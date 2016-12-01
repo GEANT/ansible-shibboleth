@@ -1,0 +1,7 @@
+---
+# file: idp.yml
+- hosts: all
+  remote_user: debian
+  roles:
+    - common
+    - jetty

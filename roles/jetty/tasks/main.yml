@@ -1,0 +1,44 @@
+---
+# tasks file for jetty
+- name: "Create Group 'jetty'"
+  become: yes
+  become_method: sudo
+  group: 
+   name: "jetty"
+   state: present
+
+- name: "Create User 'jetty'"
+  become: yes
+  become_method: sudo
+  user: 
+   name: "jetty"
+   groups: "jetty"
+   shell: /bin/bash
+
+- name: "Download Latest Jetty Web Server"
+  become: yes
+  become_method: sudo
+  unarchive:
+   src: "http://central.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.3.13.v20161014/jetty-distribution-9.3.13.v20161014.tar.gz"
+   dest: /usr/local/src
+   remote_src: yes
+
+- name: "Create useful link to Jetty source"
+  become: yes
+  become_method: sudo
+  file:
+   src: /usr/local/src/jetty-distribution-9.3.13.v20161014 
+   dest: /usr/local/src/jetty-src
+   owner: "root"
+   group: "root"
+   mode: "0644"
+   state: link
+     
+- name: "Install Java (latest package version)"
+  become: yes
+  become_method: sudo
+  apt:
+   name: "default-jdk"
+   update_cache: yes
+   state: latest
+   

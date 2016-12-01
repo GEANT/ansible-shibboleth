@@ -1,0 +1,31 @@
+---
+# handlers file for common
+- name: "Restart ntp"
+  become: yes
+  become_method: sudo
+  service: 
+   name: ntp 
+   state: restarted
+
+- name: "Restart Apache"
+  become: yes
+  become_method: sudo
+  service: 
+   name: apache2 
+   state: restarted
+
+- name: "Update Timezone"
+  become: yes
+  become_method: sudo
+  shell: dpkg-reconfigure --frontend noninteractive tzdata
+
+- name: "APT Update"
+  become: yes
+  become_method: sudo
+  apt:
+   update_cache: yes
+
+- name: "Update FQDN"
+  become: yes
+  become_method: sudo
+  shell: "service hostname stop ; service hostname start"
