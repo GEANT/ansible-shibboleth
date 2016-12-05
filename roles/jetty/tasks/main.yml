@@ -1,5 +1,22 @@
 ---
 # tasks file for jetty
+- name: "Install Java (latest package version)"
+  become: yes
+  become_method: sudo
+  apt:
+   name: "default-jdk"
+   update_cache: yes
+   state: latest
+  notify:
+   - "Restart Jetty"
+  tags: jetty
+
+#- name: "Get Java Version"
+#  become: yes
+#  become_method: sudo
+#  shell: java -version 2>&1 | grep -i version | cut -d'"' -f2 | cut -d'.' -f1-2
+#  register: java_version
+
 - name: "Create Group 'jetty'"
   become: yes
   become_method: sudo
@@ -13,32 +30,70 @@
   user: 
    name: "jetty"
    groups: "jetty"
-   shell: /bin/bash
+   createhome: "no"
 
-- name: "Download Latest Jetty Web Server"
+# Trovare il modo di anonimizzare le versioni di Jetty
+- name: "Extract Jetty Source Package"
   become: yes
   become_method: sudo
   unarchive:
-   src: "http://central.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.3.13.v20161014/jetty-distribution-9.3.13.v20161014.tar.gz"
-   dest: /usr/local/src
-   remote_src: yes
+   src: "files/{{ ansible_distribution_release }}/{{ jetty_distribution }}.tar.gz"
+   dest: "/usr/local/src"
+   owner: "jetty"
+   group: "jetty"
+  tags: jetty
 
 - name: "Create useful link to Jetty source"
   become: yes
   become_method: sudo
   file:
-   src: /usr/local/src/jetty-distribution-9.3.13.v20161014 
-   dest: /usr/local/src/jetty-src
-   owner: "root"
-   group: "root"
-   mode: "0644"
+   src: "{{ item.src }}" 
+   dest: "{{ item.dest }}"
+   owner: "jetty"
+   group: "jetty"
    state: link
-     
-- name: "Install Java (latest package version)"
+  with_items:
+   - { src: '/usr/local/src/{{ jetty_distribution }}' , dest: '/usr/local/src/jetty-src' }
+   - { src: '/usr/local/src/jetty-src/bin/jetty.sh' , dest: '/etc/init.d/jetty' }
+  notify:
+   - "Restart Jetty"
+  tags: jetty
+
+- name: "Create Jetty's directories"
   become: yes
   become_method: sudo
-  apt:
-   name: "default-jdk"
-   update_cache: yes
-   state: latest
-   
+  file:
+   path: "{{ item }}"
+   owner: "jetty"
+   group: "jetty"
+   state: directory
+  with_items:
+   - /opt/jetty
+   - /opt/jetty/etc
+   - /opt/jetty/tmp
+   - /var/log/jetty
+  tags: jetty
+  
+- name: "Copy the Jetty configurations to /etc/default/jetty"
+  become: yes
+  become_method: sudo
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "jetty"
+   group: "jetty"
+  with_items:
+   - { src: 'files/{{ ansible_distribution_release }}/{{ ansible_distribution_release }}.jetty', dest: '/etc/default/jetty' }
+   - { src: 'files/{{ ansible_distribution_release }}/{{ ansible_distribution_release }}.start.ini', dest: '/opt/jetty/start.ini' }
+#   - { src: 'files/{{ ansible_distribution_release }}/{{ ansible_distribution_release }}.jetty.xml', dest: '/opt/jetty/etc/jetty.xml' }
+  notify:
+   - "Restart Jetty"
+  tags: jetty
+
+- name: "Be sure that Jetty is enabled and running"
+  become: yes
+  become_method: sudo
+  service:
+    name: jetty
+    state: started
+  tags: jetty

@@ -1,2 +1,10 @@
 ---
 # handlers file for jetty
+
+- name: "Restart Jetty"
+  become: yes
+  become_method: sudo
+  service:
+   name: jetty
+   state: restarted
+

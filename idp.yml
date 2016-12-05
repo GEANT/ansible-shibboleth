@@ -2,6 +2,8 @@
 # file: idp.yml
 - hosts: all
   remote_user: debian
+  vars_files:
+   - group_vars/os_jessie.yml
   roles:
     - common
     - jetty

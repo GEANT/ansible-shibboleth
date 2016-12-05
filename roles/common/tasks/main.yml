@@ -1,6 +1,18 @@
 ---
 # tasks file for common
 
+#- debug:
+#   var: "{{ item }}"
+#  with_items:
+#   - my_timezone 
+#   - ca
+#   - https_cert
+#   - https_key 
+#   - https_domain
+#   - ntp1
+#   - ntp2
+#   - ntp3
+
 - name: "Be sure that the FQDN is configured"
   become: yes
   become_method: sudo
@@ -178,4 +190,3 @@
   notify:
    - "Restart Apache"
   tags: https
-
