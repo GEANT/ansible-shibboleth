@@ -2,6 +2,8 @@
 # file: group_vars/os_jessie
 jetty_distribution: "jetty-distribution-9.2.19.v20160908"
 
+java_home_dir: "/usr/lib/jvm/java-7-openjdk-amd64/jre"
+
 # Variables for "common" role
 my_timezone: Europe/Rome
 
@@ -16,3 +18,7 @@ ca: GARR-MI-CA-selfsigned.pem
 https_cert: "{{ ansible_hostname }}.{{ https_domain }}.crt"
 
 https_key: "{{ ansible_hostname }}.{{ https_domain }}.key"
+
+# Variables for "openldap" role
+
+

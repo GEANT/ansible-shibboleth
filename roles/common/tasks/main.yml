@@ -35,7 +35,7 @@
    line: "#manage_etc_hosts"
    state: present
 
-- name: "Be sure that ntp, ntpdate, vim, ca-certificates, openssl, apache2 and expat are installed"
+- name: "Be sure that needed packages are installed"
   become: yes
   become_method: sudo
   apt: 
@@ -51,6 +51,8 @@
    - apache2
    - expat
    - aptitude
+   - debconf
+   - debconf-utils
   tags: common
 
 - name: "Be sure to work with the last updated packages (safe-upgrade)"
