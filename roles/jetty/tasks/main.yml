@@ -11,12 +11,6 @@
    - "Restart Jetty"
   tags: jetty
 
-#- name: "Get Java Version"
-#  become: yes
-#  become_method: sudo
-#  shell: java -version 2>&1 | grep -i version | cut -d'"' -f2 | cut -d'.' -f1-2
-#  register: java_version
-
 - name: "Create Group 'jetty'"
   become: yes
   become_method: sudo
@@ -32,7 +26,6 @@
    groups: "jetty"
    createhome: "no"
 
-# Trovare il modo di anonimizzare le versioni di Jetty
 - name: "Extract Jetty Source Package"
   become: yes
   become_method: sudo
@@ -90,10 +83,22 @@
    - "Restart Jetty"
   tags: jetty
 
+- name: "Check that 'jetty.service' exists"
+  stat: 
+   path: /run/systemd/generator.late/jetty.service
+  register: jetty_service
+
+- name: "Be sure that Jetty is bootable at boot time"
+  become: yes
+  become_method: sudo
+  shell: "update-rc.d jetty defaults"
+  when: jetty_service.stat.exists == False
+
 - name: "Be sure that Jetty is enabled and running"
   become: yes
   become_method: sudo
   service:
     name: jetty
     state: started
+    enabled: yes
   tags: jetty
