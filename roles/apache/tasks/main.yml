@@ -1,0 +1,110 @@
+---
+# tasks file for apache
+- name: "Be sure that packages needed to apache are installed"
+  become: yes
+  become_method: sudo
+  apt:
+   name: "{{item}}"
+   state: latest
+   update_cache: yes
+  with_items:
+   - apache2
+  tags: apache
+
+- name: "Create /root/certificates directory"
+  become: yes
+  become_method: sudo
+  file:
+   path: /root/certificates
+   state: directory
+   owner: "root"
+   group: "root"
+   mode: "0755"
+  tags: https
+
+- name: "Copy the HTTPS Server certificate to the /root/certificates"
+  become: yes
+  become_method: sudo
+  copy:
+   src: "files/{{ https_cert }}"
+   dest: /root/certificates
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  notify:
+   - "Restart Apache"
+  tags: https
+
+- name: "Copy the HTTPS Server Key to the /root/certificates"
+  become: yes
+  become_method: sudo
+  copy:
+   src: "files/{{ https_key }}"
+   dest: /root/certificates
+   owner: "root"
+   group: "root"
+   mode: "0400"
+  notify:
+   - "Restart Apache"
+  tags: https
+
+- name: "Copy the CA Certificate to the /root/certificates"
+  become: yes
+  become_method: sudo
+  copy:
+   src: "files/{{ ca }}"
+   dest: /root/certificates
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  notify:
+   - "Restart Apache"
+  tags: https
+
+- name: "Configure Apache SSL"
+  become: yes
+  become_method: sudo
+  template:
+   src: default-ssl.conf.j2
+   dest: /etc/apache2/sites-enabled/default-ssl.conf
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  notify:
+   - "Restart Apache"
+  tags: https
+
+- name: "Enable SSL module"
+  become: yes
+  become_method: sudo
+  apache2_module:
+   name: "{{ item }}"
+   state: present
+  with_items:
+   - proxy_http
+   - ssl
+   - headers
+  notify:
+   - "Restart Apache"
+  tags: https
+
+- name: "Disable HTTP site"
+  become: yes
+  become_method: sudo
+  file:
+    path: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
+  notify:
+   - "Restart Apache"
+  tags: https
+
+- name: "Disable HTTP port"
+  become: yes
+  become_method: sudo
+  replace:
+   dest: /etc/apache2/ports.conf
+   regexp: "^Listen 80"
+   replace: "#Listen 80"
+  notify:
+   - "Restart Apache"
+  tags: https

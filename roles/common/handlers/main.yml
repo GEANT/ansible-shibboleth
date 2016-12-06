@@ -7,13 +7,6 @@
    name: ntp 
    state: restarted
 
-- name: "Restart Apache"
-  become: yes
-  become_method: sudo
-  service: 
-   name: apache2 
-   state: restarted
-
 - name: "Update Timezone"
   become: yes
   become_method: sudo

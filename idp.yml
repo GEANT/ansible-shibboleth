@@ -6,4 +6,5 @@
    - group_vars/os_jessie.yml
   roles:
     - common
+    - apache
     - jetty
