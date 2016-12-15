@@ -4,7 +4,7 @@
 
 2. Edit the [production|test|developmet].ini inventory
 
-3. Insert "hostname.domain.name.ext.crt", "hostname.domain.name.ext.key" and "CA.crt" inside roles/common/files
+3. Insert "hostname.domain.name.ext.crt", "hostname.domain.name.ext.key" and "CA.crt" inside roles/apache2/files
 
 4. Run this command to run Ansible on develoment inventory to install and configure a Web Server with Apache2 enable on SSL:
 
