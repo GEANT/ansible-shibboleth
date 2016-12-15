@@ -1,1 +1,2 @@
-idp.retry
+# ignore generated 'retry' files,
+*.retry

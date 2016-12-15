@@ -1,3 +1,15 @@
 ---
 # file: group_vars/all
 
+### NTP
+my_timezone: Europe/Rome
+
+ntp1: ntp1.inrim.it
+ntp2: ntp2.inrim.it
+ntp3: 0.it.pool.ntp.org
+
+### WEB SERVER
+ca: GARR-MI-CA-selfsigned.pem
+
+https_cert: "{{ ansible_hostname }}.{{ https_domain }}.crt"
+https_key: "{{ ansible_hostname }}.{{ https_domain }}.key"

@@ -11,23 +11,23 @@
    - apache2
   tags: apache
 
-- name: "Create /root/certificates directory"
-  become: yes
-  become_method: sudo
-  file:
-   path: /root/certificates
-   state: directory
-   owner: "root"
-   group: "root"
-   mode: "0755"
-  tags: https
+#- name: "Create /root/certificates directory"
+#  become: yes
+#  become_method: sudo
+#  file:
+#   path: /root/certificates
+#   state: directory
+#   owner: "root"
+#   group: "root"
+#   mode: "0755"
+#  tags: https
 
-- name: "Copy the HTTPS Server certificate to the /root/certificates"
+- name: "Copy the CA Certificate to the /etc/ssl/certs"
   become: yes
   become_method: sudo
   copy:
-   src: "files/{{ https_cert }}"
-   dest: /root/certificates
+   src: "files/{{ ca }}"
+   dest: /etc/ssl/certs
    owner: "root"
    group: "root"
    mode: "0644"
@@ -35,12 +35,25 @@
    - "Restart Apache"
   tags: https
 
-- name: "Copy the HTTPS Server Key to the /root/certificates"
+- name: "Copy the HTTPS Server certificate to the /etc/ssl/certs"
+  become: yes
+  become_method: sudo
+  copy:
+   src: "files/{{ https_cert }}"
+   dest: /etc/ssl/certs
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  notify:
+   - "Restart Apache"
+  tags: https
+
+- name: "Copy the HTTPS Server Key to the /etc/ssl/private"
   become: yes
   become_method: sudo
   copy:
    src: "files/{{ https_key }}"
-   dest: /root/certificates
+   dest: /etc/ssl/private
    owner: "root"
    group: "root"
    mode: "0400"
@@ -48,15 +61,16 @@
    - "Restart Apache"
   tags: https
 
-- name: "Copy the CA Certificate to the /root/certificates"
+- name: "Enable SSL module"
   become: yes
   become_method: sudo
-  copy:
-   src: "files/{{ ca }}"
-   dest: /root/certificates
-   owner: "root"
-   group: "root"
-   mode: "0644"
+  apache2_module:
+   name: "{{ item }}"
+   state: present
+  with_items:
+   - ssl
+   - headers
+   - proxy_http
   notify:
    - "Restart Apache"
   tags: https
@@ -70,20 +84,6 @@
    owner: "root"
    group: "root"
    mode: "0644"
-  notify:
-   - "Restart Apache"
-  tags: https
-
-- name: "Enable SSL module"
-  become: yes
-  become_method: sudo
-  apache2_module:
-   name: "{{ item }}"
-   state: present
-  with_items:
-   - proxy_http
-   - ssl
-   - headers
   notify:
    - "Restart Apache"
   tags: https

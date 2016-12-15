@@ -1,10 +1,9 @@
 ---
 # file: idp.yml
-- hosts: all
+- hosts: Debian
   remote_user: debian
-  vars_files:
-   - group_vars/os_jessie.yml
   roles:
     - common
     - apache
     - jetty
+#    - openldap
