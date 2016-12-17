@@ -6,4 +6,4 @@
     - common
     - apache
     - jetty
-#    - openldap
+    - openldap

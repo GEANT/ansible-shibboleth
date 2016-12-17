@@ -1,2 +1,5 @@
 # ignore generated 'retry' files,
 *.retry
+
+# ignore vault password file
+*.vault_pass.txt

@@ -1,0 +1,14 @@
+dn: ou=people,{{ ldap_basedn }}
+objectClass: organizationalUnit
+objectClass: top
+ou: People
+
+dn: ou=groups,{{ ldap_basedn }}
+objectClass: organizationalUnit
+objectClass: top
+ou: Groups
+
+dn: ou=system,{{ ldap_basedn }}
+objectClass: organizationalUnit
+objectClass: top
+ou: System

@@ -4,32 +4,21 @@
   become: yes
   become_method: sudo
   apt:
-   name: "{{item}}"
+   name: "{{ item }}"
    state: latest
    update_cache: yes
   with_items:
    - apache2
   tags: apache
 
-#- name: "Create /root/certificates directory"
-#  become: yes
-#  become_method: sudo
-#  file:
-#   path: /root/certificates
-#   state: directory
-#   owner: "root"
-#   group: "root"
-#   mode: "0755"
-#  tags: https
-
 - name: "Copy the CA Certificate to the /etc/ssl/certs"
   become: yes
   become_method: sudo
   copy:
    src: "files/{{ ca }}"
-   dest: /etc/ssl/certs
+   dest: /etc/ssl/certs/cacert.pem
    owner: "root"
-   group: "root"
+   group: "ssl-cert"
    mode: "0644"
   notify:
    - "Restart Apache"
@@ -42,7 +31,7 @@
    src: "files/{{ https_cert }}"
    dest: /etc/ssl/certs
    owner: "root"
-   group: "root"
+   group: "ssl-cert"
    mode: "0644"
   notify:
    - "Restart Apache"
@@ -55,10 +44,18 @@
    src: "files/{{ https_key }}"
    dest: /etc/ssl/private
    owner: "root"
-   group: "root"
-   mode: "0400"
+   group: "ssl-cert"
+   mode: "0640"
   notify:
    - "Restart Apache"
+  tags: https
+
+- name: "Add apache2 user to ssl-cert group"
+  become: yes
+  become_method: sudo
+  user: 
+   name: "apache2"
+   groups: "ssl-cert"
   tags: https
 
 - name: "Enable SSL module"
