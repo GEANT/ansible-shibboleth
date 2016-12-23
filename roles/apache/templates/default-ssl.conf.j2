@@ -38,8 +38,8 @@
                 #   /usr/share/doc/apache2/README.Debian.gz for more info.
                 #   If both key and certificate are stored in the same file, only the
                 #   SSLCertificateFile directive is needed.
-                SSLCertificateFile      /etc/ssl/certs/{{ ansible_hostname }}.{{ https_domain }}.crt
-                SSLCertificateKeyFile /etc/ssl/private/{{ ansible_hostname }}.{{ https_domain }}.key
+                SSLCertificateFile    /etc/ssl/certs/ssl-cert.crt
+                SSLCertificateKeyFile /etc/ssl/private/ssl-cert.key
 
                 #   Server Certificate Chain:
                 #   Point SSLCertificateChainFile at a file containing the

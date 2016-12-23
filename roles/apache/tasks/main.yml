@@ -11,45 +11,6 @@
    - apache2
   tags: apache
 
-- name: "Copy the CA Certificate to the /etc/ssl/certs"
-  become: yes
-  become_method: sudo
-  copy:
-   src: "files/{{ ca }}"
-   dest: /etc/ssl/certs/cacert.pem
-   owner: "root"
-   group: "ssl-cert"
-   mode: "0644"
-  notify:
-   - "Restart Apache"
-  tags: https
-
-- name: "Copy the HTTPS Server certificate to the /etc/ssl/certs"
-  become: yes
-  become_method: sudo
-  copy:
-   src: "files/{{ https_cert }}"
-   dest: /etc/ssl/certs
-   owner: "root"
-   group: "ssl-cert"
-   mode: "0644"
-  notify:
-   - "Restart Apache"
-  tags: https
-
-- name: "Copy the HTTPS Server Key to the /etc/ssl/private"
-  become: yes
-  become_method: sudo
-  copy:
-   src: "files/{{ https_key }}"
-   dest: /etc/ssl/private
-   owner: "root"
-   group: "ssl-cert"
-   mode: "0640"
-  notify:
-   - "Restart Apache"
-  tags: https
-
 - name: "Add apache2 user to ssl-cert group"
   become: yes
   become_method: sudo

@@ -3,3 +3,8 @@
 
 # ignore vault password file
 *.vault_pass.txt
+
+# ignore crt and key files
+*.crt
+*.key
+*.pem

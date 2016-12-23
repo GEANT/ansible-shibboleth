@@ -102,7 +102,7 @@
      dest: "/root/ldap-configs/directory-content.ldif"
   tags: openldap 
 
-- name: "Copy eduPerson schema and member-overlay to /root/ldap-configs"
+- name: "Copy eduPerson, schac schema and member-overlay to /root/ldap-configs"
   become: yes
   become_method: sudo
   copy:
@@ -113,6 +113,7 @@
    mode: "0644"
   with_items:
    - eduperson-201602.ldif
+   - schac-20150413.ldif
    - memberof-overlay.ldif
   tags: openldap
 
@@ -155,6 +156,22 @@
   notify: 
    - "Restart slapd"
   tags: openldap
+
+#- name: "Search Directory for schac schema"
+#  become: yes
+#  become_method: sudo
+#  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=schema,cn=config  cn=*schac dn"
+#  register: schac_schema
+#  tags: openldap
+
+#- name: "Add schac-20150413 schema ldif"
+#  become: yes
+#  become_method: sudo
+#  command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/schac-20150413.ldif"
+#  when: schac_schema.stdout == ""
+#  notify: 
+#   - "Restart slapd"
+#  tags: openldap
   
 - name: "Search the branch 'people' inside LDAP and store the result into 'people_in_ldap' variable"
   become: yes
@@ -183,6 +200,19 @@
   command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/directory-content.ldif"
   when: (people_in_ldap.stdout == "0" and groups_in_ldap.stdout == "0" and system_in_ldap.stdout == "0")
   notify: 
+   - "Restart slapd"
+  tags: openldap
+
+- name: "Add ldap.conf to /etc/ldap"
+  become: yes 
+  become_method: sudo
+  copy:
+   src: "files/ldap.conf"
+   dest: "/etc/ldap/ldap.conf"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  notify:
    - "Restart slapd"
   tags: openldap
 
