@@ -1,3 +1,3 @@
 ---
 # file: site.yml
-- include: idp.yml
+- include: shib-dp.yml

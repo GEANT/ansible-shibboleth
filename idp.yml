@@ -1,9 +1,0 @@
----
-# file: idp.yml
-- hosts: Debian
-  remote_user: debian
-  roles:
-    - common
-    - apache
-    - jetty
-    - openldap
