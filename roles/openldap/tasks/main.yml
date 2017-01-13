@@ -157,21 +157,21 @@
    - "Restart slapd"
   tags: openldap
 
-#- name: "Search Directory for schac schema"
-#  become: yes
-#  become_method: sudo
-#  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=schema,cn=config  cn=*schac dn"
-#  register: schac_schema
-#  tags: openldap
+- name: "Search Directory for schac schema"
+  become: yes
+  become_method: sudo
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=schema,cn=config  cn=*schac dn"
+  register: schac_schema
+  tags: openldap
 
-#- name: "Add schac-20150413 schema ldif"
-#  become: yes
-#  become_method: sudo
-#  command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/schac-20150413.ldif"
-#  when: schac_schema.stdout == ""
-#  notify: 
-#   - "Restart slapd"
-#  tags: openldap
+- name: "Add schac-20150413 schema ldif"
+  become: yes
+  become_method: sudo
+  command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/schac-20150413.ldif"
+  when: schac_schema.stdout == ""
+  notify: 
+   - "Restart slapd"
+  tags: openldap
   
 - name: "Search the branch 'people' inside LDAP and store the result into 'people_in_ldap' variable"
   become: yes
