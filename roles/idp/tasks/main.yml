@@ -23,20 +23,40 @@
     remote_src: True
   tags: idp
 
+- name: "Be sure that the Shibboleth Identity Provider installer properties file exists in the right position"
+  become: yes
+  become_method: sudo
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "root"
+    group: "root"
+    mode: 0644
+  with_items:
+   - { src: "shib-idp-install.properties.j2", dest: "/tmp/shib-idp-install.properties" }
+   - { src: "installer.properties.j2", dest: "/tmp/installer.properties"} 
+   - { src: "idp.xml.j2", dest: "/opt/jetty/webapps/idp.xml" }
+  tags: idp
+ 
 - name: "Install Shibboleth Idp"
   become: yes
   become_method: sudo
-  command: |
-    /usr/local/src/shibboleth-identity-provider-{{ shib_idp_version | quote }}/bin/install.sh \
-    -Didp.sealer.password={{ idp_pw | quote }} \
-    -Didp.keystore.password={{ idp_pw | quote }} \
-    -Didp.scope={{ https_domain | quote }} \
-    -Didp.src.dir=/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version | quote }} \
-    -Didp.host.name={{ ansible_hostname | quote }} \
-    -Didp.target.dir=/opt/shibboleth-idp \
-    -Didp.merge.properties=/tmp/shib-install.properties
+  shell: "./install.sh -Didp.property.file=/tmp/installer.properties"
+  args:
+    chdir: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/bin"
+#  command: |
+#    /usr/local/src/shibboleth-identity-provider-{{ shib_idp_version | quote }}/bin/install.sh \
+#    -Didp.sealer.password={{ idp_pw | quote }} \
+#    -Didp.keystore.password={{ idp_pw | quote }} \
+#    -Didp.scope={{ https_domain | quote }} \
+#    -Didp.src.dir=/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version | quote }} \
+#    -Didp.host.name={{ ansible_hostname | quote }} \
+#    -Didp.target.dir=/opt/shibboleth-idp \
+#    -Didp.merge.properties=/tmp/shib-idp-install.properties
   environment:
     JAVA_HOME: "/usr/lib/jvm/java-7-openjdk-amd64/jre"
+  notify:
+    - "Restart Jetty"
   tags: idp
 
 #- name: "Be sure that the JSTL library for IDP Status Page is in the right position"
@@ -67,4 +87,4 @@
     - conf
     - system
     - war
-
+  tags: idp
