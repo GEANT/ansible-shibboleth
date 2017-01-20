@@ -44,33 +44,24 @@
   shell: "./install.sh -Didp.property.file=/tmp/installer.properties"
   args:
     chdir: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/bin"
-#  command: |
-#    /usr/local/src/shibboleth-identity-provider-{{ shib_idp_version | quote }}/bin/install.sh \
-#    -Didp.sealer.password={{ idp_pw | quote }} \
-#    -Didp.keystore.password={{ idp_pw | quote }} \
-#    -Didp.scope={{ https_domain | quote }} \
-#    -Didp.src.dir=/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version | quote }} \
-#    -Didp.host.name={{ ansible_hostname | quote }} \
-#    -Didp.target.dir=/opt/shibboleth-idp \
-#    -Didp.merge.properties=/tmp/shib-idp-install.properties
   environment:
     JAVA_HOME: "/usr/lib/jvm/java-7-openjdk-amd64/jre"
   notify:
     - "Restart Jetty"
   tags: idp
 
-#- name: "Be sure that the JSTL library for IDP Status Page is in the right position"
-#  become: yes
-#  become_method: sudo
-#  copy:
-#   src: "{{ item.src }}"
-#   dest: "{{ item.dest }}"
-#   owner: "{{ item.owner }}"
-#   group: "{{ item.group }}"
-#   mode: "{{ item.mode }}"
-#  with_items:
-#   - { src: "files/jstl-1.2.jar", dest: "/opt/shibboleth-idp/edit-webapp/WEB-INF/lib/jstl-1.2.jar", owner: "root" , group: "root" , mode: "0644"  }
-#  tags: idp 
+- name: "Be sure that the JSTL library for IDP Status Page is in the right position"
+  become: yes
+  become_method: sudo
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "{{ item.owner }}"
+   group: "{{ item.group }}"
+   mode: "{{ item.mode }}"
+  with_items:
+   - { src: "files/jstl-1.2.jar", dest: "/opt/shibboleth-idp/edit-webapp/WEB-INF/lib/jstl-1.2.jar", owner: "root" , group: "root" , mode: "0644"  }
+  tags: idp 
 
 - name: "Be sure that the IdP directories have the right permissions"
   become: yes
