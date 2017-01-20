@@ -78,7 +78,7 @@
   with_items:
    - { src: 'files/{{ ansible_distribution_release }}/{{ ansible_distribution_release }}.jetty', dest: '/etc/default/jetty' }
    - { src: 'files/{{ ansible_distribution_release }}/{{ ansible_distribution_release }}.start.ini', dest: '/opt/jetty/start.ini' }
-#   - { src: 'files/{{ ansible_distribution_release }}/{{ ansible_distribution_release }}.jetty.xml', dest: '/opt/jetty/etc/jetty.xml' }
+   - { src: 'files/{{ ansible_distribution_release }}/{{ ansible_distribution_release }}.jetty.xml', dest: '/opt/jetty/etc/jetty.xml' }
   notify:
    - "Restart Jetty"
   tags: jetty

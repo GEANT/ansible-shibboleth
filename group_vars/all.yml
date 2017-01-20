@@ -13,3 +13,6 @@ ca: GARR-MI-CA-selfsigned.pem
 
 https_cert: "{{ ansible_hostname }}.{{ https_domain }}.crt"
 https_key: "{{ ansible_hostname }}.{{ https_domain }}.key"
+
+### IDP
+shib_idp_version: "3.2.1"
