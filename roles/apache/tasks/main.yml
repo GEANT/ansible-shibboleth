@@ -61,7 +61,7 @@
   become_method: sudo
   replace:
    dest: /etc/apache2/ports.conf
-   regexp: "^Listen 80"
+   regexp: "#Listen 80"
    replace: "Listen 127.0.0.1:80"
   notify:
    - "Restart Apache"
