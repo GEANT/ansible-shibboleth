@@ -1,2 +1,9 @@
 ---
 # handlers file for idp
+
+- name: "Rebuild idp WAR and restart Jetty"
+  become: yes
+  become_method: sudo
+  shell: "./build.sh -Didp.target.dir=/opt/shibboleth-idp"
+  args:
+   chdir: "/opt/shibboleth-idp/bin"

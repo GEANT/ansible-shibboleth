@@ -37,18 +37,6 @@
    - { src: "installer.properties.j2", dest: "/tmp/installer.properties"} 
    - { src: "idp.xml.j2", dest: "/opt/jetty/webapps/idp.xml" }
   tags: idp
- 
-- name: "Install Shibboleth Idp"
-  become: yes
-  become_method: sudo
-  shell: "./install.sh -Didp.property.file=/tmp/installer.properties"
-  args:
-    chdir: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/bin"
-  environment:
-    JAVA_HOME: "/usr/lib/jvm/java-7-openjdk-amd64/jre"
-  notify:
-    - "Restart Jetty"
-  tags: idp
 
 - name: "Be sure that the JSTL library for IDP Status Page is in the right position"
   become: yes
@@ -60,8 +48,20 @@
    group: "{{ item.group }}"
    mode: "{{ item.mode }}"
   with_items:
-   - { src: "files/jstl-1.2.jar", dest: "/opt/shibboleth-idp/edit-webapp/WEB-INF/lib/jstl-1.2.jar", owner: "root" , group: "root" , mode: "0644"  }
+   - { src: "files/jstl-1.2.jar", dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/jstl-1.2.jar", owner: "root" , group: "root" , mode: "0644" }
   tags: idp 
+
+- name: "Install Shibboleth Idp"
+  become: yes
+  become_method: sudo
+  shell: "./install.sh -Didp.property.file=/tmp/installer.properties"
+  args:
+    chdir: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/bin"
+  environment:
+    JAVA_HOME: "/usr/lib/jvm/java-7-openjdk-amd64/jre"
+  notify:
+    - "Restart Jetty"
+  tags: idp
 
 - name: "Be sure that the IdP directories have the right permissions"
   become: yes

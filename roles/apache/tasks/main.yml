@@ -56,13 +56,13 @@
    - "Restart Apache"
   tags: https
 
-- name: "Disable HTTP port"
+- name: "Disable HTTP port for all except Localhost"
   become: yes
   become_method: sudo
   replace:
    dest: /etc/apache2/ports.conf
    regexp: "^Listen 80"
-   replace: "#Listen 80"
+   replace: "Listen 127.0.0.1:80"
   notify:
    - "Restart Apache"
   tags: https
