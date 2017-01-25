@@ -7,4 +7,5 @@
     - apache
     - jetty
     - openldap
+    - mysql
     - idp

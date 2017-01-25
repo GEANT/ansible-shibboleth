@@ -23,7 +23,7 @@
   with_items:
    - { src: "shib-idp-install.properties.j2", dest: "/tmp/shib-idp-install.properties" }
    - { src: "installer.properties.j2", dest: "/tmp/installer.properties"} 
-   - { src: "idp.xml.j2", dest: "/opt/jetty/webapps/idp.xml" }
+   - { src: "shib-idp-persistentId-db.sql.j2", dest: "/tmp/shib-idp-persistentId-db.sql" }
   tags: idp
 
 - name: "Be sure that the JSTL library for IDP Status Page is in the right position"
@@ -32,12 +32,13 @@
   copy:
    src: "{{ item.src }}"
    dest: "{{ item.dest }}"
-   owner: "{{ item.owner }}"
-   group: "{{ item.group }}"
-   mode: "{{ item.mode }}"
+   owner: "root"
+   group: "root"
+   mode: 0644
   with_items:
-   - { src: "files/jstl-1.2.jar", dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/jstl-1.2.jar", owner: "root" , group: "root" , mode: "0644" }
-   - { src: "files/idp.conf", dest: "/etc/apache2/sites-enabled/idp.conf", owner: "root" , group: "root" , mode: "0644" }
+   - { src: "files/jstl-1.2.jar", dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/jstl-1.2.jar" }
+   - { src: "files/idp.conf", dest: "/etc/apache2/sites-enabled/idp.conf" }
+   - { src: "files/idp.xml", dest: "/opt/jetty/webapps/idp.xml" }
   tags: idp 
 
 - name: "Be sure to install Shibboleth IdP"
@@ -68,4 +69,19 @@
     - conf
     - system
     - war
+  tags: idp
+
+#- name: "Be sure that Shibboleth DB is created"
+#  become: yes
+#  become_method: sudo
+#  shell: "mysql -u root --password={{ root_db_password }} < roles/mysql/files/shibboleth.sql"
+#  tags: mysql 
+
+- name: "Be sure to create the database needed for persistent identifiers"
+  become: yes
+  become_method: sudo
+  mysql_db:
+    state: import
+    name: all
+    target: /tmp/shib-idp-persistentId-db.sql
   tags: idp
