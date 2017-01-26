@@ -1,6 +1,6 @@
 ---
 # tasks file for mysql
-- name: "Check if debconf-utils is installed"
+- name: "Be sure that 'debconf-utils' package is installed"
   become: yes
   become_method: sudo
   apt:
@@ -9,7 +9,7 @@
    state: latest
   tags: mysql
 
-- name: "Check debconf for mysql entries"
+- name: "Check if debconf-get-selections has parameters for unattended mysql installation and store the result on 'debconf' ansible variable"
   become: yes
   become_method: sudo
   shell: (debconf-get-selections | grep -q -s mysql-server); echo $?
@@ -17,7 +17,7 @@
   ignore_errors: yes
   tags: mysql 
 
-- name: "Configure MYSQL installation parameters"
+- name: "Be sure that debconf MYSQL unattented installation parameters are set"
   become: yes
   become_method: sudo
   debconf:
@@ -50,7 +50,7 @@
    - libcommons-pool-java
   tags: mysql
 
-- name: "Copy the root credentials as .my.cnf file"
+- name: "Be sure that .my.cnf file is present for MySQL authentication"
   become: yes
   become_method: sudo
   template: 
@@ -68,7 +68,7 @@
     enabled: yes
   tags: mysql
 
-- name: "Update MySQL root password for all root accounts"
+- name: "Be sure that all root accounts receive the root password for database"
   become: yes
   become_method: sudo
   mysql_user: 

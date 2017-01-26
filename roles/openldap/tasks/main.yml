@@ -10,7 +10,7 @@
    state: latest
   tags: openldap
 
-- name: "Check debconf for slapd entries"
+- name: "Check if debconf-get-selections has parameters for unattended OpenLDAP installation and store the result on 'debconf' ansible variable"
   become: yes
   become_method: sudo
   shell: (debconf-get-selections | grep -q -s slapd); echo $?
@@ -134,10 +134,10 @@
    - "Restart slapd"
   tags: openldap
 
-- name: "Search SSL Key for STARTTLS of LDAP"
+- name: "Check if LDAP has alread the olcTLSCertificateKeyFile needed for STARTTLS and store the result on 'olc_cert_key' ansible variable"
   become: yes
   become_method: sudo
-  shell: "sudo ldapsearch -H ldapi:// -Y EXTERNAL -b cn=config -LLL -Q '(olcTLSCertificateKeyFile=*)' dn olcTLSCertificateKeyFile | grep olcTLSCertificateKeyFile | wc -l"
+  shell: "ldapsearch -H ldapi:// -Y EXTERNAL -b cn=config -LLL -Q '(olcTLSCertificateKeyFile=*)' dn olcTLSCertificateKeyFile | grep olcTLSCertificateKeyFile | wc -l"
   register: olc_cert_key
   tags: openldap
 
@@ -167,7 +167,7 @@
    - "Restart slapd"
   tags: openldap
 
-- name: "Search Directory for memberof overlay"
+- name: "Check memberof overlay into LDAP and store the result on 'memberof_overlay' ansible variable"
   become: yes
   become_method: sudo
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=config  olcOverlay=memberof"
@@ -183,7 +183,7 @@
    - "Restart slapd"
   tags: openldap
 
-- name: "Search Directory for eduperson schema"
+- name: "Check eduPerson schema on LDAP and store the result on 'eduperson_schema' ansible variable"
   become: yes
   become_method: sudo
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=schema,cn=config  cn=*eduperson dn"
@@ -199,7 +199,7 @@
    - "Restart slapd"
   tags: openldap
 
-- name: "Search Directory for schac schema"
+- name: "Check SCHAC schema on LDAP and store the result on 'schac_schema' ansible variable"
   become: yes
   become_method: sudo
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=schema,cn=config  cn=*schac dn"
@@ -215,21 +215,21 @@
    - "Restart slapd"
   tags: openldap
   
-- name: "Search the branch 'people' inside LDAP and store the result into 'people_in_ldap' variable"
+- name: "Check the existance of branch 'people' inside LDAP and store the result into 'people_in_ldap' ansible variable"
   become: yes
   become_method: sudo
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap_basedn }} objectClass=organizationalUnit dn | grep ou=people,{{ ldap_basedn }} | wc -l"
   register: people_in_ldap
   tags: openldap
 
-- name: "Search the branch 'groups' inside LDAP and store the result into 'groups_in_ldap' variable"
+- name: "Check the existance of branch 'groups' inside LDAP and store the result into 'groups_in_ldap' ansible variable"
   become: yes
   become_method: sudo
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap_basedn }} objectClass=organizationalUnit dn | grep ou=groups,{{ ldap_basedn }} | wc -l"
   register: groups_in_ldap
   tags: openldap
 
-- name: "Search the branch 'system' inside LDAP and store the result into 'system_in_ldap' variable"
+- name: "Check the existance of branch 'system' inside LDAP and store the result into 'system_in_ldap' ansible variable"
   become: yes
   become_method: sudo
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap_basedn }} objectClass=organizationalUnit dn | grep ou=system,{{ ldap_basedn }} | wc -l"

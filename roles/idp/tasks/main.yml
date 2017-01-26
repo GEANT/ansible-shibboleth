@@ -1,5 +1,10 @@
 ---
 # tasks file for idp
+- name: "Check if Shibboleth IdP directory exists and store the result into 'shib_idp_dir' ansible variable"
+  stat:
+    path: "/opt/shibboleth-idp"
+  register: shib_idp_dir
+
 - name: "Be sure that the Shibboleth Identity Provider is downloaded and extracted into the right position"
   become: yes
   become_method: sudo
@@ -9,6 +14,7 @@
     owner: "root"
     group: "root"
     remote_src: True
+  when: shib_idp_dir.stat.isdir is undefined
   tags: idp
 
 - name: "Be sure that the Shibboleth Identity Provider installer properties' files exists in the right position"
@@ -24,9 +30,10 @@
    - { src: "shib-idp-install.properties.j2", dest: "/tmp/shib-idp-install.properties", mode: "0644" }
    - { src: "installer.properties.j2", dest: "/tmp/installer.properties", mode: "0644" } 
    - { src: "shib-idp-persistentId-db.sql.j2", dest: "/root/shib-idp-persistentId-db.sql", mode: "0600" }
+  when: shib_idp_dir.stat.isdir is undefined
   tags: idp
 
-- name: "Be sure that the JSTL library for IDP Status Page is in the right position"
+- name: "Be sure that Apache2 and Jetty are enabled for Shibboleth IdP"
   become: yes
   become_method: sudo
   copy:
@@ -52,6 +59,7 @@
   notify:
     - "Restart Jetty"
     - "Restart Apache"
+  when: shib_idp_dir.stat.isdir is undefined
   tags: idp
 
 - name: "Be sure that the IdP directories have the right permissions"
