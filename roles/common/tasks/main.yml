@@ -18,8 +18,6 @@
    owner: "root"
    group: "root"
    mode: "0644" 
-  notify:
-   - "Update FQDN"
   tags: common
 
 - name: "Be sure to comment out 'manage_etc_host' from /etc/cloud/cloud.cfg "

@@ -17,11 +17,3 @@
   become_method: sudo
   apt:
    update_cache: yes
-
-- name: "Update FQDN"
-  become: yes
-  become_method: sudo
-  service:
-    name: hostname
-    state: restarted
-#  shell: "service hostname stop ; service hostname start"
