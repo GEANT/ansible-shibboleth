@@ -1,16 +1,6 @@
-dn: cn=config
-replace: olcTLSCACertificateFile
-olcTLSCACertificateFile: /etc/ssl/certs/cacert.pem
--
-replace: olcTLSCertificateFile
-olcTLSCertificateFile: /etc/ssl/certs/ssl-cert.crt
--
-replace: olcTLSCertificateKeyFile
-olcTLSCertificateKeyFile: /etc/ssl/private/ssl-cert.key
--
 replace: olcLogLevel
 olcLogLevel: 256
-
+-
 dn: olcDatabase={1}mdb,cn=config
 changeType: modify
 replace: olcAccess

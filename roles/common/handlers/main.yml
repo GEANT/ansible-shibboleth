@@ -21,4 +21,7 @@
 - name: "Update FQDN"
   become: yes
   become_method: sudo
-  shell: "service hostname stop ; service hostname start"
+  service:
+    name: hostname
+    state: restarted
+#  shell: "service hostname stop ; service hostname start"

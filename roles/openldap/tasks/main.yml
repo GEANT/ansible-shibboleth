@@ -75,6 +75,8 @@
   user: 
    name: openldap
    groups: ssl-cert
+  notify:
+   - "Restart slapd"
   tags: openldap
 
 - name: "Create /root/ldap-configs used to maintain the LDAP configuration files"
@@ -96,6 +98,8 @@
    group: "root"
    mode: "0600"
   with_items:
+   - src: "ldap-ssl.ldif.j2"
+     dest: "/root/ldap-configs/ldap-ssl.ldif"
    - src: "directory-config.ldif.j2"
      dest: "/root/ldap-configs/directory-config.ldif"
    - src: "directory-content.ldif.j2"
@@ -115,6 +119,44 @@
    - eduperson-201602.ldif
    - schac-20150413.ldif
    - memberof-overlay.ldif
+  tags: openldap
+
+- name: "Add ldap.conf to /etc/ldap"
+  become: yes 
+  become_method: sudo
+  copy:
+   src: "files/ldap.conf"
+   dest: "/etc/ldap/ldap.conf"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  notify:
+   - "Restart slapd"
+  tags: openldap
+
+- name: "Search SSL Key for STARTTLS of LDAP"
+  become: yes
+  become_method: sudo
+  shell: "sudo ldapsearch -H ldapi:// -Y EXTERNAL -b cn=config -LLL -Q '(olcTLSCertificateKeyFile=*)' dn olcTLSCertificateKeyFile | grep olcTLSCertificateKeyFile | wc -l"
+  register: olc_cert_key
+  tags: openldap
+
+- name: "Be sure that SLAPD is restarted before load ldap configuration"
+  become: yes
+  become_method: sudo
+  service:
+    name: "slapd"
+    state: "restarted"
+  when: olc_cert_key == ""
+  tags: openldap
+
+- name: "Be sure that LDAP has STARTTLS enabled"
+  become: yes
+  become_method: sudo
+  command: "ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/ldap-ssl.ldif"
+  notify: 
+   - "Restart slapd"
+  when: olc_cert_key == ""
   tags: openldap
 
 - name: "Apply Directory config ldif"
@@ -200,19 +242,6 @@
   command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/directory-content.ldif"
   when: (people_in_ldap.stdout == "0" and groups_in_ldap.stdout == "0" and system_in_ldap.stdout == "0")
   notify: 
-   - "Restart slapd"
-  tags: openldap
-
-- name: "Add ldap.conf to /etc/ldap"
-  become: yes 
-  become_method: sudo
-  copy:
-   src: "files/ldap.conf"
-   dest: "/etc/ldap/ldap.conf"
-   owner: "root"
-   group: "root"
-   mode: "0644"
-  notify:
    - "Restart slapd"
   tags: openldap
 

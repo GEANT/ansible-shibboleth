@@ -17,6 +17,11 @@
     ldap_host: "localhost"
     ldap_user: "openldap"
     ldap_root_pw: "##ONE_PASSWORD##"
+
+    # IDP Variables
+    idp_pw: "##IDP_PASSWORD##"
+    root_db_password: "## ROOT DB PASSWORD ##"
+    shibboleth_db_password: "## SHIBBOLETH USER DB PASSWORD"
     ```
 6. Ecrypted with your Ansible Vault:
     * cd /opt/ansible-shibboleth

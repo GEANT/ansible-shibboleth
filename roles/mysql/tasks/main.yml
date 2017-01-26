@@ -12,12 +12,12 @@
 - name: "Check debconf for mysql entries"
   become: yes
   become_method: sudo
-  shell: (debconf-get-selections | grep -q -s mysql); echo $?
+  shell: (debconf-get-selections | grep -q -s mysql-server); echo $?
   register: debconf
   ignore_errors: yes
   tags: mysql 
 
-- name: "Configure MYSQL params"
+- name: "Configure MYSQL installation parameters"
   become: yes
   become_method: sudo
   debconf:
@@ -28,10 +28,10 @@
   with_items:
     - question: mysql-server/root_password
       type: password
-      value: "{{ root_db_password|default('') }}"
+      value: "{{ root_db_password }}"
     - question: mysql-server/root_password_again
       type: password
-      value: "{{ root_db_password|default('') }}"
+      value: "{{ root_db_password }}"
   when: debconf.stdout == "1"
   tags: mysql
 
@@ -50,6 +50,15 @@
    - libcommons-pool-java
   tags: mysql
 
+- name: "Copy the root credentials as .my.cnf file"
+  become: yes
+  become_method: sudo
+  template: 
+    src: "root.cnf.j2" 
+    dest: "~/.my.cnf"
+    mode: 0600
+  tags: mysql
+
 - name: "Be sure that MySQL is up and running"
   become: yes
   become_method: sudo
@@ -59,11 +68,17 @@
     enabled: yes
   tags: mysql
 
-- name: "Copy the root credentials as .my.cnf file"
+- name: "Update MySQL root password for all root accounts"
   become: yes
   become_method: sudo
-  template: 
-    src: "root.cnf.j2" 
-    dest: "~/.my.cnf"
-    mode: 0600
+  mysql_user: 
+   name: "root" 
+   host: "{{ item }}" 
+   password: "{{ root_db_password }}"
+   state: present
+  with_items:
+     - "{{ ansible_hostname }}"
+     - 127.0.0.1
+     - ::1
+     - localhost
   tags: mysql

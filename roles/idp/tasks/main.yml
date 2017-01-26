@@ -19,11 +19,11 @@
     dest: "{{ item.dest }}"
     owner: "root"
     group: "root"
-    mode: 0644
+    mode: "{{ item.mode }}"
   with_items:
-   - { src: "shib-idp-install.properties.j2", dest: "/tmp/shib-idp-install.properties" }
-   - { src: "installer.properties.j2", dest: "/tmp/installer.properties"} 
-   - { src: "shib-idp-persistentId-db.sql.j2", dest: "/tmp/shib-idp-persistentId-db.sql" }
+   - { src: "shib-idp-install.properties.j2", dest: "/tmp/shib-idp-install.properties", mode: "0644" }
+   - { src: "installer.properties.j2", dest: "/tmp/installer.properties", mode: "0644" } 
+   - { src: "shib-idp-persistentId-db.sql.j2", dest: "/root/shib-idp-persistentId-db.sql", mode: "0600" }
   tags: idp
 
 - name: "Be sure that the JSTL library for IDP Status Page is in the right position"
@@ -71,17 +71,11 @@
     - war
   tags: idp
 
-#- name: "Be sure that Shibboleth DB is created"
-#  become: yes
-#  become_method: sudo
-#  shell: "mysql -u root --password={{ root_db_password }} < roles/mysql/files/shibboleth.sql"
-#  tags: mysql 
-
 - name: "Be sure to create the database needed for persistent identifiers"
   become: yes
   become_method: sudo
   mysql_db:
     state: import
     name: all
-    target: /tmp/shib-idp-persistentId-db.sql
+    target: /root/shib-idp-persistentId-db.sql
   tags: idp
