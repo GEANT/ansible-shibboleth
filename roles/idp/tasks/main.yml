@@ -1,5 +1,22 @@
 ---
 # tasks file for idp
+- name: "Be sure that Jetty has the right libraries imported"
+  become: yes
+  become_method: sudo
+  file:
+   src: "{{ item.src }}" 
+   dest: "{{ item.dest }}"
+   owner: "jetty"
+   group: "jetty"
+   state: link
+  with_items:
+   - { src: '/usr/share/java/commons-dbcp.jar' , dest: '/opt/jetty/lib/ext/common-dbcp.jar' }
+   - { src: '/usr/share/java/commons-pool.jar' , dest: '/opt/jetty/lib/ext/commons-pool.jar' }
+   - { src: '/usr/share/java/mysql.jar' , dest: '/opt/jetty/lib/ext/mysql-connector-java.jar' }
+  notify:
+   - "Restart Jetty"
+  tags: jetty
+
 - name: "Check if Shibboleth IdP directory exists and store the result into 'shib_idp_dir' ansible variable"
   stat:
     path: "/opt/shibboleth-idp"
@@ -55,14 +72,14 @@
   args:
     chdir: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/bin"
   environment:
-    JAVA_HOME: "/usr/lib/jvm/java-7-openjdk-amd64/jre"
+    JAVA_HOME: "{{ java_home_dir }}"
   notify:
     - "Restart Jetty"
     - "Restart Apache"
   when: shib_idp_dir.stat.isdir is undefined
   tags: idp
 
-- name: "Be sure that the IdP directories have the right permissions"
+- name: "Be sure that the Shibboleth IdP directories have the right permissions"
   become: yes
   become_method: sudo
   file:
@@ -79,11 +96,58 @@
     - war
   tags: idp
 
-- name: "Be sure to create the database needed for persistent identifiers"
+- name: "Check if 'shibboleth' DB is already created and store the result into 'shib_db' ansible variable"
+  become: yes
+  become_method: sudo
+  command: mysql -u root -s -N -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='shibboleth'"
+  register: shib_db
+  tags: idp
+
+- name: "Be sure the existance of persistent identifiers 'shibboleth' database"
   become: yes
   become_method: sudo
   mysql_db:
     state: import
     name: all
     target: /root/shib-idp-persistentId-db.sql
+  when: shib_db.stdout == ""
+  tags: idp
+
+- name: "Be sure that the IdP is configured correctly - Part 1"
+  become: yes
+  become_method: sudo
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "jetty"
+    group: "root"
+    mode: 0600
+  with_items:
+   - { src: "saml-nameid.properties.j2", dest: "/opt/shibboleth-idp/conf/saml-nameid.properties" }
+   - { src: "global.xml.j2", dest: "/opt/shibboleth-idp/conf/global.xml" }
+   - { src: "idp.properties.j2", dest: "/opt/shibboleth-idp/conf/idp.properties"}
+   - { src: "ldap.properties.j2", dest: "/opt/shibboleth-idp/conf/ldap.properties" }
+  notify:
+    - "Restart Jetty"
+  tags: idp
+
+- name: "Be sure that the IdP is configured correctly - Part 2"
+  become: yes
+  become_method: sudo
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "jetty"
+   group: "root"
+   mode: 0600
+  with_items:
+   - { src: "files/saml-nameid.xml", dest: "/opt/shibboleth-idp/conf/saml-nameid.xml" }
+   - { src: "files/subject-c14n.xml", dest: "/opt/shibboleth-idp/conf/c14n/subject-c14n.xml" }
+   - { src: "files/logback.xml", dest: "/opt/shibboleth-idp/conf/logback.xml" }
+   - { src: "files/attribute-resolver-v3-custom.xml", dest: "/opt/shibboleth-idp/conf/attribute-resolver-v3-custom.xml" }
+   - { src: "files/attribute-filter-v3-custom.xml", dest: "/opt/shibboleth-idp/conf/attribute-filter-v3-custom.xml" }
+   - { src: "files/services.xml", dest: "/opt/shibboleth-idp/conf/services.xml"}
+   - { src: "files/federation-cert.pem", dest: "/opt/shibboleth-idp/metadata/federation-cert.pem"}
+  notify:
+    - "Restart Jetty"
   tags: idp

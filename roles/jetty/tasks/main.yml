@@ -5,8 +5,9 @@
   become_method: sudo
   apt:
    name: "default-jdk"
-   update_cache: yes
    state: latest
+   update_cache: yes
+   cache_valid_time: 3600
   notify:
    - "Restart Jetty"
   tags: jetty
@@ -17,14 +18,17 @@
   group: 
    name: "jetty"
    state: present
+  tags: jetty
 
 - name: "Create User 'jetty'"
   become: yes
   become_method: sudo
   user: 
    name: "jetty"
-   groups: "jetty"
+   groups: jetty,ssl-cert
    createhome: "no"
+   state: present
+  tags: jetty
 
 - name: "Extract Jetty Source Package"
   become: yes
@@ -87,12 +91,14 @@
   stat: 
    path: /run/systemd/generator.late/jetty.service
   register: jetty_service
+  tags: jetty
 
 - name: "Be sure that Jetty is bootable at boot time"
   become: yes
   become_method: sudo
   shell: "update-rc.d jetty defaults"
   when: jetty_service.stat.exists == False
+  tags: jetty
 
 - name: "Be sure that Jetty is enabled and running"
   become: yes

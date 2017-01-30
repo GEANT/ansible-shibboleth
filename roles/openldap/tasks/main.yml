@@ -98,8 +98,6 @@
    group: "root"
    mode: "0600"
   with_items:
-   - src: "ldap-ssl.ldif.j2"
-     dest: "/root/ldap-configs/ldap-ssl.ldif"
    - src: "directory-config.ldif.j2"
      dest: "/root/ldap-configs/directory-config.ldif"
    - src: "directory-content.ldif.j2"
@@ -147,16 +145,7 @@
   service:
     name: "slapd"
     state: "restarted"
-  when: olc_cert_key == ""
-  tags: openldap
-
-- name: "Be sure that LDAP has STARTTLS enabled"
-  become: yes
-  become_method: sudo
-  command: "ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/ldap-ssl.ldif"
-  notify: 
-   - "Restart slapd"
-  when: olc_cert_key == ""
+  when: olc_cert_key.stdout == "0"
   tags: openldap
 
 - name: "Apply Directory config ldif"
@@ -165,6 +154,7 @@
   command: "ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/directory-config.ldif"
   notify: 
    - "Restart slapd"
+  when: olc_cert_key.stdout == "0"
   tags: openldap
 
 - name: "Check memberof overlay into LDAP and store the result on 'memberof_overlay' ansible variable"
