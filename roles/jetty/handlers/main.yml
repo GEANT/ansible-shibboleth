@@ -5,6 +5,6 @@
   become: yes
   become_method: sudo
   service:
-   name: jetty
+   name: jetty9
    state: restarted
 

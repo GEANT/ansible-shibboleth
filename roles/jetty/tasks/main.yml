@@ -1,10 +1,19 @@
 ---
 # tasks file for jetty
-- name: "Install Java (latest package version)"
+- name: "Be sure that Jessie Backports are installed"
+  become: yes
+  become_method: sudo
+  apt_repository:
+   repo: "deb http://ftp.de.debian.org/debian jessie-backports main"
+   state: present
+   update_cache: yes
+  tags: jetty
+
+- name: "Install Java 8"
   become: yes
   become_method: sudo
   apt:
-   name: "default-jdk"
+   name: "openjdk-8-jdk"
    state: latest
    update_cache: yes
    cache_valid_time: 3600
@@ -12,99 +21,46 @@
    - "Restart Jetty"
   tags: jetty
 
-- name: "Create Group 'jetty'"
-  become: yes
-  become_method: sudo
-  group: 
-   name: "jetty"
-   state: present
-  tags: jetty
-
-- name: "Create User 'jetty'"
-  become: yes
-  become_method: sudo
-  user: 
-   name: "jetty"
-   groups: jetty,ssl-cert
-   createhome: "no"
-   state: present
-  tags: jetty
-
-- name: "Extract Jetty Source Package"
-  become: yes
-  become_method: sudo
-  unarchive:
-   src: "files/{{ ansible_distribution_release }}/{{ jetty_distribution }}.tar.gz"
-   dest: "/usr/local/src"
-   owner: "jetty"
-   group: "jetty"
-  tags: jetty
-
-- name: "Create useful link to Jetty source"
+- name: "Be sure that 'default-java' is defined correctly"
   become: yes
   become_method: sudo
   file:
-   src: "{{ item.src }}" 
-   dest: "{{ item.dest }}"
-   owner: "jetty"
-   group: "jetty"
+   src: "/usr/lib/jvm/java-8-openjdk-amd64"
+   dest: "/usr/lib/jvm/default-java"
+   owner: "root"
+   group: "root"
    state: link
-  with_items:
-   - { src: '/usr/local/src/{{ jetty_distribution }}' , dest: '/usr/local/src/jetty-src' }
-   - { src: '/usr/local/src/jetty-src/bin/jetty.sh' , dest: '/etc/init.d/jetty' }
-  notify:
-   - "Restart Jetty"
-  tags: jetty
+  tags: jetty   
 
-- name: "Create Jetty's directories"
+- name: "Be sure that jetty is installed"
   become: yes
   become_method: sudo
-  file:
-   path: "{{ item }}"
-   owner: "jetty"
-   group: "jetty"
-   state: directory
-  with_items:
-   - /opt/jetty
-   - /opt/jetty/etc
-   - /opt/jetty/tmp
-   - /var/log/jetty
+  apt: 
+   name: "jetty9"
+   state: latest
+   update_cache: yes
+   cache_valid_time: 3600
   tags: jetty
-  
-- name: "Copy the Jetty configurations to /etc/default/jetty"
+
+- name: "Be sure that /etc/default/jetty9 is well configured"
   become: yes
   become_method: sudo
   copy:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
-   owner: "jetty"
-   group: "jetty"
-  with_items:
-   - { src: 'files/{{ ansible_distribution_release }}/{{ ansible_distribution_release }}.jetty', dest: '/etc/default/jetty' }
-   - { src: 'files/{{ ansible_distribution_release }}/{{ ansible_distribution_release }}.start.ini', dest: '/opt/jetty/start.ini' }
-   - { src: 'files/{{ ansible_distribution_release }}/{{ ansible_distribution_release }}.jetty.xml', dest: '/opt/jetty/etc/jetty.xml' }
+   src: "files/jetty"
+   dest: "/etc/default/jetty9"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+   backup: "yes"
   notify:
    - "Restart Jetty"
-  tags: jetty
-
-- name: "Check that 'jetty.service' exists"
-  stat: 
-   path: /run/systemd/generator.late/jetty.service
-  register: jetty_service
-  tags: jetty
-
-- name: "Be sure that Jetty is bootable at boot time"
-  become: yes
-  become_method: sudo
-  shell: "update-rc.d jetty defaults"
-  when: jetty_service.stat.exists == False
   tags: jetty
 
 - name: "Be sure that Jetty is enabled and running"
   become: yes
   become_method: sudo
   service:
-    name: jetty
+    name: jetty9
     state: started
     enabled: yes
   tags: jetty

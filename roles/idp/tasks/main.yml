@@ -10,9 +10,9 @@
    group: "jetty"
    state: link
   with_items:
-   - { src: '/usr/share/java/commons-dbcp.jar' , dest: '/opt/jetty/lib/ext/common-dbcp.jar' }
-   - { src: '/usr/share/java/commons-pool.jar' , dest: '/opt/jetty/lib/ext/commons-pool.jar' }
-   - { src: '/usr/share/java/mysql.jar' , dest: '/opt/jetty/lib/ext/mysql-connector-java.jar' }
+   - { src: '/usr/share/java/commons-dbcp.jar' , dest: '/usr/share/jetty9/lib/ext/common-dbcp.jar' }
+   - { src: '/usr/share/java/commons-pool.jar' , dest: '/usr/share/jetty9/lib/ext/commons-pool.jar' }
+   - { src: '/usr/share/java/mysql.jar' , dest: '/usr/share/jetty9/lib/ext/mysql-connector-java.jar' }
   notify:
    - "Restart Jetty"
   tags: jetty
@@ -62,7 +62,10 @@
   with_items:
    - { src: "files/jstl-1.2.jar", dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/jstl-1.2.jar" }
    - { src: "files/idp.conf", dest: "/etc/apache2/sites-enabled/idp.conf" }
-   - { src: "files/idp.xml", dest: "/opt/jetty/webapps/idp.xml" }
+   - { src: "files/idp.xml", dest: "/usr/share/jetty9/webapps/idp.xml" }
+  notify:
+   - "Restart Apache"
+   - "Restart Jetty"
   tags: idp 
 
 - name: "Be sure to install Shibboleth IdP"

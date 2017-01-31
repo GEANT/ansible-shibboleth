@@ -1,0 +1,35 @@
+# change to 1 to prevent Jetty from starting
+NO_START=0
+
+# change to 'no' or uncomment to use the default setting in /etc/default/rcS
+VERBOSE=yes
+
+# Run Jetty as this user ID (default: jetty)
+# Set this to an empty string to prevent Jetty from starting automatically
+#JETTY_USER=jetty
+
+# The home directory of the Java Runtime Environment (JRE). You need at least
+# Java 6. If JAVA_HOME is not set, some common directories for OpenJDK and
+# the Oracle JDK are tried.
+#JAVA_HOME=
+
+# Extra options to pass to the JVM
+#JAVA_OPTIONS="-Xmx256m -Djava.awt.headless=true"
+JAVA_OPTIONS="-Djava.awt.headless=true -XX:+DisableExplicitGC -XX:+UseParallelOldGC -Xms256m -Xmx2g -Djava.security.egd=file:/dev/./urandom -Didp.home=/opt/shibboleth-idp"
+
+# Timeout in seconds for the shutdown of all webapps
+#JETTY_SHUTDOWN=30
+
+# Additional arguments to pass to Jetty
+JETTY_ARGS=idp.home=/opt/shibboleth/idp
+
+# Jetty uses a directory to store temporary files like unpacked webapps
+#JETTY_TMP=/var/cache/jetty9
+
+# Default for number of days to keep old log files in /var/log/jetty9/
+#LOGFILE_DAYS=14
+
+# If you run Jetty on port numbers that are all higher than 1023, then you
+# do not need authbind. It is used for binding Jetty to lower port numbers.
+# (yes/no, default: no)
+#AUTHBIND=yes
