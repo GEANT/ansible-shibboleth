@@ -19,7 +19,7 @@
     ldap_basedn: "dc=example,dc=org"
     ldap_domain: "example.org"
     ldap_org: "EXAMPLE Institution"
-    ldap_host: "localhost"
+    ldap_host: "{{ ansible_fqdn }}"
     ldap_user: "openldap"
     ldap_root_pw: "##ONE_PASSWORD##"
 
