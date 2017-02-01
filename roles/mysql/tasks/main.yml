@@ -1,8 +1,6 @@
 ---
 # tasks file for mysql
 - name: "Be sure that 'debconf-utils' package is installed"
-  become: yes
-  become_method: sudo
   apt:
    name: "debconf-utils"
    state: latest
@@ -11,16 +9,12 @@
   tags: mysql
 
 - name: "Check if debconf-get-selections has parameters for unattended mysql installation and store the result on 'debconf' ansible variable"
-  become: yes
-  become_method: sudo
   shell: (debconf-get-selections | grep -q -s mysql-server); echo $?
   register: debconf
   ignore_errors: yes
   tags: mysql 
 
-- name: "Be sure that debconf MYSQL unattented installation parameters are set"
-  become: yes
-  become_method: sudo
+- name: "Be sure that debconf MYSQL unattented installation parameters are set correctly"
   debconf:
     name: "mysql-server"
     question: "{{ item.question }}"
@@ -37,8 +31,6 @@
   tags: mysql
 
 - name: "Be sure that Mysql and the needed libraries are installed"
-  become: yes
-  become_method: sudo
   apt:
    name: "{{ item }}"
    state: latest
@@ -53,8 +45,6 @@
   tags: mysql
 
 - name: "Be sure that .my.cnf file is present for MySQL authentication"
-  become: yes
-  become_method: sudo
   template: 
     src: "root.cnf.j2" 
     dest: "~/.my.cnf"
@@ -62,8 +52,6 @@
   tags: mysql
 
 - name: "Be sure that MySQL is up and running"
-  become: yes
-  become_method: sudo
   service:
     name: mysql
     state: started
@@ -71,8 +59,6 @@
   tags: mysql
 
 - name: "Be sure that all root accounts receive the root password for database"
-  become: yes
-  become_method: sudo
   mysql_user: 
    name: "root" 
    host: "{{ item }}" 

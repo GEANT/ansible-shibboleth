@@ -10,8 +10,6 @@
 #   - ntp3
 
 - name: "Be sure that the FQDN is configured"
-  become: yes
-  become_method: sudo
   template:
    src: hosts.j2
    dest: /etc/hosts
@@ -21,8 +19,6 @@
   tags: common
 
 - name: "Be sure to comment out 'manage_etc_host' from /etc/cloud/cloud.cfg "
-  become: yes
-  become_method: sudo
   lineinfile:
    dest: /etc/cloud/cloud.cfg
    regexp: "manage_etc_hosts"
@@ -30,8 +26,6 @@
    state: present
 
 - name: "Be sure that needed packages are installed"
-  become: yes
-  become_method: sudo
   apt: 
    name: "{{item}}"
    state: latest
@@ -44,22 +38,17 @@
    - ca-certificates
    - openssl
    - ssl-cert
-   - expat
    - aptitude
    - debconf
    - debconf-utils
   tags: common
 
 - name: "Be sure to work with the last updated packages (safe-upgrade)"
-  become: yes
-  become_method: sudo
   apt:
     upgrade: safe
   tags: common
 
 - name: "Be sure ntp is configured"
-  become: yes
-  become_method: sudo
   template: 
    src: ntp.conf.j2
    dest: /etc/ntp.conf
@@ -68,8 +57,6 @@
   tags: common
 
 - name: "Be sure ntpd is running and enabled"
-  become: yes
-  become_method: sudo
   service: 
    name: ntp
    state: started
@@ -77,8 +64,6 @@
   tags: common
 
 - name: "Set timezone variable"
-  become: yes
-  become_method: sudo
   template:
    src: timezone.j2
    dest: /etc/timezone
@@ -90,9 +75,7 @@
    - "Update Timezone"
   tags: common
 
-- name: "Copy CA, SSL Certificate and Key to the created directories"
-  become: yes
-  become_method: sudo
+- name: "Be sure that CA, SSL Certificate and SSL Key are inside the right '/etc/ssl' directories"
   copy:
    src: "{{ item.src }}"
    dest: "{{ item.dest }}"

@@ -1,9 +1,6 @@
 ---
 # tasks file for openldap
-
-- name: "Check if debconf-utils is installed"
-  become: yes
-  become_method: sudo
+- name: "Be sure that the package 'debconf-utils' is installed"
   apt: 
    name: "debconf-utils"
    update_cache: yes
@@ -11,16 +8,12 @@
   tags: openldap
 
 - name: "Check if debconf-get-selections has parameters for unattended OpenLDAP installation and store the result on 'debconf' ansible variable"
-  become: yes
-  become_method: sudo
   shell: (debconf-get-selections | grep -q -s slapd); echo $?
   register: debconf
   ignore_errors: yes
   tags: openldap
 
-- name: "Configure LDAP authentication params"
-  become: yes
-  become_method: sudo
+- name: "Be sure that OpenLDAP unattended installation parameters are set correctly"
   debconf:
     name: "slapd"
     question: "{{ item.key }}"
@@ -57,9 +50,7 @@
   when: debconf.stdout == "1"
   tags: openldap
 
-- name: "Install slapd and ldap-utils"
-  become: yes
-  become_method: sudo
+- name: "Be sure that OpenLDAP is installed with its utilities"
   apt: 
    name: "{{ item }}"
    update_cache: yes
@@ -69,9 +60,7 @@
     - ldap-utils
   tags: openldap
 
-- name: "Add slapd user to ssl-cert group"
-  become: yes
-  become_method: sudo
+- name: "Be sure that the OpenLDAP user is added to 'ssl-cert' group"
   user: 
    name: openldap
    groups: ssl-cert
@@ -79,18 +68,14 @@
    - "Restart slapd"
   tags: openldap
 
-- name: "Create /root/ldap-configs used to maintain the LDAP configuration files"
-  become: yes
-  become_method: sudo
+- name: "Be sure that the directory '/root/ldap-configs' is present or create it"
   file:
     path: /root/ldap-configs
     state: directory
     mode: 0600
   tags: openldap
 
-- name: "Store Directory LDIFs to /root/ldap-configs"
-  become: yes
-  become_method: sudo
+- name: "Be sure that the directory configuration LDIFs are stored into /root/ldap-configs"
   template:
    src: "{{ item.src }}"
    dest: "{{ item.dest }}"
@@ -104,9 +89,7 @@
      dest: "/root/ldap-configs/directory-content.ldif"
   tags: openldap 
 
-- name: "Copy eduPerson, schac schema and member-overlay to /root/ldap-configs"
-  become: yes
-  become_method: sudo
+- name: "Be sure that eduPerson, schac schema and member-overlay are stored into /root/ldap-configs"
   copy:
    src: "files/{{ item }}"
    dest: "/root/ldap-configs"
@@ -119,9 +102,7 @@
    - memberof-overlay.ldif
   tags: openldap
 
-- name: "Add ldap.conf to /etc/ldap"
-  become: yes 
-  become_method: sudo
+- name: "Be sure that 'ldap.conf' is configured correctly"
   copy:
    src: "files/ldap.conf"
    dest: "/etc/ldap/ldap.conf"
@@ -133,24 +114,18 @@
   tags: openldap
 
 - name: "Check if LDAP has alread the olcTLSCertificateKeyFile needed for STARTTLS and store the result on 'olc_cert_key' ansible variable"
-  become: yes
-  become_method: sudo
   shell: "ldapsearch -H ldapi:// -Y EXTERNAL -b cn=config -LLL -Q '(olcTLSCertificateKeyFile=*)' dn olcTLSCertificateKeyFile | grep olcTLSCertificateKeyFile | wc -l"
   register: olc_cert_key
   tags: openldap
 
-- name: "Be sure that SLAPD is restarted before load ldap configuration"
-  become: yes
-  become_method: sudo
+- name: "Be sure that SLAPD is restarted before applying new ldap configuration"
   service:
     name: "slapd"
     state: "restarted"
   when: olc_cert_key.stdout == "0"
   tags: openldap
 
-- name: "Apply Directory config ldif"
-  become: yes
-  become_method: sudo
+- name: "Be sure that the Directory is configured correctly"
   command: "ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/directory-config.ldif"
   notify: 
    - "Restart slapd"
@@ -158,15 +133,11 @@
   tags: openldap
 
 - name: "Check memberof overlay into LDAP and store the result on 'memberof_overlay' ansible variable"
-  become: yes
-  become_method: sudo
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=config  olcOverlay=memberof"
   register: memberof_overlay
   tags: openldap
   
 - name: "Add memberOf overlay to openldap"
-  become: yes
-  become_method: sudo
   command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/memberof-overlay.ldif"
   when: memberof_overlay.stdout == ""
   notify: 
@@ -174,15 +145,11 @@
   tags: openldap
 
 - name: "Check eduPerson schema on LDAP and store the result on 'eduperson_schema' ansible variable"
-  become: yes
-  become_method: sudo
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=schema,cn=config  cn=*eduperson dn"
   register: eduperson_schema
   tags: openldap
 
-- name: "Add eduperson-201602 schema ldif"
-  become: yes
-  become_method: sudo
+- name: "Be sure that the eduperson-201602 schema is added"
   command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/eduperson-201602.ldif"
   when: eduperson_schema.stdout == ""
   notify: 
@@ -190,15 +157,11 @@
   tags: openldap
 
 - name: "Check SCHAC schema on LDAP and store the result on 'schac_schema' ansible variable"
-  become: yes
-  become_method: sudo
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=schema,cn=config  cn=*schac dn"
   register: schac_schema
   tags: openldap
 
-- name: "Add schac-20150413 schema ldif"
-  become: yes
-  become_method: sudo
+- name: "Be sure that the schac-20150413 schema is added"
   command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/schac-20150413.ldif"
   when: schac_schema.stdout == ""
   notify: 
@@ -206,38 +169,28 @@
   tags: openldap
   
 - name: "Check the existance of branch 'people' inside LDAP and store the result into 'people_in_ldap' ansible variable"
-  become: yes
-  become_method: sudo
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap_basedn }} objectClass=organizationalUnit dn | grep ou=people,{{ ldap_basedn }} | wc -l"
   register: people_in_ldap
   tags: openldap
 
 - name: "Check the existance of branch 'groups' inside LDAP and store the result into 'groups_in_ldap' ansible variable"
-  become: yes
-  become_method: sudo
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap_basedn }} objectClass=organizationalUnit dn | grep ou=groups,{{ ldap_basedn }} | wc -l"
   register: groups_in_ldap
   tags: openldap
 
 - name: "Check the existance of branch 'system' inside LDAP and store the result into 'system_in_ldap' ansible variable"
-  become: yes
-  become_method: sudo
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap_basedn }} objectClass=organizationalUnit dn | grep ou=system,{{ ldap_basedn }} | wc -l"
   register: system_in_ldap
   tags: openldap
 
-- name: "Add Directory content ldif"
-  become: yes
-  become_method: sudo
+- name: "Be sure that Directory contains the standard 'people', 'groups' and 'system' branches"
   command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/directory-content.ldif"
   when: (people_in_ldap.stdout == "0" and groups_in_ldap.stdout == "0" and system_in_ldap.stdout == "0")
   notify: 
    - "Restart slapd"
   tags: openldap
 
-- name: "Start slapd"
-  become: yes
-  become_method: sudo
+- name: "Be sure that OpenLDAP is up and running"
   service: 
    name: slapd
    state: started

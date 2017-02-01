@@ -1,8 +1,6 @@
 ---
 # tasks file for idp
 - name: "Be sure that Jetty has the right libraries imported"
-  become: yes
-  become_method: sudo
   file:
    src: "{{ item.src }}" 
    dest: "{{ item.dest }}"
@@ -17,14 +15,24 @@
    - "Restart Jetty"
   tags: jetty
 
+- name: "Be sure that Jetty is configured correctly for a Shibboleth IdP"
+  copy:
+   src: "files/jetty"
+   dest: "/etc/default/jetty9"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+   backup: "yes"
+  notify:
+   - "Restart Jetty"
+  tags: idp
+
 - name: "Check if Shibboleth IdP directory exists and store the result into 'shib_idp_dir' ansible variable"
   stat:
     path: "/opt/shibboleth-idp"
   register: shib_idp_dir
 
 - name: "Be sure that the Shibboleth Identity Provider is downloaded and extracted into the right position"
-  become: yes
-  become_method: sudo
   unarchive:
     src: "https://shibboleth.net/downloads/identity-provider/{{ shib_idp_version }}/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"
     dest: /usr/local/src
@@ -35,8 +43,6 @@
   tags: idp
 
 - name: "Be sure that the Shibboleth Identity Provider installer properties' files exists in the right position"
-  become: yes
-  become_method: sudo
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -50,9 +56,7 @@
   when: shib_idp_dir.stat.isdir is undefined
   tags: idp
 
-- name: "Be sure that Apache2 and Jetty are enabled for Shibboleth IdP"
-  become: yes
-  become_method: sudo
+- name: "Be sure that Apache2 and Jetty are configured to expone the Shibboleth IdP"
   copy:
    src: "{{ item.src }}"
    dest: "{{ item.dest }}"
@@ -69,8 +73,6 @@
   tags: idp 
 
 - name: "Be sure to install Shibboleth IdP"
-  become: yes
-  become_method: sudo
   shell: "./install.sh -Didp.property.file=/tmp/installer.properties"
   args:
     chdir: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/bin"
@@ -83,8 +85,6 @@
   tags: idp
 
 - name: "Be sure that the Shibboleth IdP directories have the right permissions"
-  become: yes
-  become_method: sudo
   file:
     path: "/opt/shibboleth-idp/{{ item }}"
     owner: "jetty"
@@ -100,15 +100,11 @@
   tags: idp
 
 - name: "Check if 'shibboleth' DB is already created and store the result into 'shib_db' ansible variable"
-  become: yes
-  become_method: sudo
   command: mysql -u root -s -N -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='shibboleth'"
   register: shib_db
   tags: idp
 
-- name: "Be sure the existance of persistent identifiers 'shibboleth' database"
-  become: yes
-  become_method: sudo
+- name: "Be sure of the existance of persistent identifiers 'shibboleth' database"
   mysql_db:
     state: import
     name: all
@@ -117,8 +113,6 @@
   tags: idp
 
 - name: "Be sure that the IdP is configured correctly - Part 1"
-  become: yes
-  become_method: sudo
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -135,8 +129,6 @@
   tags: idp
 
 - name: "Be sure that the IdP is configured correctly - Part 2"
-  become: yes
-  become_method: sudo
   copy:
    src: "{{ item.src }}"
    dest: "{{ item.dest }}"
