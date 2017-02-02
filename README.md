@@ -42,15 +42,28 @@
 
     ### Federation Metadata URL
     metadata:
-     - id:  "TEST-FEDERATION"
-       file: "test-metadata-sha256.xml"
-       url: "http://www.example.org/metadata/test-metadata-sha256.xml"
-       crt: "federation-signer.pem"
-     - id:  "PROD-FEDERATION"
-       file: "prod-metadata-sha256.xml"
-       url: "http://www.example.it/metadata/prod-metadata-sha256.xml"
-       crt: "federation-signer.pem"
-
+     - id: "IDEM-TEST-FEDERATION"
+       file: "idem-test-metadata-sha256.xml"
+       url: "http://www.garr.it/idem-metadata/idem-test-metadata-sha256.xml"
+       pubKey: |
+        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxrLc3bV+zC7cATqGoI9R
+        WO8LKiXk4pMez0JcMgXICiKA/5hJ2WgtIbDHqfqSz1oFsmqXNEEgR3cKkHK9fsaY
+        G4hOXcSWHExjjQK/9QuiTUZsOZAyE9JxTonV/1vnbpH0qz4FthliYFFf2CqalfVH
+        zrsgRLjP4mFedevkrwdM+N9oMaHbE5EvqaxePDAMmBokI6kEJy0u8JZyZSnS5ymX
+        xUcaMUAAjkRvqnBAQQ+PXKpbnaCAz4Ac0VjpsAL1FftC/wyidBnBek00E0v5RycY
+        tUFe0F+13jOrtfE8030X8SV7dgkZo5WTxwIQm3lJ9N6C7NRoDKHx/8F8SzoLC5wJ
+        KwIDAQAB
+     - id: "IDEM-PRODUCTION-FEDERATION"
+       file: "idem-metadata-sha256.xml"
+       url: "http://www.garr.it/idem-metadata/idem-metadata-sha256.xml"
+       pubKey: |
+        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxrLc3bV+zC7cATqGoI9R
+        WO8LKiXk4pMez0JcMgXICiKA/5hJ2WgtIbDHqfqSz1oFsmqXNEEgR3cKkHK9fsaY
+        G4hOXcSWHExjjQK/9QuiTUZsOZAyE9JxTonV/1vnbpH0qz4FthliYFFf2CqalfVH
+        zrsgRLjP4mFedevkrwdM+N9oMaHbE5EvqaxePDAMmBokI6kEJy0u8JZyZSnS5ymX
+        xUcaMUAAjkRvqnBAQQ+PXKpbnaCAz4Ac0VjpsAL1FftC/wyidBnBek00E0v5RycY
+        tUFe0F+13jOrtfE8030X8SV7dgkZo5WTxwIQm3lJ9N6C7NRoDKHx/8F8SzoLC5wJ
+        KwIDAQAB
     ```
 6. Ecrypted with your Ansible Vault:
     * ```cd /opt/ansible-shibboleth```
