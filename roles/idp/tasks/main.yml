@@ -144,7 +144,6 @@
    - { src: "files/attribute-resolver-v3-custom.xml", dest: "/opt/shibboleth-idp/conf/attribute-resolver-v3-custom.xml" }
    - { src: "files/attribute-filter-v3-custom.xml", dest: "/opt/shibboleth-idp/conf/attribute-filter-v3-custom.xml" }
    - { src: "files/services.xml", dest: "/opt/shibboleth-idp/conf/services.xml" }
-   - { src: "files/federation-cert.pem", dest: "/opt/shibboleth-idp/metadata/federation-cert.pem" }
   notify:
     - "Restart Jetty"
   tags: idp

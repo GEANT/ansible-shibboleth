@@ -48,7 +48,11 @@
           Verify the signature on the root element of the metadata aggregate
           using a trusted metadata signing certificate.
       -->
-      <MetadataFilter xsi:type="SignatureValidation" requireSignedRoot="true" certificateFile="${idp.home}/metadata/{{ md['crt'] }}"/>
+      <MetadataFilter xsi:type="SignatureValidation" requireSignedRoot="true">
+         <PublicKey>
+            {{ md['pubKey'] }}
+         </PublicKey>
+      </MetadataFilter>
 
       <!--
           Require a validUntil XML attribute on the root element and make sure its value is no more than 5 days into the future. 
