@@ -13,7 +13,7 @@
    - { src: '/usr/share/java/mysql.jar' , dest: '/usr/share/jetty9/lib/ext/mysql-connector-java.jar' }
   notify:
    - "Restart Jetty"
-  tags: jetty
+  tags: idp
 
 - name: "Be sure that Jetty is configured correctly for a Shibboleth IdP"
   copy:
@@ -31,6 +31,7 @@
   stat:
     path: "/opt/shibboleth-idp"
   register: shib_idp_dir
+  tags: idp
 
 - name: "Be sure that the Shibboleth Identity Provider is downloaded and extracted into the right position"
   unarchive:
@@ -122,8 +123,9 @@
   with_items:
    - { src: "saml-nameid.properties.j2", dest: "/opt/shibboleth-idp/conf/saml-nameid.properties" }
    - { src: "global.xml.j2", dest: "/opt/shibboleth-idp/conf/global.xml" }
-   - { src: "idp.properties.j2", dest: "/opt/shibboleth-idp/conf/idp.properties"}
+   - { src: "idp.properties.j2", dest: "/opt/shibboleth-idp/conf/idp.properties" }
    - { src: "ldap.properties.j2", dest: "/opt/shibboleth-idp/conf/ldap.properties" }
+   - { src: "metadata-providers.xml.j2", dest: "/opt/shibboleth-idp/conf/metadata-providers.xml" }
   notify:
     - "Restart Jetty"
   tags: idp
@@ -141,8 +143,8 @@
    - { src: "files/logback.xml", dest: "/opt/shibboleth-idp/conf/logback.xml" }
    - { src: "files/attribute-resolver-v3-custom.xml", dest: "/opt/shibboleth-idp/conf/attribute-resolver-v3-custom.xml" }
    - { src: "files/attribute-filter-v3-custom.xml", dest: "/opt/shibboleth-idp/conf/attribute-filter-v3-custom.xml" }
-   - { src: "files/services.xml", dest: "/opt/shibboleth-idp/conf/services.xml"}
-   - { src: "files/federation-cert.pem", dest: "/opt/shibboleth-idp/metadata/federation-cert.pem"}
+   - { src: "files/services.xml", dest: "/opt/shibboleth-idp/conf/services.xml" }
+   - { src: "files/federation-cert.pem", dest: "/opt/shibboleth-idp/metadata/federation-cert.pem" }
   notify:
     - "Restart Jetty"
   tags: idp

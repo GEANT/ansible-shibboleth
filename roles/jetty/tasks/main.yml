@@ -9,10 +9,14 @@
 
 - name: "Be sure that OpenJDK 8 is installed"
   apt:
-   name: "openjdk-8-jdk"
+   name: "{{ item }}"
    state: latest
    update_cache: yes
    cache_valid_time: 3600
+   default_release: "{{ansible_distribution_release}}-backports"
+  with_items:
+   - ca-certificates-java
+   - openjdk-8-jdk
   notify:
    - "Restart Jetty"
   tags: jetty

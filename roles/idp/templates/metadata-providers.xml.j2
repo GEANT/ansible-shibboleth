@@ -37,17 +37,18 @@
     that the IdP needs to interoperate with.
     -->
 
+{% for md in metadata %}    
     <MetadataProvider
-      id="URLMD-Federation"
+      id="{{ md['id'] }}"
       xsi:type="FileBackedHTTPMetadataProvider"
-      backingFile="%{idp.home}/metadata/federation-metadata.xml"
-      metadataURL="{{ federation_metadata_url }}">
+      backingFile="%{idp.home}/metadata/{{ md['file'] }}"
+      metadataURL="{{ md['url'] }}">
 
       <!--
           Verify the signature on the root element of the metadata aggregate
           using a trusted metadata signing certificate.
       -->
-      <MetadataFilter xsi:type="SignatureValidation" requireSignedRoot="true" certificateFile="${idp.home}/metadata/federation-cert.pem"/>
+      <MetadataFilter xsi:type="SignatureValidation" requireSignedRoot="true" certificateFile="${idp.home}/metadata/{{ md['crt'] }}"/>
 
       <!--
           Require a validUntil XML attribute on the root element and make sure its value is no more than 5 days into the future. 
@@ -59,6 +60,7 @@
         <RetainedRole>md:SPSSODescriptor</RetainedRole>
       </MetadataFilter>
     </MetadataProvider>
+{% endfor %}
 
     <!--
     <MetadataProvider id="HTTPMetadata"

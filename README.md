@@ -19,7 +19,7 @@
     ldap_basedn: "dc=example,dc=org"
     ldap_domain: "example.org"
     ldap_org: "EXAMPLE Institution"
-    ldap_host: "{{ ansible_fqdn }}"
+    ldap_host: "{{ ansible_hostname }}.{{ https_domain }}"
     ldap_user: "openldap"
     ldap_root_pw: "##ONE_PASSWORD##"
 
@@ -41,7 +41,15 @@
     idp_persistentId_salt: "OS0wCcdZADpiIR2VqyNKOW62YOPQNYRPDzN1u5uuW-qUkynS"
 
     ### Federation Metadata URL
-    federation_metadata: "http://www.garr.it/idem-metadata/idem-test-metadata-sha256.xml"
+    metadata:
+     - id:  "TEST-FEDERATION"
+       file: "test-metadata-sha256.xml"
+       url: "http://www.example.org/metadata/test-metadata-sha256.xml"
+       crt: "federation-signer.pem"
+     - id:  "PROD-FEDERATION"
+       file: "prod-metadata-sha256.xml"
+       url: "http://www.example.it/metadata/prod-metadata-sha256.xml"
+       crt: "federation-signer.pem"
 
     ```
 6. Ecrypted with your Ansible Vault:

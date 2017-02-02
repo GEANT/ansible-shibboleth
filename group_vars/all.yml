@@ -15,4 +15,4 @@ https_cert: "{{ ansible_hostname }}.{{ https_domain }}.crt"
 https_key: "{{ ansible_hostname }}.{{ https_domain }}.key"
 
 ### IDP
-shib_idp_version: "3.2.1"
+shib_idp_version: "3.3.0"
