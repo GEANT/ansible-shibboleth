@@ -1,20 +1,21 @@
 ---
 # tasks file for mysql
 - name: "Be sure that 'debconf-utils' package is installed"
-  apt:
+  package:
    name: "debconf-utils"
    state: latest
-   update_cache: yes
-   cache_valid_time: 3600
+  notify:
+   - "Safe Upgrade"
   tags: mysql
 
 - name: "Check if debconf-get-selections has parameters for unattended mysql installation and store the result on 'debconf' ansible variable"
   shell: (debconf-get-selections | grep -q -s mysql-server); echo $?
   register: debconf
   ignore_errors: yes
+  changed_when: false
   tags: mysql 
 
-- name: "Be sure that debconf MYSQL unattented installation parameters are set correctly"
+- name: "Be sure that MYSQL unattented installation debconf's parameters are set correctly"
   debconf:
     name: "mysql-server"
     question: "{{ item.question }}"
@@ -31,11 +32,9 @@
   tags: mysql
 
 - name: "Be sure that Mysql and the needed libraries are installed"
-  apt:
+  package:
    name: "{{ item }}"
    state: latest
-   update_cache: yes
-   cache_valid_time: 3600
   with_items:
    - python-mysqldb
    - mysql-server

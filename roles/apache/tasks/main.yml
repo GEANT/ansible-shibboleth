@@ -1,13 +1,11 @@
 ---
 # tasks file for apache
 - name: "Be sure that packages needed to apache are installed"
-  apt:
-   name: "{{ item }}"
+  package:
+   name: "apache2"
    state: latest
-   update_cache: yes
-   cache_valid_time: 3600
-  with_items:
-   - apache2
+  notify:
+   - "Safe Upgrade"
   tags: apache
 
 - name: "Be sure that apache2 user is added to ssl-cert group"

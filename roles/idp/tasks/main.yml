@@ -31,6 +31,7 @@
   stat:
     path: "/opt/shibboleth-idp"
   register: shib_idp_dir
+  changed_when: false
   tags: idp
 
 - name: "Be sure that the Shibboleth Identity Provider is downloaded and extracted into the right position"
@@ -103,6 +104,7 @@
 - name: "Check if 'shibboleth' DB is already created and store the result into 'shib_db' ansible variable"
   command: mysql -u root -s -N -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='shibboleth'"
   register: shib_db
+  changed_when: false
   tags: idp
 
 - name: "Be sure of the existance of persistent identifiers 'shibboleth' database"
@@ -110,7 +112,8 @@
     state: import
     name: all
     target: /root/shib-idp-persistentId-db.sql
-  when: shib_db.stdout == ""
+  #when: shib_db.stdout == ""
+  when: shib_db.rc != 0
   tags: idp
 
 - name: "Be sure that the IdP is configured correctly - Part 1"

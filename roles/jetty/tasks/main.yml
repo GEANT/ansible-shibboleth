@@ -4,7 +4,6 @@
   apt_repository:
    repo: "deb http://ftp.de.debian.org/debian jessie-backports main"
    state: present
-   update_cache: yes
   tags: jetty
 
 - name: "Be sure that OpenJDK 8 is installed"
@@ -18,6 +17,7 @@
    - ca-certificates-java
    - openjdk-8-jdk
   notify:
+   - "Safe Upgrade"
    - "Restart Jetty"
   tags: jetty
 
@@ -31,11 +31,9 @@
   tags: jetty   
 
 - name: "Be sure that the last version of jetty9 is installed"
-  apt: 
+  package: 
    name: "jetty9"
    state: latest
-   update_cache: yes
-   cache_valid_time: 3600
   tags: jetty
 
 - name: "Be sure that Jetty is enabled and running"

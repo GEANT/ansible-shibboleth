@@ -24,13 +24,19 @@
    regexp: "manage_etc_hosts"
    line: "#manage_etc_hosts"
    state: present
+  tags: common
+
+- name: "Only run 'update_cache=yes' if the last one is more than 3600 seconds ago"
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  changed_when: false
+  tags: common
 
 - name: "Be sure that needed packages are installed"
-  apt: 
+  package: 
    name: "{{item}}"
    state: latest
-   update_cache: yes
-   cache_valid_time: 3600
   with_items:
    - python-apt
    - ntp
@@ -42,11 +48,8 @@
    - aptitude
    - debconf
    - debconf-utils
-  tags: common
-
-- name: "Be sure to work with the last updated packages (safe-upgrade)"
-  apt:
-    upgrade: safe
+  notify:
+   - "Safe Upgrade"
   tags: common
 
 - name: "Be sure ntp is configured"

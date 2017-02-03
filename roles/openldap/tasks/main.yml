@@ -11,6 +11,7 @@
   shell: (debconf-get-selections | grep -q -s slapd); echo $?
   register: debconf
   ignore_errors: yes
+  changed_when: false
   tags: openldap
 
 - name: "Be sure that OpenLDAP unattended installation parameters are set correctly"
@@ -116,6 +117,7 @@
 - name: "Check if LDAP has alread the olcTLSCertificateKeyFile needed for STARTTLS and store the result on 'olc_cert_key' ansible variable"
   shell: "ldapsearch -H ldapi:// -Y EXTERNAL -b cn=config -LLL -Q '(olcTLSCertificateKeyFile=*)' dn olcTLSCertificateKeyFile | grep olcTLSCertificateKeyFile | wc -l"
   register: olc_cert_key
+  changed_when: false
   tags: openldap
 
 - name: "Be sure that SLAPD is restarted before applying new ldap configuration"
@@ -127,14 +129,15 @@
 
 - name: "Be sure that the Directory is configured correctly"
   command: "ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/directory-config.ldif"
+  when: olc_cert_key.stdout == "0"
   notify: 
    - "Restart slapd"
-  when: olc_cert_key.stdout == "0"
   tags: openldap
 
 - name: "Check memberof overlay into LDAP and store the result on 'memberof_overlay' ansible variable"
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=config  olcOverlay=memberof"
   register: memberof_overlay
+  changed_when: false
   tags: openldap
   
 - name: "Add memberOf overlay to openldap"
@@ -147,6 +150,7 @@
 - name: "Check eduPerson schema on LDAP and store the result on 'eduperson_schema' ansible variable"
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=schema,cn=config  cn=*eduperson dn"
   register: eduperson_schema
+  changed_when: false
   tags: openldap
 
 - name: "Be sure that the eduperson-201602 schema is added"
@@ -159,6 +163,7 @@
 - name: "Check SCHAC schema on LDAP and store the result on 'schac_schema' ansible variable"
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=schema,cn=config  cn=*schac dn"
   register: schac_schema
+  changed_when: false
   tags: openldap
 
 - name: "Be sure that the schac-20150413 schema is added"
@@ -171,16 +176,19 @@
 - name: "Check the existance of branch 'people' inside LDAP and store the result into 'people_in_ldap' ansible variable"
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap_basedn }} objectClass=organizationalUnit dn | grep ou=people,{{ ldap_basedn }} | wc -l"
   register: people_in_ldap
+  changed_when: false
   tags: openldap
 
 - name: "Check the existance of branch 'groups' inside LDAP and store the result into 'groups_in_ldap' ansible variable"
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap_basedn }} objectClass=organizationalUnit dn | grep ou=groups,{{ ldap_basedn }} | wc -l"
   register: groups_in_ldap
+  changed_when: false
   tags: openldap
 
 - name: "Check the existance of branch 'system' inside LDAP and store the result into 'system_in_ldap' ansible variable"
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap_basedn }} objectClass=organizationalUnit dn | grep ou=system,{{ ldap_basedn }} | wc -l"
   register: system_in_ldap
+  changed_when: false
   tags: openldap
 
 - name: "Be sure that Directory contains the standard 'people', 'groups' and 'system' branches"
