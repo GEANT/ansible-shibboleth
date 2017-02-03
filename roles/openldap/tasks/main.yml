@@ -148,7 +148,7 @@
   tags: openldap
 
 - name: "Check eduPerson schema on LDAP and store the result on 'eduperson_schema' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=schema,cn=config  cn=*eduperson dn"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=schema,cn=config cn=*eduperson dn"
   register: eduperson_schema
   changed_when: false
   tags: openldap
@@ -161,7 +161,7 @@
   tags: openldap
 
 - name: "Check SCHAC schema on LDAP and store the result on 'schac_schema' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=schema,cn=config  cn=*schac dn"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=schema,cn=config cn=*schac dn"
   register: schac_schema
   changed_when: false
   tags: openldap
@@ -172,7 +172,20 @@
   notify: 
    - "Restart slapd"
   tags: openldap
-  
+
+- name: "Check Password Policy schema on LDAP and store the result on 'ppolicy_schema' ansible variable"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=schema,cn=config cn=*ppolicy dn"
+  register: ppolicy_schema
+  changed_when: false
+  tags: openldap
+ 
+- name: "Be sure that the Password Policy are enabled on OpenLDAP"
+  command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/ppolicy.ldif"
+  when: ppolicy_schema.stdout == ""
+  notify:
+   - "Restart slapd"
+  tags: openldap
+
 - name: "Check the existance of branch 'people' inside LDAP and store the result into 'people_in_ldap' ansible variable"
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap_basedn }} objectClass=organizationalUnit dn | grep ou=people,{{ ldap_basedn }} | wc -l"
   register: people_in_ldap
@@ -191,7 +204,13 @@
   changed_when: false
   tags: openldap
 
-- name: "Be sure that Directory contains the standard 'people', 'groups' and 'system' branches"
+- name: "Check the existance of branch 'ppolicy' inside LDAP and store the result into 'ppolicy_in_ldap' ansible variable"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap_basedn }} objectClass=organizationalUnit dn | grep ou=policies,{{ ldap_basedn }} | wc -l"
+  register: ppolicy_in_ldap
+  changed_when: false
+  tags: openldap
+
+- name: "Be sure that Directory contains the standard 'people', 'groups', 'system' and 'policies' branches"
   command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/directory-content.ldif"
   when: (people_in_ldap.stdout == "0" and groups_in_ldap.stdout == "0" and system_in_ldap.stdout == "0")
   notify: 
