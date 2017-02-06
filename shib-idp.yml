@@ -11,3 +11,4 @@
     - openldap
     - mysql
     - idp
+    - phpldapadmin

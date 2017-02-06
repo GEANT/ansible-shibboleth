@@ -1,44 +1,89 @@
 ---
 # tasks file for jetty
-- name: "Be sure that Jessie Backports are installed"
-  apt_repository:
-   repo: "deb http://ftp.de.debian.org/debian jessie-backports main"
-   state: present
-  tags: jetty
-
-- name: "Be sure that OpenJDK 8 is installed"
-  apt:
-   name: "{{ item }}"
+- name: "Be sure to have installed the latest OpenJDK availble"
+  package:
+   name: "default-jdk"
    state: latest
-   update_cache: yes
-   cache_valid_time: 3600
-   default_release: "{{ansible_distribution_release}}-backports"
-  with_items:
-   - ca-certificates-java
-   - openjdk-8-jdk
   notify:
-   - "Safe Upgrade"
    - "Restart Jetty"
   tags: jetty
 
-- name: "Be sure that 'default-java' is defined correctly"
-  file:
-   src: "/usr/lib/jvm/java-8-openjdk-amd64"
-   dest: "/usr/lib/jvm/default-java"
-   owner: "root"
-   group: "root"
-   state: link
-  tags: jetty   
+- name: "Be sure to have created 'jetty' group"
+  group: 
+   name: "jetty"
+   state: present
+  tags: jetty
 
-- name: "Be sure that the last version of jetty9 is installed"
-  package: 
-   name: "jetty9"
-   state: latest
+- name: "Be sure to have created 'jetty' user"
+  user: 
+   name: "jetty"
+   groups: "jetty"
+   createhome: "no"
+  tags: jetty
+
+- name: "Be sure to have extracted Jetty Source Package"
+  unarchive:
+   src: "files/{{ ansible_distribution_release }}/{{ jetty_distribution }}.tar.gz"
+   dest: "/usr/local/src"
+   owner: "jetty"
+   group: "jetty"
+  tags: jetty
+
+- name: "Be sure to have created some useful links for Jetty"
+  file:
+   src: "{{ item.src }}" 
+   dest: "{{ item.dest }}"
+   owner: "jetty"
+   group: "jetty"
+   state: link
+  with_items:
+   - { src: '/usr/local/src/{{ jetty_distribution }}' , dest: '/usr/local/src/jetty-src' }
+   - { src: '/usr/local/src/jetty-src/bin/jetty.sh' , dest: '/etc/init.d/jetty' }
+  notify:
+   - "Restart Jetty"
+  tags: jetty
+
+- name: "Be sure to have created the Jetty's directories"
+  file:
+   path: "{{ item }}"
+   owner: "jetty"
+   group: "jetty"
+   state: directory
+  with_items:
+   - /opt/jetty
+   - /opt/jetty/etc
+   - /opt/jetty/tmp
+   - /var/log/jetty
+  tags: jetty
+  
+- name: "Be sure to have configured Jetty correctly"
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "jetty"
+   group: "jetty"
+  with_items:
+   - { src: 'files/{{ ansible_distribution_release }}/{{ ansible_distribution_release }}.jetty', dest: '/etc/default/jetty' }
+   - { src: 'files/{{ ansible_distribution_release }}/{{ ansible_distribution_release }}.start.ini', dest: '/opt/jetty/start.ini' }
+   - { src: 'files/{{ ansible_distribution_release }}/{{ ansible_distribution_release }}.jetty.xml', dest: '/opt/jetty/etc/jetty.xml' }
+  notify:
+   - "Restart Jetty"
+  tags: jetty
+
+- name: "Check that 'jetty.service' exists"
+  stat: 
+   path: /run/systemd/generator.late/jetty.service
+  register: jetty_service
+  tags: jetty
+
+- name: "Be sure that Jetty is bootable at boot time"
+  shell: "update-rc.d jetty defaults"
+  when: jetty_service.stat.exists == False
   tags: jetty
 
 - name: "Be sure that Jetty is enabled and running"
   service:
-    name: jetty9
+    name: jetty
     state: started
     enabled: yes
   tags: jetty

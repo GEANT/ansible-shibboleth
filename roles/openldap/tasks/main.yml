@@ -1,9 +1,8 @@
 ---
 # tasks file for openldap
 - name: "Be sure that the package 'debconf-utils' is installed"
-  apt: 
+  package: 
    name: "debconf-utils"
-   update_cache: yes
    state: latest
   tags: openldap
 
@@ -52,9 +51,8 @@
   tags: openldap
 
 - name: "Be sure that OpenLDAP is installed with its utilities"
-  apt: 
+  package: 
    name: "{{ item }}"
-   update_cache: yes
    state: latest
   with_items:
     - slapd

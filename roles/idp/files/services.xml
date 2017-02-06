@@ -139,9 +139,8 @@
     and fall back to one with a .properties extension.
     -->
     <util:list id="shibboleth.MessageSourceResources">
-        <value>%{idp.home}/messages/authn-messages</value>
-        <value>%{idp.home}/messages/consent-messages</value>
-        <value>%{idp.home}/messages/error-messages</value>
+        <value>%{idp.home}/messages/messages</value>
+        <value>%{idp.home}/system/messages/messages</value>
     </util:list>
 
 </beans>

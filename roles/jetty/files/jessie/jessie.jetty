@@ -1,0 +1,6 @@
+JETTY_HOME=/usr/local/src/jetty-src
+JETTY_BASE=/opt/jetty
+JETTY_USER=jetty
+JETTY_LOGS=/var/log/jetty
+TMPDIR=/opt/jetty/tmp
+JAVA_OPTIONS="-Djava.awt.headless=true -XX:+DisableExplicitGC -XX:+UseParallelOldGC -Xms256m -Xmx2g -Djava.security.egd=file:/dev/./urandom -Didp.home=/opt/shibboleth-idp"

@@ -1,6 +1,6 @@
 ---
 # file: group_vars/Debian.yml
-jetty_distribution: "jetty-distribution-9.4.1.v20170120"
+jetty_distribution: "jetty-distribution-9.2.21.v20170120"
 
 java_home_dir: "/usr/lib/jvm/default-java/jre"
 
