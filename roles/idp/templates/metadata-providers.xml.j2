@@ -43,6 +43,7 @@
       xsi:type="FileBackedHTTPMetadataProvider"
       backingFile="%{idp.home}/metadata/{{ md['file'] }}"
       metadataURL="{{ md['url'] }}">
+
 {% if md['pubKey'] is defined %}
       <!--
           Verify the signature on the root element of the metadata aggregate
@@ -53,12 +54,14 @@
             {{ md['pubKey'] }}
          </PublicKey>
       </MetadataFilter>
+
 {% endif %}
 {% if md['maxValidInterval'] is defined %}
       <!--
           Require a validUntil XML attribute on the root element and make sure its value is no more than 5 days into the future. 
       -->
       <MetadataFilter xsi:type="RequiredValidUntil" maxValidityInterval="{{ md['maxValidInterval'] }}"/>
+
 {% endif %}
       <!-- Consume all SP metadata in the aggregate -->
       <MetadataFilter xsi:type="EntityRoleWhiteList">

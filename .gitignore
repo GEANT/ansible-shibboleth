@@ -1,4 +1,4 @@
-# ignore generated 'retry' files,
+# ignore generated 'retry' files
 *.retry
 
 # ignore vault password file
@@ -8,3 +8,6 @@
 *.crt
 *.key
 *.pem
+
+# ignore swp files
+*.swp

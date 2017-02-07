@@ -104,6 +104,24 @@
   when: shib_db.stdout != 'shibboleth'
   tags: idp
 
+- name: "Save the 'idp-signing.crt' value for IDP Metadata"
+  command: "cat /opt/shibboleth-idp/credentials/idp-signing.crt"
+  register: idp_sign_cert
+  changed_when: false
+  tags: idp
+
+- name: "Save the 'idp-encryption.crt' value for IDP Metadata"
+  command: "cat /opt/shibboleth-idp/credentials/idp-encryption.crt"
+  register: idp_enc_cert
+  changed_when: false
+  tags: idp
+
+- name: "Save the 'idp-backchannel.crt' value for IDP Metadata"
+  command: "cat /opt/shibboleth-idp/credentials/idp-backchannel.crt"
+  register: idp_back_cert
+  changed_when: false
+  tags: idp
+
 - name: "Be sure that the IdP is configured correctly - Part 1"
   template:
     src: "{{ item.src }}"
@@ -117,6 +135,7 @@
    - { src: "idp.properties.j2", dest: "/opt/shibboleth-idp/conf/idp.properties" }
    - { src: "ldap.properties.j2", dest: "/opt/shibboleth-idp/conf/ldap.properties" }
    - { src: "metadata-providers.xml.j2", dest: "/opt/shibboleth-idp/conf/metadata-providers.xml" }
+   - { src: "idp-metadata.xml.j2", dest: "/opt/shibboleth-idp/metadata/idp-metadata.xml" }
   notify:
     - "Restart Jetty"
   tags: idp
@@ -135,6 +154,9 @@
    - { src: "files/attribute-resolver-v3-custom.xml", dest: "/opt/shibboleth-idp/conf/attribute-resolver-v3-custom.xml" }
    - { src: "files/attribute-filter-v3-custom.xml", dest: "/opt/shibboleth-idp/conf/attribute-filter-v3-custom.xml" }
    - { src: "files/services.xml", dest: "/opt/shibboleth-idp/conf/services.xml" }
+   - { src: "files/messages_it.properties", dest: "/opt/shibboleth-idp/messages/messages_it.properties" }
   notify:
     - "Restart Jetty"
   tags: idp
+
+
