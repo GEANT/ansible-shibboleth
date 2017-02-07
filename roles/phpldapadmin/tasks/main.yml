@@ -1,0 +1,56 @@
+---
+# tasks file for phpldapadmin
+- name: "Be sure that phpLDAPadmin is installed"
+  package:
+   name: "{{ item }}"
+   state: latest
+  with_items:
+   - apache2-utils
+   - python-passlib
+   - phpldapadmin
+  notify:
+   - "Safe Upgrade"
+   - "Restart Apache"
+  tags: pla
+
+- name: "Be sure to configure phpLDAPadmin correctly"
+  template:
+   src: config.php.j2
+   dest: /etc/phpldapadmin/config.php
+   owner: "root"
+   group: "www-data"
+  notify:
+   - "Restart Apache"
+  tags: pla
+
+- name: "Be sure to configure 'admin' user for phpLDAPadmin"
+  htpasswd:
+    path: /etc/apache2/htpasswd
+    name: admin
+    password: "{{ ldap_root_pw }}"
+    owner: root
+    group: root
+    mode: 0644
+  tags: pla
+
+- name: "Be sure to change '/phpldapadmin' into '/idm' to prevent random login attempts"
+  replace:
+   dest: /etc/apache2/conf-enabled/phpldapadmin.conf
+   regexp: "Alias /phpldapadmin /usr/share/phpldapadmin/htdocs"
+   replace: "Alias /idm /usr/share/phpldapadmin/htdocs"
+  notify:
+   - "Restart Apache"
+  tags: pla
+
+- name: "Be sure that the HTTP site is disabled"
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "{{ item.owner }}"
+   group: "{{ item.group }}"
+   mode: "{{ item.mode }}"
+  with_items:
+   - { src: "files/idm.conf", dest: "/etc/apache2/sites-enabled/idm.conf", owner: "root" , group: "root" , mode: "0644"  }
+  notify:
+   - "Restart Apache"
+  tags: pla
