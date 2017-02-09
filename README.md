@@ -24,15 +24,17 @@
     ldap_root_pw: "##ONE_PASSWORD##"
 
     # IDP Variables
+
+    # Set to 'True' to perform an IdP Restoration
     restore: "False"
 
-    idp_pw: "##IDP_PASSWORD##"
+    idp_pw: "## IDP PASSWORD ##"
 
     idp_sealer_pw: "## IDP SEALER PASSWORD ##"
-    idp_keystore_pw: "## IDP BACKCHANNEL PASSWORD"
+    idp_keystore_pw: "## IDP BACKCHANNEL PASSWORD ##"
 
     root_db_password: "## ROOT DB PASSWORD ##"
-    shibboleth_db_password: "## SHIBBOLETH USER DB PASSWORD"
+    shibboleth_db_password: "## SHIBBOLETH USER DB PASSWORD ##"
 
     ## IDP BASIC CONFIGURATION VARIABLE ##
 
@@ -77,8 +79,13 @@
 
 7. Insert your "```hostname.domain.name.ext.crt```", "```hostname.domain.name.ext.key```" and "```CA.crt```" inside ```/opt/ansible-shibboleth/roles/common/files```.
 
-8. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) only on development VMs:
+8. Insert your "```/opt/shibboleth-idp/credentials```" directory into the "```roles/idp/files/restore/hostname/```" directory
+
+9. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) only on a specific development VM:
     ```ansible-playbook shib-idp.yml -i development.ini --limit ##FULL.VM.QUALIFIED.DOMAIN.NAME## --vault-password-file .vault_pass.txt```
+
+10. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) into all development VMs:
+    ```ansible-playbook shib-idp.yml -i development.ini --vault-password-file .vault_pass.txt```
 
 ## Documentation ##
 The environment (production,development, test, ...) are located into different files:

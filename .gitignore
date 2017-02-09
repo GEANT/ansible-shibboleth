@@ -10,6 +10,8 @@
 *.pem
 *.jks
 *.kver
+*.p12
+
 
 # ignore swp files
 *.swp
