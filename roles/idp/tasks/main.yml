@@ -89,6 +89,27 @@
     - war
   tags: idp
 
+- name: "RESTORE: Be sure to restore the credentials of Shibboleth IdP"
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "jetty"
+   group: "root"
+   mode: "{{ item.mode }}"
+  with_items:
+   - { src: "files/restore/{{ ansible_hostname }}/credentials/idp-signing.crt", dest: "/opt/shibboleth-idp/credentials/idp-signing.crt", mode: "0644" }
+   - { src: "files/restore/{{ ansible_hostname }}/credentials/idp-signing.key", dest: "/opt/shibboleth-idp/credentials/idp-signing.key", mode: "0600" }
+   - { src: "files/restore/{{ ansible_hostname }}/credentials/idp-encryption.crt", dest: "/opt/shibboleth-idp/credentials/idp-encryption.crt", mode: "0644" }
+   - { src: "files/restore/{{ ansible_hostname }}/credentials/idp-encryption.key", dest: "/opt/shibboleth-idp/credentials/idp-encryption.key", mode: "0600" }
+   - { src: "files/restore/{{ ansible_hostname }}/credentials/idp-backchannel.crt", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.crt", mode: "0644" }
+   - { src: "files/restore/{{ ansible_hostname }}/credentials/idp-backchannel.p12", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.p12", mode: "0644" }
+   - { src: "files/restore/{{ ansible_hostname }}/credentials/sealer.jks", dest: "/opt/shibboleth-idp/credentials/sealer.jks", mode: "0644" }
+   - { src: "files/restore/{{ ansible_hostname }}/credentials/sealer.kver", dest: "/opt/shibboleth-idp/credentials/sealer.kver", mode: "0644" }
+  notify:
+   - "Restart Jetty"
+  when: restore == "True"
+  tags: idp
+
 - name: "Check if 'shibboleth' DB is already created and store the result into 'shib_db' ansible variable"
   command: mysql -u root -s -N -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='shibboleth'"
   register: shib_db
@@ -101,24 +122,24 @@
     state: import
     name: all
     target: /root/shib-idp-persistentId-db.sql
-  when: shib_db.stdout != 'shibboleth'
+  when: shib_db.stdout != 'shibboleth' 
   tags: idp
 
 - name: "Save the 'idp-signing.crt' value for IDP Metadata"
   command: "cat /opt/shibboleth-idp/credentials/idp-signing.crt"
-  register: idp_sign_cert
+  register: idp_signing_cert
   changed_when: false
   tags: idp
 
 - name: "Save the 'idp-encryption.crt' value for IDP Metadata"
   command: "cat /opt/shibboleth-idp/credentials/idp-encryption.crt"
-  register: idp_enc_cert
+  register: idp_encryption_cert
   changed_when: false
   tags: idp
 
 - name: "Save the 'idp-backchannel.crt' value for IDP Metadata"
   command: "cat /opt/shibboleth-idp/credentials/idp-backchannel.crt"
-  register: idp_back_cert
+  register: idp_backchannel_cert
   changed_when: false
   tags: idp
 
@@ -158,5 +179,3 @@
   notify:
     - "Restart Jetty"
   tags: idp
-
-

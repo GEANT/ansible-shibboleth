@@ -6,9 +6,9 @@ idp.host.name = {{ ansible_hostname }}.{{ https_domain }}
 
 idp.uri.subject.alt.name = https://{{ ansible_hostname }}.{{ https_domain }}/idp/shibboleth
 
-idp.sealer.password = {{ idp_pw }}
+idp.sealer.password = {{ idp_sealer_pw }}
 
-idp.keystore.password = {{ idp_pw }}
+idp.keystore.password = {{ idp_keystore_pw }}
 
 idp.scope = {{ ldap_domain }}
 

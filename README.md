@@ -24,7 +24,13 @@
     ldap_root_pw: "##ONE_PASSWORD##"
 
     # IDP Variables
+    restore: "False"
+
     idp_pw: "##IDP_PASSWORD##"
+
+    idp_sealer_pw: "## IDP SEALER PASSWORD ##"
+    idp_keystore_pw: "## IDP BACKCHANNEL PASSWORD"
+
     root_db_password: "## ROOT DB PASSWORD ##"
     shibboleth_db_password: "## SHIBBOLETH USER DB PASSWORD"
 
@@ -41,7 +47,7 @@
     idp_persistentId_salt: "OS0wCcdZADpiIR2VqyNKOW62YOPQNYRPDzN1u5uuW-qUkynS"
 
     ### Federation Metadata URL
-    metadata:
+    metadata_providers:
      - id: "IDEM-TEST-FEDERATION"
        file: "idem-test-metadata-sha256.xml"
        url: "http://www.garr.it/idem-metadata/idem-test-metadata-sha256.xml"

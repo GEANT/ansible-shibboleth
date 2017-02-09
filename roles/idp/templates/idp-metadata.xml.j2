@@ -20,7 +20,7 @@
             <ds:KeyInfo>
                     <ds:X509Data>
                         <ds:X509Certificate>
-{{ idp_back_cert.stdout | regex_replace('-+.*', '') }}
+{{ idp_backchannel_cert.stdout | regex_replace('-+.*', '') }}
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
@@ -30,7 +30,7 @@
             <ds:KeyInfo>
                     <ds:X509Data>
                         <ds:X509Certificate>
-{{ idp_sign_cert.stdout | regex_replace('-+.*', '') }}
+{{ idp_signing_cert.stdout | regex_replace('-+.*', '') }}
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
@@ -40,7 +40,7 @@
             <ds:KeyInfo>
                     <ds:X509Data>
                         <ds:X509Certificate>
-{{ idp_enc_cert.stdout | regex_replace('-+.*', '') }}
+{{ idp_encryption_cert.stdout | regex_replace('-+.*', '') }}
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
@@ -71,7 +71,7 @@
             <ds:KeyInfo>
                     <ds:X509Data>
                         <ds:X509Certificate>
-{{ idp_back_cert.stdout | regex_replace('-+.*', '') }}
+{{ idp_backchannel_cert.stdout | regex_replace('-+.*', '') }}
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
@@ -81,7 +81,7 @@
             <ds:KeyInfo>
                     <ds:X509Data>
                         <ds:X509Certificate>
-{{ idp_sign_cert.stdout | regex_replace('-+.*', '') }}
+{{ idp_signing_cert.stdout | regex_replace('-+.*', '') }}
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
@@ -91,7 +91,7 @@
             <ds:KeyInfo>
                     <ds:X509Data>
                         <ds:X509Certificate>
-{{ idp_enc_cert.stdout | regex_replace('-+.*', '') }}
+{{ idp_encryption_cert.stdout | regex_replace('-+.*', '') }}
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>

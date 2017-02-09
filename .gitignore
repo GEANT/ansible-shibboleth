@@ -8,6 +8,8 @@
 *.crt
 *.key
 *.pem
+*.jks
+*.kver
 
 # ignore swp files
 *.swp
