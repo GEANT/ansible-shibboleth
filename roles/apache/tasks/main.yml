@@ -37,7 +37,7 @@
    - "Restart Apache"
   tags: https
 
-- name: "Be sure thata the HTTP site is disabled"
+- name: "Be sure that HTTP site is disabled"
   file:
     path: /etc/apache2/sites-enabled/000-default.conf
     state: absent

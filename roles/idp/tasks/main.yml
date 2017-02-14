@@ -143,39 +143,55 @@
   changed_when: false
   tags: idp
 
+- name: "Be sure to create the useful directories for Login Page"
+  file:
+    path: "/var/www/html/{{ item }}"
+    state: directory
+  with_items:
+    - css
+  notify:
+    - "Restart Apache"
+  tags: idp
+
 - name: "Be sure that the IdP is configured correctly - Part 1"
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    owner: "jetty"
-    group: "root"
-    mode: 0600
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
   with_items:
-   - { src: "saml-nameid.properties.j2", dest: "/opt/shibboleth-idp/conf/saml-nameid.properties" }
-   - { src: "global.xml.j2", dest: "/opt/shibboleth-idp/conf/global.xml" }
-   - { src: "idp.properties.j2", dest: "/opt/shibboleth-idp/conf/idp.properties" }
-   - { src: "ldap.properties.j2", dest: "/opt/shibboleth-idp/conf/ldap.properties" }
-   - { src: "metadata-providers.xml.j2", dest: "/opt/shibboleth-idp/conf/metadata-providers.xml" }
-   - { src: "idp-metadata.xml.j2", dest: "/opt/shibboleth-idp/metadata/idp-metadata.xml" }
+   - { src: "conf/saml-nameid.properties.j2", dest: "/opt/shibboleth-idp/conf/saml-nameid.properties", owner: "jetty", group: "root", mode: "0600" }
+   - { src: "conf/global.xml.j2", dest: "/opt/shibboleth-idp/conf/global.xml", owner: "jetty", group: "root", mode: "0600" }
+   - { src: "conf/idp.properties.j2", dest: "/opt/shibboleth-idp/conf/idp.properties", owner: "jetty", group: "root", mode: "0600" }
+   - { src: "conf/ldap.properties.j2", dest: "/opt/shibboleth-idp/conf/ldap.properties", owner: "jetty", group: "root", mode: "0600" }
+   - { src: "conf/metadata-providers.xml.j2", dest: "/opt/shibboleth-idp/conf/metadata-providers.xml", owner: "jetty", group: "root", mode: "0600" }
+   - { src: "idp-metadata.xml.j2", dest: "/opt/shibboleth-idp/metadata/idp-metadata.xml", owner: "jetty", group: "root", mode: "0600"  }
+   - { src: "styles/login.css.j2", dest: "/var/www/html/css/login.css", owner: "root", group: "root", mode: "0644" }
+   - { src: "styles/login.vm.j2", dest: "/opt/shibboleth-idp/views/login.vm", owner: "root", group: "root", mode: "0644" }
+   - { src: "messages/cookie_policy.properties.j2", dest: "/opt/shibboleth-idp/messages/cookie_policy.properties", owner: "root", group: "root", mode: "0644"  }
+   - { src: "messages/cookie_policy_it.properties.j2", dest: "/opt/shibboleth-idp/messages/cookie_policy_it.properties", owner: "root", group: "root", mode: "0644"  }
+   - { src: "messages/custom.properties.j2", dest: "/opt/shibboleth-idp/messages/custom.properties", owner: "root", group: "root", mode: "0644"  }
+   - { src: "messages/custom_it.properties.j2", dest: "/opt/shibboleth-idp/messages/custom_it.properties", owner: "root", group: "root", mode: "0644"  }
+   - { src: "messages/messages.properties.j2", dest: "/opt/shibboleth-idp/messages/messages.properties", owner: "root", group: "root", mode: "0644"  }
+   - { src: "messages/messages_it.properties.j2", dest: "/opt/shibboleth-idp/messages/messages_it.properties", owner: "root", group: "root", mode: "0644"  }
   notify:
     - "Restart Jetty"
+    - "Restart Apache"
   tags: idp
 
 - name: "Be sure that the IdP is configured correctly - Part 2"
   copy:
    src: "{{ item.src }}"
    dest: "{{ item.dest }}"
-   owner: "jetty"
-   group: "root"
-   mode: 0600
+   owner: "{{ item.owner }}"
+   group: "{{ item.group }}"
+   mode: "{{ item.mode }}"
   with_items:
-   - { src: "files/saml-nameid.xml", dest: "/opt/shibboleth-idp/conf/saml-nameid.xml" }
-   - { src: "files/subject-c14n.xml", dest: "/opt/shibboleth-idp/conf/c14n/subject-c14n.xml" }
-   - { src: "files/logback.xml", dest: "/opt/shibboleth-idp/conf/logback.xml" }
-   - { src: "files/attribute-resolver-v3-custom.xml", dest: "/opt/shibboleth-idp/conf/attribute-resolver-v3-custom.xml" }
-   - { src: "files/attribute-filter-v3-custom.xml", dest: "/opt/shibboleth-idp/conf/attribute-filter-v3-custom.xml" }
-   - { src: "files/services.xml", dest: "/opt/shibboleth-idp/conf/services.xml" }
-   - { src: "files/messages_it.properties", dest: "/opt/shibboleth-idp/messages/messages_it.properties" }
+   - { src: "files/conf/", dest: "/opt/shibboleth-idp/conf/", owner: "jetty", group: "root", mode: "0600" }
+   - { src: "files/conf/c14n/subject-c14n.xml", dest: "/opt/shibboleth-idp/conf/c14n/subject-c14n.xml", owner: "jetty", group: "root", mode: "0600" }
+   - { src: "files/styles/{{ ansible_hostname }}.{{ https_domain }}/", dest: "/var/www/html/", owner: "root", group: "root", mode: "0644" }
   notify:
     - "Restart Jetty"
+    - "Restart Apache"
   tags: idp

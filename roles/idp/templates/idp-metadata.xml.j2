@@ -5,15 +5,17 @@
 
         <Extensions>
             <shibmd:Scope regexp="false">{{ ldap_domain }}</shibmd:Scope>
-<!--
-    Fill in the details for your IdP here
-
+{% for md in metadata %}
             <mdui:UIInfo>
-                <mdui:DisplayName xml:lang="en">A Name for the IdP at {{ ansible_hostname }}.{{ https_domain }}</mdui:DisplayName>
-                <mdui:Description xml:lang="en">Enter a description of your IdP at {{ ansible_hostname }}.{{ https_domain }}</mdui:Description>
-                <mdui:Logo height="80" width="80">https://{{ ansible_hostname }}.{{ https_domain }}/Path/To/Logo.png</mdui:Logo>
+{% for mdui in md['mdui'] %}
+               <mdui:DisplayName xml:lang="{{ mdui['lang'] }}">{{ mdui['displayName'] }}</mdui:DisplayName>
+               <mdui:Description xml:lang="{{ mdui['lang'] }}">{{ mdui['description'] }}</mdui:Description>
+               <mdui:InformationURL xml:lang="{{ mdui['lang'] }}">{{ mdui['infoUrl'] }}</mdui:InformationURL>
+               <mdui:PrivacyStatementURL xml:lang="{{ mdui['lang'] }}">{{ mdui['privacyUrl'] }}</mdui:PrivacyStatementURL>
+               <mdui:Logo xml:lang="{{ mdui['lang'] }}" width="16" height="16">{{ mdui['favicon'] }}</mdui:Logo>
+               <mdui:Logo xml:lang="{{ mdui['lang'] }}">{{ mdui['logo'] }}</mdui:Logo>
+{% endfor %}
             </mdui:UIInfo>
--->
         </Extensions>
 
         <KeyDescriptor use="signing">
@@ -101,5 +103,20 @@
         <AttributeService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://{{ ansible_hostname }}.{{ https_domain }}/idp/profile/SAML2/SOAP/AttributeQuery"/>
 
     </AttributeAuthorityDescriptor>
+    <Organization>
+{% for org in md['organization'] %}
+       <OrganizationName xml:lang="{{ org['lang'] }}">{{ org['orgName'] }}</OrganizationName>
+       <OrganizationDisplayName xml:lang="{{ org['lang'] }}">{{ org['orgDisplayName'] }}</OrganizationDisplayName>
+       <OrganizationURL xml:lang="{{ org['lang'] }}">{{ org['orgUrl'] }}</OrganizationURL>
+{% endfor %}
+   </Organization>
+{% for contact in md['contacts'] %}
+   <ContactPerson contactType="{{ contact['type'] }}">
+       <GivenName>{{ contact['givenName'] }}</GivenName>
+       <SurName>{{ contact['surName'] }}</SurName>
+       <EmailAddress>{{ contact['mail'] }}</EmailAddress>
+   </ContactPerson>
+{% endfor %}
+{% endfor %}
 
 </EntityDescriptor>

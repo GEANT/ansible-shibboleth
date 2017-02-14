@@ -42,7 +42,7 @@
    - "Restart Apache"
   tags: pla
 
-- name: "Be sure that the HTTP site is disabled"
+- name: "Be sure to load the Apache configuration file for phpLDAPadmin"
   copy:
    src: "{{ item.src }}"
    dest: "{{ item.dest }}"
