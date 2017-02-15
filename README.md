@@ -53,6 +53,15 @@
     idp_persistentId_salt: "OS0wCcdZADpiIR2VqyNKOW62YOPQNYRPDzN1u5uuW-qUkynS"
 
     ### IDP Metadata Variables ###
+    idp_edugain_enabled: "True"
+    idp_edugain_url_it: "http://www.geant.org/Services/Trust_identity_and_security/eduGAIN"
+    idp_edugain_logo_it: "/images/edugain-logo.png"
+    idp_edugain_name_it: "Interfederazione eduGAIN"
+    idp_edugain_url_en: "http://www.geant.org/Services/Trust_identity_and_security/eduGAIN"
+    idp_edugain_logo_en: "/images/edugain-logo.png"
+    idp_edugain_name_en: "eduGAIN Interfederation"
+
+
     idp_tech_mail: "email.address@example.it"
 
     idp_favicon_it: "https://{{ ansible_hostname }}.{{ https_domain }}/it/favicon.png"
@@ -66,6 +75,15 @@
 
     idp_info_it: "https://{{ ansible_hostname }}.{{ https_domain }}/it/info.html"
     idp_info_en: "https://{{ ansible_hostname }}.{{ https_domain }}/en/info.html"
+
+    idp_federation_url_it: "http://www.federation-url.it/"
+    idp_federation_url_en: "http://www.federation-url.it/en/"
+
+    idp_federation_logo_it: "/images/federation-logo.png"
+    idp_federation_logo_en: "/images/federation-logo.png"
+
+    idp_federation_name_it: "FEDERATION NAME IT"
+    idp_federation_name_en: "FEDERATION NAME ENG"
 
     metadata:
      - mdui:

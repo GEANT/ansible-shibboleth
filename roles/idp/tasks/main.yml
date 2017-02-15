@@ -195,3 +195,12 @@
     - "Restart Jetty"
     - "Restart Apache"
   tags: idp
+
+- name: "Be sure that eduGAIN Logo is in the right place"
+  file:
+   path: "/var/www/html/images/edugain-logo.png"
+   state: "absent"
+  when: idp_edugain_enabled == "False"
+  notify:
+   - "Restart Apache"
+  tags: idp
