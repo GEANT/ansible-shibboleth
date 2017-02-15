@@ -72,8 +72,8 @@
 
     metadata:
        it:
-          mdui_displayName: "IRCCS GARR Milano"
-          mdui_description: "IDP di Test per IRCCS"
+          mdui_displayName: "Organization english Display Name"
+          mdui_description: "IDP di Test per Organization Name"
           mdui_infoUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/it/info.html"
           mdui_privacyUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/it/privacy.html"
           mdui_favicon: "https://{{ ansible_hostname }}.{{ https_domain }}/it/favicon.png"
@@ -82,8 +82,8 @@
           org_displayName: "Organization italian Display Name "
           org_url: "http://www.orgUrl.it"
        en:
-          mdui_displayName: "IRCCS GARR Milano"
-          mdui_description: "IDP di Test per IRCCS"
+          mdui_displayName: "Organization english Display Name"
+          mdui_description: "IDP di Test per Organization Name"
           mdui_infoUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/en/info.html"
           mdui_privacyUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/en/privacy.html"
           mdui_favicon: "https://{{ ansible_hostname }}.{{ https_domain }}/en/favicon.png"
