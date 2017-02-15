@@ -1,3 +1,9 @@
+{% for lang, value in metadata2.iteritems() %}
+  {{ metadata2[lang]['mdui_displayName'] }}
+  {{ metadata2[lang]['mdui_description'] }}
+{% endfor %}
+
+
 <?xml version="1.0" encoding="UTF-8"?>
 <EntityDescriptor  xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" entityID="https://{{ ansible_hostname }}.{{ https_domain }}/idp/shibboleth">
 
@@ -6,21 +12,21 @@
         <Extensions>
             <shibmd:Scope regexp="false">{{ ldap_domain }}</shibmd:Scope>
             <mdui:UIInfo>
-{% for lang, value in metadata.iteritems() %}
-               <mdui:DisplayName xml:lang="{{ lang }}">{{ metadata[lang]['mdui_displayName'] }}</mdui:DisplayName>
-               <mdui:Description xml:lang="{{ lang }}">{{ metadata[lang]['mdui_description'] }}</mdui:Description>
-               <mdui:InformationURL xml:lang="{{ lang }}">{{ metadata[lang]['mdui_infoUrl'] }}</mdui:InformationURL>
-               <mdui:PrivacyStatementURL xml:lang="{{ lang }}">{{ metadata[lang]['mdui_privacyUrl'] }}</mdui:PrivacyStatementURL>
-               <mdui:Logo xml:lang="{{ lang }}" width="16" height="16">{{ metadata[lang]['mdui_favicon'] }}</mdui:Logo>
-               <mdui:Logo xml:lang="{{ lang }}">{{ metadata[lang]['mdui_logo'] }}</mdui:Logo>
+{% for lang, value in metadata2.iteritems() %}
+               <mdui:DisplayName xml:lang="{{ lang }}">{{ metadata2[lang]['mdui_displayName'] }}</mdui:DisplayName>
+               <mdui:Description xml:lang="{{ lang }}">{{ metadata2[lang]['mdui_description'] }}</mdui:Description>
+               <mdui:InformationURL xml:lang="{{ lang }}">{{ metadata2[lang]['mdui_infoUrl'] }}</mdui:InformationURL>
+               <mdui:PrivacyStatementURL xml:lang="{{ lang }}">{{ metadata2[lang]['mdui_privacyUrl'] }}</mdui:PrivacyStatementURL>
+               <mdui:Logo xml:lang="{{ lang }}" width="16" height="16">{{ metadata2[lang]['mdui_favicon'] }}</mdui:Logo>
+               <mdui:Logo xml:lang="{{ lang }}">{{ metadata2[lang]['mdui_logo'] }}</mdui:Logo>
 {% endfor %}
             </mdui:UIInfo>
         </Extensions>
+
         <KeyDescriptor use="signing">
             <ds:KeyInfo>
                     <ds:X509Data>
                         <ds:X509Certificate>
-{{ idp_backchannel_cert.stdout | regex_replace('-+.*', '') }}
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
@@ -30,7 +36,6 @@
             <ds:KeyInfo>
                     <ds:X509Data>
                         <ds:X509Certificate>
-{{ idp_signing_cert.stdout | regex_replace('-+.*', '') }}
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
@@ -40,7 +45,6 @@
             <ds:KeyInfo>
                     <ds:X509Data>
                         <ds:X509Certificate>
-{{ idp_encryption_cert.stdout | regex_replace('-+.*', '') }}
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
@@ -71,7 +75,6 @@
             <ds:KeyInfo>
                     <ds:X509Data>
                         <ds:X509Certificate>
-{{ idp_backchannel_cert.stdout | regex_replace('-+.*', '') }}
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
@@ -81,7 +84,6 @@
             <ds:KeyInfo>
                     <ds:X509Data>
                         <ds:X509Certificate>
-{{ idp_signing_cert.stdout | regex_replace('-+.*', '') }}
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
@@ -91,7 +93,6 @@
             <ds:KeyInfo>
                     <ds:X509Data>
                         <ds:X509Certificate>
-{{ idp_encryption_cert.stdout | regex_replace('-+.*', '') }}
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
@@ -102,10 +103,10 @@
 
     </AttributeAuthorityDescriptor>
     <Organization>
-{% for lang, value in metadata.iteritems() %}
-       <OrganizationName xml:lang="{{ lang }}">{{ metadata[lang]['org_name'] }}</OrganizationName>
-       <OrganizationDisplayName xml:lang="{{ lang }}">{{ metadata[lang]['org_displayName'] }}</OrganizationDisplayName>
-       <OrganizationURL xml:lang="{{ lang }}">{{ metadata[lang]['org_url'] }}</OrganizationURL>
+{% for lang, value in metadata2.iteritems() %}
+       <OrganizationName xml:lang="{{ lang }}">{{ metadata2[lang]['org_name'] }}</OrganizationName>
+       <OrganizationDisplayName xml:lang="{{ lang }}">{{ metadata2[lang]['org_displayName'] }}</OrganizationDisplayName>
+       <OrganizationURL xml:lang="{{ lang }}">{{ metadata2[lang]['org_url'] }}</OrganizationURL>
 {% endfor %}
    </Organization>
 {% for type, value in contacts.iteritems() %}

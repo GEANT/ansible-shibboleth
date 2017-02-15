@@ -61,21 +61,6 @@
     idp_edugain_logo_en: "/images/edugain-logo.png"
     idp_edugain_name_en: "eduGAIN Interfederation"
 
-
-    idp_tech_mail: "email.address@example.it"
-
-    idp_favicon_it: "https://{{ ansible_hostname }}.{{ https_domain }}/it/favicon.png"
-    idp_favicon_en: "https://{{ ansible_hostname }}.{{ https_domain }}/en/favicon.png"
-
-    idp_logo_it: "https://{{ ansible_hostname }}.{{ https_domain }}/it/images/logo.png"
-    idp_logo_en: "https://{{ ansible_hostname }}.{{ https_domain }}/it/idp-logo.png"
-
-    idp_privacy_it: "https://{{ ansible_hostname }}.{{ https_domain }}/it/privacy.html"
-    idp_privacy_en: "https://{{ ansible_hostname }}.{{ https_domain }}/en/privacy.html"
-
-    idp_info_it: "https://{{ ansible_hostname }}.{{ https_domain }}/it/info.html"
-    idp_info_en: "https://{{ ansible_hostname }}.{{ https_domain }}/en/info.html"
-
     idp_federation_url_it: "http://www.federation-url.it/"
     idp_federation_url_en: "http://www.federation-url.it/en/"
 
@@ -86,36 +71,33 @@
     idp_federation_name_en: "FEDERATION NAME ENG"
 
     metadata:
-     - mdui:
-        - lang: "it"
-          displayName: "IRCCS GARR Milano"
-          description: "IDP di Test per IRCCS"
-          infoUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/it/info.html"
-          privacyUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/it/privacy.html"
-          favicon: "https://{{ ansible_hostname }}.{{ https_domain }}/it/images/favicon.png"
-          logo: "https://{{ ansible_hostname }}.{{ https_domain }}/it/images/logo.png"
-        - lang: "en"
-          displayName: "IRCCS GARR Milano"
-          description: "IDP di Test per IRCCS"
-          infoUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/en/info.html"
-          privacyUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/en/privacy.html"
-          favicon: "https://{{ ansible_hostname }}.{{ https_domain }}/en/images/favicon.png"
-          logo: "https://{{ ansible_hostname }}.{{ https_domain }}/en/images/logo.png"
-       organization:
-        - lang: "it"
-          orgName: "Organization italian Name"
-          orgDisplayName: "Organization italian Display Name "
-          orgUrl: "http://www.orgUrl.it"
-        - lang: "en"
-          orgName: "Organization english Name"
-          orgDisplayName: "Organization english Display Name"
-          orgUrl: "http://www.orgUrl.uk/"
-       contacts:
-        - type: "technical"
+       it:
+          mdui_displayName: "IRCCS GARR Milano"
+          mdui_description: "IDP di Test per IRCCS"
+          mdui_infoUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/it/info.html"
+          mdui_privacyUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/it/privacy.html"
+          mdui_favicon: "https://{{ ansible_hostname }}.{{ https_domain }}/it/favicon.png"
+          mdui_logo: "https://{{ ansible_hostname }}.{{ https_domain }}/it/idp-logo.png"
+          org_name: "Organization italian Name"
+          org_displayName: "Organization italian Display Name "
+          org_url: "http://www.orgUrl.it"
+       en:
+          mdui_displayName: "IRCCS GARR Milano"
+          mdui_description: "IDP di Test per IRCCS"
+          mdui_infoUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/en/info.html"
+          mdui_privacyUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/en/privacy.html"
+          mdui_favicon: "https://{{ ansible_hostname }}.{{ https_domain }}/en/favicon.png"
+          mdui_logo: "https://{{ ansible_hostname }}.{{ https_domain }}/en/idp-logo.png"
+          org_name: "Organization english Name"
+          org_displayName: "Organization english Display Name"
+          org_url: "http://www.orgUrl.uk/"
+       
+    contacts:
+       technical:
           givenName: "Name"
           surName: "Surname"
           mail: "email.address@example.it"
-        - type: "support"
+       support:
           givenName: "Name"
           surName: "Surname"
           mail: "email.address@example.it"
