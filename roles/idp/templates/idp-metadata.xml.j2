@@ -6,13 +6,22 @@
         <Extensions>
             <shibmd:Scope regexp="false">{{ ldap_domain }}</shibmd:Scope>
             <mdui:UIInfo>
+{% for field in ["mdui_displayName", "mdui_description", "mdui_infoUrl", "mdui_privacyUrl", "mdui_favicon", "mdui_logo"] %}
 {% for lang, value in metadata.iteritems() %}
+{% if field == "mdui_displayName" %}
                <mdui:DisplayName xml:lang="{{ lang }}">{{ metadata[lang]['mdui_displayName'] }}</mdui:DisplayName>
+{% elif field == "mdui_description" %}
                <mdui:Description xml:lang="{{ lang }}">{{ metadata[lang]['mdui_description'] }}</mdui:Description>
+{% elif field == "mdui_infoUrl" %}
                <mdui:InformationURL xml:lang="{{ lang }}">{{ metadata[lang]['mdui_infoUrl'] }}</mdui:InformationURL>
+{% elif field == "mdui_privacyUrl" %}
                <mdui:PrivacyStatementURL xml:lang="{{ lang }}">{{ metadata[lang]['mdui_privacyUrl'] }}</mdui:PrivacyStatementURL>
+{% elif field == "mdui_favicon" %}
                <mdui:Logo xml:lang="{{ lang }}" width="16" height="16">{{ metadata[lang]['mdui_favicon'] }}</mdui:Logo>
+{% elif field == "mdui_logo" %}
                <mdui:Logo xml:lang="{{ lang }}">{{ metadata[lang]['mdui_logo'] }}</mdui:Logo>
+{% endif %}
+{% endfor %}
 {% endfor %}
             </mdui:UIInfo>
         </Extensions>
@@ -102,10 +111,16 @@
 
     </AttributeAuthorityDescriptor>
     <Organization>
+{% for field in ["org_name", "org_displayName", "org_url"] %}
 {% for lang, value in metadata.iteritems() %}
+{% if field == "org_name" %}
        <OrganizationName xml:lang="{{ lang }}">{{ metadata[lang]['org_name'] }}</OrganizationName>
+{% elif field == "org_displayName" %}
        <OrganizationDisplayName xml:lang="{{ lang }}">{{ metadata[lang]['org_displayName'] }}</OrganizationDisplayName>
+{% elif field == "org_url" %}
        <OrganizationURL xml:lang="{{ lang }}">{{ metadata[lang]['org_url'] }}</OrganizationURL>
+{% endif%}
+{% endfor %}
 {% endfor %}
    </Organization>
 {% for type, value in contacts.iteritems() %}

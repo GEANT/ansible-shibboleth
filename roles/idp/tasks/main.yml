@@ -129,19 +129,19 @@
   command: "cat /opt/shibboleth-idp/credentials/idp-signing.crt"
   register: idp_signing_cert
   changed_when: false
-  tags: idp
+  tags: idp-md
 
 - name: "Save the 'idp-encryption.crt' value for IDP Metadata"
   command: "cat /opt/shibboleth-idp/credentials/idp-encryption.crt"
   register: idp_encryption_cert
   changed_when: false
-  tags: idp
+  tags: idp-md
 
 - name: "Save the 'idp-backchannel.crt' value for IDP Metadata"
   command: "cat /opt/shibboleth-idp/credentials/idp-backchannel.crt"
   register: idp_backchannel_cert
   changed_when: false
-  tags: idp
+  tags: idp-md
 
 - name: "Be sure to create the useful directories for Login Page"
   file:
@@ -178,7 +178,7 @@
   notify:
     - "Restart Jetty"
     - "Restart Apache"
-  tags: idp
+  tags: idp-md
 
 - name: "Be sure that the IdP is configured correctly - Part 2"
   copy:
