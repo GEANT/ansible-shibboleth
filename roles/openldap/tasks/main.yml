@@ -224,6 +224,25 @@
    - "Restart slapd"
   tags: openldap
 
+- name: "Be sure to create directory needed for backups"
+  file:
+   path: "/var/lib/autoldapbackup"
+   state: "directory"
+   mode: "750"
+  tags: openldap
+
+- name: "Be sure to have the autoldapbackup files"
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: "{{ item.mode }}"
+  with_items:
+   - { src: "files/autoldapbackup.sh", dest: "/usr/sbin/autoldapbackup", mode: "0755" }
+   - { src: "files/autoldapbackup", dest: "/etc/cron.daily/autoldapbackup", mode: "0755" }
+  tags: openldap
+
 - name: "Be sure that OpenLDAP is up and running"
   service: 
    name: slapd

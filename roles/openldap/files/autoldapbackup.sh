@@ -1,0 +1,269 @@
+#!/bin/bash
+#
+#
+# Version:  2011.04.03.0000
+# Description: LDAP Backup script
+#
+# Author:  http://linuxmanage.com/
+#
+
+CONFIGFILE="/etc/autoldapbackup/autoldapbackup.conf"
+
+if [ -r ${CONFIGFILE} ]; then
+        # Read the configfile if it's existing and readable
+        source ${CONFIGFILE}
+else
+#       DBHOST=localhost        # not implemented yet
+#       PORT=389                # not implemented yet
+        BACKUPDIR="/var/lib/autoldapbackup"
+        MAILCONTENT="quiet"
+        MAXATTSIZE="4000"
+        MAILADDR="admin@example.com"
+        DOWEEKLY=6
+        COMP=gzip
+        LATEST=no
+fi
+
+WHICH="`which which`"
+AWK="`${WHICH} gawk`"
+LOGGER="`${WHICH} logger`"
+ECHO="`${WHICH} echo`"
+CAT="`${WHICH} cat`"
+BASENAME="`${WHICH} basename`"
+DATEC="`${WHICH} date`"
+DU="`${WHICH} du`"
+EXPR="`${WHICH} expr`"
+FIND="`${WHICH} find`"
+RM="`${WHICH} rm`"
+SLAPCAT="`${WHICH} slapcat`"
+GZIP="`${WHICH} gzip`"
+BZIP2="`${WHICH} bzip2`"
+CP="`${WHICH} cp`"
+HOSTNAMEC="`${WHICH} hostname`"
+SED="`${WHICH} sed`"
+GREP="`${WHICH} grep`"
+
+HOST=`${HOSTNAMEC}`
+
+
+while [ $# -gt 0 ]; do
+        case $1 in
+                -c)
+                        if [ -r "$2" ]; then
+                                source "$2"
+                                shift 2
+                        else
+                                ${ECHO} "Ureadable config file \"$2\""
+                                exit 1
+                        fi
+                        ;;
+                *)
+                        ${ECHO} "Unknown Option \"$1\""
+                        exit 2
+                        ;;
+        esac
+done
+
+export LC_ALL=C
+PROGNAME=`${BASENAME} $0`
+PATH=/usr/local/bin:/usr/bin:/bin
+DATE=`${DATEC} +%Y-%m-%d_%Hh%Mm`                                # Datestamp e.g 2002-09-21
+DOW=`${DATEC} +%A`                                                      # Day of the week e.g. Monday
+DNOW=`${DATEC} +%u`                                             # Day number of the week 1 to 7 where 1 represents Monday
+DOM=`${DATEC} +%d`                                                      # Date of the Month e.g. 27
+M=`${DATEC} +%B`                                                        # Month e.g January
+W=`${DATEC} +%V`                                                        # Week Number e.g 37
+VER=0.0.1                                                               # Version Number
+LOGFILE=${BACKUPDIR}/${DBHOST}-`${DATEC} +%N`.log               # Logfile Name
+LOGERR=${BACKUPDIR}/ERRORS_${DBHOST}-`${DATEC} +%N`.log         # Logfile Name
+BACKUPFILES=""
+
+# IO redirection for logging.
+touch ${LOGFILE}
+exec 6>&1           # Link file descriptor #6 with stdout.
+                    # Saves stdout.
+exec > ${LOGFILE}     # stdout replaced with file ${LOGFILE}.
+touch ${LOGERR}
+exec 7>&2           # Link file descriptor #7 with stderr.
+                    # Saves stderr.
+exec 2> ${LOGERR}     # stderr replaced with file ${LOGERR}.
+
+# Create required directories
+if [ ! -e "${BACKUPDIR}" ]              # Check Backup Directory exists.
+        then
+        mkdir -p "${BACKUPDIR}"
+fi
+
+if [ ! -e "${BACKUPDIR}/daily" ]                # Check Daily Directory exists.
+        then
+        mkdir -p "${BACKUPDIR}/daily"
+fi
+
+if [ ! -e "${BACKUPDIR}/weekly" ]               # Check Weekly Directory exists.
+        then
+        mkdir -p "${BACKUPDIR}/weekly"
+fi
+
+if [ ! -e "${BACKUPDIR}/monthly" ]      # Check Monthly Directory exists.
+        then
+        mkdir -p "${BACKUPDIR}/monthly"
+fi
+
+if [ "${LATEST}" = "yes" ]
+then
+        if [ ! -e "${BACKUPDIR}/latest" ]       # Check Latest Directory exists.
+        then
+                mkdir -p "${BACKUPDIR}/latest"
+        fi
+eval ${RM} -fv "${BACKUPDIR}/latest/*"
+fi
+
+
+# Functions
+
+# LDAP dump function
+ldapdump () {
+${SLAPCAT} > ${1}
+return $?
+}
+
+# Compression function plus latest copy
+SUFFIX=""
+compression () {
+if [ "${COMP}" = "gzip" ]; then
+        ${GZIP} -f "${1}"
+        ${ECHO}
+        ${ECHO} Backup Information for "${1}"
+        ${GZIP} -l "${1}.gz"
+        SUFFIX=".gz"
+elif [ "${COMP}" = "bzip2" ]; then
+        ${ECHO} Compression information for "${1}.bz2"
+        ${BZIP2} -f -v ${1} 2>&1
+        SUFFIX=".bz2"
+else
+        ${ECHO} "No compression option set, check advanced settings"
+fi
+if [ "${LATEST}" = "yes" ]; then
+        ${CP} ${1}${SUFFIX} "${BACKUPDIR}/latest/"
+fi
+return 0
+}
+
+
+${ECHO} ======================================================================
+${ECHO} AutoLDAPBackup VER ${VER}
+${ECHO} Backup of LDAP Database Server - ${HOST}
+${ECHO} ======================================================================
+
+${ECHO} Backup Start Time `${DATEC}`
+${ECHO} ======================================================================
+        # Monthly Full Backup of LDAP
+        if [ ${DOM} = "01" ]; then
+                 # Prepare ${DB} for using
+                ${ECHO} Monthly Backup of LDAP...
+                        ldapdump "${BACKUPDIR}/monthly/ldap_${DATE}.${M}.ldif"
+                        [ $? -eq 0 ] && {
+                                ${ECHO} "Rotating 5 month backups"
+                                ${FIND} "${BACKUPDIR}/monthly" -mtime +150 -type f -exec ${RM} -v {} \;
+                        }
+                        compression "${BACKUPDIR}/monthly/ldap_${DATE}.${M}.ldif"
+                        BACKUPFILES="${BACKUPFILES} ${BACKUPDIR}/monthly/ldap_${DATE}.${M}.ldif${SUFFIX}"
+                ${ECHO} ----------------------------------------------------------------------
+        fi
+
+        # Weekly Backup
+        if [ ${DNOW} = ${DOWEEKLY} ]; then
+                ${ECHO} Weekly Backup of LDAP
+                ${ECHO}
+                        ldapdump "${BACKUPDIR}/weekly/ldap_week.${W}.${DATE}.ldif"
+                        [ $? -eq 0 ] && {
+                                ${ECHO} Rotating 5 weeks Backups...
+                                ${FIND} "${BACKUPDIR}/weekly" -mtime +35 -type f -exec ${RM} -v {} \;
+                        }
+                        compression "${BACKUPDIR}/weekly/ldap_week.${W}.${DATE}.ldif"
+                        BACKUPFILES="${BACKUPFILES} ${BACKUPDIR}/weekly/ldap_week.${W}.${DATE}.ldif${SUFFIX}"
+                ${ECHO} ----------------------------------------------------------------------
+
+        # Daily Backup
+        else
+                ${ECHO} Daily Backup of LDAP
+                ${ECHO}
+                        ldapdump  "${BACKUPDIR}/daily/ldap_${DATE}.${DOW}.ldif"
+                        [ $? -eq 0 ] && {
+                                ${ECHO} Rotating last weeks Backup...
+                                ${FIND} "${BACKUPDIR}/daily" -mtime +15 -type f -exec ${RM} -v {} \;
+                        }
+                        compression "${BACKUPDIR}/daily/ldap_${DATE}.${DOW}.ldif"
+                        BACKUPFILES="${BACKUPFILES} ${BACKUPDIR}/daily/ldap_${DATE}.${DOW}.ldif${SUFFIX}"
+                ${ECHO} ----------------------------------------------------------------------
+        fi
+${ECHO} Backup End `${DATEC}`
+${ECHO} ======================================================================
+
+
+${ECHO} Total disk space used for backup storage..
+${ECHO} Size - Location
+${ECHO} `${DU} -hs "${BACKUPDIR}"`
+${ECHO} ======================================================================
+
+#Clean up IO redirection
+exec 1>&6 6>&-      # Restore stdout and close file descriptor #6.
+exec 2>&7 7>&-      # Restore stdout and close file descriptor #7.
+
+if [ "${MAILCONTENT}" = "files" ]
+then
+        if [ -s "${LOGERR}" ]
+        then
+                # Include error log if is larger than zero.
+                BACKUPFILES="${BACKUPFILES} ${LOGERR}"
+                ERRORNOTE="WARNING: Error Reported "
+        fi
+        #Get backup size
+        ATTSIZE=`${DU} -c ${BACKUPFILES} | ${GREP} "[[:digit:][:space:]]total$" |${SED} s/\s*total//`
+        if [ ${MAXATTSIZE} -ge ${ATTSIZE} ]
+        then
+                BACKUPFILES=`${ECHO} "${BACKUPFILES}" | ${SED} -e "s# # -a #g"` #enable multiple attachments
+                mutt -s "${ERRORNOTE} LDAP Backup Log for ${HOST} - ${DATE}" ${BACKUPFILES} ${MAILADDR} < ${LOGFILE}            #send via mutt
+        else
+                ${CAT} "${LOGFILE}" | mail -s "WARNING! - Backup exceeds set maximum attachment size on ${HOST} - ${DATE}" ${MAILADDR}
+        fi
+elif [ "${MAILCONTENT}" = "log" ]
+then
+        ${CAT} "${LOGFILE}" | mail -s "LDAP Backup Log for ${HOST} - ${DATE}" ${MAILADDR}
+        if [ -s "${LOGERR}" ]
+                then
+                        ${CAT} "${LOGERR}" | mail -s "ERRORS REPORTED: LDAP Backup error Log for ${HOST} - ${DATE}" ${MAILADDR}
+        fi
+elif [ "${MAILCONTENT}" = "quiet" ]
+then
+        if [ -s "${LOGERR}" ]
+                then
+                        ${CAT} "${LOGERR}" | mail -s "ERRORS REPORTED: LDAP Backup error Log for ${HOST} - ${DATE}" ${MAILADDR}
+                        ${CAT} "${LOGFILE}" | mail -s "LDAP Backup Log for ${HOST} - ${DATE}" ${MAILADDR}
+        fi
+else
+        if [ -s "${LOGERR}" ]
+                then
+                        ${CAT} "${LOGFILE}"
+                        ${ECHO}
+                        ${ECHO} "###### WARNING ######"
+                        ${ECHO} "Errors reported during AutoLDAPBackup execution.. Backup failed"
+                        ${ECHO} "Error log below.."
+                        ${CAT} "${LOGERR}"
+        else
+                ${CAT} "${LOGFILE}"
+        fi
+fi
+
+if [ -s "${LOGERR}" ]
+        then
+                STATUS=1
+        else
+                STATUS=0
+fi
+
+# Clean up Logfile
+eval ${RM} -f "${LOGFILE}"
+eval ${RM} -f "${LOGERR}"
+
+exit ${STATUS}

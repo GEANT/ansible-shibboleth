@@ -53,10 +53,11 @@
     idp_persistentId_salt: "OS0wCcdZADpiIR2VqyNKOW62YOPQNYRPDzN1u5uuW-qUkynS"
 
     ### IDP Metadata Variables ###
-    idp_edugain_enabled: "True"
+    
     idp_edugain_url_it: "http://www.geant.org/Services/Trust_identity_and_security/eduGAIN"
     idp_edugain_logo_it: "/images/edugain-logo.png"
     idp_edugain_name_it: "Interfederazione eduGAIN"
+
     idp_edugain_url_en: "http://www.geant.org/Services/Trust_identity_and_security/eduGAIN"
     idp_edugain_logo_en: "/images/edugain-logo.png"
     idp_edugain_name_en: "eduGAIN Interfederation"
@@ -77,7 +78,7 @@
           mdui_infoUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/it/info.html"
           mdui_privacyUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/it/privacy.html"
           mdui_favicon: "https://{{ ansible_hostname }}.{{ https_domain }}/it/favicon.png"
-          mdui_logo: "https://{{ ansible_hostname }}.{{ https_domain }}/it/idp-logo.png"
+          mdui_logo: "https://{{ ansible_hostname }}.{{ https_domain }}/it/logo.png"
           org_name: "Organization italian Name"
           org_displayName: "Organization italian Display Name "
           org_url: "http://www.orgUrl.it"
@@ -87,7 +88,7 @@
           mdui_infoUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/en/info.html"
           mdui_privacyUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/en/privacy.html"
           mdui_favicon: "https://{{ ansible_hostname }}.{{ https_domain }}/en/favicon.png"
-          mdui_logo: "https://{{ ansible_hostname }}.{{ https_domain }}/en/idp-logo.png"
+          mdui_logo: "https://{{ ansible_hostname }}.{{ https_domain }}/en/logo.png"
           org_name: "Organization english Name"
           org_displayName: "Organization english Display Name"
           org_url: "http://www.orgUrl.uk/"

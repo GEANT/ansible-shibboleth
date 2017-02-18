@@ -1,0 +1,3 @@
+#!/bin/sh
+test -x /usr/sbin/autoldapbackup || exit 0
+/usr/sbin/autoldapbackup

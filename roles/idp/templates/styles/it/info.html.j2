@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <title>Pagina Informativa</title>
+      <link href="{{ metadata['it']['mdui_favicon'] }}" rel="shortcut icon" type="image/x-icon" />
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+      <style type="text/css">
+         #infoHeader img {
+            height: 60px;
+         }
+         #headerLogo{
+            width: 100%;
+            padding: 15%;
+         }
+      </style>
+   </head>
+
+   <body>
+      <div class="container">
+         <div class='row'>
+            <div class="col-md-2"><img id="headerLogo" src="{{ metadata['it']['mdui_logo'] }}"/></div>
+            <div class="col-md-8 text-center">
+               <h2>PARTECIPAZIONE AL PROGETTO DI IDEM GARR:<br/>IDP IN THE CLOUD<br/><strong>Pagina Informativa</strong></h2>
+               <p class="text-center">
+                  <a href="/it/info.html"><img height="26px" src="/images/itFlag.png"></a>
+                  <a href="/en/info.html"><img height="26px" src="/images/enFlag.png"></a>
+               </p>
+            </div>
+            <div class="col-md-2">
+               <a href="{{ idp_federation_url_it }}" target="_blank">
+                  <img id="headerLogo" src="{{ idp_federation_logo_it }}" alt="Logo {{ idp_federation_name_it }}"/>
+               </a>
+            </div>
+         </div>
+         Il {{ metadata['it']['mdui_displayName'] }} partecipa a IDEM (IDEntity Management federato per l'accesso ai servizi) 
+         per la realizzazione dell'Infrastruttura di Autenticazione e Autorizzazione federata della rete GARR.
+         <br/>
+         Le credenziali di accesso vengono conferite a [...elencare le tipologie di utenti].
+         <br/>
+         Le modalità di conferimento, utilizzo e revoca delle credenziali sono contenute nel <a href="#" target="_blank">Documento descrittivo del processo di accreditamento degli utenti (DOPAU)</a>
+         <br/>
+    
+         <h3> SUPPORTO UTENTE PER CREDENZIALI, RILASCIO ATTRIBUTI, ... </h3>
+         <p> Nome Cognome: {{ contacts['support']['givenName'] }} {{ contacts['support']['surName'] }}</p>
+         <p> e-mail: <a href="{{ contacts['support']['mail'] }}">Supporto Utenti</a></p>
+         <p> tel.:</p>
+
+         <h3> REFERENTE TECNICO PER L'IDENTITY PROVIDER: </h3>
+         <p> Nome Cognome: {{ contacts['technical']['givenName'] }} {{ contacts['technical']['surName'] }}</p>
+         <p> e-mail: <a href="{{ contacts['technical']['mail'] }}">Contato Tecnico</a></p>
+         <p> tel.:</p>
+    
+         <h3> INFORMAZIONI SUL RILASCIO DEGLI ATTRIBUTI UTENTE AI FORNITORI DI RISORSE:</h3>
+         <p>Il {{ metadata['it']['mdui_displayName'] }} mediante questo Identity Provider può trasmettere alla Risorsa a cui Lei chiede di accedere alcune informazioni (attributi) su di Lei, su richiesta della Risorsa stessa.<br />
+         Tali informazioni sono:</p>
+         <ul>
+            <li>Necessarie per ricevere il servizio richiesto</li>
+            <li>Limitate alle sole informazioni strettamente necessarie</li>
+            <li>Verranno trattate dalla Risorsa secondo le norme di legge</li>
+         </ul>
+         <p>L'insieme delle informazioni da trasmettere può variare da Risorsa a Risorsa. <br /> 
+         Questo Identity Provider invierà a ciascuna Risorsa solamente quelle informazioni che la Risorsa richiede di ricevere.<br />
+         Durante il processo di accesso alla Risorsa le verrà mostrato l'elenco esatto delle informazioni che questo Identity Provider trasmetterà alla Risorsa. Lei potrà decidere, prima che l'invio venga effettuato, se acconsentire a tale trasmissione ed accedere alla Risorsa, oppure se negare il consenso alla trasmissione delle informazioni, ed in tal caso rinunciare all'accesso alla Risorsa.<br />
+         Nella tabella seguente vengono elencate tutte le informazioni, ciascuna individuata da un nome identificativo (nome dell'attributo), che questo Identity Provider potrebbe trasmettere ad una Risorsa che ne faccia richiesta. <br />
+         L'Identity Provider potrà trasmettere solo un sottoinsieme di informazioni estratto dal seguente elenco:</p>
+         <br />
+         <table class="table table-bordered table-responsive" width="70%">      
+            <tr>
+               <td><strong>Nome dell'Attributo</strong></td>
+               <td><strong>Significato</strong></td>
+            </tr>
+            <tr>
+              <td><code>sn</code></td>
+              <td>Cognome</td>
+            </tr>
+            <tr>
+              <td><code>givenName</code></td>
+              <td>Nome</td>
+            </tr>
+            <tr>
+              <td><code>cn</code></td>
+              <td>Nome Cognome</td>
+            </tr>
+            <tr>
+              <td><code>displayName</code></td>
+              <td>Nome Cognome</td>
+            </tr>
+            <tr>
+              <td><code>schacDateOfBirth</code></td>
+              <td>Data Nascita</td>
+            </tr>
+            <tr>
+              <td><code>schacYearOfBirth</code></td>
+              <td>Anno di Nascita</td>
+            </tr>
+            <tr>
+              <td><code>schacPlaceOfBirth</code></td>
+              <td>Luogo di nascita</td>
+            </tr>
+            <tr>
+              <td><code>schacPersonalUniqueID</code></td>
+              <td>Codice Fiscale</td>
+            </tr>
+            <tr>
+              <td><code>street</code></td>
+              <td>Via</td>
+            </tr>
+            <tr>
+              <td><code>houseIdentifier</code></td>
+              <td>Numero civico</td>
+            </tr>
+            <tr>
+              <td><code>l</code></td>
+              <td>Città</td>
+            </tr>
+            <tr>
+              <td><code>postalCode</code></td>
+              <td>CAP</td>
+            </tr>
+            <tr>
+              <td><code>st</code></td>
+              <td>Provincia</td>
+            </tr>
+            <tr>
+              <td><code>c</code></td>
+              <td>Sigla Nazione</td>
+            </tr>
+            <tr>
+              <td><code>co</code></td>
+              <td>Nazione</td>
+            </tr>
+            <tr>
+              <td><code>mail</code></td>
+              <td>E-mail</td>
+            </tr>
+            <tr>
+              <td><code>telephoneNumber</code></td>
+              <td>Telefono</td>
+            </tr>
+            <tr>
+              <td><code>schacPersonalPosition</code></td>
+              <td>Qualifica ricoperta</td>
+            </tr>
+            <tr>
+              <td><code>ou</code></td>
+              <td>Sezione/Divisione/Unità/Laboratorio in cui si svolgono le funzioni di operatore SSN</td>
+            </tr>
+            <tr>
+              <td><code>o</code></td>
+              <td>Struttura con cui si ha un rapporto di lavoro/collaborazione</td>
+            </tr>
+            <tr>
+              <td><code>eduPersonOrgDN</code></td>
+              <td>Identificativo dell'Organizzazione di appartenenza</td>
+            </tr>
+            <tr>
+              <td><code>eduPersonOrgUnitDN</code></td>
+              <td>Identificativo dell'ufficio di appartenenza all'interno dell'organizzazione</td>
+            </tr>
+            <tr>
+              <td><code>schacHomeOrganization</code></td>
+              <td>Identificativo dell'organizzazione di appartenenza</td>
+            </tr>
+            <tr>
+              <td><code>schacHomeOrganizationType</code></td>
+              <td>Tipologia a cui appartiene l'organizzazione di appartenenza</td>
+            </tr>
+            <tr>
+              <td><code>eduPersonScopedAffiliation</code></td>
+              <td>Tipologia di affiliazione all'organizzazione di appartenenza</td>
+            </tr>
+            <tr>
+              <td><code>eduPersonPrincipalName</code></td>
+              <td>Identificativo univoco per l'utente</td>
+            </tr>
+            <tr>
+              <td><code>eduPersonEntitlement</code></td>
+              <td>Valori utilizzati per conferire dei privilegi sulla risorsa a cui si vuole accedere</td>
+            </tr>
+         </table>
+         <p><a href="https://www.idem.garr.it/it/servizi/sp" target="_blank">Elenco delle Risorse associate alla Federazione {{ idp_federation_name_it }}</a> a cui è possibile accedere tramite le credenziali fornite per questo Identity Provider.</p>
+
+         <p>La Politica sulla Privacy per gli utenti dell'istituto {{ metadata['it']['mdui_displayName'] }} è consultabile qui: <a href="/it/privacy.html">Privacy Policy</a></p>
+      </div>
+   </body>
+</html>

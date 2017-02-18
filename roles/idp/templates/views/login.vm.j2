@@ -33,7 +33,7 @@
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
         <title>#springMessageText("idp.title", "Web Login Service")</title>
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
-        <link href="#springMessageText("metadata.favicon", "#")" rel="shortcut icon" type="image/x-icon" />
+        <link href="#springMessageText("idp.favicon", "$request.getContextPath()/images/dummylogo.png")" rel="shortcut icon" type="image/x-icon" />
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
         <link rel="stylesheet" type="text/css" href="/css/login.css">
@@ -135,7 +135,7 @@
                     <br/><br/>
                     <a href="javascript:setParam('spinfo', 'false');"><span class="item-marker">&lsaquo;</span> #springMessageText("idp.login.goback", "Go back to login page")</a>
                     #else
-                    <a href="#springMessageText("idp.infoUrl", "#")"><img src="#springMessageText("idp.logo","/idp/images/dummylogo.png")" alt="#springMessageText("idp.logo.alt-text", "logo")" height="170px"></a>
+                    <a href="#springMessageText("idp.infoUrl", "#")"><img src="#springMessageText("idp.logo","$request.getContextPath()/idp/images/dummylogo.png")" alt="#springMessageText("idp.logo.alt-text", "logo")" height="170px"></a>
                     #end
                 </header>
 
@@ -275,10 +275,8 @@
                         </p>
                         <p>
                             <a href="#springMessageText("federation.url","#")"><img src="#springMessageText("federation.logo" ,"/images/federation-logo.png")" alt="#springMessageText("federation.name", "Federation Name")" style="width: 100px"/></a>
-{% if idp_edugain_enabled %}
                             <br/>
                             <a href="#springMessageText("edugain.url","#")"><img src="#springMessageText("edugain.logo" ,"/images/edugain-logo.png")" alt="#springMessageText("edugain.name", "eduGAIN Interfederation")" style="width: 120px"/></a>
-{% endif%}
                         </p>
                     </div> ## column two
                         #end

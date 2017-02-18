@@ -41,6 +41,7 @@
    - libmysql-java
    - libcommons-dbcp-java
    - libcommons-pool-java
+   - automysqlbackup
   tags: mysql
 
 - name: "Be sure that .my.cnf file is present for MySQL authentication"
