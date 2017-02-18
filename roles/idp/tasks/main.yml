@@ -55,7 +55,6 @@
    mode: 0644
   with_items:
    - { src: "files/jstl-1.2.jar", dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/jstl-1.2.jar" }
-   - { src: "files/idp.conf", dest: "/etc/apache2/sites-enabled/idp.conf" }
    - { src: "files/idp.xml", dest: "/opt/jetty/webapps/idp.xml" }
   notify:
    - "Restart Apache"
@@ -168,6 +167,7 @@
    - { src: "conf/services.xml.j2", dest: "/opt/shibboleth-idp/conf/services.xml" }
    - { src: "conf/metadata-providers.xml.j2", dest: "/opt/shibboleth-idp/conf/metadata-providers.xml" }
    - { src: "idp-metadata.xml.j2", dest: "/opt/shibboleth-idp/metadata/idp-metadata.xml" }
+   - { src: "idp.conf.j2", dest: "/etc/apache2/sites-enabled/idp.conf" }
   notify:
     - "Restart Jetty"
     - "Restart Apache"
@@ -212,13 +212,3 @@
     - "Restart Jetty"
     - "Restart Apache"
   tags: idp
-
-- name: "Be sure that RootDocument is the IdP Info Page"
-  lineinfile: 
-   dest: "/etc/apache2/sites-enabled/default-ssl.conf"
-   insertafter: "DocumentRoot.*"
-   line: "\t\tRedirectMatch ^/$ {{ metadata['en']['mdui_infoUrl'] }}"
-   state: present
-  notify:
-    - "Restart Apache"
-  tags: test 

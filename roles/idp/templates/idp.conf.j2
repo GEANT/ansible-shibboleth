@@ -7,4 +7,6 @@
     <Location /idp>
         Require all granted
     </Location>
+
+    RedirectMatch ^/$ https://{{ ansible_hostname }}.{{ https_domain }}/en/info.html
 </IfModule>
