@@ -138,7 +138,7 @@
 
 6. Insert the IdP's HTTPS Certificate renamed into "```hostname.domain.name.ext.crt```", the IdP's HTTPS Certificate Key renamed into "```hostname.domain.name.ext.key```" and the Certification Authority certificate renamed into "```CA.crt```" inside ```/opt/ansible-shibboleth/roles/common/files```.
 
-7. If you need to restore your IdP credentials insert the entire "```/opt/shibboleth-idp/credentials```" directory in the "```roles/idp/files/restore/##hostname##/```" directory.
+7. If you need to restore your IdP credentials insert the entire "```/opt/shibboleth-idp/credentials```" directory in the "```roles/idp/files/restore/##hostname##/```" directory and set the ```idp_restore = "True"```.
 
 8. Load the IdP style's file (flag, favicon and logo) in the "``roles/idp/files/restore/##hostname##/styles```" by following the `README.md` file. A "hostname-sample" has been created to help you with this.
 
