@@ -37,7 +37,7 @@
     that the IdP needs to interoperate with.
     -->
 
-{% for md in metadata_providers %}    
+{% for md in idp_metadata_providers %}    
     <MetadataProvider
       id="{{ md['id'] }}"
       xsi:type="FileBackedHTTPMetadataProvider"

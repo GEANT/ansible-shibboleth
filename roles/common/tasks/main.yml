@@ -1,14 +1,5 @@
 ---
 # tasks file for common
-
-#- debug:
-#   var: "{{ item }}"
-#  with_items:
-#   - my_timezone 
-#   - ntp1
-#   - ntp2
-#   - ntp3
-
 - name: "Be sure that the FQDN is configured"
   template:
    src: hosts.j2

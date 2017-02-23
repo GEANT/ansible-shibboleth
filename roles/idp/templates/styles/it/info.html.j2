@@ -3,7 +3,7 @@
    <head>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
       <title>Pagina Informativa</title>
-      <link href="{{ metadata['it']['mdui_favicon'] }}" rel="shortcut icon" type="image/x-icon" />
+      <link href="{{ idp_metadata['it']['mdui_favicon'] }}" rel="shortcut icon" type="image/x-icon" />
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
       <style type="text/css">
          #infoHeader img {
@@ -19,12 +19,14 @@
    <body>
       <div class="container">
          <div class='row'>
-            <div class="col-md-2"><img id="headerLogo" src="{{ metadata['it']['mdui_logo'] }}"/></div>
+            <div class="col-md-2"><img id="headerLogo" src="{{ idp_metadata['it']['mdui_logo'] }}"/></div>
             <div class="col-md-8 text-center">
                <h2>PARTECIPAZIONE AL PROGETTO DI IDEM GARR:<br/>IDP IN THE CLOUD<br/><strong>Pagina Informativa</strong></h2>
+               <br/>
                <p class="text-center">
-                  <a href="/it/info.html"><img height="26px" src="/images/itFlag.png"></a>
-                  <a href="/en/info.html"><img height="26px" src="/images/enFlag.png"></a>
+{% for lang, value in idp_metadata.iteritems() %}
+                  <a href="/{{ lang }}/info.html"><img height="36px" src="/{{ lang }}/{{ lang }}Flag.png"></a>
+{% endfor %}
                </p>
             </div>
             <div class="col-md-2">
@@ -33,7 +35,7 @@
                </a>
             </div>
          </div>
-         Il {{ metadata['it']['mdui_displayName'] }} partecipa a IDEM (IDEntity Management federato per l'accesso ai servizi) 
+         Il {{ idp_metadata['it']['mdui_displayName'] }} partecipa a IDEM (IDEntity Management federato per l'accesso ai servizi) 
          per la realizzazione dell'Infrastruttura di Autenticazione e Autorizzazione federata della rete GARR.
          <br/>
          Le credenziali di accesso vengono conferite a [...elencare le tipologie di utenti].
@@ -42,17 +44,17 @@
          <br/>
     
          <h3> SUPPORTO UTENTE PER CREDENZIALI, RILASCIO ATTRIBUTI, ... </h3>
-         <p> Nome Cognome: {{ contacts['support']['givenName'] }} {{ contacts['support']['surName'] }}</p>
-         <p> e-mail: <a href="{{ contacts['support']['mail'] }}">Supporto Utenti</a></p>
+         <p> Nome Cognome: {{ idp_contacts['support']['givenName'] }} {{ idp_contacts['support']['surName'] }}</p>
+         <p> e-mail: <a href="{{ idp_contacts['support']['mail'] }}">Supporto Utenti</a></p>
          <p> tel.:</p>
 
          <h3> REFERENTE TECNICO PER L'IDENTITY PROVIDER: </h3>
-         <p> Nome Cognome: {{ contacts['technical']['givenName'] }} {{ contacts['technical']['surName'] }}</p>
-         <p> e-mail: <a href="{{ contacts['technical']['mail'] }}">Contato Tecnico</a></p>
+         <p> Nome Cognome: {{ idp_contacts['technical']['givenName'] }} {{ idp_contacts['technical']['surName'] }}</p>
+         <p> e-mail: <a href="{{ idp_contacts['technical']['mail'] }}">Contato Tecnico</a></p>
          <p> tel.:</p>
     
          <h3> INFORMAZIONI SUL RILASCIO DEGLI ATTRIBUTI UTENTE AI FORNITORI DI RISORSE:</h3>
-         <p>Il {{ metadata['it']['mdui_displayName'] }} mediante questo Identity Provider può trasmettere alla Risorsa a cui Lei chiede di accedere alcune informazioni (attributi) su di Lei, su richiesta della Risorsa stessa.<br />
+         <p>Il {{ idp_metadata['it']['mdui_displayName'] }} mediante questo Identity Provider può trasmettere alla Risorsa a cui Lei chiede di accedere alcune informazioni (attributi) su di Lei, su richiesta della Risorsa stessa.<br />
          Tali informazioni sono:</p>
          <ul>
             <li>Necessarie per ricevere il servizio richiesto</li>
@@ -181,7 +183,7 @@
          </table>
          <p><a href="https://www.idem.garr.it/it/servizi/sp" target="_blank">Elenco delle Risorse associate alla Federazione {{ idp_federation_name_it }}</a> a cui è possibile accedere tramite le credenziali fornite per questo Identity Provider.</p>
 
-         <p>La Politica sulla Privacy per gli utenti dell'istituto {{ metadata['it']['mdui_displayName'] }} è consultabile qui: <a href="/it/privacy.html">Privacy Policy</a></p>
+         <p>La Politica sulla Privacy per gli utenti dell'istituto {{ idp_metadata['it']['mdui_displayName'] }} è consultabile qui: <a href="/it/privacy.html">Privacy Policy</a></p>
       </div>
    </body>
 </html>

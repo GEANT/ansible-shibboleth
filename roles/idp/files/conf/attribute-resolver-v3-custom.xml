@@ -20,7 +20,7 @@
     <!-- ========================================== -->
 
     <!-- Schema: Core schema attributes-->
-    <resolver:AttributeDefinition id="uid" xsi:type="ad:Simple"  sourceAttributeID="uid">
+    <resolver:AttributeDefinition id="uid" xsi:type="resolver:Simple"  sourceAttributeID="uid">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">UserID</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">UserID</resolver:DisplayName>
@@ -29,7 +29,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:0.9.2342.19200300.100.1.1" friendlyName="uid" encodeType="false" />
     </resolver:AttributeDefinition>
     
-    <resolver:AttributeDefinition id="surname" xsi:type="ad:Simple" sourceAttributeID="sn">
+    <resolver:AttributeDefinition id="surname" xsi:type="resolver:Simple" sourceAttributeID="sn">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">Surname</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">Cognome</resolver:DisplayName>
@@ -38,7 +38,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:2.5.4.4" friendlyName="sn" encodeType="false" />
     </resolver:AttributeDefinition>
     
-    <resolver:AttributeDefinition id="givenName" xsi:type="ad:Simple" sourceAttributeID="givenName">
+    <resolver:AttributeDefinition id="givenName" xsi:type="resolver:Simple" sourceAttributeID="givenName">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">Name</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">Nome</resolver:DisplayName>
@@ -47,7 +47,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:2.5.4.42" friendlyName="givenName" encodeType="false" />
     </resolver:AttributeDefinition>
 
-    <resolver:AttributeDefinition id="commonName" xsi:type="ad:Simple"  sourceAttributeID="cn">
+    <resolver:AttributeDefinition id="commonName" xsi:type="resolver:Simple"  sourceAttributeID="cn">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">Common Name</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">Nome e Cognome</resolver:DisplayName>
@@ -56,7 +56,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:2.5.4.3" friendlyName="cn" encodeType="false" />
     </resolver:AttributeDefinition>
 
-    <resolver:AttributeDefinition id="title" xsi:type="ad:Simple"  sourceAttributeID="title">
+    <resolver:AttributeDefinition id="title" xsi:type="resolver:Simple"  sourceAttributeID="title">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">Title</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">Titolo</resolver:DisplayName>
@@ -65,7 +65,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:2.5.4.12" friendlyName="title" encodeType="false" />
     </resolver:AttributeDefinition>
 
-    <resolver:AttributeDefinition id="email" xsi:type="ad:Simple" sourceAttributeID="mail">
+    <resolver:AttributeDefinition id="email" xsi:type="resolver:Simple" sourceAttributeID="mail">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">E-mail</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">E-mail</resolver:DisplayName>
@@ -74,7 +74,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:0.9.2342.19200300.100.1.3" friendlyName="mail" encodeType="false" />
     </resolver:AttributeDefinition>
     
-    <resolver:AttributeDefinition id="telephoneNumber" xsi:type="ad:Simple"  sourceAttributeID="telephoneNumber">
+    <resolver:AttributeDefinition id="telephoneNumber" xsi:type="resolver:Simple"  sourceAttributeID="telephoneNumber">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">Telephone Number</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">Numero di Telefono</resolver:DisplayName>
@@ -83,7 +83,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:2.5.4.20" friendlyName="telephoneNumber" encodeType="false" />
     </resolver:AttributeDefinition>
 
-    <resolver:AttributeDefinition id="mobile" xsi:type="ad:Simple"  sourceAttributeID="mobile">
+    <resolver:AttributeDefinition id="mobile" xsi:type="resolver:Simple"  sourceAttributeID="mobile">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">Mobile Telephone Number</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">Numero di Telefono Mobile</resolver:DisplayName>
@@ -93,7 +93,7 @@
     </resolver:AttributeDefinition>
 
     <!-- This attribute definition will be removed in the next version of "Specifiche Tecniche per la compilazione ed uso degli Attributi V3.0" -->
-    <resolver:AttributeDefinition id="facsimileTelephoneNumber" xsi:type="ad:Simple"  sourceAttributeID="facsimileTelephoneNumber">
+    <resolver:AttributeDefinition id="facsimileTelephoneNumber" xsi:type="resolver:Simple"  sourceAttributeID="facsimileTelephoneNumber">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">Facsimile Number</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">Numero del FAX</resolver:DisplayName>
@@ -103,7 +103,7 @@
     </resolver:AttributeDefinition>
 
     <!-- Schema: inetOrgPerson attributes-->
-    <resolver:AttributeDefinition id="displayName" xsi:type="ad:Simple"  sourceAttributeID="displayName">
+    <resolver:AttributeDefinition id="displayName" xsi:type="resolver:Simple"  sourceAttributeID="displayName">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">Display name</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">Nome visualizzato</resolver:DisplayName>
@@ -112,7 +112,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:2.16.840.1.113730.3.1.241" friendlyName="displayName" encodeType="false" />
     </resolver:AttributeDefinition>
     
-    <resolver:AttributeDefinition id="preferredLanguage" xsi:type="ad:Simple"  sourceAttributeID="preferredLanguage">
+    <resolver:AttributeDefinition id="preferredLanguage" xsi:type="resolver:Simple"  sourceAttributeID="preferredLanguage">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">Preferred Language</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">Lingua Preferita</resolver:DisplayName>
@@ -122,7 +122,7 @@
     </resolver:AttributeDefinition>
     
     <!-- Schema: eduPerson attributes -->
-    <resolver:AttributeDefinition id="eduPersonOrgDN" xsi:type="ad:Simple"  sourceAttributeID="eduPersonOrgDN">
+    <resolver:AttributeDefinition id="eduPersonOrgDN" xsi:type="resolver:Simple"  sourceAttributeID="eduPersonOrgDN">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">eduPersonOrgDN</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">eduPersonOrgDN</resolver:DisplayName>
@@ -131,7 +131,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.3" friendlyName="eduPersonOrgDN" encodeType="false" />
     </resolver:AttributeDefinition>
 
-    <resolver:AttributeDefinition id="eduPersonOrgUnitDN" xsi:type="ad:Simple"  sourceAttributeID="eduPersonOrgUnitDN">
+    <resolver:AttributeDefinition id="eduPersonOrgUnitDN" xsi:type="resolver:Simple"  sourceAttributeID="eduPersonOrgUnitDN">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">eduPersonOrgUnitDN</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">eduPersonOrgUnitDN</resolver:DisplayName>
@@ -140,7 +140,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.4" friendlyName="eduPersonOrgUnitDN" encodeType="false"/>
     </resolver:AttributeDefinition>
 
-    <resolver:AttributeDefinition id="eduPersonAffiliation" xsi:type="ad:Simple"  sourceAttributeID="eduPersonAffiliation">
+    <resolver:AttributeDefinition id="eduPersonAffiliation" xsi:type="resolver:Simple"  sourceAttributeID="eduPersonAffiliation">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">Affiliation</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">Affiliazione</resolver:DisplayName>
@@ -167,7 +167,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="eduPersonPrincipalName" encodeType="false" />
     </resolver:AttributeDefinition>
 
-    <resolver:AttributeDefinition id="eduPersonEntitlement" xsi:type="ad:Simple" sourceAttributeID="eduPersonEntitlement">
+    <resolver:AttributeDefinition id="eduPersonEntitlement" xsi:type="resolver:Simple" sourceAttributeID="eduPersonEntitlement">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">Entitlement</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">Entitlement</resolver:DisplayName>
@@ -185,7 +185,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2XMLObject" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" friendlyName="eduPersonTargetedID" encodeType="false" />
     </resolver:AttributeDefinition>
 
-    <resolver:AttributeDefinition id="eduPersonOrcid" xsi:type="ad:Simple"  sourceAttributeID="eduPersonOrcid">
+    <resolver:AttributeDefinition id="eduPersonOrcid" xsi:type="resolver:Simple"  sourceAttributeID="eduPersonOrcid">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">ORCID</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">ORCID</resolver:DisplayName>
@@ -195,7 +195,7 @@
     </resolver:AttributeDefinition>
     
     <!-- Schema: SCHAC attributes -->
-    <resolver:AttributeDefinition id="schacMotherTongue" xsi:type="ad:Simple"  sourceAttributeID="schacMotherTongue">
+    <resolver:AttributeDefinition id="schacMotherTongue" xsi:type="resolver:Simple"  sourceAttributeID="schacMotherTongue">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">Mother Tongue</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">Lingua Madre</resolver:DisplayName>
@@ -204,7 +204,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.25178.1.2.1" friendlyName="schacMotherTogue" encodeType="false"/>
     </resolver:AttributeDefinition>
     
-    <resolver:AttributeDefinition id="schacPersonalTitle" xsi:type="ad:Simple"  sourceAttributeID="schacPersonalTitle">
+    <resolver:AttributeDefinition id="schacPersonalTitle" xsi:type="resolver:Simple"  sourceAttributeID="schacPersonalTitle">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">Personal Title</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">Soprannome</resolver:DisplayName>
@@ -213,7 +213,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.25178.1.2.8" friendlyName="schacPersonalTitle" encodeType="false"/>
     </resolver:AttributeDefinition>
 
-    <resolver:AttributeDefinition id="schacPersonalPosition" xsi:type="ad:Simple"  sourceAttributeID="schacPersonalPosition">
+    <resolver:AttributeDefinition id="schacPersonalPosition" xsi:type="resolver:Simple"  sourceAttributeID="schacPersonalPosition">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">Personal Position</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">Ruolo ricoperto</resolver:DisplayName>
@@ -222,7 +222,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.25178.1.2.13" friendlyName="schacPersonalPosition" encodeType="false"/>
     </resolver:AttributeDefinition>
     
-    <resolver:AttributeDefinition id="schacUserPresenceID" xsi:type="ad:Simple"  sourceAttributeID="schacUserPresenceID">
+    <resolver:AttributeDefinition id="schacUserPresenceID" xsi:type="resolver:Simple"  sourceAttributeID="schacUserPresenceID">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">User Network IDs</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">Il nome a dominio dell’organizzazione di appartenenza dell’utente</resolver:DisplayName>
@@ -261,7 +261,7 @@
         </ad:Script>
     </resolver:AttributeDefinition>
 
-    <resolver:AttributeDefinition id="schacHomeOrganizationType" xsi:type="ad:Simple" sourceAttributeID="schacHomeOrganizationType">
+    <resolver:AttributeDefinition id="schacHomeOrganizationType" xsi:type="resolver:Simple" sourceAttributeID="schacHomeOrganizationType">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">Home organization type (international)</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">Tipo dell'organizzazione di appartenenza (internazionale)</resolver:DisplayName>
@@ -270,7 +270,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.25178.1.2.10" friendlyName="schacHomeOrganizationType" encodeType="false"/>
     </resolver:AttributeDefinition>
 
-    <resolver:AttributeDefinition id="schacPersonalUniqueID" xsi:type="ad:Simple" sourceAttributeID="schacPersonalUniqueID">
+    <resolver:AttributeDefinition id="schacPersonalUniqueID" xsi:type="resolver:Simple" sourceAttributeID="schacPersonalUniqueID">
         <resolver:Dependency ref="myLDAP" />
         <resolver:DisplayName xml:lang="en">Legal Unique ID</resolver:DisplayName>
         <resolver:DisplayName xml:lang="it">ID Legale Univoco</resolver:DisplayName>

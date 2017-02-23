@@ -2,15 +2,16 @@
 
 ## Simple flow to install and configure a Shibboleth IdP
 
-1. ```cd /opt/```
+1. Move on the `/opt` directory and download the Ansible-Shibboleth code:
+    ```* cd /opt/```
+    ```* git clone https://github.com/malavolti/ansible-shibboleth.git ; cd /opt/ansible-shibboleth```
 
-2. ```git clone https://github.com/malavolti/ansible-shibboleth.git```
+2. Edit the ```[production|test|developmet].ini``` inventory by adding your virtual machine servers.
 
-3. Edit the ```[production|test|developmet].ini``` inventory by adding your virtual machine servers.
+3. Create your ```.vault_pass.txt``` that contains the encryption password:
+    ```* vim /opt/ansible-shibboleth/.vault_pass.txt```
 
-4. Create your ```.vault_pass.txt``` that contains the encryption password.
-
-5. Create your own ```/opt/ansible-shibboleth/hosts_vars/##FULL.VM.QUALIFIED.DOMAIN.NAME##.yml```:
+4. Create the IdP configuration file as ```/opt/ansible-shibboleth/hosts_vars/##FULL.VM.QUALIFIED.DOMAIN.NAME##.yml```:
     ```yaml
     # file: host_vars/##FULL.VM.QUALIFIED.DOMAIN.NAME##.yml
     https_domain: "example.org"
@@ -23,24 +24,25 @@
     ldap_user: "openldap"
     ldap_root_pw: "##ONE_PASSWORD##"
 
+    # MySQL Variables
+    mysql_root_password: "## ROOT DB PASSWORD ##"
+
     # IDP Variables
 
     # Set to 'True' to perform an IdP Restoration
-    restore: "False"
+    idp_restore: "False"
 
     idp_pw: "## IDP PASSWORD ##"
-
     idp_sealer_pw: "## IDP SEALER PASSWORD ##"
     idp_keystore_pw: "## IDP BACKCHANNEL PASSWORD ##"
 
-    root_db_password: "## ROOT DB PASSWORD ##"
-    shibboleth_db_password: "## SHIBBOLETH USER DB PASSWORD ##"
+    idp_shibboleth_db_password: "## SHIBBOLETH USER DB PASSWORD ##"
 
     ## IDP BASIC CONFIGURATION VARIABLE ##
 
     ## IDP STYLE ##
-    footer_text_color: "#f5ffff"
-    footer_background_color: "#517171"
+    idp_footer_text_color: "#ffffff"
+    idp_footer_background_color: "#717171"
 
     ### idp_sourceAttribute: 
     ### MUST BE an attribute, or a list of comma-separated attributes, 
@@ -71,7 +73,9 @@
     idp_federation_name_it: "FEDERATION NAME IT"
     idp_federation_name_en: "FEDERATION NAME ENG"
 
-    metadata:
+    idp_federation_regAuth: "http://registration.authority.com/"
+
+    idp_metadata:
        it:
           mdui_displayName: "Organization english Display Name"
           mdui_description: "IDP di Test per Organization Name"
@@ -93,7 +97,7 @@
           org_displayName: "Organization english Display Name"
           org_url: "http://www.orgUrl.uk/"
        
-    contacts:
+    idp_contacts:
        technical:
           givenName: "Name"
           surName: "Surname"
@@ -104,7 +108,7 @@
           mail: "email.address@example.it"
 
     ### Federation Metadata URL
-    metadata_providers:
+    idp_metadata_providers:
      - id: "IDEM-TEST-FEDERATION"
        file: "idem-test-metadata-sha256.xml"
        url: "http://www.garr.it/idem-metadata/idem-test-metadata-sha256.xml"
@@ -128,19 +132,21 @@
         tUFe0F+13jOrtfE8030X8SV7dgkZo5WTxwIQm3lJ9N6C7NRoDKHx/8F8SzoLC5wJ
         KwIDAQAB
     ```
-6. Ecrypted with your Ansible Vault:
+5. Ecrypt the IdP configuration file with Ansible Vault:
     * ```cd /opt/ansible-shibboleth```
     * ```ansible-vault encrypt host_vars/##FULL.VM.QUALIFIED.DOMAIN.NAME##.yml --vault-password-file .vault_pass.txt```
 
-7. Insert your "```hostname.domain.name.ext.crt```", "```hostname.domain.name.ext.key```" and "```CA.crt```" inside ```/opt/ansible-shibboleth/roles/common/files```.
+6. Insert the IdP's HTTPS Certificate renamed into "```hostname.domain.name.ext.crt```", the IdP's HTTPS Certificate Key renamed into "```hostname.domain.name.ext.key```" and the Certification Authority certificate renamed into "```CA.crt```" inside ```/opt/ansible-shibboleth/roles/common/files```.
 
-8. Insert your "```/opt/shibboleth-idp/credentials```" directory into the "```roles/idp/files/restore/hostname/```" directory
+7. If you need to restore your IdP credentials insert the entire "```/opt/shibboleth-idp/credentials```" directory in the "```roles/idp/files/restore/##hostname##/```" directory.
+
+8. Load the IdP style's file (flag, favicon and logo) in the "``roles/idp/files/restore/##hostname##/styles```" by following the `README.md` file. A "hostname-sample" has been created to help you with this.
 
 9. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) only on a specific development VM:
-    ```ansible-playbook shib-idp.yml -i development.ini --limit ##FULL.VM.QUALIFIED.DOMAIN.NAME## --vault-password-file .vault_pass.txt```
+    ```ansible-playbook site.yml -i development.ini --limit ##FULL.VM.QUALIFIED.DOMAIN.NAME## --vault-password-file .vault_pass.txt```
 
 10. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) into all development VMs:
-    ```ansible-playbook shib-idp.yml -i development.ini --vault-password-file .vault_pass.txt```
+    ```ansible-playbook site.yml -i development.ini --vault-password-file .vault_pass.txt```
 
 ## Documentation ##
 The environment (production,development, test, ...) are located into different files:

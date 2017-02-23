@@ -106,7 +106,7 @@
    - { src: "files/restore/{{ ansible_hostname }}/credentials/sealer.kver", dest: "/opt/shibboleth-idp/credentials/sealer.kver", mode: "0644" }
   notify:
    - "Restart Jetty"
-  when: restore == "True"
+  when: idp_restore == "True"
   tags: idp
 
 - name: "Check if 'shibboleth' DB is already created and store the result into 'shib_db' ansible variable"
@@ -165,6 +165,7 @@
    - { src: "conf/idp.properties.j2", dest: "/opt/shibboleth-idp/conf/idp.properties" }
    - { src: "conf/ldap.properties.j2", dest: "/opt/shibboleth-idp/conf/ldap.properties" }
    - { src: "conf/services.xml.j2", dest: "/opt/shibboleth-idp/conf/services.xml" }
+   - { src: "conf/attribute-filter-v3-federation.xml.j2", dest: "/opt/shibboleth-idp/conf/attribute-filter-v3-federation.xml" }
    - { src: "conf/metadata-providers.xml.j2", dest: "/opt/shibboleth-idp/conf/metadata-providers.xml" }
    - { src: "idp-metadata.xml.j2", dest: "/opt/shibboleth-idp/metadata/idp-metadata.xml" }
    - { src: "idp.conf.j2", dest: "/etc/apache2/sites-enabled/idp.conf" }
@@ -182,33 +183,110 @@
    mode: "{{ item.mode }}"
   with_items:
    - { src: "files/conf/", dest: "/opt/shibboleth-idp/conf/", owner: "jetty", mode: "0600" }
-   - { src: "files/styles/{{ ansible_hostname }}.{{ https_domain }}/", dest: "/var/www/html/", owner: "root", mode: "0644" }
+  notify:
+    - "Restart Jetty"
+  tags: idp
+
+- name: "Be sure that Federation logo, eduGAIN logo and other images are present"
+  copy:
+   src: "files/restore/{{ ansible_hostname }}/styles/images"
+   dest: "/var/www/html/"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  notify:
+    - "Restart Apache"
+  tags: idp
+
+- name: "Be sure that IdP image files are present"
+  copy:
+   src: "files/restore/{{ ansible_hostname }}/styles/{{ item.key }}/"
+   dest: "/var/www/html/{{ item.key }}/"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_dict: "{{ idp_metadata }}"
+  notify:
+    - "Restart Apache"
+  tags: idp
+
+- name: "Be sure that default english messages and IdP style files are present"
+  template:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_items:
+   - { src: "views/login.css.j2", dest: "/var/www/html/css/login.css" }
+   - { src: "views/login.vm.j2", dest: "/opt/shibboleth-idp/views/login.vm" }
+   - { src: "messages/cookie_policy.properties.j2", dest: "/opt/shibboleth-idp/messages/cookie_policy.properties" }
+   - { src: "messages/custom.properties.j2", dest: "/opt/shibboleth-idp/messages/custom.properties" }
+   - { src: "messages/messages.properties.j2", dest: "/opt/shibboleth-idp/messages/messages.properties" }
   notify:
     - "Restart Jetty"
     - "Restart Apache"
   tags: idp
 
-- name: "Be sure that IdP style files are present"
+- name: "Be sure that messages for interested languages are present"
   template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    owner: "root"
-    group: "root"
-    mode: "0644"
-  with_items:
-   - { src: "views/login.css.j2", dest: "/var/www/html/css/login.css" }
-   - { src: "views/login.vm.j2", dest: "/opt/shibboleth-idp/views/login.vm" }
-   - { src: "messages/cookie_policy.properties.j2", dest: "/opt/shibboleth-idp/messages/cookie_policy.properties" }
-   - { src: "messages/cookie_policy_it.properties.j2", dest: "/opt/shibboleth-idp/messages/cookie_policy_it.properties" }
-   - { src: "messages/custom.properties.j2", dest: "/opt/shibboleth-idp/messages/custom.properties" }
-   - { src: "messages/custom_it.properties.j2", dest: "/opt/shibboleth-idp/messages/custom_it.properties" }
-   - { src: "messages/messages.properties.j2", dest: "/opt/shibboleth-idp/messages/messages.properties" }
-   - { src: "messages/messages_it.properties.j2", dest: "/opt/shibboleth-idp/messages/messages_it.properties" }
-   - { src: "styles/it/info.html.j2", dest: "/var/www/html/it/info.html" }
-   - { src: "styles/en/info.html.j2", dest: "/var/www/html/en/info.html" }
-   - { src: "styles/it/privacy.html.j2", dest: "/var/www/html/it/privacy.html" }
-   - { src: "styles/en/privacy.html.j2", dest: "/var/www/html/en/privacy.html" }
+   src: "messages/messages_{{ item.key }}.properties.j2"
+   dest: "/opt/shibboleth-idp/messages/messages_{{ item.key }}.properties"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_dict: "{{ idp_metadata }}"
+  when: "item.key != 'en'"
   notify:
     - "Restart Jetty"
+  tags: idp
+
+- name: "Be sure that custom messages for interested languages are present"
+  template:
+   src: "messages/custom_{{ item.key }}.properties.j2"
+   dest: "/opt/shibboleth-idp/messages/custom_{{ item.key }}.properties"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_dict: "{{ idp_metadata }}"
+  when: "item.key != 'en'"
+  notify:
+    - "Restart Jetty"
+  tags: idp
+
+- name: "Be sure that cookie_policy messages for interested languages are present"
+  template:
+   src: "messages/cookie_policy_{{ item.key }}.properties.j2"
+   dest: "/opt/shibboleth-idp/messages/cookie_policy_{{ item.key }}.properties"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_dict: "{{ idp_metadata }}"
+  when: "item.key != 'en'"
+  notify:
+    - "Restart Jetty"
+  tags: idp
+
+- name: "Be sure that Information Page for interested languages are present"
+  template:
+   src: "styles/{{ item.key }}/info.html.j2"
+   dest: "/var/www/html/{{ item.key }}/info.html"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_dict: "{{ idp_metadata }}"
+  notify:
+    - "Restart Apache"
+  tags: idp
+
+- name: "Be sure that Privacy Policy Page for interested languages are present"
+  template:
+   src: "styles/{{ item.key }}/privacy.html.j2"
+   dest: "/var/www/html/{{ item.key }}/privacy.html"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_dict: "{{ idp_metadata }}"
+  notify:
     - "Restart Apache"
   tags: idp

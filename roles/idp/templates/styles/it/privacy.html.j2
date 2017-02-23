@@ -3,7 +3,7 @@
    <head>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
       <title>Pagina sulla Privacy</title>
-      <link href="{{ metadata['it']['mdui_favicon'] }}" rel="shortcut icon" type="image/x-icon" />
+      <link href="{{ idp_metadata['it']['mdui_favicon'] }}" rel="shortcut icon" type="image/x-icon" />
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
       <style type="text/css">
          #infoHeader img {
@@ -19,12 +19,14 @@
    <body>
       <div class="container">
          <div class='row'>
-            <div class="col-md-2"><img id="headerLogo" src="{{ metadata['it']['mdui_logo'] }}"/></div>
+            <div class="col-md-2"><img id="headerLogo" src="{{ idp_metadata['it']['mdui_logo'] }}"/></div>
             <div class="col-md-8 text-center">
                <h2>PARTECIPAZIONE AL PROGETTO DI IDEM GARR:<br/>IDP IN THE CLOUD<br/><strong>Privacy Policy</strong></h2>
+               <br/>
                <p class="text-center">
-                  <a href="/it/privacy.html"><img height="26px" src="/images/itFlag.png"></a>
-                  <a href="/en/privacy.html"><img height="26px" src="/images/enFlag.png"></a>
+{% for lang, value in idp_metadata.iteritems() %}
+                  <a href="/{{ lang }}/privacy.html"><img height="36px" src="/{{ lang }}/{{ lang }}Flag.png"></a>
+{% endfor %}
                </p>
             </div>
             <div class="col-md-2">
@@ -34,14 +36,14 @@
             </div>
          </div>
          <h3>Privacy</h3>
-         La presente informativa è resa ai sensi dell'articolo 13 del Decreto Legislativo n.196 del 2003, Codice in Materia di Protezione dei Dati Personali, a coloro che interagiscono con i servizi web dell'{{ metadata['en']['mdui_displayName'] }} accessibili per via telematica.
+         La presente informativa è resa ai sensi dell'articolo 13 del Decreto Legislativo n.196 del 2003, Codice in Materia di Protezione dei Dati Personali, a coloro che interagiscono con i servizi web dell'{{ idp_metadata['en']['mdui_displayName'] }} accessibili per via telematica.
 
          Essa è riferita al solo Sito di Ateneo e non ha valore per siti web esterni eventualmente visitati dall'utente tramite link.
 
          <a href="http://www.garanteprivacy.it/web/guest/home/docweb/-/docweb-display/docweb/1311248">Codice in Materia di Protezione dei Dati Personali</a>
          <h3>Titolare del trattamento</h3>
 
-         Il titolare del trattamento dei dati personali è {{ metadata['en']['mdui_displayName'] }} - [inserire l'indirizzo fisico dell'istituto].
+         Il titolare del trattamento dei dati personali è {{ idp_metadata['en']['mdui_displayName'] }} - [inserire l'indirizzo fisico dell'istituto].
 
          <h3>Luogo di trattamento dei dati</h3>
 
@@ -66,12 +68,12 @@
          <br/>
          <br/><i>Cookie di monitoraggio</i>
          <br/>
-         L'{{ metadata['it']['mdui_displayName'] }} si avvale del servizio di Google Analytics, un servizio di analisi dei dati fornito dalla società Google Inc, che consente di raccogliere informazioni, in forma aggregata, sul numero degli utenti e su come questi visitano il sito, e quindi elaborare statistiche generali sul servizio e sul suo utilizzo per finalità migliorative del servizio di comunicazione.
+         L'{{ idp_metadata['it']['mdui_displayName'] }} si avvale del servizio di Google Analytics, un servizio di analisi dei dati fornito dalla società Google Inc, che consente di raccogliere informazioni, in forma aggregata, sul numero degli utenti e su come questi visitano il sito, e quindi elaborare statistiche generali sul servizio e sul suo utilizzo per finalità migliorative del servizio di comunicazione.
          <br/>
          <br/><i>Cookie di terze parti presenti sul sito</i>
          <br/>
-         Visitando il Sito web {{ metadata['it']['org_url'] }} l’utente potrebbe ricevere sul suo dispositivo anche cookie da siti gestiti da altre organizzazioni ("c.d cookies di "terze parti"): ciò accade perché sul Sito possono essere presenti elementi come, ad esempio, immagini, mappe, specifici link a pagine web di siti o servizi web. 
-         <br/>Questi cookies possono essere inviati al browser dell’utente da società terze direttamente dal loro siti web cui è possibile accedere navigando dal {{ metadata['it']['org_url'] }}. 
+         Visitando il Sito web {{ idp_metadata['it']['org_url'] }} l’utente potrebbe ricevere sul suo dispositivo anche cookie da siti gestiti da altre organizzazioni ("c.d cookies di "terze parti"): ciò accade perché sul Sito possono essere presenti elementi come, ad esempio, immagini, mappe, specifici link a pagine web di siti o servizi web. 
+         <br/>Questi cookies possono essere inviati al browser dell’utente da società terze direttamente dal loro siti web cui è possibile accedere navigando dal {{ idp_metadata['it']['org_url'] }}. 
           
          <br/>Ai fini della trasparenza informativa, di seguito si riporta una lista dei servizi di terze parti presenti sul sito, le finalità e i link alle pagine informative dei diversi servizi.
           
@@ -129,14 +131,14 @@
             <li>al trattamento dei dati personali che lo riguardano ai fini dell'invio di materiale pubblicitario o di vendita diretta ovvero per il compimento di ricerche di mercato o di comunicazione commerciale.</li>
          </ol>
          <br/>
-         I diritti possono essere esercitati con richiesta al Titolare ({{ metadata['it']['mdui_displayName'] }} - [Inserire l'indirizzo del proprio istituto e numero civico]).
+         I diritti possono essere esercitati con richiesta al Titolare ({{ idp_metadata['it']['mdui_displayName'] }} - [Inserire l'indirizzo del proprio istituto e numero civico]).
 
          <h3>CONTACTS</h3>
-         <p> Nome Cognome: {{ contacts['support']['givenName'] }} {{ contacts['support']['surName'] }}</p>
-         <p> e-mail: <a href="{{ contacts['support']['mail'] }}">Supporto Utenti</a></p>
+         <p> Nome Cognome: {{ idp_contacts['support']['givenName'] }} {{ idp_contacts['support']['surName'] }}</p>
+         <p> e-mail: <a href="{{ idp_contacts['support']['mail'] }}">Supporto Utenti</a></p>
          <p> tel.:</p>
          <br/>
-         <p>Qui puoi trovare la pagina di informazioni per l'istituto {{ metadata['it']['mdui_displayName'] }}: <a href="/it/info.html">Information Page</a></p>
+         <p>Qui puoi trovare la pagina di informazioni per l'istituto {{ idp_metadata['it']['mdui_displayName'] }}: <a href="/it/info.html">Information Page</a></p>
       </div>
    </body>
 </html>

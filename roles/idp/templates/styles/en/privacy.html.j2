@@ -3,7 +3,7 @@
    <head>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
       <title>Privacy Policy Page</title>
-      <link href="{{ metadata['en']['mdui_favicon'] }}" rel="shortcut icon" type="image/x-icon" />
+      <link href="{{ idp_metadata['en']['mdui_favicon'] }}" rel="shortcut icon" type="image/x-icon" />
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
       <style type="text/css">
          #headerLogo{
@@ -16,12 +16,14 @@
    <body>
       <div class="container">
          <div class="row">
-            <div class="col-md-2"><img id="headerLogo" src="{{ metadata['en']['mdui_logo'] }}"/></div>
+            <div class="col-md-2"><img id="headerLogo" src="{{ idp_metadata['en']['mdui_logo'] }}"/></div>
             <div class="col-md-8 text-center">
                <h2>PARTICIPATION TO THE IDEM GARR PROJECT:<br/>IDP IN THE CLOUD<br/><strong>Privacy Policy</strong></h2>
+               <br/>
                <p class="text-center">
-                  <a href="/it/privacy.html"><img height="26px" src="/images/itFlag.png"></a>
-                  <a href="/en/privacy.html"><img height="26px" src="/images/enFlag.png"></a>
+{% for lang, value in idp_metadata.iteritems() %}
+                  <a href="/{{ lang }}/privacy.html"><img height="366px" src="/{{ lang }}/{{ lang }}Flag.png"></a>
+{% endfor %}
                </p>
             </div>
             <div class="col-md-2">
@@ -31,12 +33,12 @@
             </div>
          </div>
          <h3>Privacy</h3>
-         This information is given in accordance with art <a href="http://194.242.234.211/documents/10160/2012405/Personal+Data+Protection+Code+-+Legislat.+Decree+no.196+of+30+June+2003.pdf">13 of Legislative Decree no. 96/2003</a> - Code on personal data protection - to users who interact with the website of the {{ metadata['en']['mdui_displayName'] }}.
+         This information is given in accordance with art <a href="http://194.242.234.211/documents/10160/2012405/Personal+Data+Protection+Code+-+Legislat.+Decree+no.196+of+30+June+2003.pdf">13 of Legislative Decree no. 96/2003</a> - Code on personal data protection - to users who interact with the website of the {{ idp_metadata['en']['mdui_displayName'] }}.
 
-         This statement is valid only for the websites of the {{ metadata['en']['mdui_displayName'] }} and not for any other website users may access through the links found on the university websites.
+         This statement is valid only for the websites of the {{ idp_metadata['en']['mdui_displayName'] }} and not for any other website users may access through the links found on the university websites.
 
          <h3>Data controller</h3>
-         The data controller is {{ metadata['en']['mdui_displayName'] }} - [insert the street address of institution]
+         The data controller is {{ idp_metadata['en']['mdui_displayName'] }} - [insert the street address of institution]
 
          <h3>Site of data treatment</h3>
          Personal data supplied by users requesting information material shall only be used to carry out the service requested and shall only be communicated to third parties if necessary for that purpose. For purposes connected to the University’s institutional activities personal data may be communicated outside the university (other public institutions or external bodies and associations).
@@ -49,7 +51,7 @@
          This category of data includes IP addresses or domain names of the computers used by the users to connect to the website and other parameters relating to the user's operating system and data processing environment.
 
          <h3>Information on Cookies</h3>
-         The institutional website ({{ metadata['en']['org_url'] }}) and the connected websites (departments, libraries, museums) only use technical session cookies and external monitoring cookies. In accordance with clause 122 of the Code on Personal Data Protection and the provision of the Authority for Data Protection of 8th May 2014, these cookies do not require the user’s express consent to the use of personal data. 
+         The institutional website ({{ idp_metadata['en']['org_url'] }}) and the connected websites (departments, libraries, museums) only use technical session cookies and external monitoring cookies. In accordance with clause 122 of the Code on Personal Data Protection and the provision of the Authority for Data Protection of 8th May 2014, these cookies do not require the user’s express consent to the use of personal data. 
           
          <br/>The cookies utilised on the University websites optimise the service provided, while easing the website usability and/or enabling users to access to specific functionalities. 
          <br/> 
@@ -60,7 +62,7 @@
          <br/>
          <br/><i>External monitoring cookies</i>
          <br/>
-         The {{ metadata['en']['mdui_displayName'] }} uses Google Analytics, a service of data analysis provided by Google Inc. The service gathers group information (in an anonymous form) on visitors’ number and sessions in order to generate statistics on how the web portal is used to improve communication services and to tailor content to users’ needs.
+         The {{ idp_metadata['en']['mdui_displayName'] }} uses Google Analytics, a service of data analysis provided by Google Inc. The service gathers group information (in an anonymous form) on visitors’ number and sessions in order to generate statistics on how the web portal is used to improve communication services and to tailor content to users’ needs.
 
          <h3>Data supplied voluntarily by the user</h3>
          Student personal data acquired during enrolment or registration or through any other specific collection methods shall only be used to carry out university institutional activities, within the limits established by law and by the regulations, in respect of the general principles of transparency, correctness and privacy.
@@ -99,11 +101,11 @@
          </ol>
          <br/>
          <h3>CONTACTS:</h3>
-         <p> Name Surname: {{ contacts['support']['givenName'] }} {{ contacts['support']['surName'] }}</p>
-         <p> e-mail: <a href="mailto:{{ contacts['support']['mail']}}">{{ contacts['support']['mail'] }}</a></p>
+         <p> Name Surname: {{ idp_contacts['support']['givenName'] }} {{ idp_contacts['support']['surName'] }}</p>
+         <p> e-mail: <a href="mailto:{{ idp_contacts['support']['mail']}}">{{ idp_contacts['support']['mail'] }}</a></p>
          <p> tel.:</p>
          <br/>
-         <p>Here you can find the {{ metadata['en']['mdui_displayName'] }} Information Page: <a href="/en/info.html">Information Page</a></p>
+         <p>Here you can find the {{ idp_metadata['en']['mdui_displayName'] }} Information Page: <a href="/en/info.html">Information Page</a></p>
       </div>
    </body>
 </html>

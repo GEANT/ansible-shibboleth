@@ -24,10 +24,10 @@
   with_items:
     - question: mysql-server/root_password
       type: password
-      value: "{{ root_db_password }}"
+      value: "{{ mysql_root_password }}"
     - question: mysql-server/root_password_again
       type: password
-      value: "{{ root_db_password }}"
+      value: "{{ mysql_root_password }}"
   when: debconf.stdout == "1"
   tags: mysql
 
@@ -62,7 +62,7 @@
   mysql_user: 
    name: "root" 
    host: "{{ item }}" 
-   password: "{{ root_db_password }}"
+   password: "{{ mysql_root_password }}"
    state: present
   with_items:
      - "{{ ansible_hostname }}"

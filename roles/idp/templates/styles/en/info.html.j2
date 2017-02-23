@@ -3,7 +3,7 @@
    <head>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
       <title>Information Page</title>
-      <link href="{{ metadata['en']['mdui_favicon'] }}" rel="shortcut icon" type="image/x-icon" />
+      <link href="{{ idp_metadata['en']['mdui_favicon'] }}" rel="shortcut icon" type="image/x-icon" />
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
       <style type="text/css">
          #headerLogo{
@@ -16,12 +16,14 @@
    <body>
       <div class="container">
          <div class="row">
-            <div class="col-md-2"><img id="headerLogo" src="{{ metadata['en']['mdui_logo'] }}"/></div>
+            <div class="col-md-2"><img id="headerLogo" src="{{ idp_metadata['en']['mdui_logo'] }}"/></div>
             <div class="col-md-8 text-center">
                <h2>PARTICIPATION TO THE IDEM GARR PROJECT:<br/>IDP IN THE CLOUD<br/><strong>Information Page</strong></h2>
+               <br/>
                <p class="text-center">
-                  <a href="/it/info.html"><img height="26px" src="/images/itFlag.png"></a>
-                  <a href="/en/info.html"><img height="26px" src="/images/enFlag.png"></a>
+{% for lang, value in idp_metadata.iteritems() %}
+                  <a href="/{{ lang }}/info.html"><img height="36px" src="/{{ lang }}/{{ lang }}Flag.png"></a>
+{% endfor %}
                </p>
             </div>
             <div class="col-md-2">
@@ -30,21 +32,21 @@
                </a>
             </div>
          </div>
-         The {{ metadata['en']['mdui_displayName'] }} participate to IDEM (IDEntity Management federate do for the access to the resources) and to realize the GARR federated AAI.<br/>
+         The {{ idp_metadata['en']['mdui_displayName'] }} participate to IDEM (IDEntity Management federate do for the access to the resources) and to realize the GARR federated AAI.<br/>
          The credentials (username and password) for the access will be provided to [...list the user's categories], by following what is written into the <a href="#" target="_blank"> Documento descrittivo del processo di accreditamento degli utenti (DOPAU) </a>
 
          <h3>USERS SUPPORT FOR CREDENTIALS AND ATTRIBUTE RELEASE PROBLEMS:</h3>
-         <p> Name Surname: {{ contacts['support']['givenName'] }} {{ contacts['support']['surName'] }}</p>
-         <p> e-mail: <a href="mailto:{{ contacts['support']['mail']}}">{{ contacts['support']['mail'] }}</a></p>
+         <p> Name Surname: {{ idp_contacts['support']['givenName'] }} {{ idp_contacts['support']['surName'] }}</p>
+         <p> e-mail: <a href="mailto:{{ idp_contacts['support']['mail']}}">{{ idp_contacts['support']['mail'] }}</a></p>
          <p> tel.:</p>
 
          <h3>TECHNICAL CONTACT FOR THE IDENTITY PROVIDER:</h3>
-         <p> Name Surname: {{ contacts['technical']['givenName'] }} {{ contacts['technical']['surName'] }}</p>
-         <p> e-mail: <a href="mailto:{{ contacts['technical']['mail']}}">{{ contacts['technical']['mail'] }}</a></p>
+         <p> Name Surname: {{ idp_contacts['technical']['givenName'] }} {{ idp_contacts['technical']['surName'] }}</p>
+         <p> e-mail: <a href="mailto:{{ idp_contacts['technical']['mail']}}">{{ idp_contacts['technical']['mail'] }}</a></p>
          <p> tel.:</p>
 
          <h3>INFORMATION ABOUT THE ATTRIBUTE RELEASE TO FEDERATED RESOURCES:</h3>
-         <p>The {{ metadata['en']['mdui_displayName'] }} with this Identity Provider can send to the requested resource some informations (called attributes) about you.<br/>
+         <p>The {{ idp_metadata['en']['mdui_displayName'] }} with this Identity Provider can send to the requested resource some informations (called attributes) about you.<br/>
          These informations are:</p>
          <ul>
             <li>Needed to access on the resource requested</li>
@@ -173,7 +175,7 @@
            </tr>
          </table>
          <p><a href="https://www.idem.garr.it/it/servizi/sp" target="_blank">Resource list available as member of the IDEM Federation</a> that you can access with this Identity Provider.</p>
-         <p>The Privacy Policy applied to the users of the institution {{ metadata['en']['mdui_displayName'] }} is located here: <a href="/en/privacy.html">Privacy Policy</a></p>
+         <p>The Privacy Policy applied to the users of the institution {{ idp_metadata['en']['mdui_displayName'] }} is located here: <a href="/en/privacy.html">Privacy Policy</a></p>
       </div>
 
 </body>

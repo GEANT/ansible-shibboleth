@@ -6,20 +6,20 @@
         <Extensions>
             <shibmd:Scope regexp="false">{{ ldap_domain }}</shibmd:Scope>
             <mdui:UIInfo>
-{% for field in ["mdui_displayName", "mdui_description", "mdui_infoUrl", "mdui_privacyUrl", "mdui_favicon", "mdui_logo"] %}
-{% for lang, value in metadata.iteritems() %}
+{% for field in ["mdui_displayName", "mdui_description", "mdui_infoUrl", "mdui_privacyUrl", "mdui_logo", "mdui_favicon"] %}
+{% for lang, value in idp_metadata.iteritems() %}
 {% if field == "mdui_displayName" %}
-               <mdui:DisplayName xml:lang="{{ lang }}">{{ metadata[lang]['mdui_displayName'] }}</mdui:DisplayName>
+               <mdui:DisplayName xml:lang="{{ lang }}">{{ idp_metadata[lang]['mdui_displayName'] }}</mdui:DisplayName>
 {% elif field == "mdui_description" %}
-               <mdui:Description xml:lang="{{ lang }}">{{ metadata[lang]['mdui_description'] }}</mdui:Description>
+               <mdui:Description xml:lang="{{ lang }}">{{ idp_metadata[lang]['mdui_description'] }}</mdui:Description>
 {% elif field == "mdui_infoUrl" %}
-               <mdui:InformationURL xml:lang="{{ lang }}">{{ metadata[lang]['mdui_infoUrl'] }}</mdui:InformationURL>
+               <mdui:InformationURL xml:lang="{{ lang }}">{{ idp_metadata[lang]['mdui_infoUrl'] }}</mdui:InformationURL>
 {% elif field == "mdui_privacyUrl" %}
-               <mdui:PrivacyStatementURL xml:lang="{{ lang }}">{{ metadata[lang]['mdui_privacyUrl'] }}</mdui:PrivacyStatementURL>
+               <mdui:PrivacyStatementURL xml:lang="{{ lang }}">{{ idp_metadata[lang]['mdui_privacyUrl'] }}</mdui:PrivacyStatementURL>
 {% elif field == "mdui_favicon" %}
-               <mdui:Logo xml:lang="{{ lang }}" width="16" height="16">{{ metadata[lang]['mdui_favicon'] }}</mdui:Logo>
+               <mdui:Logo xml:lang="{{ lang }}" width="16" height="16">{{ idp_metadata[lang]['mdui_favicon'] }}</mdui:Logo>
 {% elif field == "mdui_logo" %}
-               <mdui:Logo xml:lang="{{ lang }}">{{ metadata[lang]['mdui_logo'] }}</mdui:Logo>
+               <mdui:Logo xml:lang="{{ lang }}">{{ idp_metadata[lang]['mdui_logo'] }}</mdui:Logo>
 {% endif %}
 {% endfor %}
 {% endfor %}
@@ -112,22 +112,22 @@
     </AttributeAuthorityDescriptor>
     <Organization>
 {% for field in ["org_name", "org_displayName", "org_url"] %}
-{% for lang, value in metadata.iteritems() %}
+{% for lang, value in idp_metadata.iteritems() %}
 {% if field == "org_name" %}
-       <OrganizationName xml:lang="{{ lang }}">{{ metadata[lang]['org_name'] }}</OrganizationName>
+       <OrganizationName xml:lang="{{ lang }}">{{ idp_metadata[lang]['org_name'] }}</OrganizationName>
 {% elif field == "org_displayName" %}
-       <OrganizationDisplayName xml:lang="{{ lang }}">{{ metadata[lang]['org_displayName'] }}</OrganizationDisplayName>
+       <OrganizationDisplayName xml:lang="{{ lang }}">{{ idp_metadata[lang]['org_displayName'] }}</OrganizationDisplayName>
 {% elif field == "org_url" %}
-       <OrganizationURL xml:lang="{{ lang }}">{{ metadata[lang]['org_url'] }}</OrganizationURL>
+       <OrganizationURL xml:lang="{{ lang }}">{{ idp_metadata[lang]['org_url'] }}</OrganizationURL>
 {% endif%}
 {% endfor %}
 {% endfor %}
    </Organization>
-{% for type, value in contacts.iteritems() %}
+{% for type, value in idp_contacts.iteritems() %}
    <ContactPerson contactType="{{ type }}">
-       <GivenName>{{ contacts[type]['givenName'] }}</GivenName>
-       <SurName>{{ contacts[type]['surName'] }}</SurName>
-       <EmailAddress>{{ contacts[type]['mail'] }}</EmailAddress>
+       <GivenName>{{ idp_contacts[type]['givenName'] }}</GivenName>
+       <SurName>{{ idp_contacts[type]['surName'] }}</SurName>
+       <EmailAddress>{{ idp_contacts[type]['mail'] }}</EmailAddress>
    </ContactPerson>
 {% endfor %}
 

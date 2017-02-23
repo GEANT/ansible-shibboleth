@@ -8,5 +8,5 @@
         Require all granted
     </Location>
 
-    RedirectMatch ^/$ https://{{ ansible_hostname }}.{{ https_domain }}/en/info.html
+    RedirectMatch ^/$ {{ idp_metadata['en']['mdui_infoUrl'] }}
 </IfModule>

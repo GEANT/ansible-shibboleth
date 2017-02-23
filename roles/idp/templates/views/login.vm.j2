@@ -270,8 +270,9 @@
                             <li class="list-help-item"><a href="#springMessageText("idp.privacyPage", "#")"><span class="item-marker">&rsaquo;</span> #springMessageText("idp.privacypage", "Privacy Policy")</a></li>
                         </ul>
                         <p>
-                            <a href="javascript:setParam('lang', 'it');"><img height="16px" src="/images/itFlag.png"></a>
-                            <a href="javascript:setParam('lang', 'en');"><img height="16px" src="/images/enFlag.png"></a>
+{% for language, value in idp_metadata.iteritems() %}
+                            <a href="javascript:setParam('lang', '{{ language }}');"><img height="16px" src="/{{ language }}/{{ language }}Flag.png"></a>
+{% endfor %}
                         </p>
                         <p>
                             <a href="#springMessageText("federation.url","#")"><img src="#springMessageText("federation.logo" ,"/images/federation-logo.png")" alt="#springMessageText("federation.name", "Federation Name")" style="width: 100px"/></a>

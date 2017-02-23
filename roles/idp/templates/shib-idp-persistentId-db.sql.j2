@@ -4,7 +4,7 @@ SET CHARACTER SET utf8;
 
 CREATE DATABASE IF NOT EXISTS shibboleth CHARACTER SET=utf8;
 
-GRANT ALL PRIVILEGES ON shibboleth.* TO shibboleth@localhost IDENTIFIED BY '{{ shibboleth_db_password }}';
+GRANT ALL PRIVILEGES ON shibboleth.* TO shibboleth@localhost IDENTIFIED BY '{{ idp_shibboleth_db_password }}';
 
 FLUSH PRIVILEGES;
 
