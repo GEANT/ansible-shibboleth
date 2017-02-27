@@ -58,10 +58,10 @@
 
         <ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://{{ ansible_hostname }}.{{ https_domain }}/idp/profile/SAML2/SOAP/ArtifactResolution" index="1"/>
 
-        <!--
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://{{ ansible_hostname }}.{{ https_domain }}/idp/profile/SAML2/Redirect/SLO"/>
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://{{ ansible_hostname }}.{{ https_domain }}/idp/profile/SAML2/POST/SLO"/>
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" Location="https://{{ ansible_hostname }}.{{ https_domain }}/idp/profile/SAML2/POST-SimpleSign/SLO"/>
+        <!--
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://{{ ansible_hostname }}.{{ https_domain }}:8443/idp/profile/SAML2/SOAP/SLO"/>
         -->
 

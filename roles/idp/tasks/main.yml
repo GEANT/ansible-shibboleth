@@ -213,7 +213,12 @@
    mode: "0644"
   with_items:
    - { src: "views/login.css.j2", dest: "/var/www/html/css/login.css" }
+   - { src: "views/consent.css.j2", dest: "/var/www/html/css/consent.css" }
    - { src: "views/login.vm.j2", dest: "/opt/shibboleth-idp/views/login.vm" }
+   - { src: "views/logout.vm.j2", dest: "/opt/shibboleth-idp/views/logout.vm" }
+   - { src: "views/logout-complete.vm.j2", dest: "/opt/shibboleth-idp/views/logout-complete.vm" }
+   - { src: "views/logout-propagate.vm.j2", dest: "/opt/shibboleth-idp/views/logout-propagate.vm" }
+   - { src: "views/intercept/attribute-release.vm.j2", dest: "/opt/shibboleth-idp/views/intercept/attribute-release.vm" }
    - { src: "messages/cookie_policy.properties.j2", dest: "/opt/shibboleth-idp/messages/cookie_policy.properties" }
    - { src: "messages/custom.properties.j2", dest: "/opt/shibboleth-idp/messages/custom.properties" }
    - { src: "messages/messages.properties.j2", dest: "/opt/shibboleth-idp/messages/messages.properties" }

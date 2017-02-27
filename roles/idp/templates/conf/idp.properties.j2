@@ -91,9 +91,9 @@ idp.session.StorageService = shibboleth.JPAStorageService
 # Tolerate storage-related errors
 #idp.session.maskStorageFailure = false
 # Track information about SPs logged into
-#idp.session.trackSPSessions = false
+idp.session.trackSPSessions = true
 # Support lookup by SP for SAML logout
-#idp.session.secondaryServiceIndex = false
+idp.session.secondaryServiceIndex = true
 # Length of time to track SP sessions
 #idp.session.defaultSPlifetime = PT2H
 
@@ -146,7 +146,7 @@ idp.consent.StorageService = shibboleth.JPAStorageService
 
 # Whether to lookup metadata, etc. for every SP involved in a logout
 # for use by user interface logic; adds overhead so off by default.
-#idp.logout.elaboration = false
+idp.logout.elaboration = true
 
 # Whether to require logout requests be signed/authenticated.
 #idp.logout.authenticated = true
