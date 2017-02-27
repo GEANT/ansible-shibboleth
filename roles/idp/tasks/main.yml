@@ -46,7 +46,7 @@
   when: shib_idp_dir.stat.isdir is undefined
   tags: idp
 
-- name: "Be sure that Apache2 and Jetty are configured to expone the Shibboleth IdP"
+- name: "Be sure that Jetty is configured correctly for Shibboleth IdP"
   copy:
    src: "{{ item.src }}"
    dest: "{{ item.dest }}"
@@ -57,7 +57,6 @@
    - { src: "files/jstl-1.2.jar", dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/jstl-1.2.jar" }
    - { src: "files/idp.xml", dest: "/opt/jetty/webapps/idp.xml" }
   notify:
-   - "Restart Apache"
    - "Restart Jetty"
   tags: idp 
 
@@ -69,7 +68,6 @@
     JAVA_HOME: "{{ java_home_dir }}"
   notify:
     - "Restart Jetty"
-    - "Restart Apache"
   when: shib_idp_dir.stat.isdir is undefined
   tags: idp
 
@@ -142,17 +140,15 @@
   changed_when: false
   tags: idp
 
-- name: "Be sure to create the useful directories for Login Page"
+- name: "Be sure to create 'css' directory needed by Login Page"
   file:
-    path: "/var/www/html/{{ item }}"
+    path: "/var/www/html/css"
     state: directory
-  with_items:
-    - css
   notify:
     - "Restart Apache"
   tags: idp
 
-- name: "Be sure that IdP configurations are present - Part 1"
+- name: "Be sure that IdP configurations files are present - Part 1"
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -176,13 +172,11 @@
 
 - name: "Be sure that IdP configurations are present - Part 2"
   copy:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
-   owner: "{{ item.owner }}"
+   src: "files/conf/"
+   dest: "/opt/shibboleth-idp/conf/"
+   owner: "jetty"
    group: "root"
-   mode: "{{ item.mode }}"
-  with_items:
-   - { src: "files/conf/", dest: "/opt/shibboleth-idp/conf/", owner: "jetty", mode: "0600" }
+   mode: "0600"
   notify:
     - "Restart Jetty"
   tags: idp
@@ -275,6 +269,7 @@
    group: "root"
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
+  when: "item.key != 'en'"
   notify:
     - "Restart Apache"
   tags: idp
@@ -287,6 +282,7 @@
    group: "root"
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
+  when: "item.key != 'en'"
   notify:
     - "Restart Apache"
   tags: idp

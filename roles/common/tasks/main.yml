@@ -9,7 +9,7 @@
    mode: "0644" 
   tags: common
 
-- name: "Be sure to comment out 'manage_etc_host' from /etc/cloud/cloud.cfg "
+- name: "Be sure to comment out 'manage_etc_host' from /etc/cloud/cloud.cfg"
   lineinfile:
    dest: /etc/cloud/cloud.cfg
    regexp: "manage_etc_hosts"

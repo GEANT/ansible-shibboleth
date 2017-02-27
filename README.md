@@ -2,7 +2,7 @@
 
 ## Simple flow to install and configure a Shibboleth IdP
 
-1. Move on the `/opt` directory and download the Ansible-Shibboleth code:
+1. Move on the ```/opt``` directory and download the Ansible-Shibboleth code:
     ```* cd /opt/```
     ```* git clone https://github.com/malavolti/ansible-shibboleth.git ; cd /opt/ansible-shibboleth```
 
@@ -140,12 +140,16 @@
 
 7. If you need to restore your IdP credentials insert the entire "```/opt/shibboleth-idp/credentials```" directory in the "```roles/idp/files/restore/##hostname##/```" directory and set the ```idp_restore = "True"```.
 
-8. Load the IdP style's file (flag, favicon and logo) in the "``roles/idp/files/restore/##hostname##/styles```" by following the `README.md` file. A "hostname-sample" has been created to help you with this.
+8. Upload the IdP style's file (flag, favicon and logo) in the "```roles/idp/files/restore/##hostname##/styles```" by following the ```README.md``` file. A "hostname-sample" has been created to help you with this.
 
-9. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) only on a specific development VM:
+9. Add the IdP Information and Privacy Policy page templates in the "```roles/idp/templates/styles/```" in your language by copying the english '```en/```' sample and changing each "```idp_metadata['en']```" (inside the "```info.html.j2```" and "```privacy.html.j2```" pages) and be sure to adapt the text of the pages.
+
+The ansible recipes use the languages provided by the "```idp_metadata```" dictionary so you **HAVE TO LEAVE** the default language "en" and add all other languages that your IdP will support and for which you have provided the needed files. (Point ```8.``` and ```9.```)
+
+10. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) only on a specific development VM:
     ```ansible-playbook site.yml -i development.ini --limit ##FULL.VM.QUALIFIED.DOMAIN.NAME## --vault-password-file .vault_pass.txt```
 
-10. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) into all development VMs:
+11. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) into all development VMs:
     ```ansible-playbook site.yml -i development.ini --vault-password-file .vault_pass.txt```
 
 ## Documentation ##
