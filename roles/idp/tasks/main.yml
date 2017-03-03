@@ -22,13 +22,23 @@
   changed_when: false
   tags: idp
 
+- name: Stat Shibboleth IdP tarball in /opt 
+  stat: path="/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"
+  register: shib_tarball
+  tags: idp
+
+- name: Download Shibboleth IdP
+  get_url: url="{{ idp_dl_url }}" dest=/usr/local/src
+  when: shib_tarball.stat.exists == False
+  tags: idp
+
 - name: "Be sure that the Shibboleth Identity Provider is downloaded and extracted into the right position"
   unarchive:
-    src: "https://shibboleth.net/downloads/identity-provider/{{ shib_idp_version }}/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"
+    src: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"
     dest: /usr/local/src
     owner: "root"
     group: "root"
-    remote_src: True
+    remote_src: yes
   when: shib_idp_dir.stat.isdir is undefined
   tags: idp
 
