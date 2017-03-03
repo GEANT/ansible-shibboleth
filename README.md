@@ -14,13 +14,13 @@
 4. Create the IdP configuration file as ```/opt/ansible-shibboleth/hosts_vars/FQDN.yml```:
     ```yaml
     # file: host_vars/##FQDN##.yml
-    https_domain: "example.org"
+    idp_fqdn: "idp.example.org"
     
     # LDAP Variables
     ldap_basedn: "dc=example,dc=org"
     ldap_domain: "example.org"
     ldap_org: "EXAMPLE Institution"
-    ldap_host: "{{ ansible_hostname }}.{{ https_domain }}"
+    ldap_host: "{{ idp_fqdn }}"
     ldap_user: "openldap"
     ldap_root_pw: "##ONE_PASSWORD##"
 
@@ -79,20 +79,20 @@
        it:
           mdui_displayName: "Organization english Display Name"
           mdui_description: "IDP di Test per Organization Name"
-          mdui_infoUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/it/info.html"
-          mdui_privacyUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/it/privacy.html"
-          mdui_favicon: "https://{{ ansible_hostname }}.{{ https_domain }}/it/favicon.png"
-          mdui_logo: "https://{{ ansible_hostname }}.{{ https_domain }}/it/logo.png"
+          mdui_infoUrl: "https://{{ idp_fqdn }}/it/info.html"
+          mdui_privacyUrl: "https://{{ idp_fqdn }}/it/privacy.html"
+          mdui_favicon: "https://{{ idp_fqdn }}/it/favicon.png"
+          mdui_logo: "https://{{ idp_fqdn }}/it/logo.png"
           org_name: "Organization italian Name"
           org_displayName: "Organization italian Display Name "
           org_url: "http://www.orgUrl.it"
        en:
           mdui_displayName: "Organization english Display Name"
           mdui_description: "IDP di Test per Organization Name"
-          mdui_infoUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/en/info.html"
-          mdui_privacyUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/en/privacy.html"
-          mdui_favicon: "https://{{ ansible_hostname }}.{{ https_domain }}/en/favicon.png"
-          mdui_logo: "https://{{ ansible_hostname }}.{{ https_domain }}/en/logo.png"
+          mdui_infoUrl: "https://{{ idp_fqdn }}/en/info.html"
+          mdui_privacyUrl: "https://{{ idp_fqdn }}/en/privacy.html"
+          mdui_favicon: "https://{{ idp_fqdn }}/en/favicon.png"
+          mdui_logo: "https://{{ idp_fqdn }}/en/logo.png"
           org_name: "Organization english Name"
           org_displayName: "Organization english Display Name"
           org_url: "http://www.orgUrl.uk/"
