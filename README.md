@@ -3,17 +3,17 @@
 ## Simple flow to install and configure a Shibboleth IdP
 
 1. Move on the ```/opt``` directory and download the Ansible-Shibboleth code:
-    ```* cd /opt/```
-    ```* git clone https://github.com/malavolti/ansible-shibboleth.git ; cd /opt/ansible-shibboleth```
+    * ```cd /opt/```
+    * ```git clone https://github.com/malavolti/ansible-shibboleth.git ; cd /opt/ansible-shibboleth```
 
-2. Edit the ```[production|test|developmet].ini``` inventory by adding your virtual machine servers.
+2. Edit the ```[production|test|developmet].ini``` inventory by adding your servers.
 
 3. Create your ```.vault_pass.txt``` that contains the encryption password:
-    ```* vim /opt/ansible-shibboleth/.vault_pass.txt```
+    * ```echo YOUR_VAULT_PASSWORD > /opt/ansible-shibboleth/.vault_pass.txt```
 
-4. Create the IdP configuration file as ```/opt/ansible-shibboleth/hosts_vars/##FULL.VM.QUALIFIED.DOMAIN.NAME##.yml```:
+4. Create the IdP configuration file as ```/opt/ansible-shibboleth/hosts_vars/FQDN.yml```:
     ```yaml
-    # file: host_vars/##FULL.VM.QUALIFIED.DOMAIN.NAME##.yml
+    # file: host_vars/##FQDN##.yml
     https_domain: "example.org"
     
     # LDAP Variables
@@ -134,7 +134,7 @@
     ```
 5. Ecrypt the IdP configuration file with Ansible Vault:
     * ```cd /opt/ansible-shibboleth```
-    * ```ansible-vault encrypt host_vars/##FULL.VM.QUALIFIED.DOMAIN.NAME##.yml --vault-password-file .vault_pass.txt```
+    * ```ansible-vault encrypt host_vars/FQDN.yml --vault-password-file .vault_pass.txt```
 
 6. Insert the IdP's HTTPS Certificate renamed into "```hostname.domain.name.ext.crt```", the IdP's HTTPS Certificate Key renamed into "```hostname.domain.name.ext.key```" and the Certification Authority certificate renamed into "```CA.crt```" inside ```/opt/ansible-shibboleth/roles/common/files```.
 
@@ -146,10 +146,10 @@
 
 The ansible recipes use the languages provided by the "```idp_metadata```" dictionary so you **HAVE TO LEAVE** the default language "en" and add all other languages that your IdP will support and for which you have provided the needed files. (Point ```8.``` and ```9.```)
 
-10. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) only on a specific development VM:
-    ```ansible-playbook site.yml -i development.ini --limit ##FULL.VM.QUALIFIED.DOMAIN.NAME## --vault-password-file .vault_pass.txt```
+10. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) only on a specific development server:
+    ```ansible-playbook site.yml -i development.ini --limit FQDN --vault-password-file .vault_pass.txt```
 
-11. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) into all development VMs:
+11. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) into all development servers:
     ```ansible-playbook site.yml -i development.ini --vault-password-file .vault_pass.txt```
 
 ## Documentation ##
@@ -170,15 +170,15 @@ The "```site.yml```" file contains what will be installed on the machine provide
 
 The "```shib-idp.yml```" contains:
    - ```hosts``` (who will receive the sync)
-   - ```remote_user``` (who will access via SSH on the VMs)
-   - ```roles``` (what will be installed and configured on the VMs)
+   - ```remote_user``` (who will access via SSH on the servers)
+   - ```roles``` (what will be installed and configured on the servers)
 
 The "```group_vars/```" directory contains:
    - ```all.yml```      (will contains all shared variable between architectures)
    - ```Debian.yml```   (will contains all variable debian-oriented)
    - ```RedHat.yml```   (will contains all variable redhat-oriented)
 
-"```host_vars```" directory contains one "full.qualified.domain.name.yml" for each VM that will contains some specific variables for the VM. 
+"```host_vars```" directory contains one ```FQDN.yml``` file for each server that contains specific variables for the host. 
 (This files have to be encrypted if shared on GitHub or somewhere other)
 
 ## Useful Commands ##
@@ -191,11 +191,11 @@ ansible-slave-2.test.garr.it
 -----------------------
 ```
 
-1. Test that the connection with the VMs is working:
+1. Test that the connection with the server(s) is working:
    * ```ansible all -m ping -i /opt/ansible-shibboleth/development.ini -u debian```
    ("```debian```" is the user used to perform the SSH connection with the client to synchronize)
 
-2. Get the facts from the VMs:
+2. Get the facts from the server(s):
    * ```ansible GROUP_NAME_or_HOST_NAME -m setup -i /opt/ansible-shibboleth/development.ini -u debian```
 
    Examples:
