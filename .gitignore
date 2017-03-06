@@ -15,3 +15,12 @@
 
 # ignore swp files
 *.swp
+
+# ignore emacs files
+*~
+
+# ignore .git_ignore files
+*.git_ignore
+
+# host_vars
+host_vars
