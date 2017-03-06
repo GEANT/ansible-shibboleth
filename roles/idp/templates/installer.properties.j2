@@ -2,9 +2,9 @@ idp.src.dir = /usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}
 
 idp.target.dir = /opt/shibboleth-idp
 
-idp.host.name = {{ ansible_hostname }}.{{ https_domain }}
+idp.host.name = {{ idp_fqdn }}
 
-idp.uri.subject.alt.name = https://{{ ansible_hostname }}.{{ https_domain }}/idp/shibboleth
+idp.uri.subject.alt.name = https://{{ idp_fqdn }}/idp/shibboleth
 
 idp.sealer.password = {{ idp_sealer_pw }}
 

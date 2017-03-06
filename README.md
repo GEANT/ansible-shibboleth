@@ -3,24 +3,24 @@
 ## Simple flow to install and configure a Shibboleth IdP
 
 1. Move on the ```/opt``` directory and download the Ansible-Shibboleth code:
-    ```* cd /opt/```
-    ```* git clone https://github.com/malavolti/ansible-shibboleth.git ; cd /opt/ansible-shibboleth```
+    * ```cd /opt/```
+    * ```git clone https://github.com/malavolti/ansible-shibboleth.git ; cd /opt/ansible-shibboleth```
 
-2. Edit the ```[production|test|developmet].ini``` inventory by adding your virtual machine servers.
+2. Edit the ```[production|test|developmet].ini``` inventory by adding your servers.
 
 3. Create your ```.vault_pass.txt``` that contains the encryption password:
-    ```* vim /opt/ansible-shibboleth/.vault_pass.txt```
+    * ```echo YOUR_VAULT_PASSWORD > /opt/ansible-shibboleth/.vault_pass.txt```
 
-4. Create the IdP configuration file as ```/opt/ansible-shibboleth/hosts_vars/##FULL.VM.QUALIFIED.DOMAIN.NAME##.yml```:
+4. Create the IdP configuration file as ```/opt/ansible-shibboleth/hosts_vars/FQDN.yml```:
     ```yaml
-    # file: host_vars/##FULL.VM.QUALIFIED.DOMAIN.NAME##.yml
-    https_domain: "example.org"
+    # file: host_vars/FQDN.yml
+    idp_fqdn: "idp.example.org"
     
     # LDAP Variables
     ldap_basedn: "dc=example,dc=org"
     ldap_domain: "example.org"
     ldap_org: "EXAMPLE Institution"
-    ldap_host: "{{ ansible_hostname }}.{{ https_domain }}"
+    ldap_host: "{{ idp_fqdn }}"
     ldap_user: "openldap"
     ldap_root_pw: "##ONE_PASSWORD##"
 
@@ -79,20 +79,20 @@
        it:
           mdui_displayName: "Organization english Display Name"
           mdui_description: "IDP di Test per Organization Name"
-          mdui_infoUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/it/info.html"
-          mdui_privacyUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/it/privacy.html"
-          mdui_favicon: "https://{{ ansible_hostname }}.{{ https_domain }}/it/favicon.png"
-          mdui_logo: "https://{{ ansible_hostname }}.{{ https_domain }}/it/logo.png"
+          mdui_infoUrl: "https://{{ idp_fqdn }}/it/info.html"
+          mdui_privacyUrl: "https://{{ idp_fqdn }}/it/privacy.html"
+          mdui_favicon: "https://{{ idp_fqdn }}/it/favicon.png"
+          mdui_logo: "https://{{ idp_fqdn }}/it/logo.png"
           org_name: "Organization italian Name"
           org_displayName: "Organization italian Display Name "
           org_url: "http://www.orgUrl.it"
        en:
           mdui_displayName: "Organization english Display Name"
           mdui_description: "IDP di Test per Organization Name"
-          mdui_infoUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/en/info.html"
-          mdui_privacyUrl: "https://{{ ansible_hostname }}.{{ https_domain }}/en/privacy.html"
-          mdui_favicon: "https://{{ ansible_hostname }}.{{ https_domain }}/en/favicon.png"
-          mdui_logo: "https://{{ ansible_hostname }}.{{ https_domain }}/en/logo.png"
+          mdui_infoUrl: "https://{{ idp_fqdn }}/en/info.html"
+          mdui_privacyUrl: "https://{{ idp_fqdn }}/en/privacy.html"
+          mdui_favicon: "https://{{ idp_fqdn }}/en/favicon.png"
+          mdui_logo: "https://{{ idp_fqdn }}/en/logo.png"
           org_name: "Organization english Name"
           org_displayName: "Organization english Display Name"
           org_url: "http://www.orgUrl.uk/"
@@ -131,25 +131,31 @@
         xUcaMUAAjkRvqnBAQQ+PXKpbnaCAz4Ac0VjpsAL1FftC/wyidBnBek00E0v5RycY
         tUFe0F+13jOrtfE8030X8SV7dgkZo5WTxwIQm3lJ9N6C7NRoDKHx/8F8SzoLC5wJ
         KwIDAQAB
+
+    ### WEB SERVER
+    ca: "ca.crt"
+
+    https_cert: "{{ idp_fqdn }}.crt"
+    https_key: "{{ idp_fqdn }}.key"
     ```
 5. Ecrypt the IdP configuration file with Ansible Vault:
     * ```cd /opt/ansible-shibboleth```
-    * ```ansible-vault encrypt host_vars/##FULL.VM.QUALIFIED.DOMAIN.NAME##.yml --vault-password-file .vault_pass.txt```
+    * ```ansible-vault encrypt host_vars/FQDN.yml --vault-password-file .vault_pass.txt```
 
-6. Insert the IdP's HTTPS Certificate renamed into "```hostname.domain.name.ext.crt```", the IdP's HTTPS Certificate Key renamed into "```hostname.domain.name.ext.key```" and the Certification Authority certificate renamed into "```CA.crt```" inside ```/opt/ansible-shibboleth/roles/common/files```.
+6. Insert the IdP's HTTPS Certificate renamed into "```FQDN.crt```", the IdP's HTTPS Certificate Key renamed into "```FQDN.key```" and the Certification Authority certificate renamed into "```CA.crt```" inside ```/opt/ansible-shibboleth/roles/common/files```.
 
-7. If you need to restore your IdP credentials insert the entire "```/opt/shibboleth-idp/credentials```" directory in the "```roles/idp/files/restore/##hostname##/```" directory and set the ```idp_restore = "True"```.
+7. If you need to restore your IdP credentials insert the entire "```/opt/shibboleth-idp/credentials```" directory in the "```roles/idp/files/restore/FQDN/```" directory and set the ```idp_restore = "True"```.
 
-8. Upload the IdP style's file (flag, favicon and logo) in the "```roles/idp/files/restore/##hostname##/styles```" by following the ```README.md``` file. A "hostname-sample" has been created to help you with this.
+8. Upload the IdP style's file (flag, favicon and logo) in the "```roles/idp/files/restore/FQDN/styles```" by following the ```README.md``` file. A "hostname-sample" has been created to help you with this.
 
 9. Add the IdP Information and Privacy Policy page templates in the "```roles/idp/templates/styles/```" in your language by copying the english '```en/```' sample and changing each "```idp_metadata['en']```" (inside the "```info.html.j2```" and "```privacy.html.j2```" pages) and be sure to adapt the text of the pages.
 
 The ansible recipes use the languages provided by the "```idp_metadata```" dictionary so you **HAVE TO LEAVE** the default language "en" and add all other languages that your IdP will support and for which you have provided the needed files. (Point ```8.``` and ```9.```)
 
-10. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) only on a specific development VM:
-    ```ansible-playbook site.yml -i development.ini --limit ##FULL.VM.QUALIFIED.DOMAIN.NAME## --vault-password-file .vault_pass.txt```
+10. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) only on a specific development server:
+    ```ansible-playbook site.yml -i development.ini --limit FQDN --vault-password-file .vault_pass.txt```
 
-11. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) into all development VMs:
+11. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) into all development servers:
     ```ansible-playbook site.yml -i development.ini --vault-password-file .vault_pass.txt```
 
 ## Documentation ##
@@ -170,15 +176,15 @@ The "```site.yml```" file contains what will be installed on the machine provide
 
 The "```shib-idp.yml```" contains:
    - ```hosts``` (who will receive the sync)
-   - ```remote_user``` (who will access via SSH on the VMs)
-   - ```roles``` (what will be installed and configured on the VMs)
+   - ```remote_user``` (who will access via SSH on the servers)
+   - ```roles``` (what will be installed and configured on the servers)
 
 The "```group_vars/```" directory contains:
    - ```all.yml```      (will contains all shared variable between architectures)
    - ```Debian.yml```   (will contains all variable debian-oriented)
    - ```RedHat.yml```   (will contains all variable redhat-oriented)
 
-"```host_vars```" directory contains one "full.qualified.domain.name.yml" for each VM that will contains some specific variables for the VM. 
+"```host_vars```" directory contains one ```FQDN.yml``` file for each server that contains specific variables for the host. 
 (This files have to be encrypted if shared on GitHub or somewhere other)
 
 ## Useful Commands ##
@@ -191,11 +197,11 @@ ansible-slave-2.test.garr.it
 -----------------------
 ```
 
-1. Test that the connection with the VMs is working:
+1. Test that the connection with the server(s) is working:
    * ```ansible all -m ping -i /opt/ansible-shibboleth/development.ini -u debian```
    ("```debian```" is the user used to perform the SSH connection with the client to synchronize)
 
-2. Get the facts from the VMs:
+2. Get the facts from the server(s):
    * ```ansible GROUP_NAME_or_HOST_NAME -m setup -i /opt/ansible-shibboleth/development.ini -u debian```
 
    Examples:
