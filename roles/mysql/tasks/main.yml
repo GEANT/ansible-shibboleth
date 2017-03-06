@@ -65,7 +65,7 @@
    password: "{{ mysql_root_password }}"
    state: present
   with_items:
-     - "{{ ansible_hostname }}"
+     - "{{ idp_fqdn }}"
      - 127.0.0.1
      - ::1
      - localhost

@@ -9,10 +9,12 @@ ntp2: ntp2.inrim.it
 ntp3: 0.it.pool.ntp.org
 
 ### WEB SERVER
-ca: GARR-MI-CA-selfsigned.pem
+ca: "idpcloud1.authnzi.org.crt"
 
-https_cert: "{{ ansible_hostname }}.{{ https_domain }}.crt"
-https_key: "{{ ansible_hostname }}.{{ https_domain }}.key"
+https_cert: "idpcloud1.authnzi.org.crt"
+https_key: "idpcloud1.authnzi.org.key"
 
 ### IDP
 shib_idp_version: "3.3.0"
+idp_dl_url: 
+  "https://shibboleth.net/downloads/identity-provider/{{ shib_idp_version }}/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"

@@ -104,14 +104,14 @@
    group: "root"
    mode: "{{ item.mode }}"
   with_items:
-   - { src: "files/restore/{{ ansible_hostname }}/credentials/idp-signing.crt", dest: "/opt/shibboleth-idp/credentials/idp-signing.crt", mode: "0644" }
-   - { src: "files/restore/{{ ansible_hostname }}/credentials/idp-signing.key", dest: "/opt/shibboleth-idp/credentials/idp-signing.key", mode: "0600" }
-   - { src: "files/restore/{{ ansible_hostname }}/credentials/idp-encryption.crt", dest: "/opt/shibboleth-idp/credentials/idp-encryption.crt", mode: "0644" }
-   - { src: "files/restore/{{ ansible_hostname }}/credentials/idp-encryption.key", dest: "/opt/shibboleth-idp/credentials/idp-encryption.key", mode: "0600" }
-   - { src: "files/restore/{{ ansible_hostname }}/credentials/idp-backchannel.crt", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.crt", mode: "0644" }
-   - { src: "files/restore/{{ ansible_hostname }}/credentials/idp-backchannel.p12", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.p12", mode: "0644" }
-   - { src: "files/restore/{{ ansible_hostname }}/credentials/sealer.jks", dest: "/opt/shibboleth-idp/credentials/sealer.jks", mode: "0644" }
-   - { src: "files/restore/{{ ansible_hostname }}/credentials/sealer.kver", dest: "/opt/shibboleth-idp/credentials/sealer.kver", mode: "0644" }
+   - { src: "files/restore/{{ idp_fqdn }}/credentials/idp-signing.crt", dest: "/opt/shibboleth-idp/credentials/idp-signing.crt", mode: "0644" }
+   - { src: "files/restore/{{ idp_fqdn }}/credentials/idp-signing.key", dest: "/opt/shibboleth-idp/credentials/idp-signing.key", mode: "0600" }
+   - { src: "files/restore/{{ idp_fqdn }}/credentials/idp-encryption.crt", dest: "/opt/shibboleth-idp/credentials/idp-encryption.crt", mode: "0644" }
+   - { src: "files/restore/{{ idp_fqdn }}/credentials/idp-encryption.key", dest: "/opt/shibboleth-idp/credentials/idp-encryption.key", mode: "0600" }
+   - { src: "files/restore/{{ idp_fqdn }}/credentials/idp-backchannel.crt", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.crt", mode: "0644" }
+   - { src: "files/restore/{{ idp_fqdn }}/credentials/idp-backchannel.p12", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.p12", mode: "0644" }
+   - { src: "files/restore/{{ idp_fqdn }}/credentials/sealer.jks", dest: "/opt/shibboleth-idp/credentials/sealer.jks", mode: "0644" }
+   - { src: "files/restore/{{ idp_fqdn }}/credentials/sealer.kver", dest: "/opt/shibboleth-idp/credentials/sealer.kver", mode: "0644" }
   notify:
    - "Restart Jetty"
   when: idp_restore == "True"
@@ -193,7 +193,7 @@
 
 - name: "Be sure that Federation logo, eduGAIN logo and other images are present"
   copy:
-   src: "files/restore/{{ ansible_hostname }}/styles/images"
+   src: "files/restore/{{ idp_fqdn }}/styles/images"
    dest: "/var/www/html/"
    owner: "root"
    group: "root"
@@ -204,7 +204,7 @@
 
 - name: "Be sure that IdP image files are present"
   copy:
-   src: "files/restore/{{ ansible_hostname }}/styles/{{ item.key }}/"
+   src: "files/restore/{{ idp_fqdn }}/styles/{{ item.key }}/"
    dest: "/var/www/html/{{ item.key }}/"
    owner: "root"
    group: "root"
