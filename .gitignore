@@ -22,5 +22,9 @@
 # ignore .git_ignore files
 *.git_ignore
 
+
 # host_vars
-host_vars
+host_vars/*
+
+# Exclude
+\!host_vars/FQDN.yml-template

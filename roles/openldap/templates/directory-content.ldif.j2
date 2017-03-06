@@ -14,3 +14,10 @@ dn: ou=system,{{ ldap_basedn }}
 objectClass: top
 objectClass: organizationalUnit
 ou: System
+
+dn: {{ idp_bindDN }}
+objectClass: inetOrgPerson
+cn: idpuser
+sn: idpuser
+givenName: idpuser
+userPassword: {{ idp_bindDNCredential }}

@@ -33,8 +33,8 @@ idp.authn.LDAP.userFilter                      = (uid={user})
 # for AD: idp.authn.LDAP.bindDN=adminuser@domain.com
 #idp.authn.LDAP.bindDN                           = uid=myservice,ou=system
 #idp.authn.LDAP.bindDNCredential                 = myServicePassword
-idp.authn.LDAP.bindDN                           = cn=admin,{{ ldap_basedn }}
-idp.authn.LDAP.bindDNCredential                 = {{ ldap_root_pw }}
+idp.authn.LDAP.bindDN                           = {{ idp_bindDN }}
+idp.authn.LDAP.bindDNCredential                 = {{ idp_bindDNCredential }}
 
 # Format DN resolution, used by directAuthenticator, adAuthenticator
 # for AD use idp.authn.LDAP.dnFormat=%s@domain.com

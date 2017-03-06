@@ -8,12 +8,6 @@ ntp1: ntp1.inrim.it
 ntp2: ntp2.inrim.it
 ntp3: 0.it.pool.ntp.org
 
-### WEB SERVER
-ca: "idpcloud1.authnzi.org.crt"
-
-https_cert: "idpcloud1.authnzi.org.crt"
-https_key: "idpcloud1.authnzi.org.key"
-
 ### IDP
 shib_idp_version: "3.3.0"
 idp_dl_url: 

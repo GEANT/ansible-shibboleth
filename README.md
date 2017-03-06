@@ -13,7 +13,7 @@
 
 4. Create the IdP configuration file as ```/opt/ansible-shibboleth/hosts_vars/FQDN.yml```:
     ```yaml
-    # file: host_vars/##FQDN##.yml
+    # file: host_vars/FQDN.yml
     idp_fqdn: "idp.example.org"
     
     # LDAP Variables
@@ -131,16 +131,22 @@
         xUcaMUAAjkRvqnBAQQ+PXKpbnaCAz4Ac0VjpsAL1FftC/wyidBnBek00E0v5RycY
         tUFe0F+13jOrtfE8030X8SV7dgkZo5WTxwIQm3lJ9N6C7NRoDKHx/8F8SzoLC5wJ
         KwIDAQAB
+
+    ### WEB SERVER
+    ca: "ca.crt"
+
+    https_cert: "{{ idp_fqdn }}.crt"
+    https_key: "{{ idp_fqdn }}.key"
     ```
 5. Ecrypt the IdP configuration file with Ansible Vault:
     * ```cd /opt/ansible-shibboleth```
     * ```ansible-vault encrypt host_vars/FQDN.yml --vault-password-file .vault_pass.txt```
 
-6. Insert the IdP's HTTPS Certificate renamed into "```hostname.domain.name.ext.crt```", the IdP's HTTPS Certificate Key renamed into "```hostname.domain.name.ext.key```" and the Certification Authority certificate renamed into "```CA.crt```" inside ```/opt/ansible-shibboleth/roles/common/files```.
+6. Insert the IdP's HTTPS Certificate renamed into "```FQDN.crt```", the IdP's HTTPS Certificate Key renamed into "```FQDN.key```" and the Certification Authority certificate renamed into "```CA.crt```" inside ```/opt/ansible-shibboleth/roles/common/files```.
 
-7. If you need to restore your IdP credentials insert the entire "```/opt/shibboleth-idp/credentials```" directory in the "```roles/idp/files/restore/##hostname##/```" directory and set the ```idp_restore = "True"```.
+7. If you need to restore your IdP credentials insert the entire "```/opt/shibboleth-idp/credentials```" directory in the "```roles/idp/files/restore/FQDN/```" directory and set the ```idp_restore = "True"```.
 
-8. Upload the IdP style's file (flag, favicon and logo) in the "```roles/idp/files/restore/##hostname##/styles```" by following the ```README.md``` file. A "hostname-sample" has been created to help you with this.
+8. Upload the IdP style's file (flag, favicon and logo) in the "```roles/idp/files/restore/FQDN/styles```" by following the ```README.md``` file. A "hostname-sample" has been created to help you with this.
 
 9. Add the IdP Information and Privacy Policy page templates in the "```roles/idp/templates/styles/```" in your language by copying the english '```en/```' sample and changing each "```idp_metadata['en']```" (inside the "```info.html.j2```" and "```privacy.html.j2```" pages) and be sure to adapt the text of the pages.
 
