@@ -140,7 +140,7 @@
     ```
 5. Ecrypt the IdP configuration file with Ansible Vault:
     * ```cd /opt/ansible-shibboleth```
-    * ```ansible-vault encrypt host_vars/FQDN.yml --vault-password-file .vault_pass.txt```
+    * ```ansible-vault encrypt inventories/#_environment_#/host_vars/FQDN.yml --vault-password-file .vault_pass.txt```
 
 6. Insert the IdP's HTTPS Certificate renamed into "```FQDN.crt```", the IdP's HTTPS Certificate Key renamed into "```FQDN.key```" and the Certification Authority certificate renamed into "```CA.crt```" inside ```/opt/ansible-shibboleth/roles/common/files```.
 
@@ -153,16 +153,16 @@
 The ansible recipes use the languages provided by the "```idp_metadata```" dictionary so you **HAVE TO LEAVE** the default language "en" and add all other languages that your IdP will support and for which you have provided the needed files. (Point ```8.``` and ```9.```)
 
 10. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) only on a specific development server:
-    ```ansible-playbook site.yml -i development.ini --limit FQDN --vault-password-file .vault_pass.txt```
+    ```ansible-playbook site.yml -i inventories/development/development.ini --limit FQDN --vault-password-file .vault_pass.txt```
 
 11. Run this command to run Ansible on develoment inventory to install and configure an IdP (under development) into all development servers:
-    ```ansible-playbook site.yml -i development.ini --vault-password-file .vault_pass.txt```
+    ```ansible-playbook site.yml -i inventories/development/development.ini --vault-password-file .vault_pass.txt```
 
 ## Documentation ##
-The environment (production,development, test, ...) are located into different files:
-   - ```development.ini```
-   - ```production.ini```
-   - ```test.ini```
+The inventories are located into different environments (production,development, test, ...):
+   - ```inventories/development/development.ini```
+   - ```inventories/production/production.ini```
+   - ```inventories/test/test.ini```
    - ...
 
 Each environment file divides the architectures through different labels:
@@ -171,21 +171,21 @@ Each environment file divides the architectures through different labels:
    - ...
 
 The "```site.yml```" file contains what will be installed on the machine provided by the environment:
-   - ```shib-idp.yml``` (Install,Configure and Run a Shibboleth IdP)
+   - ```shib-idp-servers.yml``` (Install,Configure and Run Shibboleth IdP servers)
    - ...
 
-The "```shib-idp.yml```" contains:
-   - ```hosts``` (who will receive the sync)
-   - ```remote_user``` (who will access via SSH on the servers)
-   - ```roles``` (what will be installed and configured on the servers)
+The "```shib-idp-servers.yml```" contains:
+   - ```hosts```        (who will receive the sync)
+   - ```remote_user```  (who will access via SSH on the servers)
+   - ```roles```        (what will be installed and configured on the servers)
 
-The "```group_vars/```" directory contains:
+The "```group_vars/```" directories contains (for each environment):
    - ```all.yml```      (will contains all shared variable between architectures)
    - ```Debian.yml```   (will contains all variable debian-oriented)
    - ```RedHat.yml```   (will contains all variable redhat-oriented)
 
-"```host_vars```" directory contains one ```FQDN.yml``` file for each server that contains specific variables for the host. 
-(This files have to be encrypted if shared on GitHub or somewhere other)
+The "```host_vars/```" directory contains one ```FQDN.yml``` file for each server that contains specific variables for the host into the specific environment.
+(These files have to be encrypted (you can do this with Ansible Vault) if shared on GitHub or somewhere other)
 
 ## Useful Commands ##
 
@@ -198,25 +198,25 @@ ansible-slave-2.test.garr.it
 ```
 
 1. Test that the connection with the server(s) is working:
-   * ```ansible all -m ping -i /opt/ansible-shibboleth/development.ini -u debian```
+   * ```ansible all -m ping -i /opt/ansible-shibboleth/inventories/development/development.ini -u debian```
    ("```debian```" is the user used to perform the SSH connection with the client to synchronize)
 
 2. Get the facts from the server(s):
-   * ```ansible GROUP_NAME_or_HOST_NAME -m setup -i /opt/ansible-shibboleth/development.ini -u debian```
+   * ```ansible GROUP_NAME_or_HOST_NAME -m setup -i /opt/ansible-shibboleth/inventories/development/development.ini -u debian```
 
    Examples:
       * without encrypted files:
-         ```ansible GROUP_NAME_or_HOST_NAME -m setup -i /opt/ansible-shibboleth/development.ini -u debian```
+         ```ansible GROUP_NAME_or_HOST_NAME -m setup -i /opt/ansible-shibboleth/inventories/development/development.ini -u debian```
       * with encrypted files:
-         ```ansible GROUP_NAME_or_HOST_NAME -m setup -i /opt/ansible-shibboleth/development.ini -u debian --vault-password-file .vault_pass.txt```
+         ```ansible GROUP_NAME_or_HOST_NAME -m setup -i /opt/ansible-shibboleth/inventories/development/development.ini -u debian --vault-password-file .vault_pass.txt```
 
    ("```.vault_pass.txt```" is the file you have created that contains the encryption password)
 
 3. Encrypt files:
-   * ```ansible-vault encrypt host_vars/#_full.qualified.domain.name_#.yml --vault-password-file .vault_pass.txt```
+   * ```ansible-vault encrypt inventories/#_environment_#/host_vars/#_full.qualified.domain.name_#.yml --vault-password-file .vault_pass.txt```
 
 4. Decrypt Encrypted files:
-   * ```ansible-vault decrypt host_vars/#_full.qualified.domain.name_#.yml --vault-password-file .vault_pass.txt```
+   * ```ansible-vault decrypt inventories/#_environment_#/host_vars/#_full.qualified.domain.name_#.yml --vault-password-file .vault_pass.txt```
 
 5. View Encrypted files:
-   * ```ansible-vault view host_vars/#_full.qualified.domain.name_#.yml --vault-password-file .vault_pass.txt```
+   * ```ansible-vault view inventories/#_environment_#/host_vars/#_full.qualified.domain.name_#.yml --vault-password-file .vault_pass.txt```

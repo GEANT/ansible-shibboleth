@@ -24,7 +24,20 @@
 
 
 # host_vars
+!host_vars/
 host_vars/*
 
 # Exclude
-\!host_vars/FQDN.yml-template
+!host_vars/FQDN.yml-template
+
+
+# ignore Ansible inventories
+*.ini
+
+# host_vars
+!restore/
+restore/*
+
+# Exclude
+!restore/sample-FQDN-dir/
+
