@@ -6,12 +6,15 @@
     * ```cd /opt/```
     * ```git clone https://github.com/malavolti/ansible-shibboleth.git ; cd /opt/ansible-shibboleth```
 
-2. Edit the ```[production|test|developmet].ini``` inventory by adding your servers.
+2. Edit the right inventory file about your IdP servers:
+    * ```inventories/development/development.ini``` for your development servers.
+    * ```inventories/production/production.ini``` for your production servers.
+    * ```inventories/test/test.ini``` for your test servers.
 
 3. Create your ```.vault_pass.txt``` that contains the encryption password:
     * ```echo YOUR_VAULT_PASSWORD > /opt/ansible-shibboleth/.vault_pass.txt```
 
-4. Create the IdP configuration file as ```/opt/ansible-shibboleth/hosts_vars/FQDN.yml```:
+4. Create the IdP configuration file as ```/opt/ansible-shibboleth/#_environment_#/hosts_vars/FQDN.yml```:
     ```yaml
     # file: host_vars/FQDN.yml
     idp_fqdn: "idp.example.org"
