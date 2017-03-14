@@ -1,0 +1,66 @@
+<?php // Copyright (c) 2011, SWITCH - Serving Swiss Universities
+
+// Whether or not to add the entityID of the preselected IdP to the
+// exported JSON/Text/PHP Code
+// Lowers security against phising!
+// If this value is set to true, any web page
+// in the world can easily find out with a high probability from which 
+// organization a user is from. This could be misused for phishing attacks. 
+// Therefore, only enable this feature if you know what you are doing!
+$exportPreselectedIdP = false;
+
+// Whether to enable logging of WAYF/DS requests
+// If turned on make sure to also configure $WAYFLogFile
+$useLogging = true; 
+
+
+// 4. Appearance settings
+//**************************
+
+// Name of the federation
+$federationName = 'IDEM Federation';
+
+// URL to send user to when clicking on federation logo
+$federationURL = '{{ idp_federation_url_en }}';
+
+
+// 5. Files and path settings
+//***************************
+
+// Set both config files to the same value if you don't want to use the 
+// the WAYF to read a (potential) automatically generated file that undergoes
+// some plausability checks before being used
+$IDPConfigFile = 'IDProvider.conf.php';
+$backupIDPConfigFile = 'IDProvider.conf.php';
+
+// Use $metadataFile as source federation's metadata.
+$metadataFile = '/opt/shibboleth-idp/metadata/{{ fed_md }}';
+
+// File to store the parsed IdP list
+// Will be updated automatically if the metadataFile modification time
+// is more recent than this file's
+// The user running the script must have permission to create $metadataIdpFile
+$metadataIDPFile = 'IDProvider.metadata.php';
+
+// File to store the parsed SP list.
+// Will be updated automatically if the metadataFile modification time
+// is more recent than this file's
+// The user running the script must have permission to create $metadataIdpFile
+$metadataSPFile = 'SProvider.metadata.php';
+
+// File to use as the lock file for writing the parsed IdP and SP lists.
+// The user running the script must have permission to write $metadataLockFile
+$metadataLockFile = '/tmp/statistics_metadata.lock';
+
+// Where to log the access
+// Make sure the web server user has write access to this file!
+$WAYFLogFile = '/var/log/apache2/statistics.log'; 
+
+
+// Development mode settings
+//**************************
+// If the development mode is activated, PHP errors and warnings will be displayed
+$developmentMode = false;
+
+?>
+

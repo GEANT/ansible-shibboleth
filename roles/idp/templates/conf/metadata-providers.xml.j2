@@ -42,7 +42,8 @@
       id="{{ md['id'] }}"
       xsi:type="FileBackedHTTPMetadataProvider"
       backingFile="%{idp.home}/metadata/{{ md['file'] }}"
-      metadataURL="{{ md['url'] }}">
+      metadataURL="{{ md['url'] }}"
+      disregardTLSCertificate="{{ md['validate_ssl_cert'] }}">
 
 {% if md['pubKey'] is defined %}
       <!--

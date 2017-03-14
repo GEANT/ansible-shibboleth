@@ -1,0 +1,7 @@
+#!/bin/sh
+cd /opt/loganalysis
+
+php readMetadata.php
+php insertSP.php
+
+python dbanalysis.py /opt/shibboleth-idp/logs/idp-audit*

@@ -1,0 +1,28 @@
+SET NAMES 'utf8';
+
+SET CHARACTER SET utf8;
+
+CREATE DATABASE IF NOT EXISTS statistics CHARACTER SET=utf8;
+
+GRANT ALL PRIVILEGES ON statistics.* TO statistics@localhost IDENTIFIED BY '{{ idp_stats_db_pw }}';
+
+FLUSH PRIVILEGES;
+
+USE statistics;
+
+CREATE TABLE IF NOT EXISTS logins
+(
+idp VARCHAR(255) NOT NULL,
+data date NOT NULL,
+sp VARCHAR(255) NOT NULL,
+user VARCHAR(127) NOT NULL,
+logins int(11) DEFAULT NULL,
+PRIMARY KEY (idp, data, sp, user)
+);
+
+CREATE TABLE IF NOT EXISTS sps
+(
+sp VARCHAR(255) NOT NULL,
+name VARCHAR(255) DEFAULT NULL,
+PRIMARY KEY (sp)
+);

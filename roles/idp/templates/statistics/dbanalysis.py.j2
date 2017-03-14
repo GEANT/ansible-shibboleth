@@ -1,0 +1,107 @@
+#!/usr/bin/python
+
+# Copyright 2010 University Corporation for Advanced Internet Development, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+"""Parse Shibboleth 2.x or 3.x Identity Provider audit logfile and generate simple stats.
+   Audit log file format: https://wiki.shibboleth.net/confluence/display/SHIB2/IdPLogging"""
+
+import sys
+import fileinput
+import os
+import MySQLdb
+import random
+from optparse import OptionParser
+from operator import itemgetter
+from datetime import datetime, date
+
+def parseFiles(files):
+    """Build datastructures from lines."""
+    lines = []
+    if sys.version_info < (2, 5):
+        for line in fileinput.input(files):
+            lines.append(line.rstrip().split("|"))
+    else:
+        for line in fileinput.input(files, openhook=fileinput.hook_compressed):
+            lines.append(line.rstrip().split("|"))
+
+    dictAll = {}
+
+    idp = None
+
+    for event in lines:
+        try:
+            strdatetime,reqBind,reqId,rp,msgProfile,idp,respBind,respId,user,authnMeth,relAttribs,nameId,assertIds,EOL = event
+            if user == 'test' or user == 'testuser' or (user == 'malavolti' and rp == 'https://sp24-test.garr.it/shibboleth') or idp == '' or idp == None:
+                continue
+        except ValueError:
+            print """ERROR: Unsupported log file format or using compressed log files with Python < 2.5.%s. See the documentation in the Shibboleth wiki.""" % os.linesep
+            sys.exit(-1)
+
+        # set the 'curdate' with YYYY-MM-DD format
+        curdate = str(datetime.strptime(strdatetime, '%Y%m%dT%H%M%SZ').date())
+
+        # if the 'curdate' is not in dictAll dictionary, create a new dictionary for that curdate
+        if not curdate in dictAll:
+            dictAll[curdate] = {}
+
+        # if the relying party 'rp' does not exist for the 'curdate' date, create a new dictionary for it at that curdate
+        if not rp in dictAll[curdate]:
+            dictAll[curdate][rp] = {}
+
+        # if the 'user' exists 
+        if not user == '':
+            # then search him in the dictionary created for the relying party 'rp' and add a login for him
+            if user in dictAll[curdate][rp]:
+                dictAll[curdate][rp][user] += 1
+            # otherwise set to 1 the logins for that user because it is his first login
+            else:
+                dictAll[curdate][rp][user] = 1
+
+    database = MySQLdb.connect(host="localhost", user="statistics", passwd="{{ idp_stats_db_pw }}", db="statistics")
+
+    cursor = database.cursor()
+    cursor.execute("SELECT MAX(data) FROM logins")
+    (lastdata,) = cursor.fetchone()
+
+    count = 0
+    for data, a in dictAll.items():
+       if datetime.strptime(data, "%Y-%m-%d").date() <= date.today():
+          if lastdata is None or datetime.strptime(data, "%Y-%m-%d").date() > lastdata:
+             for sp, b in a.items():
+                for utente, numlogins in b.items():
+                   if idp:
+                     #print "INSERT INTO `logins` VALUES (%s, %s, %s, %s, %s);" % (idp, data, sp, utente, numlogins)
+                     cursor.execute("INSERT INTO logins VALUES (%s, %s, %s, %s, %s)", (idp, data, sp, utente, numlogins))
+                     database.commit()
+                     count = count + 1
+
+    database.close()
+    print "Inserted %d elements in the login database." % count
+
+def main():
+    """Parse command line options and arguments and their contents."""
+    parser = OptionParser()
+    usage = "usage: %prog [files ...]"
+    (options, args) = parser.parse_args()
+    if len(args) == 0:
+        print "Missing filename(s). Specify '-' as filename to read from STDIN.\n"
+        parser.print_help()
+        sys.exit(-1)
+
+    parseFiles(args)
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,113 @@
+html, body {
+	color: #25383C;
+	font: 14px/1.5em "Lucida Grande", Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	margin: 0px;
+	padding: 0px;
+	height: 100%;
+	width: 100%;
+}
+
+#menu {
+	background-color: #99CCFF;
+	float: left;
+	height: 100%;
+	box-shadow: 2px 2px 2px #888888;
+	width: 200px;
+}
+
+#menu #logo {
+	padding: 10px;
+	text-align: center;
+}
+
+#menu li {
+	padding-left: 10px;
+	margin-bottom: 2px;
+}
+
+#menu li a.current {
+	color: #CC0033;
+}
+
+#corpo {
+	margin-left: 210px;
+	padding-right: 10px;
+}
+
+a:link, a:visited {
+	color: #3b5998;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+a:hover, a:active {
+	text-decoration: underline;
+}
+
+strong {
+	font-weight: bold;
+}
+
+i {
+	font-style: italic;
+}
+
+h1 {
+	border-bottom: 2px solid #999999;
+	margin: 0 0 2px 0;
+	padding: 12px 0 2px;
+	font-size: 20pt;
+}
+
+h2 {
+	font-style: italic;
+	padding: 2px 0 2px;
+	margin: 0 0 20px 0;
+	font-size: 14pt;
+}
+
+#graphs {
+	min-width: 950px;
+	height: 500px;
+}
+
+#timeline {
+	min-width: 650px;
+	height: 500px;
+	float: left;
+}
+
+#pie {
+	min-width: 250px;
+	height: 500px;
+	float: left;
+}
+
+#pietitle {
+	font-family: Arial;
+	font-size: 13px;
+	font-weight: bold;
+	line-height: 13px;
+	padding: 10px;
+	text-align: center;
+}
+
+#piechart {
+	height: 350px;
+}
+
+#legend {
+	cursor: hand;
+	cursor: pointer;
+	color: #3b5998;
+}
+
+#table {
+	min-width: 900px;
+	display: inline-block;
+}
+
+#legend:hover {
+	text-decoration: underline;
+}
