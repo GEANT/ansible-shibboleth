@@ -2,6 +2,8 @@
 idp_fqdn: FQDN
 
 # LDAP Variables
+ldap_restore: "False"
+
 ldap_basedn: "dc=example,dc=org"
 ldap_domain: "example.org"
 ldap_org: "EXAMPLE Institution"
@@ -17,7 +19,8 @@ mysql_root_password: "mysqlrootpassword"
 # IDP Variables
 
 # Set to 'True' to perform an IdP Restoration
-idp_restore: "False"
+idp_cert_restore: "False"
+idp_db_restore: "False"
 
 idp_pw: "rootpassword"
 idp_sealer_pw: "rootpassword"

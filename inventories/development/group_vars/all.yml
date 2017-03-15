@@ -10,5 +10,5 @@ ntp3: 0.it.pool.ntp.org
 
 ### IDP
 shib_idp_version: "3.3.0"
-idp_dl_url: 
-  "https://shibboleth.net/downloads/identity-provider/{{ shib_idp_version }}/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"
+idp_dl_url: "https://shibboleth.net/downloads/identity-provider/{{ shib_idp_version }}/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"
+shib_idp_checksum: "558c6b71e6eba8fbdff19ee8857368d1a6facdfe2c703afc70d5b1655411f552"

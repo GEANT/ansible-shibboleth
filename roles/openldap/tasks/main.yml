@@ -226,21 +226,85 @@
 
 - name: "Be sure to create directory needed for backups"
   file:
-   path: "/var/lib/autoldapbackup"
+   dest: "/var/lib/autoldapbackup"
    state: "directory"
    mode: "750"
   tags: openldap
 
-- name: "Be sure to have the autoldapbackup files"
+- name: "Be sure to have the autoldapbackup daily CRON job configured"
   copy:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
+   src: "files/autoldapbackup"
+   dest: "/etc/cron.daily/autoldapbackup"
    owner: "root"
    group: "root"
-   mode: "{{ item.mode }}"
+   mode: "0755"
+  tags: openldap
+
+- name: "Be sure to have executable of autoldapbackup in the right position"
+  template:
+   src: "autoldapbackup.sh.j2"
+   dest: "/usr/sbin/autoldapbackup"
+   owner: "root"
+   group: "root"
+   mode: "0755"
+  tags: openldap 
+
+- name: "RESTORE - Be sure to put the backup into the /root directory"
+  copy:
+   src: "files/restore/{{ idp_fqdn }}/ldap-backup.gz"
+   dest: "/root/ldap-backup.gz"
+   owner: "root"
+   group: "root"
+   mode: "0600"
+  when: ldap_restore == "True"
+  tags: openldap
+
+- name: "RESTORE - Be sure to extract the LDAP Backup into the right position"
+  command: "gunzip /root/ldap-backup.gz"
+  when: ldap_restore == "True"
+  tags: openldap
+
+- name: "RESTORE - Be sure that the ldap-backup has the right permission"
+  file:
+   dest: "/root/ldap-backup"
+   owner: "root"
+   group: "root"
+   mode: "600"
+  when: ldap_restore == "True"
+  tags: openldap
+
+- name: "RESTORE - Check the existance of branch 'people' inside LDAP and store the result into 'people_in_ldap' ansible variable"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap_basedn }} objectClass=organizationalUnit dn | grep ou=people,{{ ldap_basedn }} | wc -l"
+  register: people_in_ldap
+  changed_when: false
+  when: ldap_restore == "True"
+  tags: openldap
+
+- name: "RESTORE - Be sure that the branch 'ou=people' is absent"
+  command: "ldapdelete -r 'ou=people,{{ ldap_basedn }}' -H ldap://{{ idp_fqdn }} -D '{{ ldap_root_dn }}' -w {{ ldap_root_pw }}"
+  when: ldap_restore == "True" and people_in_ldap.stdout == "1"
+  tags: openldap
+
+- name: "RESTORE - Be sure to stop SLAPD before to restore entries"
+  service:
+   name: slapd
+   state: stopped
+  when: ldap_restore == "True"
+  tags: openldap
+
+- name: "RESTORE - Be sure to restore ldap entries"
+  command: "slapadd -c -l /root/ldap-backup"
+  when: ldap_restore == "True"
+  tags: openldap
+
+- name: "RESTORE - Be sure to remove the ldap-backup.ldif restored"
+  file:
+   dest: "{{ item.dest }}"
+   state: "absent"
   with_items:
-   - { src: "files/autoldapbackup.sh", dest: "/usr/sbin/autoldapbackup", mode: "0755" }
-   - { src: "files/autoldapbackup", dest: "/etc/cron.daily/autoldapbackup", mode: "0755" }
+   - { dest: "/root/ldap-backup.ldif" }
+   - { dest: "/root/ldap-backup.gz" }
+  when: ldap_restore == "True"
   tags: openldap
 
 - name: "Be sure that OpenLDAP is up and running"
@@ -249,3 +313,4 @@
    state: started
    enabled: yes
   tags: openldap
+

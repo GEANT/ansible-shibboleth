@@ -4,9 +4,9 @@ header('Content-Type: application/json');
 include_once("db.php");
 
 if (!mysql_connect($sbhost, $dbuser, $dbpasswd))
-	die("Impossibile connettersi al database");
+	die("Unable to connect to database");
 if (!mysql_select_db($dbname))
-	die("Impossibile selezionare il database");
+	die("Unable to select 'statistics' database");
 
 $sps_names = array();
 $result = mysql_query("SELECT sp, name FROM sps");
@@ -15,7 +15,7 @@ while($row = mysql_fetch_row($result)) {
 }
 mysql_free_result($result);
 
-$dati = $_GET['dati'];
+$dati = isset($_GET['dati']) ? $_GET['dati'] : "sp";
 $item = $_GET['item'];
 if ($dati == "sp") {
 	$curitem = array_search($item, $sps_names);

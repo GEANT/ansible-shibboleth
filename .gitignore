@@ -36,5 +36,10 @@ inventories/*/host_vars/*
 # restore idp directory 
 roles/idp/files/restore/*
 
+# restore ldap directory
+roles/openldap/files/restore/*
+
 # Exclude
 !roles/idp/files/restore/sample-FQDN-dir/
+!roles/openldap/files/restore/sample-FQDN-dir/
+

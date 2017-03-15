@@ -20,6 +20,8 @@
     idp_fqdn: "idp.example.org"
     
     # LDAP Variables
+    ldap_restore: "False"   
+
     ldap_basedn: "dc=example,dc=org"
     ldap_domain: "example.org"
     ldap_org: "EXAMPLE Institution"
@@ -33,7 +35,8 @@
     # IDP Variables
 
     # Set to 'True' to perform an IdP Restoration
-    idp_restore: "False"
+    idp_cert_restore: "False"
+    idp_db_restore: "False"
 
     idp_pw: "## IDP PASSWORD ##"
     idp_sealer_pw: "## IDP SEALER PASSWORD ##"
@@ -151,7 +154,7 @@
 
 6. Insert the IdP's HTTPS Certificate renamed into "```FQDN.crt```", the IdP's HTTPS Certificate Key renamed into "```FQDN.key```" and the Certification Authority certificate renamed into "```CA.crt```" inside ```/opt/ansible-shibboleth/roles/common/files```.
 
-7. If you need to restore your IdP credentials insert the entire "```/opt/shibboleth-idp/credentials```" directory in the "```roles/idp/files/restore/FQDN/```" directory and set the ```idp_restore = "True"```.
+7. If you need to restore your IdP credentials insert the entire "```/opt/shibboleth-idp/credentials```" directory in the "```roles/idp/files/restore/FQDN/```" directory and set the ```idp_cert_restore = "True"```.
 
 8. Upload the IdP style's file (flag, favicon and logo) in the "```roles/idp/files/restore/FQDN/styles```" by following the ```README.md``` file. A "hostname-sample" has been created to help you with this.
 

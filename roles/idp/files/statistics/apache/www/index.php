@@ -9,13 +9,9 @@
         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 </head>
 <?php
-        $dati = $_GET['dati'];
-        if ($dati == "") $dati = "sp";
-
-        $year = $_GET['year'];
-        $month = $_GET['month'];
-        if ($year == "") $year = date('Y');
-        if ($month == "") $month = date('m');
+        $dati = isset($_GET['dati']) ? $_GET['dati'] : "sp";
+        $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
+        $month = isset($_GET['month']) ? $_GET['month'] : date('m');
 
         $months = array('', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
 
@@ -304,7 +300,7 @@
                 } else {
                         echo "data.addColumn('string', 'Date');";
                 }
-                foreach ($sps as $spname) echo "data.addColumn('number', '".$spname."');\n";
+                foreach ($sps_names as $spname) echo "data.addColumn('number', '".$spname."');\n";
                 ?>
                 if (selecteddata == null) {
                         viewItems[selecteditem] = !viewItems[selecteditem];

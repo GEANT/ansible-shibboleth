@@ -68,12 +68,12 @@ export LC_ALL=C
 PROGNAME=`${BASENAME} $0`
 PATH=/usr/local/bin:/usr/bin:/bin
 DATE=`${DATEC} +%Y-%m-%d_%Hh%Mm`                                # Datestamp e.g 2002-09-21
-DOW=`${DATEC} +%A`                                                      # Day of the week e.g. Monday
+DOW=`${DATEC} +%A`                                              # Day of the week e.g. Monday
 DNOW=`${DATEC} +%u`                                             # Day number of the week 1 to 7 where 1 represents Monday
-DOM=`${DATEC} +%d`                                                      # Date of the Month e.g. 27
-M=`${DATEC} +%B`                                                        # Month e.g January
-W=`${DATEC} +%V`                                                        # Week Number e.g 37
-VER=0.0.1                                                               # Version Number
+DOM=`${DATEC} +%d`                                              # Date of the Month e.g. 27
+M=`${DATEC} +%B`                                                # Month e.g January
+W=`${DATEC} +%V`                                                # Week Number e.g 37
+VER=0.0.1                                                       # Version Number
 LOGFILE=${BACKUPDIR}/${DBHOST}-`${DATEC} +%N`.log               # Logfile Name
 LOGERR=${BACKUPDIR}/ERRORS_${DBHOST}-`${DATEC} +%N`.log         # Logfile Name
 BACKUPFILES=""
@@ -82,14 +82,14 @@ BACKUPFILES=""
 touch ${LOGFILE}
 exec 6>&1           # Link file descriptor #6 with stdout.
                     # Saves stdout.
-exec > ${LOGFILE}     # stdout replaced with file ${LOGFILE}.
+exec > ${LOGFILE}   # stdout replaced with file ${LOGFILE}.
 touch ${LOGERR}
 exec 7>&2           # Link file descriptor #7 with stderr.
                     # Saves stderr.
-exec 2> ${LOGERR}     # stderr replaced with file ${LOGERR}.
+exec 2> ${LOGERR}   # stderr replaced with file ${LOGERR}.
 
 # Create required directories
-if [ ! -e "${BACKUPDIR}" ]              # Check Backup Directory exists.
+if [ ! -e "${BACKUPDIR}" ]                      # Check Backup Directory exists.
         then
         mkdir -p "${BACKUPDIR}"
 fi
@@ -104,7 +104,7 @@ if [ ! -e "${BACKUPDIR}/weekly" ]               # Check Weekly Directory exists.
         mkdir -p "${BACKUPDIR}/weekly"
 fi
 
-if [ ! -e "${BACKUPDIR}/monthly" ]      # Check Monthly Directory exists.
+if [ ! -e "${BACKUPDIR}/monthly" ]              # Check Monthly Directory exists.
         then
         mkdir -p "${BACKUPDIR}/monthly"
 fi
@@ -123,7 +123,7 @@ fi
 
 # LDAP dump function
 ldapdump () {
-${SLAPCAT} > ${1}
+${SLAPCAT} -b "{{ ldap_basedn }}" -s "ou=people,{{ ldap_basedn }}" > ${1}
 return $?
 }
 

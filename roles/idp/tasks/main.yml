@@ -27,8 +27,11 @@
   register: shib_tarball
   tags: idp
 
-- name: Download Shibboleth IdP
-  get_url: url="{{ idp_dl_url }}" dest=/usr/local/src
+- name: "Download Shibboleth IdP and check its SHA256 checksum"
+  get_url:
+   url: "{{ idp_dl_url }}"
+   dest: "/usr/local/src"
+   checksum: "sha256:{{ shib_idp_checksum }}"
   when: shib_tarball.stat.exists == False
   tags: idp
 
@@ -114,7 +117,7 @@
    - { src: "files/restore/{{ idp_fqdn }}/credentials/sealer.kver", dest: "/opt/shibboleth-idp/credentials/sealer.kver", mode: "0644" }
   notify:
    - "Restart Jetty"
-  when: idp_restore == "True"
+  when: idp_cert_restore == "True"
   tags: idp
 
 - name: "Check if 'shibboleth' DB is already created and store the result into 'shib_db' ansible variable"
@@ -322,22 +325,13 @@
    - php5-mysql
   notify:
    - "Safe Upgrade"
-  tags: idp_stats
+  tags: idp
 
 - name: "Check if 'statistics' DB is already created and store the result into 'statistics_db' ansible variable"
   command: mysql -u root -s -N -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='statistics'"
   register: statistics_db
   changed_when: false
-  tags: idp_stats
-
-- name: "Be sure that the 'statistics' database is created"
-  mysql_db:
-    encoding: "utf8"
-    state: import
-    name: all
-    target: /root/statistics-idp-db.sql
-  when: statistics_db.stdout != 'statistics'
-  tags: idp_stats
+  tags: idp
 
 - name: "Be sure that 'loganalysis' directory is created"
   file:
@@ -346,7 +340,7 @@
     group: "root"
     mode: "0644" 
     state: directory
-  tags: idp_stats
+  tags: idp
 
 - name: "Be sure that 'statistics' directory is created"
   file:
@@ -355,7 +349,7 @@
     group: "root"
     mode: "0755" 
     state: directory
-  tags: idp_stats
+  tags: idp
 
 - name: "Be sure that the files needed for statistics application are in ther right position - Part 1"
   template:
@@ -371,7 +365,16 @@
    - { src: "statistics/insertSP.php.j2", dest: "/opt/loganalysis/insertSP.php", mode: "0644" }
    - { src: "statistics/IDProvider.conf.php.j2", dest: "/opt/loganalysis/IDProvider.conf.php", mode: "0644" }
    - { src: "statistics/db.php.j2", dest: "/var/www/html/statistics/db.php", mode: "0644" }
-  tags: idp_stats
+  tags: idp
+
+- name: "Be sure that the 'statistics' database is created"
+  mysql_db:
+    encoding: "utf8"
+    state: import
+    name: all
+    target: /root/statistics-idp-db.sql
+  when: statistics_db.stdout != 'statistics'
+  tags: idp
 
 - name: "Be sure that the files needed for statistics application are in ther right position - Part 2"
   copy:
@@ -386,7 +389,7 @@
    - { src: "files/statistics/apache/idp-stats.conf", dest: "/etc/apache2/sites-enabled/idp-stats.conf", owner: "root", group: "root", mode: "0644" }
   notify:
    - "Restart Apache"
-  tags: idp_stats
+  tags: idp
 
 - name: "Be sure that needed metadata file is linked correctly"
   file:
@@ -395,7 +398,7 @@
    owner: "root"
    group: "root"
    state: "link"
-  tags: idp_stats
+  tags: idp
 
 - name: "Be sure to put the Statistic Web Application in the right position"
   copy:
@@ -404,4 +407,60 @@
    owner: "root"
    group: "root"
    mode: "0644"
-  tags: idp_stats
+  tags: idp
+
+- name: "RESTORE - Be sure to put the backup into the /root directory"
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: "0600"
+  with_items:
+   - { src: "files/restore/{{ idp_fqdn }}/mysql-backups/shibboleth-backup.sql.gz", dest: "/root/shibboleth-backup.sql.gz" }
+   - { src: "files/restore/{{ idp_fqdn }}/mysql-backups/statistics-backup.sql.gz", dest: "/root/statistics-backup.sql.gz" }
+  when: idp_db_restore == "True"
+  tags: idp_db
+
+- name: "RESTORE - Be sure to extract the Databases Backup into the right position"
+  command: "gunzip {{ item }}"
+  with_items:
+   - "/root/shibboleth-backup.sql.gz"
+   - "/root/statistics-backup.sql.gz"
+  when: idp_db_restore == "True"
+  tags: idp_db
+
+- name: "RESTORE - Be sure that the Databases Backup have the right permission"
+  file:
+   dest: "{{ item }}"
+   owner: "root"
+   group: "root"
+   mode: "600"
+  with_items:
+   - "/root/shibboleth-backup.sql"
+   - "/root/statistics-backup.sql"
+  when: idp_db_restore == "True"
+  tags: idp_db
+
+- name: "RESTORE - Be sure to restore databases"
+  mysql_db:
+    encoding: "utf8"
+    state: import
+    name: all
+    target: "{{ item }}"
+  with_items:
+   - "/root/shibboleth-backup.sql"
+   - "/root/statistics-backup.sql"
+  when: idp_db_restore == "True"
+  tags: idp_db
+
+- name: "RESTORE - Be sure to remove the ldap-backup.ldif restored"
+  file:
+   dest: "{{ item }}"
+   state: "absent"
+  with_items:
+   - "/root/shibboleth-backup.sql"
+   - "/root/statistics-backup.sql"
+  when: idp_db_restore == "True"
+  tags: idp_db
+
