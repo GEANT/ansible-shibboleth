@@ -251,7 +251,7 @@
 
 - name: "RESTORE - Be sure to put the backup into the /root directory"
   copy:
-   src: "files/restore/{{ idp_fqdn }}/ldap-backup.gz"
+   src: "files/restore/{{ idp_fqdn }}/ldap-backup/ldap-backup.gz"
    dest: "/root/ldap-backup.gz"
    owner: "root"
    group: "root"

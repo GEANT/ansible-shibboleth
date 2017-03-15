@@ -197,6 +197,25 @@ The "```group_vars/```" directories contains (for each environment):
 The "```host_vars/```" directory contains one ```FQDN.yml``` file for each server that contains specific variables for the host into the specific environment.
 (These files have to be encrypted (you can do this with Ansible Vault) if shared on GitHub or somewhere other)
 
+
+## Restore Procedures ##
+
+### Databases Restore
+
+1. Put the Databases Backup (shibboleth and statistics) of an IdP into
+  - ```roles/idp/files/restore/{{ idp_fqdn }}/mysql-backups/shibboleth-backup.sql.gz```
+  - ```roles/idp/files/restore/{{ idp_fqdn }}/mysql-backups/statistics-backup.sql.gz```
+
+2. Set the IDP configuration variable ```idp_db_restore``` to "True" on its ```host_vars``` file
+3. Run again the playbook
+
+### LDAP Restore
+
+1. Put the LDAP Backup of an IdP into its ```roles/openldap/files/restore/{{ idp_fqdn }}/ldap-backup/ldap-backup.gz```
+2. Set the IDP configuration variable ```ldap_restore``` to "True" on its ```host_vars``` file
+3. Run again the playbook
+
+
 ## Useful Commands ##
 
 ```

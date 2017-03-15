@@ -33,10 +33,14 @@ inventories/*/host_vars/*
 # ignore Ansible inventories
 *.ini
 
-# restore idp directory 
+# ignore gunzip files
+*.gz
+
+
+# ignore entire 'restore' idp directory 
 roles/idp/files/restore/*
 
-# restore ldap directory
+# ignore entire 'restore' openldap directory
 roles/openldap/files/restore/*
 
 # Exclude
