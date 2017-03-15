@@ -99,6 +99,7 @@ idp_metadata_providers:
  - id: "IDEM-TEST-FEDERATION"
    file: "idem-test-metadata-sha256.xml"
    url: "http://www.garr.it/idem-metadata/idem-test-metadata-sha256.xml"
+   validate_ssl_cert: "true"
    pubKey: |     
     MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxrLc3bV+zC7cATqGoI9R
     WO8LKiXk4pMez0JcMgXICiKA/5hJ2WgtIbDHqfqSz1oFsmqXNEEgR3cKkHK9fsaY
@@ -110,6 +111,7 @@ idp_metadata_providers:
  - id: "IDEM-PRODUCTION-FEDERATION"
    file: "idem-metadata-sha256.xml"
    url: "http://www.garr.it/idem-metadata/idem-metadata-sha256.xml"
+   validate_ssl_cert: "true"
    pubKey: |  
     MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxrLc3bV+zC7cATqGoI9R
     WO8LKiXk4pMez0JcMgXICiKA/5hJ2WgtIbDHqfqSz1oFsmqXNEEgR3cKkHK9fsaY
@@ -126,3 +128,6 @@ ca: "ca.crt"
 https_cert: "{{ idp_fqdn }}.crt"
 https_key: "{{ idp_fqdn }}.key"
 
+## Statistics Web App
+fed_md: "{{ idp_metadata_providers[1]['file'] }}"
+idp_stats_db_pw: "## STATISTICS DB PASSWORD ##"

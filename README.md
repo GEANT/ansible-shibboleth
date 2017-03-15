@@ -140,6 +140,10 @@
 
     https_cert: "{{ idp_fqdn }}.crt"
     https_key: "{{ idp_fqdn }}.key"
+
+    ### Statistics Web App
+    fed_md: "{{ idp_metadata_providers[1]['file'] }}"
+    idp_stats_db_pw: "## STATISTICS DB PASSWORD ##"
     ```
 5. Ecrypt the IdP configuration file with Ansible Vault:
     * ```cd /opt/ansible-shibboleth```
