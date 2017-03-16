@@ -249,6 +249,12 @@
    mode: "0755"
   tags: openldap 
 
+- name: "Check if the Directory is not empty"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b '{{ ldap_basedn }}' '(&(|(ou:dn:=people)(ou:dn:=groups))(!(objectClass=organizationalUnit)))' | wc -l"
+  register: ldap_is_empty
+  changed_when: false
+  tags: openldap
+
 - name: "RESTORE - Be sure to put the backup into the /root directory"
   copy:
    src: "files/restore/{{ idp_fqdn }}/ldap-backup/ldap-backup.ldif.gz"
@@ -256,12 +262,12 @@
    owner: "root"
    group: "root"
    mode: "0600"
-  when: ldap_restore == "True"
+  when: ldap_restore == "True" and ldap_is_empty.stdout == "0"
   tags: openldap
 
 - name: "RESTORE - Be sure to extract the LDAP Backup into the right position"
   command: "gunzip /root/ldap-backup.ldif.gz"
-  when: ldap_restore == "True"
+  when: ldap_restore == "True" and ldap_is_empty.stdout == "0"
   tags: openldap
 
 - name: "RESTORE - Be sure that the ldap-backup has the right permission"
@@ -270,19 +276,19 @@
    owner: "root"
    group: "root"
    mode: "600"
-  when: ldap_restore == "True"
+  when: ldap_restore == "True" and ldap_is_empty.stdout == "0"
   tags: openldap
 
 - name: "RESTORE - Be sure to stop SLAPD before to restore entries"
   service:
    name: slapd
    state: stopped
-  when: ldap_restore == "True"
+  when: ldap_restore == "True" and ldap_is_empty.stdout == "0"
   tags: openldap
 
 - name: "RESTORE - Be sure to restore ldap entries"
   command: "slapadd -c -l /root/ldap-backup.ldif"
-  when: ldap_restore == "True"
+  when: ldap_restore == "True" and ldap_is_empty.stdout == "0"
   tags: openldap
 
 - name: "RESTORE - Be sure to remove the ldap-backup.ldif restored"
@@ -292,7 +298,7 @@
   with_items:
    - { dest: "/root/ldap-backup.ldif" }
    - { dest: "/root/ldap-backup.ldif.gz" }
-  when: ldap_restore == "True"
+  when: ldap_restore == "True" and ldap_is_empty.stdout == "0"
   tags: openldap
 
 - name: "Be sure that OpenLDAP is up and running"

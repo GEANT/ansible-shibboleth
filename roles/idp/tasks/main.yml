@@ -407,6 +407,20 @@
    mode: "0644"
   tags: idp
 
+- name: "RESTORE - Be sure that 'shibboleth' database is empty"
+  shell: "mysql shibboleth -e 'SELECT * FROM shibpid' | wc -l"
+  register: shibboleth_db_is_empty
+  changed_when: false
+  when: idp_db_restore == "True"
+  tags: idp
+
+- name: "RESTORE - Be sure that 'shibboleth' database is empty"
+  shell: "mysql statistics -e 'SELECT * FROM sps' | wc -l"
+  register: statistics_db_is_empty
+  changed_when: false
+  when: idp_db_restore == "True"
+  tags: idp
+
 - name: "RESTORE - Be sure to put the backup into the /root directory"
   copy:
    src: "{{ item.src }}"
@@ -417,16 +431,16 @@
   with_items:
    - { src: "files/restore/{{ idp_fqdn }}/mysql-backups/shibboleth-backup.sql.gz", dest: "/root/shibboleth-backup.sql.gz" }
    - { src: "files/restore/{{ idp_fqdn }}/mysql-backups/statistics-backup.sql.gz", dest: "/root/statistics-backup.sql.gz" }
-  when: idp_db_restore == "True"
-  tags: idp_db
+  when: idp_db_restore == "True" and shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty == "0"
+  tags: idp
 
 - name: "RESTORE - Be sure to extract the Databases Backup into the right position"
   command: "gunzip {{ item }}"
   with_items:
    - "/root/shibboleth-backup.sql.gz"
    - "/root/statistics-backup.sql.gz"
-  when: idp_db_restore == "True"
-  tags: idp_db
+  when: idp_db_restore == "True" and shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty == "0"
+  tags: idp
 
 - name: "RESTORE - Be sure that the Databases Backup have the right permission"
   file:
@@ -437,8 +451,8 @@
   with_items:
    - "/root/shibboleth-backup.sql"
    - "/root/statistics-backup.sql"
-  when: idp_db_restore == "True"
-  tags: idp_db
+  when: idp_db_restore == "True" and shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty == "0"
+  tags: idp
 
 - name: "RESTORE - Be sure to restore databases"
   mysql_db:
@@ -449,8 +463,8 @@
   with_items:
    - "/root/shibboleth-backup.sql"
    - "/root/statistics-backup.sql"
-  when: idp_db_restore == "True"
-  tags: idp_db
+  when: idp_db_restore == "True" and shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty == "0"
+  tags: idp
 
 - name: "RESTORE - Be sure to remove the ldap-backup.ldif restored"
   file:
@@ -459,6 +473,6 @@
   with_items:
    - "/root/shibboleth-backup.sql"
    - "/root/statistics-backup.sql"
-  when: idp_db_restore == "True"
-  tags: idp_db
+  when: idp_db_restore == "True" and shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty == "0"
+  tags: idp
 
