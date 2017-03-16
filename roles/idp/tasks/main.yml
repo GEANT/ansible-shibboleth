@@ -298,7 +298,6 @@
    group: "root"
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
-  #when: "item.key != 'en'"
   notify:
     - "Restart Apache"
   tags: idp
@@ -311,7 +310,6 @@
    group: "root"
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
-  #when: "item.key != 'en'"
   notify:
     - "Restart Apache"
   tags: idp
