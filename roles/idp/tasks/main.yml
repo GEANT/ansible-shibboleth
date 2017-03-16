@@ -411,14 +411,12 @@
   shell: "mysql shibboleth -e 'SELECT * FROM shibpid' | wc -l"
   register: shibboleth_db_is_empty
   changed_when: false
-  when: idp_db_restore == "True"
   tags: idp
 
 - name: "RESTORE - Be sure that 'shibboleth' database is empty"
   shell: "mysql statistics -e 'SELECT * FROM sps' | wc -l"
   register: statistics_db_is_empty
   changed_when: false
-  when: idp_db_restore == "True"
   tags: idp
 
 - name: "RESTORE - Be sure to put the backup into the /root directory"
