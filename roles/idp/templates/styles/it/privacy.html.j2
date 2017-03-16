@@ -135,7 +135,7 @@
 
          <h3>CONTACTS</h3>
          <p> Nome Cognome: {{ idp_contacts['support']['givenName'] }} {{ idp_contacts['support']['surName'] }}</p>
-         <p> e-mail: <a href="{{ idp_contacts['support']['mail'] }}">Supporto Utenti</a></p>
+         <p> e-mail: <a href="mailto:{{ idp_contacts['support']['mail'] }}">{{ idp_contacts['support']['mail'] }}</a></p>
          <p> tel.:</p>
          <br/>
          <p>Qui puoi trovare la pagina di informazioni per l'istituto {{ idp_metadata['it']['mdui_displayName'] }}: <a href="/it/info.html">Information Page</a></p>
