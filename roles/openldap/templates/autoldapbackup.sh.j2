@@ -36,6 +36,7 @@ EXPR="`${WHICH} expr`"
 FIND="`${WHICH} find`"
 RM="`${WHICH} rm`"
 SLAPCAT="`${WHICH} slapcat`"
+LDAPSEARCH="`${WHICH} ldapsearch`"
 GZIP="`${WHICH} gzip`"
 BZIP2="`${WHICH} bzip2`"
 CP="`${WHICH} cp`"
@@ -123,7 +124,7 @@ fi
 
 # LDAP dump function
 ldapdump () {
-${SLAPCAT} -b "{{ ldap_basedn }}" -s "ou=people,{{ ldap_basedn }}" > ${1}
+${LDAPSEARCH} -QLLLY EXTERNAL -H ldapi:/// -b '{{ ldap_basedn }}' '(&(|(ou:dn:=people)(ou:dn:=groups))(!(objectClass=organizationalUnit)))' > ${1}
 return $?
 }
 

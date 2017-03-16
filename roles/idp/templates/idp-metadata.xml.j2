@@ -19,7 +19,7 @@
 {% elif field == "mdui_favicon" %}
                <mdui:Logo xml:lang="{{ lang }}" width="16" height="16">{{ idp_metadata[lang]['mdui_favicon'] }}</mdui:Logo>
 {% elif field == "mdui_logo" %}
-               <mdui:Logo xml:lang="{{ lang }}">{{ idp_metadata[lang]['mdui_logo'] }}</mdui:Logo>
+               <mdui:Logo xml:lang="{{ lang }}" width="80" height="60">{{ idp_metadata[lang]['mdui_logo'] }}</mdui:Logo>
 {% endif %}
 {% endfor %}
 {% endfor %}

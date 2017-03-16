@@ -45,12 +45,12 @@
     
          <h3> SUPPORTO UTENTE PER CREDENZIALI, RILASCIO ATTRIBUTI, ... </h3>
          <p> Nome Cognome: {{ idp_contacts['support']['givenName'] }} {{ idp_contacts['support']['surName'] }}</p>
-         <p> e-mail: <a href="{{ idp_contacts['support']['mail'] }}">Supporto Utenti</a></p>
+         <p> e-mail: <a href="mailto:{{ idp_contacts['support']['mail'] }}">Supporto Utenti</a></p>
          <p> tel.:</p>
 
          <h3> REFERENTE TECNICO PER L'IDENTITY PROVIDER: </h3>
          <p> Nome Cognome: {{ idp_contacts['technical']['givenName'] }} {{ idp_contacts['technical']['surName'] }}</p>
-         <p> e-mail: <a href="{{ idp_contacts['technical']['mail'] }}">Contato Tecnico</a></p>
+         <p> e-mail: <a href="mailto:{{ idp_contacts['technical']['mail'] }}">Contato Tecnico</a></p>
          <p> tel.:</p>
     
          <h3> INFORMAZIONI SUL RILASCIO DEGLI ATTRIBUTI UTENTE AI FORNITORI DI RISORSE:</h3>

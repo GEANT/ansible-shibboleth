@@ -251,8 +251,8 @@
 
 - name: "RESTORE - Be sure to put the backup into the /root directory"
   copy:
-   src: "files/restore/{{ idp_fqdn }}/ldap-backup/ldap-backup.gz"
-   dest: "/root/ldap-backup.gz"
+   src: "files/restore/{{ idp_fqdn }}/ldap-backup/ldap-backup.ldif.gz"
+   dest: "/root/ldap-backup.ldif.gz"
    owner: "root"
    group: "root"
    mode: "0600"
@@ -260,29 +260,17 @@
   tags: openldap
 
 - name: "RESTORE - Be sure to extract the LDAP Backup into the right position"
-  command: "gunzip /root/ldap-backup.gz"
+  command: "gunzip /root/ldap-backup.ldif.gz"
   when: ldap_restore == "True"
   tags: openldap
 
 - name: "RESTORE - Be sure that the ldap-backup has the right permission"
   file:
-   dest: "/root/ldap-backup"
+   dest: "/root/ldap-backup.ldif"
    owner: "root"
    group: "root"
    mode: "600"
   when: ldap_restore == "True"
-  tags: openldap
-
-- name: "RESTORE - Check the existance of branch 'people' inside LDAP and store the result into 'people_in_ldap' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap_basedn }} objectClass=organizationalUnit dn | grep ou=people,{{ ldap_basedn }} | wc -l"
-  register: people_in_ldap
-  changed_when: false
-  when: ldap_restore == "True"
-  tags: openldap
-
-- name: "RESTORE - Be sure that the branch 'ou=people' is absent"
-  command: "ldapdelete -r 'ou=people,{{ ldap_basedn }}' -H ldap://{{ idp_fqdn }} -D '{{ ldap_root_dn }}' -w {{ ldap_root_pw }}"
-  when: ldap_restore == "True" and people_in_ldap.stdout == "1"
   tags: openldap
 
 - name: "RESTORE - Be sure to stop SLAPD before to restore entries"
@@ -293,7 +281,7 @@
   tags: openldap
 
 - name: "RESTORE - Be sure to restore ldap entries"
-  command: "slapadd -c -l /root/ldap-backup"
+  command: "slapadd -c -l /root/ldap-backup.ldif"
   when: ldap_restore == "True"
   tags: openldap
 
@@ -303,7 +291,7 @@
    state: "absent"
   with_items:
    - { dest: "/root/ldap-backup.ldif" }
-   - { dest: "/root/ldap-backup.gz" }
+   - { dest: "/root/ldap-backup.ldif.gz" }
   when: ldap_restore == "True"
   tags: openldap
 
