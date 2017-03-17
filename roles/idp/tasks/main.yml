@@ -429,7 +429,9 @@
   with_items:
    - { src: "files/restore/{{ idp_fqdn }}/mysql-backups/shibboleth-backup.sql.gz", dest: "/root/shibboleth-backup.sql.gz" }
    - { src: "files/restore/{{ idp_fqdn }}/mysql-backups/statistics-backup.sql.gz", dest: "/root/statistics-backup.sql.gz" }
-  when: idp_db_restore == "True" and shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty == "0"
+  when: 
+   - idp_db_restore == "True" 
+   - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
 
 - name: "RESTORE - Be sure to extract the Databases Backup into the right position"
@@ -437,7 +439,9 @@
   with_items:
    - "/root/shibboleth-backup.sql.gz"
    - "/root/statistics-backup.sql.gz"
-  when: idp_db_restore == "True" and shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty == "0"
+  when: 
+   - idp_db_restore == "True" 
+   - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
 
 - name: "RESTORE - Be sure that the Databases Backup have the right permission"
@@ -449,7 +453,9 @@
   with_items:
    - "/root/shibboleth-backup.sql"
    - "/root/statistics-backup.sql"
-  when: idp_db_restore == "True" and shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty == "0"
+  when: 
+   - idp_db_restore == "True" 
+   - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
 
 - name: "RESTORE - Be sure to restore databases"
@@ -461,7 +467,9 @@
   with_items:
    - "/root/shibboleth-backup.sql"
    - "/root/statistics-backup.sql"
-  when: idp_db_restore == "True" and shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty == "0"
+  when: 
+   - idp_db_restore == "True" 
+   - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
 
 - name: "RESTORE - Be sure to remove the ldap-backup.ldif restored"
@@ -471,6 +479,8 @@
   with_items:
    - "/root/shibboleth-backup.sql"
    - "/root/statistics-backup.sql"
-  when: idp_db_restore == "True" and shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty == "0"
+  when: 
+   - idp_db_restore == "True" 
+   - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
 
