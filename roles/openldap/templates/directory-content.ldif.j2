@@ -1,23 +1,23 @@
-dn: ou=people,{{ ldap_basedn }}
+dn: ou=people,{{ ldap['basedn'] }}
 objectClass: top
 objectClass: organizationalUnit
 ou: People
-description: {{ ldap_org }} people
+description: {{ ldap['org'] }} people
 
-dn: ou=groups,{{ ldap_basedn }}
+dn: ou=groups,{{ ldap['basedn'] }}
 objectClass: top
 objectClass: organizationalUnit
 ou: Groups
-description: {{ ldap_org }} groups
+description: {{ ldap['org'] }} groups
 
-dn: ou=system,{{ ldap_basedn }}
+dn: ou=system,{{ ldap['basedn'] }}
 objectClass: top
 objectClass: organizationalUnit
 ou: System
 
-dn: {{ idp_bindDN }}
+dn: {{ idp['ldap']['bindDN'] }}
 objectClass: inetOrgPerson
 cn: idpuser
 sn: idpuser
 givenName: idpuser
-userPassword: {{ idp_bindDNCredential }}
+userPassword: {{ idp['ldap']['bindDNCredential'] }}

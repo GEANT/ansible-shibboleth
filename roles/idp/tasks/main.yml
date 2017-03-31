@@ -1,5 +1,19 @@
 ---
 # tasks file for idp
+- name: "Include OS-specific variables."
+  include_vars: "{{ ansible_os_family }}.yml"
+  tags: idp
+
+- name: "Include attribute resolver default dictionary if a custom one is not provided on the host_vars of IdP"
+  include_vars:
+    file: attr-defs-dict.yml
+  when: idp_attrDef is undefined or idp_attrDef == ""
+  tags: idp
+
+- name: "Include shibboleth identity provider variables"
+  include_vars: shib-idp-vars.yml
+  tags: idp
+
 - name: "Be sure that Jetty has the right libraries imported"
   file:
    src: "{{ item.src }}" 
@@ -22,8 +36,9 @@
   changed_when: false
   tags: idp
 
-- name: Stat Shibboleth IdP tarball in /opt 
-  stat: path="/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"
+- name: "Stat Shibboleth IdP tarball in /opt" 
+  stat: 
+   path: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"
   register: shib_tarball
   tags: idp
 
@@ -175,6 +190,7 @@
    - { src: "conf/ldap.properties.j2", dest: "/opt/shibboleth-idp/conf/ldap.properties" }
    - { src: "conf/services.xml.j2", dest: "/opt/shibboleth-idp/conf/services.xml" }
    - { src: "conf/attribute-filter-v3-federation.xml.j2", dest: "/opt/shibboleth-idp/conf/attribute-filter-v3-federation.xml" }
+   - { src: "conf/attribute-resolver-v3-custom.xml.j2", dest: "/opt/shibboleth-idp/conf/attribute-resolver-v3-custom.xml" }
    - { src: "conf/metadata-providers.xml.j2", dest: "/opt/shibboleth-idp/conf/metadata-providers.xml" }
    - { src: "idp-metadata.xml.j2", dest: "/opt/shibboleth-idp/metadata/idp-metadata.xml" }
    - { src: "idp.conf.j2", dest: "/etc/apache2/sites-enabled/idp.conf" }
@@ -298,6 +314,7 @@
    group: "root"
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
+  when: idp['login']['create_info_and_pp_pages']
   notify:
     - "Restart Apache"
   tags: idp
@@ -310,6 +327,7 @@
    group: "root"
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
+  when: idp['login']['create_info_and_pp_pages']
   notify:
     - "Restart Apache"
   tags: idp

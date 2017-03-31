@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<AttributeResolver
+        xmlns="urn:mace:shibboleth:2.0:resolver"
+        xmlns:sec="urn:mace:shibboleth:2.0:security"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd
+                            urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd">
+
+    <!-- ========================================== -->
+    <!--      Attribute Definitions                 -->
+    <!-- ========================================== -->
+
+{% for attr, value in idp_attrDef.iteritems() %}
+    <AttributeDefinition{{ {'id': idp_attrDef[attr]['AttributeDefinition']['id'], 'xsi:type': idp_attrDef[attr]['AttributeDefinition']['type'], 'scope': idp_attrDef[attr]['AttributeDefinition']['scope'], 'sourceAttributeID': idp_attrDef[attr]['AttributeDefinition']['sourceAttributeID'], 'nameIdFormat': idp_attrDef[attr]['AttributeDefinition']['nameIdFormat'] }|xmlattr }}>
+{% for ref, value in idp_attrDef[attr]['Dependency'].iteritems() %}
+        <Dependency ref="{{ idp_attrDef[attr]['Dependency'][ref] }}" />
+{% endfor %}
+{% if idp_attrDef[attr]['DisplayName'] %}
+{% for lang, value in idp_attrDef[attr]['DisplayName'].iteritems() %}
+        <DisplayName xml:lang="{{ lang }}">{{ value }}</DisplayName>
+{% endfor %}
+{% endif %}
+{% if idp_attrDef[attr]['DisplayDescription'] %}
+{% for lang, value in idp_attrDef[attr]['DisplayDescription'].iteritems() %}
+        <DisplayDescription xml:lang="{{ lang }}">{{ value }}</DisplayDescription>
+{% endfor %}
+{% endif %}
+{% for enc, value in idp_attrDef[attr]['AttributeEncoder'].iteritems() %}
+        <AttributeEncoder xsi:type="{{ idp_attrDef[attr]['AttributeEncoder'][enc]['type'] }}" name="{{ idp_attrDef[attr]['AttributeEncoder'][enc]['name'] }}" friendlyName="{{ idp_attrDef[attr]['AttributeEncoder'][enc]['friendlyName'] }}" encodeType="{{ idp_attrDef[attr]['AttributeEncoder'][enc]['encodeType'] }}" />
+{% if idp_attrDef[attr]['AttributeDefinition']['type'] is equalto 'ScriptedAttribute' %}
+        <Script>
+{{ idp_attrDef[attr]['Script'] }}        </Script>
+{% endif %}
+{% endfor %}
+    </AttributeDefinition>
+
+{% endfor %}
+    <!-- ========================================== -->
+
+    <!--      Data Connectors                       -->
+    <!-- ========================================== -->
+
+    <!-- LDAP Connector -->
+    <DataConnector id="myLDAP" xsi:type="LDAPDirectory"
+        ldapURL="%{idp.attribute.resolver.LDAP.ldapURL}"
+        baseDN="%{idp.attribute.resolver.LDAP.baseDN}"
+        principal="%{idp.attribute.resolver.LDAP.bindDN}"
+        principalCredential="%{idp.attribute.resolver.LDAP.bindDNCredential}"
+        useStartTLS="%{idp.attribute.resolver.LDAP.useStartTLS:true}">
+        <FilterTemplate>
+            <![CDATA[
+                %{idp.attribute.resolver.LDAP.searchFilter}
+            ]]>
+        </FilterTemplate>
+{% if idp['ldap']['useStartTLS'] is equalto 'True' or idp['ldap']['useSSL'] is equalto 'True' or idp['ldap']['useStartTLS'] is equalto 'true' or idp['ldap']['useSSL'] is equalto 'true' %}
+{% if idp['ldap']['trustCertificates'] %}
+        <StartTLSTrustCredential id="LDAPtoIdPCredential" xsi:type="sec:X509ResourceBacked">
+            <sec:Certificate>%{idp.attribute.resolver.LDAP.trustCertificates}</sec:Certificate>
+        </StartTLSTrustCredential>
+{% endif %}
+{% endif %}
+        <ReturnAttributes>%{idp.attribute.resolver.LDAP.returnAttributes}</ReturnAttributes>
+    </DataConnector>
+
+    <!-- Data Connector for eduPersonTargetedID -->
+
+    <DataConnector id="myStoredId" xsi:type="StoredId"
+        generatedAttributeID="persistentID"
+        sourceAttributeID="%{idp.persistentId.sourceAttribute}"
+        salt="%{idp.persistentId.salt}"
+        queryTimeout="0">
+        <Dependency ref="%{idp.persistentId.sourceAttribute}"/>
+        <BeanManagedConnection>MyDataSource</BeanManagedConnection>
+    </DataConnector>
+
+</AttributeResolver>

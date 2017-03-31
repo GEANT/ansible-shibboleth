@@ -330,7 +330,7 @@ $servers->newServer('ldap_pla');
 
 /* A convenient name that will appear in the tree viewer and throughout
    phpLDAPadmin to identify this LDAP server to users. */
-$servers->setValue('server','name','{{ ldap_org }} LDAP Server');
+$servers->setValue('server','name','{{ ldap['org'] }} LDAP Server');
 
 /* Examples:
    'ldap.example.com',
@@ -344,7 +344,7 @@ $servers->setValue('server','port',389);
 
 /* Array of base DNs of your LDAP server. Leave this blank to have phpLDAPadmin
    auto-detect it for you. */
-$servers->setValue('server','base',array('{{ ldap_basedn }}'));
+$servers->setValue('server','base',array('{{ ldap['basedn'] }}'));
 
 /* Five options for auth_type:
    1. 'cookie': you will login via a web form, and a client-side cookie will
@@ -371,12 +371,12 @@ $servers->setValue('login','auth_type','config');
    auth_type, then you can also specify the bind_id/bind_pass here for searching
    the directory for users (ie, if your LDAP server does not allow anonymous
    binds. */
-$servers->setValue('login','bind_id','{{ ldap_root_dn }}');
-#  $servers->setValue('login','bind_id','cn=Manager,{{ ldap_basedn }}');
+$servers->setValue('login','bind_id','{{ ldap['root_dn'] }}');
+#  $servers->setValue('login','bind_id','cn=Manager,{{ ldap['basedn'] }}');
 
 /* Your LDAP password. If you specified an empty bind_id above, this MUST also
    be blank. */
-$servers->setValue('login','bind_pass','{{ ldap_root_pw }}');
+$servers->setValue('login','bind_pass','{{ ldap['root_pw'] }}');
 #  $servers->setValue('login','bind_pass','secret');
 
 /* Use TLS (Transport Layer Security) to connect to the LDAP server. */

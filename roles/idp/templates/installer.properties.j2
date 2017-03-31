@@ -10,6 +10,6 @@ idp.sealer.password = {{ idp_sealer_pw }}
 
 idp.keystore.password = {{ idp_keystore_pw }}
 
-idp.scope = {{ ldap_domain }}
+idp.scope = {{ idp['scope'] }}
 
 idp.merge.properties = /tmp/shib-idp-install.properties

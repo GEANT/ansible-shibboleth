@@ -4,7 +4,7 @@
     <IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
 
         <Extensions>
-            <shibmd:Scope regexp="false">{{ ldap_domain }}</shibmd:Scope>
+            <shibmd:Scope regexp="false">{{ idp['scope'] }}</shibmd:Scope>
             <mdui:UIInfo>
 {% for field in ["mdui_displayName", "mdui_description", "mdui_infoUrl", "mdui_privacyUrl", "mdui_logo", "mdui_favicon"] %}
 {% for lang, value in idp_metadata.iteritems() %}
@@ -73,7 +73,7 @@
 
     <AttributeAuthorityDescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
         <Extensions>
-            <shibmd:Scope regexp="false">{{ ldap_domain }}</shibmd:Scope>
+            <shibmd:Scope regexp="false">{{ idp['scope'] }}</shibmd:Scope>
         </Extensions>
 
         <KeyDescriptor use="signing">

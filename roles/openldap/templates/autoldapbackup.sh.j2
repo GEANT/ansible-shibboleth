@@ -124,7 +124,7 @@ fi
 
 # LDAP dump function
 ldapdump () {
-${LDAPSEARCH} -QLLLY EXTERNAL -H ldapi:/// -b '{{ ldap_basedn }}' '(&(|(ou:dn:=people)(ou:dn:=groups))(!(objectClass=organizationalUnit)))' > ${1}
+${LDAPSEARCH} -QLLLY EXTERNAL -H ldapi:/// -b '{{ ldap['basedn'] }}' '(&(|(ou:dn:=people)(ou:dn:=groups))(!(objectClass=organizationalUnit)))' > ${1}
 return $?
 }
 

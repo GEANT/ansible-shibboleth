@@ -8,6 +8,18 @@
    - "Restart Jetty"
   tags: jetty
 
+- name: "Check what Java version is installed"
+  shell: java -version 2>&1 | grep -i version | sed 's/.version ".*\.\(.*\)\..*"/\1/; 1q'
+  register: java_version
+  changed_when: false
+  tags: jetty 
+
+- name: "Include jetty default variables"
+  include_vars:
+    file: "{{ java_version['stdout'] }}_jetty_vars.yml"
+  when: jetty_distribution is undefined or jetty_distribution == ""
+  tags: jetty 
+
 - name: "Be sure to have created 'jetty' group"
   group: 
    name: "jetty"
@@ -23,7 +35,7 @@
 
 - name: "Be sure to have extracted Jetty Source Package"
   unarchive:
-   src: "files/{{ ansible_distribution_release }}/{{ jetty_distribution }}.tar.gz"
+   src: "files/{{ ansible_os_family }}/{{ java_version['stdout'] }}/{{ jetty_distribution }}.tar.gz"
    dest: "/usr/local/src"
    owner: "jetty"
    group: "jetty"
@@ -63,9 +75,9 @@
    owner: "jetty"
    group: "jetty"
   with_items:
-   - { src: 'files/{{ ansible_distribution_release }}/{{ ansible_distribution_release }}.jetty', dest: '/etc/default/jetty' }
-   - { src: 'files/{{ ansible_distribution_release }}/{{ ansible_distribution_release }}.start.ini', dest: '/opt/jetty/start.ini' }
-   - { src: 'files/{{ ansible_distribution_release }}/{{ ansible_distribution_release }}.jetty.xml', dest: '/opt/jetty/etc/jetty.xml' }
+   - { src: "files/{{ ansible_os_family }}/{{ java_version['stdout'] }}/jetty", dest: '/etc/default/jetty' }
+   - { src: "files/{{ ansible_os_family }}/{{ java_version['stdout'] }}/start.ini", dest: '/opt/jetty/start.ini' }
+   - { src: "files/{{ ansible_os_family }}/{{ java_version['stdout'] }}/jetty.xml", dest: '/opt/jetty/etc/jetty.xml' }
   notify:
    - "Restart Jetty"
   tags: jetty

@@ -1,5 +1,9 @@
 ---
 # tasks file for common
+- name: "Include OS-specific variables if custom ones are not already defined by host_vars"
+  include_vars: "{{ ansible_os_family }}.yml"
+  tags: common
+
 - name: "Be sure that the FQDN is configured"
   template:
    src: hosts.j2

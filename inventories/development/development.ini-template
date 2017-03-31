@@ -1,3 +1,4 @@
 [Debian]
-ansible-slave-1.example.garr.it
 ansible-slave-2.test.garr.it
+
+[Debian-no-LDAP]

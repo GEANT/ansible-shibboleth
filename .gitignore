@@ -28,6 +28,7 @@ inventories/*/host_vars/*
 
 # Exclude
 !host_vars/FQDN.yml-template
+!host_vars/FQDN.yml-template-no-ldap
 
 
 # ignore Ansible inventories

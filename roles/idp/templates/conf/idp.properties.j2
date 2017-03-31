@@ -5,7 +5,7 @@ idp.additionalProperties= /conf/ldap.properties, /conf/saml-nameid.properties, /
 idp.entityID= https://{{ idp_fqdn }}/idp/shibboleth
 
 # Set the scope used in the attribute resolver for scoped attributes
-idp.scope= {{ ldap_domain }}
+idp.scope= {{ idp['scope'] }}
 
 # General cookie properties (maxAge only applies to persistent cookies)
 #idp.cookie.secure = false

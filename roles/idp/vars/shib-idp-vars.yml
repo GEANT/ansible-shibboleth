@@ -1,0 +1,6 @@
+---
+### Variables for Shibboleth Identity Provider (IDP)
+
+shib_idp_version: "3.3.1"
+idp_dl_url: "https://shibboleth.net/downloads/identity-provider/{{ shib_idp_version }}/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"
+shib_idp_checksum: "8bd852dcdc7e6729ee645c0374a3c476b152fa24506fb86ffec33dfd190e607c"

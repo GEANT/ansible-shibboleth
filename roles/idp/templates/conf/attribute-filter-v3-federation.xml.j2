@@ -5,7 +5,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
 
-    <!-- Rule for {{ idp_federation_name_en }} SPs -->
+    <!-- Rule for local Federation SPs -->
     <AttributeFilterPolicy id="releaseToFederation">
         <PolicyRequirementRule xsi:type="RegistrationAuthority"
                 registrars="{{ idp_federation_regAuth }}"/>

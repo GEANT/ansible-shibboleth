@@ -27,7 +27,7 @@
   htpasswd:
     path: /etc/apache2/htpasswd
     name: admin
-    password: "{{ ldap_root_pw }}"
+    password: "{{ ldap['root_pw'] }}"
     owner: root
     group: root
     mode: 0644

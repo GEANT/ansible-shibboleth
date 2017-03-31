@@ -1,5 +1,9 @@
 ---
 # tasks file for openldap
+- name: "Include Default OS variables if custom ones are not provided on the host_vars of IdP"
+  include_vars: "{{ ansible_os_family }}.yml"
+  tags: openldap
+
 - name: "Be sure that the package 'debconf-utils' is installed"
   package: 
    name: "debconf-utils"
@@ -22,19 +26,19 @@
   with_items:
     - key: slapd/password1
       type: password
-      value: "{{ ldap_root_pw|default('') }}"
+      value: "{{ ldap['root_pw']|default('') }}"
     - key: slapd/password2
       type: password
-      value: "{{ ldap_root_pw|default('') }}"
+      value: "{{ ldap['root_pw']|default('') }}"
     - key: slapd/move_old_database
       type: boolean
       value: true
     - key: slapd/domain
       type: string
-      value: "{{ ldap_domain|default('') }}"
+      value: "{{ ldap['domain']|default('') }}"
     - key: shared/organization
       type: string
-      value: "{{ ldap_org|default('') }}"
+      value: "{{ ldap['org']|default('') }}"
     - key: slapd/no_configuration
       type: boolean
       value: false
@@ -187,19 +191,19 @@
   tags: openldap
 
 - name: "Check the existance of branch 'people' inside LDAP and store the result into 'people_in_ldap' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap_basedn }} objectClass=organizationalUnit dn | grep ou=people,{{ ldap_basedn }} | wc -l"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} objectClass=organizationalUnit dn | grep ou=people,{{ ldap['basedn'] }} | wc -l"
   register: people_in_ldap
   changed_when: false
   tags: openldap
 
 - name: "Check the existance of branch 'groups' inside LDAP and store the result into 'groups_in_ldap' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap_basedn }} objectClass=organizationalUnit dn | grep ou=groups,{{ ldap_basedn }} | wc -l"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} objectClass=organizationalUnit dn | grep ou=groups,{{ ldap['basedn'] }} | wc -l"
   register: groups_in_ldap
   changed_when: false
   tags: openldap
 
 - name: "Check the existance of branch 'system' inside LDAP and store the result into 'system_in_ldap' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap_basedn }} objectClass=organizationalUnit dn | grep ou=system,{{ ldap_basedn }} | wc -l"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} objectClass=organizationalUnit dn | grep ou=system,{{ ldap['basedn'] }} | wc -l"
   register: system_in_ldap
   changed_when: false
   tags: openldap
@@ -212,7 +216,7 @@
   tags: openldap
 
 - name: "Check the existance of branch 'policies' inside LDAP and store the result into 'ppolicy_in_ldap' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap_basedn }} objectClass=organizationalUnit dn | grep ou=policies,{{ ldap_basedn }} | wc -l"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} objectClass=organizationalUnit dn | grep ou=policies,{{ ldap['basedn'] }} | wc -l"
   register: ppolicy_in_ldap
   changed_when: false
   tags: openldap
@@ -250,7 +254,7 @@
   tags: openldap 
 
 - name: "Check if the Directory is not empty"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b '{{ ldap_basedn }}' '(&(|(ou:dn:=people)(ou:dn:=groups))(!(objectClass=organizationalUnit)))' | wc -l"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b '{{ ldap['basedn'] }}' '(&(|(ou:dn:=people)(ou:dn:=groups))(!(objectClass=organizationalUnit)))' | wc -l"
   register: ldap_is_empty
   changed_when: false
   tags: openldap
@@ -262,12 +266,12 @@
    owner: "root"
    group: "root"
    mode: "0600"
-  when: ldap_restore == "True" and ldap_is_empty.stdout == "0"
+  when: ldap['restore'] == "True" and ldap_is_empty.stdout == "0"
   tags: openldap
 
 - name: "RESTORE - Be sure to extract the LDAP Backup into the right position"
   command: "gunzip /root/ldap-backup.ldif.gz"
-  when: ldap_restore == "True" and ldap_is_empty.stdout == "0"
+  when: ldap['restore'] == "True" and ldap_is_empty.stdout == "0"
   tags: openldap
 
 - name: "RESTORE - Be sure that the ldap-backup has the right permission"
@@ -276,19 +280,19 @@
    owner: "root"
    group: "root"
    mode: "600"
-  when: ldap_restore == "True" and ldap_is_empty.stdout == "0"
+  when: ldap['restore'] == "True" and ldap_is_empty.stdout == "0"
   tags: openldap
 
 - name: "RESTORE - Be sure to stop SLAPD before to restore entries"
   service:
    name: slapd
    state: stopped
-  when: ldap_restore == "True" and ldap_is_empty.stdout == "0"
+  when: ldap['restore'] == "True" and ldap_is_empty.stdout == "0"
   tags: openldap
 
 - name: "RESTORE - Be sure to restore ldap entries"
   command: "slapadd -c -l /root/ldap-backup.ldif"
-  when: ldap_restore == "True" and ldap_is_empty.stdout == "0"
+  when: ldap['restore'] == "True" and ldap_is_empty.stdout == "0"
   tags: openldap
 
 - name: "RESTORE - Be sure to remove the ldap-backup.ldif restored"
@@ -298,7 +302,7 @@
   with_items:
    - { dest: "/root/ldap-backup.ldif" }
    - { dest: "/root/ldap-backup.ldif.gz" }
-  when: ldap_restore == "True" and ldap_is_empty.stdout == "0"
+  when: ldap['restore'] == "True" and ldap_is_empty.stdout == "0"
   tags: openldap
 
 - name: "Be sure that OpenLDAP is up and running"
