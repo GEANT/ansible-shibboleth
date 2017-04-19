@@ -1,55 +1,13 @@
 ---
 # tasks file for apache
-- name: "Be sure that packages needed to apache are installed"
-  package:
-   name: "apache2"
-   state: latest
-  notify:
-   - "Safe Upgrade"
-  tags: apache
+- name: "Include OS-specific variables."
+  include_vars: "{{ ansible_os_family }}.yml"
+  tags: httpd
 
-- name: "Be sure that apache2 user is added to ssl-cert group"
-  user: 
-   name: "apache2"
-   groups: "ssl-cert"
-  tags: https
+- name: "Install Apache"
+  include: httpd-install.yml
+  tags: httpd
 
-- name: "Be sure to have SSL, headers and Proxy modules enabled"
-  apache2_module:
-   name: "{{ item }}"
-   state: present
-  with_items:
-   - ssl
-   - headers
-   - proxy_http
-  notify:
-   - "Restart Apache"
-  tags: https
-
-- name: "Be sure to have Apache SSL site configured correctly"
-  template:
-   src: default-ssl.conf.j2
-   dest: /etc/apache2/sites-enabled/default-ssl.conf
-   owner: "root"
-   group: "root"
-   mode: "0644"
-  notify:
-   - "Restart Apache"
-  tags: https
-
-- name: "Be sure that HTTP site is disabled"
-  file:
-    path: /etc/apache2/sites-enabled/000-default.conf
-    state: absent
-  notify:
-   - "Restart Apache"
-  tags: https
-
-- name: "Be sure to disable HTTP port for all hosts except localhost"
-  replace:
-   dest: /etc/apache2/ports.conf
-   regexp: "Listen 80"
-   replace: "Listen 127.0.0.1:80"
-  notify:
-   - "Restart Apache"
-  tags: https
+- name: "Configure Apache"
+  include: httpd-configure.yml
+  tags: httpd

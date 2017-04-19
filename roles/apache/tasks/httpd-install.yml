@@ -1,0 +1,10 @@
+---
+# tasks file for apache
+- name: "Be sure that packages needed are installed"
+  apt:
+   name: "{{ httpd_packages }}"
+   state: latest
+   update_cache: yes
+  notify:
+   - "Safe Upgrade"
+  tags: httpd

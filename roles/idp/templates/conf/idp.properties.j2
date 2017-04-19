@@ -2,7 +2,7 @@
 idp.additionalProperties= /conf/ldap.properties, /conf/saml-nameid.properties, /conf/services.properties
 
 # Set the entityID of the IdP
-idp.entityID= https://{{ idp_fqdn }}/idp/shibboleth
+idp.entityID= https://{{ fqdn }}/idp/shibboleth
 
 # Set the scope used in the attribute resolver for scoped attributes
 idp.scope= {{ idp['scope'] }}

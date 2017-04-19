@@ -1,22 +1,15 @@
 ---
 # tasks file for jetty
-- name: "Be sure to have installed the latest OpenJDK availble"
-  package:
-   name: "default-jdk"
-   state: latest
-  notify:
-   - "Restart Jetty"
-  tags: jetty
 
 - name: "Check what Java version is installed"
-  shell: java -version 2>&1 | grep -i version | sed 's/.version ".*\.\(.*\)\..*"/\1/; 1q'
+  shell: java -version 2>&1 | grep -i version | sed 's/.*version ".*\.\(.*\)\..*"/\1/; 1q'
   register: java_version
   changed_when: false
   tags: jetty 
 
 - name: "Include jetty default variables"
   include_vars:
-    file: "{{ java_version['stdout'] }}_jetty_vars.yml"
+    file: "java{{ java_version['stdout'] }}_jetty_vars.yml"
   when: jetty_distribution is undefined or jetty_distribution == ""
   tags: jetty 
 
@@ -35,7 +28,7 @@
 
 - name: "Be sure to have extracted Jetty Source Package"
   unarchive:
-   src: "files/{{ ansible_os_family }}/{{ java_version['stdout'] }}/{{ jetty_distribution }}.tar.gz"
+   src: "files/{{ ansible_os_family }}/java{{ java_version['stdout'] }}/{{ jetty_distribution }}.tar.gz"
    dest: "/usr/local/src"
    owner: "jetty"
    group: "jetty"
@@ -51,8 +44,6 @@
   with_items:
    - { src: '/usr/local/src/{{ jetty_distribution }}' , dest: '/usr/local/src/jetty-src' }
    - { src: '/usr/local/src/jetty-src/bin/jetty.sh' , dest: '/etc/init.d/jetty' }
-  notify:
-   - "Restart Jetty"
   tags: jetty
 
 - name: "Be sure to have created the Jetty's directories"
@@ -64,6 +55,11 @@
   with_items:
    - /opt/jetty
    - /opt/jetty/etc
+   - /opt/jetty/lib
+   - /opt/jetty/lib/ext
+   - /opt/jetty/logs
+   - /opt/jetty/resources
+   - /opt/jetty/webapps
    - /opt/jetty/tmp
    - /var/log/jetty
   tags: jetty
@@ -75,11 +71,9 @@
    owner: "jetty"
    group: "jetty"
   with_items:
-   - { src: "files/{{ ansible_os_family }}/{{ java_version['stdout'] }}/jetty", dest: '/etc/default/jetty' }
-   - { src: "files/{{ ansible_os_family }}/{{ java_version['stdout'] }}/start.ini", dest: '/opt/jetty/start.ini' }
-   - { src: "files/{{ ansible_os_family }}/{{ java_version['stdout'] }}/jetty.xml", dest: '/opt/jetty/etc/jetty.xml' }
-  notify:
-   - "Restart Jetty"
+   - { src: "files/{{ ansible_os_family }}/java{{ java_version['stdout'] }}/jetty", dest: '/etc/default/jetty' }
+   - { src: "files/{{ ansible_os_family }}/java{{ java_version['stdout'] }}/start.ini", dest: '/opt/jetty/start.ini' }
+   - { src: "files/{{ ansible_os_family }}/java{{ java_version['stdout'] }}/jetty.xml", dest: '/opt/jetty/etc/jetty.xml' }
   tags: jetty
 
 - name: "Check that 'jetty.service' exists"
@@ -93,9 +87,14 @@
   when: jetty_service.stat.exists == False
   tags: jetty
 
-- name: "Be sure that Jetty is enabled and running"
+- name: "Be sure that Jetty is enabled"
+  service:
+    name: jetty
+    enabled: yes
+  tags: jetty
+
+- name: "Be sure that Jetty is started"
   service:
     name: jetty
     state: started
-    enabled: yes
   tags: jetty

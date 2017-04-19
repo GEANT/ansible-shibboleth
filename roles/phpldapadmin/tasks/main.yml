@@ -1,9 +1,10 @@
 ---
 # tasks file for phpldapadmin
 - name: "Be sure that phpLDAPadmin is installed"
-  package:
+  apt:
    name: "{{ item }}"
    state: latest
+   update_cache: yes
   with_items:
    - apache2-utils
    - python-passlib

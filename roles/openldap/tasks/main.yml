@@ -5,9 +5,12 @@
   tags: openldap
 
 - name: "Be sure that the package 'debconf-utils' is installed"
-  package: 
+  apt: 
    name: "debconf-utils"
    state: latest
+   update_cache: yes
+  notify:
+   - "Safe Upgrade"
   tags: openldap
 
 - name: "Check if debconf-get-selections has parameters for unattended OpenLDAP installation and store the result on 'debconf' ansible variable"
@@ -55,9 +58,12 @@
   tags: openldap
 
 - name: "Be sure that OpenLDAP is installed with its utilities"
-  package: 
+  apt:
    name: "{{ item }}"
    state: latest
+   update_cache: yes
+  notify:
+   - "Safe Upgrade"
   with_items:
     - slapd
     - ldap-utils
@@ -261,7 +267,7 @@
 
 - name: "RESTORE - Be sure to put the backup into the /root directory"
   copy:
-   src: "files/restore/{{ idp_fqdn }}/ldap-backup/ldap-backup.ldif.gz"
+   src: "files/restore/{{ fqdn }}/ldap-backup/ldap-backup.ldif.gz"
    dest: "/root/ldap-backup.ldif.gz"
    owner: "root"
    group: "root"

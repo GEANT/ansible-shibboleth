@@ -1,4 +1,2 @@
 ---
 # defaults file for jetty
-java7:
-   jetty_distribution: "jetty-distribution-9.2.21.v20170120"

@@ -20,7 +20,7 @@
 
    into the proper ```/opt/ansible-shibboleth/#_environment_#/host_vars/FQDN.yml```  (**FQDN** = **F**ull **Q**ualified **D**omain **N**ame)
 
-5. Ecrypt the IdP configuration file with Ansible Vault (Optional: this is needed ONLY when you use Ansible Vault):
+5. Encrypt the IdP configuration file with Ansible Vault (Optional: this is needed ONLY when you use Ansible Vault):
     * ```cd /opt/ansible-shibboleth```
     * ```ansible-vault encrypt inventories/#_environment_#/host_vars/FQDN.yml --vault-password-file .vault_pass.txt```
 

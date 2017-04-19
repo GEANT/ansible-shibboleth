@@ -1,9 +1,10 @@
 ---
 # tasks file for mysql
 - name: "Be sure that 'debconf-utils' package is installed"
-  package:
+  apt:
    name: "debconf-utils"
    state: latest
+   update_cache: yes
   notify:
    - "Safe Upgrade"
   tags: mysql
@@ -32,9 +33,12 @@
   tags: mysql
 
 - name: "Be sure that Mysql and the needed libraries are installed"
-  package:
+  apt:
    name: "{{ item }}"
    state: latest
+   update_cache: yes
+  notify:
+   - "Safe Upgrade"
   with_items:
    - python-mysqldb
    - mysql-server
@@ -65,7 +69,7 @@
    password: "{{ mysql_root_password }}"
    state: present
   with_items:
-     - "{{ idp_fqdn }}"
+     - "{{ fqdn }}"
      - 127.0.0.1
      - ::1
      - localhost

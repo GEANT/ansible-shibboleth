@@ -6,3 +6,4 @@
   service:
    name: apache2
    state: restarted
+  tags: httpd

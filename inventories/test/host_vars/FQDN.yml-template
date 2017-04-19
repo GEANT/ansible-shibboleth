@@ -1,17 +1,19 @@
 # file: host_vars/##FULL.VM.QUALIFIED.DOMAIN.NAME##.yml
-idp_fqdn: FQDN
+fqdn: FQDN
+
+# JDK Variables - Default "oraclejdk", "8"
+jdk_type: "openjdk"
+jdk_version: "8" 
 
 # LDAP Variables
-ldap_restore: "False"
-
-ldap_basedn: "dc=example,dc=org"
-ldap_domain: "example.org"
-ldap_org: "EXAMPLE Institution"
-ldap_host: "{{ idp_fqdn }}"
-ldap_root_dn: "cn=admin, {{ ldap_basedn }}" 
-ldap_root_pw: "ldaprootpw"
-idp_bindDN: "cn=idpuser,ou=system, {{ ldap_basedn }}"
-idp_bindDNCredential: "idpuserpassword"
+ldap:
+   restore: "False"
+   basedn: "dc=example,dc=org"
+   domain: "example.org"
+   org: "EXAMPLE Institution"
+   url: "ldap://{{ fqdn }}:389"
+   root_dn: "cn=admin,dc=example,dc=org"
+   root_pw: "ldaprootpw"
 
 # MySQL Variables
 mysql_root_password: "mysqlrootpassword"
@@ -71,10 +73,10 @@ idp_metadata:
    it:
       mdui_displayName: "Organization english Display Name"
       mdui_description: "IDP di Test per Organization Name"
-      mdui_infoUrl: "https://{{ idp_fqdn }}/it/info.html"
-      mdui_privacyUrl: "https://{{ idp_fqdn }}/it/privacy.html"
-      mdui_favicon: "https://{{ idp_fqdn }}/it/favicon.png"
-      mdui_logo: "https://{{ idp_fqdn }}/it/logo.png"
+      mdui_infoUrl: "https://{{ fqdn }}/it/info.html"
+      mdui_privacyUrl: "https://{{ fqdn }}/it/privacy.html"
+      mdui_favicon: "https://{{ fqdn }}/it/favicon.png"
+      mdui_logo: "https://{{ fqdn }}/it/logo.png"
       org_name: "Organization italian Name"
       org_displayName: "Organization italian Display Name "
       org_url: "http://www.orgUrl.it"
@@ -89,10 +91,10 @@ idp_metadata:
    en:
       mdui_displayName: "Organization english Display Name"
       mdui_description: "IDP di Test per Organization Name"
-      mdui_infoUrl: "https://{{ idp_fqdn }}/en/info.html"
-      mdui_privacyUrl: "https://{{ idp_fqdn }}/en/privacy.html"
-      mdui_favicon: "https://{{ idp_fqdn }}/en/favicon.png"
-      mdui_logo: "https://{{ idp_fqdn }}/en/logo.png"
+      mdui_infoUrl: "https://{{ fqdn }}/en/info.html"
+      mdui_privacyUrl: "https://{{ fqdn }}/en/privacy.html"
+      mdui_favicon: "https://{{ fqdn }}/en/favicon.png"
+      mdui_logo: "https://{{ fqdn }}/en/logo.png"
       org_name: "Organization english Name"
       org_displayName: "Organization english Display Name"
       org_url: "http://www.orgUrl.uk/"
@@ -143,11 +145,11 @@ idp_metadata_providers:
     KwIDAQAB
 
 ### WEB SERVER
-## For self-signed certs use ca: "{{ idp_fqdn }}.crt
+## For self-signed certs use ca: "{{ fqdn }}.crt
 ca: "ca.crt"
 
-https_cert: "{{ idp_fqdn }}.crt"
-https_key: "{{ idp_fqdn }}.key"
+https_cert: "{{ fqdn }}.crt"
+https_key: "{{ fqdn }}.key"
 
 ## Statistics Web App
 fed_md: "{{ idp_metadata_providers[1]['file'] }}"

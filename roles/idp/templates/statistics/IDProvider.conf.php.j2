@@ -19,9 +19,9 @@ $IDProviders['local'] = array (
 	'Name' => 'Newly installed IdP',
 );
 
-$IDProviders['https://{{ idp_fqdn }}/idp/shibboleth'] = array (
-	'Name'      => 'IdP at {{ idp_fqdn }}',
-	'SSO'       => 'https://{{idp_fqdn }}/idp/profile/Shibboleth/SSO',
+$IDProviders['https://{{ fqdn }}/idp/shibboleth'] = array (
+	'Name'      => 'IdP at {{ fqdn }}',
+	'SSO'       => 'https://{{fqdn }}/idp/profile/Shibboleth/SSO',
 	'Type'      => 'local',
 	'Protocols' => 'urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:1.0:protocol',
 );

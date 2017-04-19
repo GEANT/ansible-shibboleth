@@ -6,7 +6,7 @@
 
 - name: "Include attribute resolver default dictionary if a custom one is not provided on the host_vars of IdP"
   include_vars:
-    file: attr-defs-dict.yml
+    file: "attr-defs-dict-java{{ jdk_version}}.yml"
   when: idp_attrDef is undefined or idp_attrDef == ""
   tags: idp
 
@@ -122,14 +122,14 @@
    group: "root"
    mode: "{{ item.mode }}"
   with_items:
-   - { src: "files/restore/{{ idp_fqdn }}/credentials/idp-signing.crt", dest: "/opt/shibboleth-idp/credentials/idp-signing.crt", mode: "0644" }
-   - { src: "files/restore/{{ idp_fqdn }}/credentials/idp-signing.key", dest: "/opt/shibboleth-idp/credentials/idp-signing.key", mode: "0600" }
-   - { src: "files/restore/{{ idp_fqdn }}/credentials/idp-encryption.crt", dest: "/opt/shibboleth-idp/credentials/idp-encryption.crt", mode: "0644" }
-   - { src: "files/restore/{{ idp_fqdn }}/credentials/idp-encryption.key", dest: "/opt/shibboleth-idp/credentials/idp-encryption.key", mode: "0600" }
-   - { src: "files/restore/{{ idp_fqdn }}/credentials/idp-backchannel.crt", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.crt", mode: "0644" }
-   - { src: "files/restore/{{ idp_fqdn }}/credentials/idp-backchannel.p12", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.p12", mode: "0644" }
-   - { src: "files/restore/{{ idp_fqdn }}/credentials/sealer.jks", dest: "/opt/shibboleth-idp/credentials/sealer.jks", mode: "0644" }
-   - { src: "files/restore/{{ idp_fqdn }}/credentials/sealer.kver", dest: "/opt/shibboleth-idp/credentials/sealer.kver", mode: "0644" }
+   - { src: "files/restore/{{ fqdn }}/credentials/idp-signing.crt", dest: "/opt/shibboleth-idp/credentials/idp-signing.crt", mode: "0644" }
+   - { src: "files/restore/{{ fqdn }}/credentials/idp-signing.key", dest: "/opt/shibboleth-idp/credentials/idp-signing.key", mode: "0600" }
+   - { src: "files/restore/{{ fqdn }}/credentials/idp-encryption.crt", dest: "/opt/shibboleth-idp/credentials/idp-encryption.crt", mode: "0644" }
+   - { src: "files/restore/{{ fqdn }}/credentials/idp-encryption.key", dest: "/opt/shibboleth-idp/credentials/idp-encryption.key", mode: "0600" }
+   - { src: "files/restore/{{ fqdn }}/credentials/idp-backchannel.crt", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.crt", mode: "0644" }
+   - { src: "files/restore/{{ fqdn }}/credentials/idp-backchannel.p12", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.p12", mode: "0644" }
+   - { src: "files/restore/{{ fqdn }}/credentials/sealer.jks", dest: "/opt/shibboleth-idp/credentials/sealer.jks", mode: "0644" }
+   - { src: "files/restore/{{ fqdn }}/credentials/sealer.kver", dest: "/opt/shibboleth-idp/credentials/sealer.kver", mode: "0644" }
   notify:
    - "Restart Jetty"
   when: idp_cert_restore == "True"
@@ -223,7 +223,7 @@
 
 - name: "Be sure that Federation logo, eduGAIN logo and other images are present"
   copy:
-   src: "files/restore/{{ idp_fqdn }}/styles/images"
+   src: "files/restore/{{ fqdn }}/styles/images"
    dest: "/var/www/html/"
    owner: "root"
    group: "root"
@@ -234,7 +234,7 @@
 
 - name: "Be sure that IdP image files are present"
   copy:
-   src: "files/restore/{{ idp_fqdn }}/styles/{{ item.key }}/"
+   src: "files/restore/{{ fqdn }}/styles/{{ item.key }}/"
    dest: "/var/www/html/{{ item.key }}/"
    owner: "root"
    group: "root"
@@ -333,9 +333,10 @@
   tags: idp
 
 - name: "Be sure that needed packages for statistics are installed"
-  package:
+  apt:
    name: "{{item}}"
    state: latest
+   update_cache: yes
   with_items:
    - python-mysqldb
    - php5-mysql
@@ -445,8 +446,8 @@
    group: "root"
    mode: "0600"
   with_items:
-   - { src: "files/restore/{{ idp_fqdn }}/mysql-backups/shibboleth-backup.sql.gz", dest: "/root/shibboleth-backup.sql.gz" }
-   - { src: "files/restore/{{ idp_fqdn }}/mysql-backups/statistics-backup.sql.gz", dest: "/root/statistics-backup.sql.gz" }
+   - { src: "files/restore/{{ fqdn }}/mysql-backups/shibboleth-backup.sql.gz", dest: "/root/shibboleth-backup.sql.gz" }
+   - { src: "files/restore/{{ fqdn }}/mysql-backups/statistics-backup.sql.gz", dest: "/root/statistics-backup.sql.gz" }
   when: 
    - idp_db_restore == "True" 
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"

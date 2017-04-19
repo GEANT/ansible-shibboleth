@@ -21,16 +21,17 @@
    state: present
   tags: common
 
-- name: "Only run 'update_cache=yes' if the last one is more than 3600 seconds ago"
-  apt:
-    update_cache: yes
-    cache_valid_time: 3600
-  changed_when: false
-  tags: common
+#- name: "Only run 'update_cache=yes' if the last one is more than 3600 seconds ago"
+#  apt:
+#    update_cache: yes
+#    cache_valid_time: 3600
+#  changed_when: false
+#  tags: common
 
 - name: "Be sure that needed packages are installed"
-  package: 
+  apt: 
    name: "{{item}}"
+   update_cache: yes
    state: latest
   with_items:
    - ntp

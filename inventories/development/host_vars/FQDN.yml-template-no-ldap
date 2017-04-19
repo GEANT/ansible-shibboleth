@@ -1,6 +1,6 @@
 # file: host_vars/##FULL.VM.QUALIFIED.DOMAIN.NAME##.yml
 
-# IDP Variables
+# Machine Variables
 
 idp_fqdn: FQDN
 
