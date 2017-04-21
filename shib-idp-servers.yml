@@ -11,3 +11,4 @@
     - jetty
     - mysql
     - idp
+    - check_mk_agent

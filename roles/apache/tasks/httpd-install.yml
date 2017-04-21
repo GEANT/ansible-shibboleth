@@ -7,4 +7,3 @@
    update_cache: yes
   notify:
    - "Safe Upgrade"
-  tags: httpd

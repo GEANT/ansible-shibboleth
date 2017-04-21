@@ -8,13 +8,11 @@
    update_cache: yes
   notify:
    - "Safe Upgrade"
-  tags: jdk
 
 - name: "Add Oracle Java Repository"
   apt_repository:
    repo: "ppa:webupd8team/java"
    codename: "xenial"
-  tags: jdk
 
 - name: "Accept Java License"
   debconf:
@@ -22,7 +20,6 @@
    question: "shared/accepted-oracle-license-v1-1"
    value: "true"
    vtype: "select"
-  tags: jdk
 
 - name: "Install Oracle Java"
   apt:
@@ -35,14 +32,12 @@
     - "oracle-java{{ jdk_version }}-installer"
     - "ca-certificates"
     - "oracle-java{{ jdk_version }}-set-default"
-  tags: jdk
 
 - name: "Be sure to set the default-java link"
   file:
    src: "/usr/lib/jvm/java-{{ jdk_version }}-oracle"
    dest: "/usr/lib/jvm/default-java"
    state: link
-  tags: jdk
 
 - name: "Be sure to install Oracle Java Cryptography Extension (JCE)"
   copy:
@@ -51,4 +46,3 @@
   with_items:
    - { src: "files/java{{ jdk_version }}/oraclejdk/local_policy.jar", dest: '/usr/lib/jvm/default-java/jre/lib/security/local_policy.jar' }
    - { src: "files/java{{ jdk_version }}/oraclejdk/US_export_policy.jar", dest: '/usr/lib/jvm/default-java/jre/lib/security/US_export_policy.jar' }
-  tags: jdk

@@ -4,7 +4,6 @@
   user:
    name: "apache2"
    groups: "ssl-cert"
-  tags: httpd
 
 - name: "Be sure to have SSL, headers and Proxy modules enabled"
   apache2_module:
@@ -16,7 +15,6 @@
    - proxy_http
   notify:
    - "Restart Apache"
-  tags: httpd
 
 - name: "Be sure to have Apache SSL site configured correctly"
   template:
@@ -27,7 +25,6 @@
    mode: "0644"
   notify:
    - "Restart Apache"
-  tags: httpd
 
 - name: "Be sure that HTTP site is disabled"
   file:
@@ -35,7 +32,6 @@
     state: absent
   notify:
    - "Restart Apache"
-  tags: httpd
 
 - name: "Be sure to disable HTTP port for all hosts except localhost"
   replace:
@@ -44,4 +40,3 @@
    replace: "Listen 127.0.0.1:80"
   notify:
    - "Restart Apache"
-  tags: httpd

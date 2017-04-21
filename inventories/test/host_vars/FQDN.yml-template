@@ -154,3 +154,6 @@ https_key: "{{ fqdn }}.key"
 ## Statistics Web App
 fed_md: "{{ idp_metadata_providers[1]['file'] }}"
 idp_stats_db_pw: "## STATISTICS DB PASSWORD ##"
+
+### CHECK_MK Monitoring Server
+check_mk_srv: "## FQDN OF CHECK_MK SERVER ##"

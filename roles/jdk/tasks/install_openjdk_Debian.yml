@@ -7,22 +7,6 @@
     update_cache: "yes"
     filename: 'jessie-backports'
   when: jdk_version == "8" and ansible_distribution_release == "jessie"
-  tags: jdk
-
-#- name: "Check JDK is already present and store the result into 'jdk_link' ansible variable"
-#  stat:
-#    path: "/usr/lib/jvm/default-java"
-#  register: jdk_link
-#  changed_when: false
-#  tags: jdk
-
-#- name: "Run an APT Update"
-#  apt:
-#    update_cache: yes
-#  notify:
-#   - "Safe Upgrade"
-#  when: jdk_link.stat.islnk is not defined
-#  tags: jdk
 
 - name: "Be sure to install OpenJDK 7"
   apt:
@@ -32,7 +16,6 @@
   notify:
    - "Safe Upgrade"
   when: jdk_version == "7" and ansible_distribution_release == "jessie"
-  tags: jdk
 
 - name: "Be sure to install OpenJDK 8"
   apt:
@@ -48,7 +31,6 @@
    - "openjdk-8-jre"
    - "openjdk-8-jdk"
   when: jdk_version == "8" and ansible_distribution_release == "jessie"
-  tags: jdk
 
 - name: "Be sure to set the default-java link"
   file:
@@ -56,4 +38,3 @@
    dest: "/usr/lib/jvm/default-java"
    state: link
   when: jdk_version == "8" and ansible_distribution_release == "jessie"
-  tags: jdk
