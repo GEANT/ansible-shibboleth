@@ -39,7 +39,7 @@ idp_attrDef:
             encodeType: "false"
    givenName:
       AttributeDefinition:
-         id: "giveName"
+         id: "givenName"
          type: "Simple"
          sourceAttributeID: "givenName"
       Dependency:
@@ -269,7 +269,7 @@ idp_attrDef:
       AttributeDefinition:
          id: "eduPersonScopedAffiliation"
          type: "Scoped"
-         sourceAttributeID: "eduPersonScopedAffiliation"
+         sourceAttributeID: "eduPersonAffiliation"
          scope: "%{idp.scope}"
       Dependency:
          ref_dc_ldap: "myLDAP"
