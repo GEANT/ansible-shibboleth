@@ -22,13 +22,13 @@
                <br/>
                <p class="text-center">
 {% for lang, value in idp_metadata.iteritems() %}
-                  <a href="/{{ lang }}/info.html"><img height="36px" src="/{{ lang }}/{{ lang }}Flag.png"></a>
+                  <a href="{{ idp_metadata[lang]['mdui_infoUrl'] | default('/'~lang~'/info.html') }}"><img height="36px" src="/{{ lang }}/{{ lang }}Flag.png"></a>
 {% endfor %}
                </p>
             </div>
             <div class="col-md-2">
-               <a href="{{ idp_metadata['en']['federation']['url'] }}" target="_blank">
-                  <img id="headerLogo" src="{{ idp_metadata['en']['federation']['logo'] }}" alt="Logo {{ idp_metadata['en']['federation']['name'] }}"/>
+               <a href="{{ idp['login']['fed_info']['federation']['en']['url'] }}" target="_blank">
+                  <img id="headerLogo" src="{{ idp['login']['fed_info']['federation']['en']['logo'] }}" alt="Logo {{ idp['login']['fed_info']['federation']['en']['name'] }}"/>
                </a>
             </div>
          </div>
@@ -174,8 +174,8 @@
              <td>A simple example would be a URL for a contract with a licensed resource provider</td>
            </tr>
          </table>
-         <p><a href="https://www.idem.garr.it/it/servizi/sp" target="_blank">Resource list available as member of the IDEM Federation</a> that you can access with this Identity Provider.</p>
-         <p>The Privacy Policy applied to the users of the institution {{ idp_metadata['en']['mdui_displayName'] }} is located here: <a href="/en/privacy.html">Privacy Policy</a></p>
+         <p><a href="https://www.idem.garr.it/it/servizi/sp" target="_blank">Resource list available as member of the {{ idp['login']['fed_info']['federation']['en']['name'] }}</a> that you can access with this Identity Provider.</p>
+         <p>The Privacy Policy applied to the users of the institution {{ idp_metadata['en']['mdui_displayName'] }} is located here: <a href="{{ idp_metadata['en']['mdui_privacyUrl'] | default('/en/privacy.html') }}">Privacy Policy</a></p>
       </div>
 
 </body>

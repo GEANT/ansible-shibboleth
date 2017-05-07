@@ -25,13 +25,13 @@
                <br/>
                <p class="text-center">
 {% for lang, value in idp_metadata.iteritems() %}
-                  <a href="/{{ lang }}/privacy.html"><img height="36px" src="/{{ lang }}/{{ lang }}Flag.png"></a>
+                  <a href="{{ idp_metadata[lang]['mdui_privacyUrl'] | default('/'~lang~'/privacy.html') }}"><img height="36px" src="/{{ lang }}/{{ lang }}Flag.png"></a>
 {% endfor %}
                </p>
             </div>
             <div class="col-md-2">
-               <a href="{{ idp_metadata['it']['federation']['url'] }}" target="_blank">
-                  <img id="headerLogo" src="{{ idp_metadata['it']['federation']['logo'] }}" alt="Logo {{ idp_metadata['it']['federation']['name'] }}"/>
+               <a href="{{ idp['login']['fed_info']['federation']['it']['url'] }}" target="_blank">
+                  <img id="headerLogo" src="{{ idp['login']['fed_info']['federation']['it']['logo'] }}" alt="Logo {{ idp['login']['fed_info']['federation']['it']['name'] }}"/>
                </a>
             </div>
          </div>
@@ -138,7 +138,7 @@
          <p> e-mail: <a href="mailto:{{ idp_contacts['support']['mail'] }}">{{ idp_contacts['support']['mail'] }}</a></p>
          <p> tel.:</p>
          <br/>
-         <p>Qui puoi trovare la pagina di informazioni per l'istituto {{ idp_metadata['it']['mdui_displayName'] }}: <a href="/it/info.html">Information Page</a></p>
+         <p>Qui puoi trovare la pagina di informazioni per l'istituto {{ idp_metadata['it']['mdui_displayName'] }}: <a href="{{ idp_metadata['it']['mdui_infoUrl'] | default('/it/info.html') }}">Information Page</a></p>
       </div>
    </body>
 </html>

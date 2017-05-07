@@ -273,11 +273,9 @@
                             <a href="javascript:setParam('lang', '{{ language }}');"><img height="16px" src="/{{ language }}/{{ language }}Flag.png"></a>
 {% endfor %}
                         </p>
-                        <p>
-                            <a href="#springMessageText("federation.url","#")"><img src="#springMessageText("federation.logo" ,"/images/federation-logo.png")" alt="#springMessageText("federation.name", "Federation Name")" style="width: 100px"/></a>
-                            <br/>
-                            <a href="#springMessageText("edugain.url","#")"><img src="#springMessageText("edugain.logo" ,"/images/edugain-logo.png")" alt="#springMessageText("edugain.name", "eduGAIN Interfederation")" style="width: 120px"/></a>
-                        </p>
+{% for fed, value in idp['login']['fed_info'].iteritems() %}
+                        <p><a href="#springMessageText("{{ fed }}.url","#")"><img src="#springMessageText("{{ fed }}.logo" ,"/images/federation-logo.png")" alt="#springMessageText("{{ fed }}.name", "Federation Name")" style="width: 100px"/></a></p>
+{% endfor %}
                     </div> ## column two
                         #end
                 </div> ## content

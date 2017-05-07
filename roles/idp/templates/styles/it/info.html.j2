@@ -25,13 +25,13 @@
                <br/>
                <p class="text-center">
 {% for lang, value in idp_metadata.iteritems() %}
-                  <a href="/{{ lang }}/info.html"><img height="36px" src="/{{ lang }}/{{ lang }}Flag.png"></a>
+                  <a href="{{ idp_metadata[lang]['mdui_infoUrl'] | default('/'~lang~'/info.html') }}"><img height="36px" src="/{{ lang }}/{{ lang }}Flag.png"></a>
 {% endfor %}
                </p>
             </div>
             <div class="col-md-2">
-               <a href="{{ idp_metadata['it']['federation']['url'] }}" target="_blank">
-                  <img id="headerLogo" src="{{ idp_metadata['it']['federation']['logo'] }}" alt="Logo {{ idp_metadata['it']['federation']['name'] }}"/>
+               <a href="{{ idp['login']['fed_info']['federation']['it']['url'] }}" target="_blank">
+                  <img id="headerLogo" src="{{ idp['login']['fed_info']['federation']['it']['logo'] }}" alt="Logo {{ idp['login']['fed_info']['federation']['it']['name'] }}"/>
                </a>
             </div>
          </div>
@@ -181,9 +181,9 @@
               <td>Valori utilizzati per conferire dei privilegi sulla risorsa a cui si vuole accedere</td>
             </tr>
          </table>
-         <p><a href="https://www.idem.garr.it/it/servizi/sp" target="_blank">Elenco delle Risorse associate alla Federazione {{ idp_metadata['it']['federation']['name'] }}</a> a cui è possibile accedere tramite le credenziali fornite per questo Identity Provider.</p>
+         <p><a href="https://www.idem.garr.it/it/servizi/sp" target="_blank">Elenco delle Risorse associate alla Federazione {{ idp['login']['fed_info']['federation']['it']['name'] }}</a> a cui è possibile accedere tramite le credenziali fornite per questo Identity Provider.</p>
 
-         <p>La Politica sulla Privacy per gli utenti dell'istituto {{ idp_metadata['it']['mdui_displayName'] }} è consultabile qui: <a href="/it/privacy.html">Privacy Policy</a></p>
+         <p>La Politica sulla Privacy per gli utenti dell'istituto {{ idp_metadata['it']['mdui_displayName'] }} è consultabile qui: <a href="{{ idp_metadata['it']['mdui_privacyUrl'] | default('/it/privacy.html') }}">Privacy Policy</a></p>
       </div>
    </body>
 </html>

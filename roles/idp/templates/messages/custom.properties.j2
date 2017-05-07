@@ -5,7 +5,7 @@ idp.login.moreinfo=Resource informations
 idp.login.goback=Go back to login page
 idp.infopage=Informations
 idp.privacypage=Privacy Policy
-idp.description={{ idp['description'] }}
+idp.description={{ idp_metadata['en']['mdui_description'] }}
 idp.organization=GARR
 idp.contacts={{ idp_contacts['technical']['mail'] }}
 idp.nocontacts=No Contacts
@@ -20,9 +20,8 @@ sp.infopage=SP Information Page
 sp.noinfopage=SP Information Page absent
 sp.privacypage=SP Privacy Policy
 sp.noprivacypage=SP Privacy Policy absent
-federation.url={{ idp_metadata['en']['federation']['url'] }}
-federation.logo={{ idp_metadata['en']['federation']['logo'] }}
-federation.name={{ idp_metadata['en']['federation']['name'] }}
-edugain.url={{ idp_metadata['en']['edugain']['url'] }}
-edugain.logo={{ idp_metadata['en']['edugain']['logo'] }}
-edugain.name={{ idp_metadata['en']['edugain']['name'] }}
+{% for fed, value in idp['login']['fed_info'].iteritems() %}
+{{ fed }}.url={{ idp['login']['fed_info'][fed]['en']['url'] }}
+{{ fed }}.logo={{ idp['login']['fed_info'][fed]['en']['logo'] }}
+{{ fed }}.name={{ idp['login']['fed_info'][fed]['en']['name'] }}
+{% endfor %}

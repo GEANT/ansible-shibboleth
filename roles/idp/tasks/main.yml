@@ -206,7 +206,7 @@
     owner: "jetty"
     group: "root"
     mode: "0644"
-    validate_certs: "{{ item.validate_ssl_cert }}"
+    validate_certs: "{{ item.disregardTLSCertificate }}"
   with_items: "{{ idp_metadata_providers }}"
   tags: idp
 
@@ -340,6 +340,7 @@
   with_items:
    - python-mysqldb
    - php5-mysql
+   - php5
   notify:
    - "Safe Upgrade"
   tags: idp
@@ -503,3 +504,35 @@
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
 
+- name: "Be sure that needed packages for Check MK plugin are installed"
+  apt:
+   name: "{{ item }}"
+   state: latest
+   update_cache: yes
+  with_items:
+   - python-ldap
+   - python-mechanize
+  when: 
+   - check_mk['srv'] is defined
+  notify:
+   - "Safe Upgrade"
+  tags: idp
+
+- name: "Be sure that the Check_MK plugin directory exists"
+  file:
+    path: "/usr/lib/check_mk_agent/local"
+    owner: "root"
+    group: "root"
+    state: directory
+  when: check_mk['srv'] is defined
+  tags: idp
+ 
+- name: "Be sure that the Check_MK 'check_aacli' plugin is installed in the right position"
+  template:
+    src: "monitoring/check_mk_plugins/check_aacli.py.j2"
+    dest: "/usr/lib/check_mk_agent/local/check_aacli.py"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  when: check_mk['srv'] is defined
+  tags: idp

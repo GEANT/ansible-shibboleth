@@ -221,6 +221,30 @@
    - "Restart slapd"
   tags: openldap
 
+- name: "Check the existance of the Test User inside LDAP and store the result into 'testuser_in_ldap' ansible variable"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} dn | grep testuser | wc -l"
+  register: testuser_in_ldap
+  changed_when: false
+  when: ldap['create_test_user']
+  tags: openldap
+
+- name: "Be sure that the Test User LDIFs is stored into /root/ldap-configs"
+  template:
+   src: "testuser.ldif.j2"
+   dest: "/root/ldap-configs/testuser.ldif"
+   owner: "root"
+   group: "root"
+   mode: "0600"
+  when: ldap['create_test_user']
+  tags: openldap
+
+- name: "Be sure that the Test User is created"
+  command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/testuser.ldif"
+  when: (ldap['create_test_user'] and testuser_in_ldap.stdout == "0")
+  notify: 
+   - "Restart slapd"
+  tags: openldap
+
 - name: "Check the existance of branch 'policies' inside LDAP and store the result into 'ppolicy_in_ldap' ansible variable"
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} objectClass=organizationalUnit dn | grep ou=policies,{{ ldap['basedn'] }} | wc -l"
   register: ppolicy_in_ldap

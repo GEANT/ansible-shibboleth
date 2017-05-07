@@ -1,0 +1,175 @@
+#!/usr/bin/python
+
+import sys
+import mechanize
+import cookielib
+import urllib
+import optparse
+import re
+
+def cleanhtml(raw_html):
+   cleanr = re.compile('<.*?>')
+   cleantext = re.sub(cleanr, '', raw_html)
+   return cleantext
+
+# Parameters to modify to test different IdPs
+idpEntityId = 'https://{{ fqdn }}/idp/shibboleth'
+spReqInit   = "{{ check_mk['spReqInit'] }}"
+testuser    = "{{ check_mk['testuser'] }}"
+testpass    = "{{ check_mk['testpass'] }}"
+basedn      = "{{ idp['ldap']['baseDN'] }}"
+idpuser     = "{{ idp['ldap']['bindDN'] }}"
+ldappasswd  = "{{ idp['ldap']['bindDNCredential'] }}"
+ldapsrv     = "{{ idp['ldap']['url'] }}"
+userid_attr = "uid"
+scope       = "{{ idp['scope'] }}"
+{% if idp['ldap']['useStartTLS'] is equalto 'true' or idp['ldap']['useStartTLS'] is equalto 'True' %}
+tls         = True
+{% else %}
+tls         = False
+{% endif %}
+# End of parameters
+
+parser = optparse.OptionParser()
+parser.add_option("-d", "--debug", dest="debug", action="store_true",
+    help="Print debug information", default=False)
+parser.add_option("-e", "--entity", dest="idpEntityId",
+    help="Specify IdP entityId", default=idpEntityId)
+parser.add_option("-u", "--user", dest="testuser",
+    help="Username to be logged in", default=testuser)
+parser.add_option("-p", "--password", dest="testpass",
+    help="Password to be used to logged in user", default=testpass)
+parser.add_option("-n", "--namehost", dest="spReqInit",
+    help="Request Initiator url of the SP to be used for login", default=spReqInit)
+parser.add_option("-l", "--ldap", dest="checkLdap", action="store_true",
+    help="Check the returned attributes against LDAP", default=False)
+(options, args) = parser.parse_args()
+
+if options.debug:
+    print "Options passed to command:   %s" % options
+    print "Arguments passed to command: %s" % args
+
+br = mechanize.Browser()
+cj = cookielib.LWPCookieJar()    # Store cookies in a human-readable file.
+br.set_cookiejar(cj)             # Set a mechanize CookieJAR instead of real cookies
+br.set_handle_redirect(True)     # Handle HTTP 30x redirections? True
+
+# Data to be passed to the test SP first form
+data = {
+    'SAMLDS': 1,
+    'target': 'ss:mem:e6f0860c5fa83650a8010497c4fa26370592b8d270bfa950cf5c926c723dfc8f',
+    'entityID': options.idpEntityId,
+    'idpSelectSelectButton': 'Continue',
+}
+# Open the target specified in the action of the first form of the test SP with all data.
+# The form method is set to GET so using a query string.
+urltoopen = options.spReqInit + '?' + urllib.urlencode(data)
+if options.debug: print urltoopen
+
+try:
+    # Open first page from the SP.
+    br.open(urltoopen)
+
+    # Search the first form (the login form) in the page.
+    # Specify username and password and submit.
+    br.select_form(nr=0)
+    br.form['j_username'] = options.testuser
+    br.form['j_password'] = options.testpass
+    r = br.submit()
+    html = r.read()
+
+    # Check if html page opened contains a form with a SAMLResponse field.
+    # This page with a form is used by the IdP to create the session it contains
+    # a javascript which submits the form itself.
+    if "<form" in html and "SAMLResponse" in html:
+        # Since we are not processing javascript, submit the form explicitly.
+        br.select_form(nr=0)
+        r = br.submit()
+        html = r.read()
+
+    if "<form" in html and "attributeRelease" in html:
+        br.select_form(nr=0)
+        r = br.submit(name='_eventId_proceed', label='Accept')
+        html = r.read()
+        if "<form" in html and "SAMLResponse" in html:
+                # Since we are not processing javascript, submit the form explicitly.
+                br.select_form(nr=0)
+                r = br.submit()
+                html = r.read()
+
+    if options.debug: print html
+except Exception as e:
+    # In case of an error put html to an empty string to return exit status 2 below.
+    if options.debug: print e
+    html = ""
+
+validAttrs = True
+attrErrString = ""
+if options.checkLdap:
+    try:
+        import ldap
+
+        # Connect to LDAP server via plain, ssl or tls.
+        con = ldap.initialize(ldapsrv)
+        if tls: con.set_option(ldap.OPT_X_TLS_DEMAND, True)
+        con.simple_bind_s(idpuser,ldappasswd)
+
+        # Search the LDAP for the right user.
+        filter = '(objectclass=person)'
+        attrs = ['*']
+        searchuser  = userid_attr + '=' + options.testuser + ',' + basedn
+        ldapuser = con.search_s(searchuser, ldap.SCOPE_SUBTREE, filter, attrs)[0][1]
+        if options.debug: print ldapuser
+
+        # Verify all interesting attrs comparing LDAP with Shibboleth session.
+        attrs = { 
+                  'givenName':'givenName',
+                  'sn':'sn',
+                  'cn':'cn',
+                  'mail':'mail',
+                  '@eduPersonAffiliation':'affiliation',
+                  '@uid':'eppn'
+                }
+
+        # Parse all attribute values in HTML.
+        html2 = html.replace('<br>', '\n')
+        html2 = html2.replace('<br />', '\n')
+        html2 = cleanhtml(html2)
+        html2 = html2.split('\n')
+        spAttrs = {}
+        for line in html2:
+            if '=' in line:
+                spAttrs[line.split('=', 1)[0].strip()] = line.split('=', 1)[1].strip()
+
+        if options.debug: print spAttrs
+
+        # Check all attributes
+        for curAttrLDAP in attrs:
+            if curAttrLDAP[0] == '@':
+                valLDAP = [('{0}@'+scope).format(i) for i in ldapuser[curAttrLDAP[1:]]]
+            else:
+                valLDAP = ldapuser[curAttrLDAP]
+
+            valSP = spAttrs[attrs[curAttrLDAP]]
+            if options.debug: print "\n\nChecking %s with %s for attribute: %s => %s" % (valLDAP, valSP, curAttrLDAP, attrs[curAttrLDAP])
+
+            if not valSP in valLDAP:
+                validAttrs = False
+                attrErrString += "Attribute %s in LDAP has value %s in LDAP session and value %s in the SP.\n" % (curAttrLDAP, valLDAP, valSP)
+
+    except Exception as e:
+        # In case of an error put validAttrs to False to return exit status 1 below.
+        if options.debug: print e
+        validAttrs = False
+
+# Search a valid string in the SP page and if found return 0 otherwise 2.
+if not "Politica della Privacy".lower() in html.lower():
+    print "2 check_login - CRITICAL error while logging in user"
+    sys.exit(2)
+elif validAttrs:
+    print "0 check_login - SUCCESS user correctly logged in"
+    sys.exit(0)
+else:
+    print "1 check_login - WARNING user correctly logged in, but wrong session was created."
+    print attrErrString
+    sys.exit(1)
