@@ -14,7 +14,7 @@ from cStringIO import StringIO
 
 # PARAMETERS
 
-spEntityId  = "{{ check_mk['spEntityID'] }}"
+spEntityId  = "https://fake-coco.example.org/shibboleth"
 user        = "{{ check_mk['testuser'] }}"
 basedn      = "{{ check_mk['baseDN'] }}"
 searchuser  = "{{ check_mk['searchuser'] }}"
@@ -90,10 +90,9 @@ try:
    # 
    # @uid == uid@<scope>      (where 'scope' contains the domain of the organization)
    attrs = {
-            'givenName':'givenName',
-            'sn':'sn',
             'cn':'cn',
-            'mail':'mail',
+            'eduPersonOrgUnitDN':'eduPersonOrgUnitDN',
+            'eduPersonOrgDN':'eduPersonOrgDN',
             '@eduPersonAffiliation':'eduPersonScopedAffiliation',
             '@uid':'eduPersonPrincipalName'
            }
@@ -125,9 +124,9 @@ except Exception as e:
    validAttrs = False
 
 if validAttrs:
-   print "0 check_aacli - SUCCESS - IdP has retrieved metadata of Test SP and is sending attributes to it"
+   print "0 check_coco - SUCCESS - IdP has retrieved metadata of Test COCO SP and is sending attributes to it"
    sys.exit(0)
 else:
-   print "1 check_aacli - CRITICAL - IdP doesn't send attributes to Test SP"
+   print "1 check_coco - CRITICAL - IdP doesn't send attributes to Test COCO SP"
    print attrErrString
    sys.exit(1)

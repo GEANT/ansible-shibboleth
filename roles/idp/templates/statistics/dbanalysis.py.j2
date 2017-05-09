@@ -44,7 +44,7 @@ def parseFiles(files):
     for event in lines:
         try:
             strdatetime,reqBind,reqId,rp,msgProfile,idp,respBind,respId,user,authnMeth,relAttribs,nameId,assertIds,EOL = event
-            if (user == "{{ check_mk['testuser'] }}" and rp == "{{ check_mk['spEntityID'] }}") or idp == '' or idp == None:
+            if (user == "{{ check_mk['testuser'] }}" and (rp == "{{ check_mk['spEntityID'] }}" or rp == "https://fake-rs.example.org/shibboleth" or rp == "https://fake-coco.example.org/shibboleth")) or idp == '' or idp == None:
                 continue
         except ValueError:
             print """ERROR: Unsupported log file format or using compressed log files with Python < 2.5.%s. See the documentation in the Shibboleth wiki.""" % os.linesep

@@ -10,12 +10,11 @@ jdk_type: "openjdk"
 jdk_version: "7"
 
 # MySQL Variables
-mysql_root_password: "mysqlrootpassword"
+mysql_root_password: "mysql-root-password"
 
 # IDP Variables
 
 # Set to 'true' to perform an IdP Restoration
-idp_cert_restore: "false"
 idp_db_restore: "false"
 
 idp:
@@ -59,11 +58,10 @@ idp:
                url: "http://www.idem.garr.it/"
                logo: "/images/federation-logo.png"
 
-idp_pw: "rootpassword"
-idp_sealer_pw: "rootpassword"
-idp_keystore_pw: "rootpassword"
+idp_sealer_pw: "sealer-password"
+idp_keystore_pw: "sealer-password"
 
-idp_shibboleth_db_password: "rootpassword"
+idp_shibboleth_db_password: "root-db-password"
 
 ## IDP BASIC CONFIGURATION VARIABLE ##
 
@@ -83,8 +81,8 @@ idp_federation_regAuth: "https://registration.authority.com/"
 
 idp_metadata:
    en:
-      mdui_displayName: "Organization english Display Name"
-      mdui_description: "IDP di Test per Organization Name"
+      mdui_displayName: "IdP english Display Name"
+      mdui_description: "Test IdP for Organization Name"
       mdui_infoUrl: "https://{{ fqdn }}/en/info.html"
       mdui_privacyUrl: "https://{{ fqdn }}/en/privacy.html"
       mdui_favicon: "https://{{ fqdn }}/en/favicon.png"
@@ -93,14 +91,14 @@ idp_metadata:
       org_displayName: "Organization english Display Name"
       org_url: "http://www.orgUrl.uk/"
    it:
-      mdui_displayName: "Organization italian Display Name"
-      mdui_description: "IDP di Test per Organization Name"
+      mdui_displayName: "Nome IDP in italiano"
+      mdui_description: "IDP di Test per Nome Organizzazione"
       mdui_infoUrl: "https://{{ fqdn }}/it/info.html"
       mdui_privacyUrl: "https://{{ fqdn }}/it/privacy.html"
       mdui_favicon: "https://{{ fqdn }}/it/favicon.png"
       mdui_logo: "https://{{ fqdn }}/it/logo.png"
-      org_name: "Organization italian Name"
-      org_displayName: "Organization italian Display Name "
+      org_name: "Nome Organizzazione"
+      org_displayName: "Nome Organizzazione leggibile"
       org_url: "http://www.orgUrl.it"
 
 idp_contacts:

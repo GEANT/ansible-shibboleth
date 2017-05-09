@@ -1,6 +1,7 @@
 # Credentials
 
-Put here the following Identity Provider credentials files to be restored:
+This directory will be populated by the script 'scripts/create-credentials.py' that
+will put here, for each Identity Provider Shibboleth, the following credentials files:
 
  * idp-backchannel.crt
  * idp-backchannel.p12

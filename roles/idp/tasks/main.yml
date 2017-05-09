@@ -114,7 +114,7 @@
     - war
   tags: idp
 
-- name: "RESTORE: Be sure to restore the credentials of Shibboleth IdP"
+- name: "Be sure to set the credentials generated for Shibboleth IdP"
   copy:
    src: "{{ item.src }}"
    dest: "{{ item.dest }}"
@@ -122,17 +122,16 @@
    group: "root"
    mode: "{{ item.mode }}"
   with_items:
-   - { src: "files/restore/{{ fqdn }}/credentials/idp-signing.crt", dest: "/opt/shibboleth-idp/credentials/idp-signing.crt", mode: "0644" }
-   - { src: "files/restore/{{ fqdn }}/credentials/idp-signing.key", dest: "/opt/shibboleth-idp/credentials/idp-signing.key", mode: "0600" }
-   - { src: "files/restore/{{ fqdn }}/credentials/idp-encryption.crt", dest: "/opt/shibboleth-idp/credentials/idp-encryption.crt", mode: "0644" }
-   - { src: "files/restore/{{ fqdn }}/credentials/idp-encryption.key", dest: "/opt/shibboleth-idp/credentials/idp-encryption.key", mode: "0600" }
-   - { src: "files/restore/{{ fqdn }}/credentials/idp-backchannel.crt", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.crt", mode: "0644" }
-   - { src: "files/restore/{{ fqdn }}/credentials/idp-backchannel.p12", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.p12", mode: "0644" }
-   - { src: "files/restore/{{ fqdn }}/credentials/sealer.jks", dest: "/opt/shibboleth-idp/credentials/sealer.jks", mode: "0644" }
-   - { src: "files/restore/{{ fqdn }}/credentials/sealer.kver", dest: "/opt/shibboleth-idp/credentials/sealer.kver", mode: "0644" }
+   - { src: "files/credentials/{{ fqdn }}/idp-signing.crt", dest: "/opt/shibboleth-idp/credentials/idp-signing.crt", mode: "0644" }
+   - { src: "files/credentials/{{ fqdn }}/idp-signing.key", dest: "/opt/shibboleth-idp/credentials/idp-signing.key", mode: "0600" }
+   - { src: "files/credentials/{{ fqdn }}/idp-encryption.crt", dest: "/opt/shibboleth-idp/credentials/idp-encryption.crt", mode: "0644" }
+   - { src: "files/credentials/{{ fqdn }}/idp-encryption.key", dest: "/opt/shibboleth-idp/credentials/idp-encryption.key", mode: "0600" }
+   - { src: "files/credentials/{{ fqdn }}/idp-backchannel.crt", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.crt", mode: "0644" }
+   - { src: "files/credentials/{{ fqdn }}/idp-backchannel.p12", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.p12", mode: "0644" }
+   - { src: "files/credentials/{{ fqdn }}/sealer.jks", dest: "/opt/shibboleth-idp/credentials/sealer.jks", mode: "0644" }
+   - { src: "files/credentials/{{ fqdn }}/sealer.kver", dest: "/opt/shibboleth-idp/credentials/sealer.kver", mode: "0644" }
   notify:
    - "Restart Jetty"
-  when: idp_cert_restore == "True"
   tags: idp
 
 - name: "Check if 'shibboleth' DB is already created and store the result into 'shib_db' ansible variable"
@@ -314,7 +313,7 @@
    group: "root"
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
-  when: idp['login']['create_info_and_pp_pages']
+  when: idp['login']['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
   notify:
     - "Restart Apache"
   tags: idp
@@ -327,7 +326,7 @@
    group: "root"
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
-  when: idp['login']['create_info_and_pp_pages']
+  when: idp['login']['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
   notify:
     - "Restart Apache"
   tags: idp
@@ -450,7 +449,7 @@
    - { src: "files/restore/{{ fqdn }}/mysql-backups/shibboleth-backup.sql.gz", dest: "/root/shibboleth-backup.sql.gz" }
    - { src: "files/restore/{{ fqdn }}/mysql-backups/statistics-backup.sql.gz", dest: "/root/statistics-backup.sql.gz" }
   when: 
-   - idp_db_restore == "True" 
+   - idp_db_restore in ["True","true","Yes","yes"] 
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
 
@@ -460,7 +459,7 @@
    - "/root/shibboleth-backup.sql.gz"
    - "/root/statistics-backup.sql.gz"
   when: 
-   - idp_db_restore == "True" 
+   - idp_db_restore in ["True","true","Yes","yes"] 
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
 
@@ -474,7 +473,7 @@
    - "/root/shibboleth-backup.sql"
    - "/root/statistics-backup.sql"
   when: 
-   - idp_db_restore == "True" 
+   - idp_db_restore in ["True","true","Yes","yes"] 
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
 
@@ -488,7 +487,7 @@
    - "/root/shibboleth-backup.sql"
    - "/root/statistics-backup.sql"
   when: 
-   - idp_db_restore == "True" 
+   - idp_db_restore in ["True","true","Yes","yes"] 
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
 
@@ -500,7 +499,7 @@
    - "/root/shibboleth-backup.sql"
    - "/root/statistics-backup.sql"
   when: 
-   - idp_db_restore == "True" 
+   - idp_db_restore in ["True","true","Yes","yes"] 
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
 
@@ -535,4 +534,78 @@
     group: "root"
     mode: "0755"
   when: check_mk['srv'] is defined
+  tags: idp
+
+- name: "Be sure that the Check_MK 'check_rs' plugin is installed in the right position"
+  template:
+    src: "monitoring/check_mk_plugins/check_rs.py.j2"
+    dest: "/usr/lib/check_mk_agent/local/check_rs.py"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  when:
+   - check_mk['srv'] is defined
+   - check_mk['check_rs'] is defined
+   - check_mk['check_rs'] in ["Yes","yes","True","true"]
+  tags: idp
+
+- name: "Be sure that the Fake RS SP Metadata is in the right place"
+  copy:
+   src: "files/metadata/fake-rs-sp.xml"
+   dest: "/opt/shibboleth-idp/metadata/fake-rs-sp.xml"
+   owner: "root"
+   group: "root"
+   mode: 0644
+  when:
+   - check_mk['srv'] is defined
+   - check_mk['check_rs'] is defined
+   - check_mk['check_rs'] in ["Yes","yes","True","true"]
+  tags: idp 
+
+- name: "Be sure that the Check_MK 'check_coco' plugin is installed in the right position"
+  template:
+    src: "monitoring/check_mk_plugins/check_coco.py.j2"
+    dest: "/usr/lib/check_mk_agent/local/check_coco.py"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  when: 
+   - check_mk['srv'] is defined
+   - check_mk['check_coco'] is defined
+   - check_mk['check_coco'] in ["Yes","yes","True","true"]
+  tags: idp
+
+- name: "Be sure that the Fake CoCo SP Metadata is in the right place"
+  copy:
+   src: "files/metadata/fake-coco-sp.xml"
+   dest: "/opt/shibboleth-idp/metadata/fake-coco-sp.xml"
+   owner: "root"
+   group: "root"
+   mode: 0644
+  when: 
+   - check_mk['srv'] is defined
+   - check_mk['check_coco'] is defined
+   - check_mk['check_coco'] in ["Yes","yes","True","true"]
+  tags: idp
+
+- name: "Be sure to remove Fake CoCo SP files if 'check_coco' is negative" 
+  file:
+   dest: "{{ item }}"
+   state: "absent"
+  with_items:
+   - "/usr/lib/check_mk_agent/local/check_coco.py"
+   - "/opt/shibboleth-idp/metadata/fake-coco-sp.xml"
+  when: 
+   - check_mk['srv'] is not defined or check_mk['check_coco'] is not defined or check_mk['check_coco'] in ["No","no","False","false"]
+  tags: idp
+
+- name: "Be sure to remove Fake RS SP files if 'check_rs' is negative" 
+  file:
+   dest: "{{ item }}"
+   state: "absent"
+  with_items:
+   - "/usr/lib/check_mk_agent/local/check_rs.py"
+   - "/opt/shibboleth-idp/metadata/fake-rs-sp.xml"
+  when: 
+   - check_mk['srv'] is not defined or check_mk['check_rs'] is not defined or check_mk['check_rs'] in ["No","no","False","false"]
   tags: idp

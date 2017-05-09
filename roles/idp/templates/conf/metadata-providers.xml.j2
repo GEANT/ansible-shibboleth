@@ -84,5 +84,13 @@
     <MetadataProvider id="LocalMetadata"  xsi:type="FilesystemMetadataProvider" metadataFile="PATH_TO_YOUR_METADATA"/>
     -->
 
+{% if check_mk['srv'] %}
+{% if check_mk['check_rs'] is defined and check_mk['check_rs'] in ["True","true","Yes","yes"] %}
+    <MetadataProvider id="Fake_RS_SP_Metadata"  xsi:type="FilesystemMetadataProvider" metadataFile="/opt/shibboleth-idp/metadata/fake-rs-sp.xml"/>
+{% endif %}
+{% if check_mk['check_coco'] is defined and check_mk['check_coco'] in ["True","true","Yes","yes"] %}
+    <MetadataProvider id="Fake_COCO_SP_Metadata"  xsi:type="FilesystemMetadataProvider" metadataFile="/opt/shibboleth-idp/metadata/fake-coco-sp.xml"/>
+{% endif %}
+{% endif %}
 
 </MetadataProvider>
