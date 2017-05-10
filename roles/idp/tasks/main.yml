@@ -313,7 +313,9 @@
    group: "root"
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
-  when: idp['login']['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
+  when:
+   - idp['login']['create_info_and_pp_pages'] is defined
+   - idp['login']['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
   notify:
     - "Restart Apache"
   tags: idp
@@ -326,7 +328,9 @@
    group: "root"
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
-  when: idp['login']['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
+  when: 
+   - idp['login']['create_info_and_pp_pages'] is defined
+   - idp['login']['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
   notify:
     - "Restart Apache"
   tags: idp
