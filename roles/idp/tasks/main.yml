@@ -335,6 +335,24 @@
     - "Restart Apache"
   tags: idp
 
+- name: "Be sure to remove Privacy Policy Page if already ones are provided"
+  file:
+   dest: "/var/www/html/{{ item.key }}/privacy.html"
+   state: "absent"
+  with_dict: "{{ idp_metadata }}"
+  when: 
+   - idp['login']['create_info_and_pp_pages'] is not defined or idp['login']['create_info_and_pp_pages'] in ["No","no","False","false"]
+  tags: idp
+
+- name: "Be sure to remove Information Page if already ones are provided"
+  file:
+   dest: "/var/www/html/{{ item.key }}/info.html"
+   state: "absent"
+  with_dict: "{{ idp_metadata }}"
+  when: 
+   - idp['login']['create_info_and_pp_pages'] is not defined or idp['login']['create_info_and_pp_pages'] in ["No","no","False","false"]
+  tags: idp
+
 - name: "Be sure that needed packages for statistics are installed"
   apt:
    name: "{{item}}"

@@ -10,6 +10,7 @@
    name: "{{ item }}"
    state: present
   with_items:
+   - alias
    - ssl
    - headers
    - proxy_http
@@ -26,17 +27,12 @@
   notify:
    - "Restart Apache"
 
-- name: "Be sure that HTTP site is disabled"
-  file:
-    path: /etc/apache2/sites-enabled/000-default.conf
-    state: absent
-  notify:
-   - "Restart Apache"
-
-- name: "Be sure to disable HTTP port for all hosts except localhost"
-  replace:
-   dest: /etc/apache2/ports.conf
-   regexp: "Listen 80"
-   replace: "Listen 127.0.0.1:80"
+- name: "Be sure to have Apache HTTP site has the redirection to HTTPS"
+  template:
+   src: default.conf.j2
+   dest: /etc/apache2/sites-enabled/000-default.conf
+   owner: "root"
+   group: "root"
+   mode: "0644"
   notify:
    - "Restart Apache"
