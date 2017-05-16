@@ -1,0 +1,27 @@
+#!/bin/bash
+
+CONFIGFILE="/etc/mysql-backup/mysql-backup.conf"
+
+if [ -r ${CONFIGFILE} ]; then
+   # Read the configfile if it's existing and readable
+   source ${CONFIGFILE}
+else
+   BACKUPDIR="/var/local/backups/mysql"
+fi
+
+WHICH="`which which`"
+MYSQLDUMP="`${WHICH} mysqldump`"
+DATEC="`${WHICH} date`"
+FIND="`${WHICH} find`"
+DATE=`${DATEC} +%Y-%m-%d`
+
+DATABASES=`mysql --defaults-file=/etc/mysql/debian.cnf --execute="SHOW DATABASES" | awk '{print $1}' | grep -v ^Database$ | grep -v ^mysql$ | grep -v ^performance_schema$ | grep -v ^information_schema$ | tr \\\r\\\n ,\ `
+
+for db in ${DATABASES}; do
+    if [[ "${db}" != "information_schema" ]] && [[ "$db" != "performance_schema" ]] && [[ "${db}" != "mysql" ]] && [[ "${db}" != _* ]] ; then
+        ${MYSQLDUMP} --databases $db > ${BACKUPDIR}/${db}-backup_${DATE}.sql
+    fi
+done
+
+${FIND} "${BACKUPDIR}" -type f -mtime +0 -exec gzip {} \;
+${FIND} "${BACKUPDIR}" -type f -mtime +29 -delete

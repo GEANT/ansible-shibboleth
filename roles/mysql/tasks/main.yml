@@ -45,7 +45,6 @@
    - libmysql-java
    - libcommons-dbcp-java
    - libcommons-pool-java
-   - automysqlbackup
   tags: mysql
 
 - name: "Be sure that .my.cnf file is present for MySQL authentication"
@@ -60,6 +59,25 @@
     name: mysql
     state: started
     enabled: yes
+  tags: mysql
+
+- name: "Be sure to create directory needed for backups"
+  file:
+   dest: "{{ item }}"
+   state: "directory"
+   mode: "750"
+  with_items:
+   - "/var/local/backups"
+   - "/var/local/backups/mysql-backup"
+  tags: mysql
+
+- name: "Be sure to have ldap backup script in the right position"
+  template:
+   src: "mysql-backup.sh.j2"
+   dest: "/etc/cron.daily/mysql-backup"
+   owner: "root"
+   group: "root"
+   mode: "0755"
   tags: mysql
 
 - name: "Be sure that all root accounts receive the root password for database"

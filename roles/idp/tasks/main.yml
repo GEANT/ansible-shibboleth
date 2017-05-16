@@ -513,7 +513,7 @@
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
 
-- name: "RESTORE - Be sure to remove the ldap-backup.ldif restored"
+- name: "RESTORE - Be sure to remove the restored files"
   file:
    dest: "{{ item }}"
    state: "absent"
@@ -575,7 +575,7 @@
   copy:
    src: "files/metadata/fake-rs-sp.xml"
    dest: "/opt/shibboleth-idp/metadata/fake-rs-sp.xml"
-   owner: "root"
+   owner: "jetty"
    group: "root"
    mode: 0644
   when:
@@ -601,7 +601,7 @@
   copy:
    src: "files/metadata/fake-coco-sp.xml"
    dest: "/opt/shibboleth-idp/metadata/fake-coco-sp.xml"
-   owner: "root"
+   owner: "jetty"
    group: "root"
    mode: 0644
   when: 

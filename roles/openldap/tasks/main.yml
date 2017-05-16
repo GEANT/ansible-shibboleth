@@ -260,24 +260,18 @@
 
 - name: "Be sure to create directory needed for backups"
   file:
-   dest: "/var/lib/autoldapbackup"
+   dest: "{{ item }}"
    state: "directory"
    mode: "750"
+  with_items:
+   - "/var/local/backups"
+   - "/var/local/backups/ldap-backup"
   tags: openldap
 
-- name: "Be sure to have the autoldapbackup daily CRON job configured"
-  copy:
-   src: "files/autoldapbackup"
-   dest: "/etc/cron.daily/autoldapbackup"
-   owner: "root"
-   group: "root"
-   mode: "0755"
-  tags: openldap
-
-- name: "Be sure to have executable of autoldapbackup in the right position"
+- name: "Be sure to have ldap backup script in the right position"
   template:
-   src: "autoldapbackup.sh.j2"
-   dest: "/usr/sbin/autoldapbackup"
+   src: "ldap-backup.sh.j2"
+   dest: "/etc/cron.daily/ldap-backup"
    owner: "root"
    group: "root"
    mode: "0755"

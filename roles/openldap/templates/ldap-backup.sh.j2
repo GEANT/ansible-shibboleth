@@ -1,0 +1,23 @@
+#!/bin/bash
+
+CONFIGFILE="/etc/ldap-backup/ldap-backup.conf"
+
+if [ -r ${CONFIGFILE} ]; then
+   # Read the config file if it's existing and readable
+   source ${CONFIGFILE}
+else
+   BACKUPDIR="/var/local/backups/ldap"
+   BASEDN="{{ ldap['basedn'] }}"
+   FILTER="(&(|(ou:dn:=people)(ou:dn:=groups))(!(objectClass=organizationalUnit)))"
+fi
+
+WHICH="`which which`"
+LDAPSEARCH="`${WHICH} ldapsearch`"
+DATEC="`${WHICH} date`"
+FIND="`${WHICH} find`"
+DATE=`${DATEC} +%Y-%m-%d`
+
+${LDAPSEARCH} -QLLLY EXTERNAL -H ldapi:/// -b ${BASEDN} ${FILTER} > ${BACKUPDIR}/ldap_backup_${DATE}.ldif
+
+${FIND} "${BACKUPDIR}" -type f -mtime +0 -exec gzip {} \;
+${FIND} "${BACKUPDIR}" -type f -mtime +30 -delete
