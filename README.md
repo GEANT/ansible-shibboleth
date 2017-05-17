@@ -81,19 +81,22 @@ If you need to limit or change the default Attribute Definitions provided, you h
 
 ### Databases Restore
 
-1. Put the Databases Backup (shibboleth and statistics) of an IdP into:
-  - ```roles/idp/files/restore/FDQN/mysql-backups/shibboleth-backup.sql.gz```
-  - ```roles/idp/files/restore/FQDN/mysql-backups/statistics-backup.sql.gz```
+1. Retrieve database backup files from ```/var/local/backups/mysql/``` on the IdP:
+2. Put the backups file (for shibboleth and statistics database) into:
+  - ```roles/idp/files/restore/FDQN/mysql-backup/shibboleth-db.sql.gz```
+  - ```roles/idp/files/restore/FQDN/mysql-backup/statistics-db.sql.gz```
 
-2. Set the IDP configuration variable ```idp_db_restore``` to ```"True"``` on its ```host_vars``` file
-3. Run again the playbook
+3. Set the IDP configuration variable ```idp_db_restore``` to ```"True"``` on its ```host_vars``` file
+4. Run again the playbook
 
 
 ### LDAP Restore
 
-1. Put the LDAP Backup of an IdP into its ```roles/openldap/files/restore/FQDN/ldap-backup/ldap-backup.gz```
-2. Set the IDP configuration variable ```ldap['restore']``` to ```"True"``` on its ```host_vars``` file
-3. Run again the playbook
+1. Retrieve LDAP backup files from ```/var/local/backups/ldap/``` on the IdP:
+2. Put the LDAP backup into:
+  - ```roles/openldap/files/restore/FQDN/ldap-backup/ldap-users.ldif.gz```
+3. Set the IDP configuration variable ```ldap['restore']``` to ```"True"``` on its ```host_vars``` file
+4. Run again the playbook
 
 
 ## Useful Commands ##

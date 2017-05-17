@@ -8,7 +8,7 @@ if [ -r ${CONFIGFILE} ]; then
 else
    BACKUPDIR="/var/local/backups/ldap"
    BASEDN="{{ ldap['basedn'] }}"
-   FILTER="(&(|(ou:dn:=people)(ou:dn:=groups))(!(objectClass=organizationalUnit)))"
+   FILTER="(&(|(ou:dn:=people)(ou:dn:=groups))(!(objectClass=organizationalUnit))(!(uid=testuser)))"
 fi
 
 WHICH="`which which`"
@@ -17,7 +17,7 @@ DATEC="`${WHICH} date`"
 FIND="`${WHICH} find`"
 DATE=`${DATEC} +%Y-%m-%d`
 
-${LDAPSEARCH} -QLLLY EXTERNAL -H ldapi:/// -b ${BASEDN} ${FILTER} > ${BACKUPDIR}/ldap_backup_${DATE}.ldif
+${LDAPSEARCH} -QLLLY EXTERNAL -H ldapi:/// -b ${BASEDN} ${FILTER} > ${BACKUPDIR}/${DATE}_ldap-users.ldif
 
 ${FIND} "${BACKUPDIR}" -type f -mtime +0 -exec gzip {} \;
 ${FIND} "${BACKUPDIR}" -type f -mtime +30 -delete

@@ -468,8 +468,8 @@
    group: "root"
    mode: "0600"
   with_items:
-   - { src: "files/restore/{{ fqdn }}/mysql-backups/shibboleth-backup.sql.gz", dest: "/root/shibboleth-backup.sql.gz" }
-   - { src: "files/restore/{{ fqdn }}/mysql-backups/statistics-backup.sql.gz", dest: "/root/statistics-backup.sql.gz" }
+   - { src: "files/restore/{{ fqdn }}/mysql-backup/shibboleth-db.sql.gz", dest: "/root/shibboleth-db.sql.gz" }
+   - { src: "files/restore/{{ fqdn }}/mysql-backup/statistics-db.sql.gz", dest: "/root/statistics-db.sql.gz" }
   when: 
    - idp_db_restore in ["True","true","Yes","yes"] 
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
@@ -478,8 +478,8 @@
 - name: "RESTORE - Be sure to extract the Databases Backup into the right position"
   command: "gunzip {{ item }}"
   with_items:
-   - "/root/shibboleth-backup.sql.gz"
-   - "/root/statistics-backup.sql.gz"
+   - "/root/shibboleth-db.sql.gz"
+   - "/root/statistics-db.sql.gz"
   when: 
    - idp_db_restore in ["True","true","Yes","yes"] 
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
@@ -492,8 +492,8 @@
    group: "root"
    mode: "600"
   with_items:
-   - "/root/shibboleth-backup.sql"
-   - "/root/statistics-backup.sql"
+   - "/root/shibboleth-db.sql"
+   - "/root/statistics-db.sql"
   when: 
    - idp_db_restore in ["True","true","Yes","yes"] 
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
@@ -506,8 +506,8 @@
     name: all
     target: "{{ item }}"
   with_items:
-   - "/root/shibboleth-backup.sql"
-   - "/root/statistics-backup.sql"
+   - "/root/shibboleth-db.sql"
+   - "/root/statistics-db.sql"
   when: 
    - idp_db_restore in ["True","true","Yes","yes"] 
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
@@ -518,8 +518,8 @@
    dest: "{{ item }}"
    state: "absent"
   with_items:
-   - "/root/shibboleth-backup.sql"
-   - "/root/statistics-backup.sql"
+   - "/root/shibboleth-db.sql"
+   - "/root/statistics-db.sql"
   when: 
    - idp_db_restore in ["True","true","Yes","yes"] 
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"

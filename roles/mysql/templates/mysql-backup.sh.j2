@@ -19,7 +19,7 @@ DATABASES=`mysql --defaults-file=/etc/mysql/debian.cnf --execute="SHOW DATABASES
 
 for db in ${DATABASES}; do
     if [[ "${db}" != "information_schema" ]] && [[ "$db" != "performance_schema" ]] && [[ "${db}" != "mysql" ]] && [[ "${db}" != _* ]] ; then
-        ${MYSQLDUMP} --databases $db > ${BACKUPDIR}/${db}-backup_${DATE}.sql
+        ${MYSQLDUMP} --databases $db > ${BACKUPDIR}/${DATE}_${db}_db.sql
     fi
 done
 

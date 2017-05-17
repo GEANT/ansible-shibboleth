@@ -65,13 +65,15 @@
   file:
    dest: "{{ item }}"
    state: "directory"
-   mode: "750"
+   owner: "root"
+   group: "root"
+   mode: "640"
   with_items:
    - "/var/local/backups"
-   - "/var/local/backups/mysql-backup"
+   - "/var/local/backups/mysql"
   tags: mysql
 
-- name: "Be sure to have ldap backup script in the right position"
+- name: "Be sure to have mysql backup script in the right position"
   template:
    src: "mysql-backup.sh.j2"
    dest: "/etc/cron.daily/mysql-backup"
