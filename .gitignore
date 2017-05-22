@@ -49,3 +49,8 @@ roles/openldap/files/restore/*
 !roles/idp/files/restore/sample-FQDN-dir/
 !roles/openldap/files/restore/sample-FQDN-dir/
 
+# ignore entire 'restore' phpldapadmin directory
+roles/phpldapadmin/files/restore/*
+
+# Exclude
+!roles/phpldapadmin/files/restore/sample-FQDN-dir/

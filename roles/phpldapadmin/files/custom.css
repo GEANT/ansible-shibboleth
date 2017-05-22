@@ -1,0 +1,84 @@
+@import "style.css";
+
+.note sup small {
+        color: #E0E0E0;
+        cursor: default
+}
+
+.note sup small acronym {
+        visibility: hidden
+}
+
+.note sup small acronym:last-child {
+        visibility: visible !important;
+        color: #000 !important;
+        cursor: pointer ! important
+}
+
+table.menu  tr:nth-child(2){
+        display: none
+}
+
+#new_values_sn_0, #new_values_givenname_0, #new_values_displayname_0, #new_values_cn_0, #new_values_street_0, #new_values_l_0 {
+        text-transform:capitalize;
+}
+
+#new_values_schacpersonaluniqueid_0 {
+        text-transform:uppercase;
+}
+
+#new_values_sn_0 {
+        background-color: #FFF !important
+}
+
+#new_values_cn_0 {
+        background-color: #FFF !important
+}
+
+#new_values_uid_0 {
+        background-color: #FFF !important
+}
+
+table.entry input.value {
+        border: thin solid #000
+}
+
+#new_values_schacplaceofbirth_0 {
+        width: 350px;
+        border: thin solid #000 !important
+}
+
+/* Live validation start */
+.LV_validation_message {
+        display: block;
+        font-size: 7pt;
+        width:300px;
+}
+
+span.LV_invalid {
+        color: #990000
+}
+
+span.LV_valid {
+        display: none;
+}
+
+.LV_invalid_field {
+        border: thin solid #990000 !important
+}
+
+.LV_valid_field {
+        border: thin solid #006600 !important
+}
+/* Live validation end */
+
+.validationMessage {
+        display:block;
+        color: #990000;
+        font-size: 7pt;
+        width:300px;
+}
+
+.locked {
+        background-color: #E3170D;
+}

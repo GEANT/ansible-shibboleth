@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE template SYSTEM "../template.dtd">
+
+<template>
+   <askcontainer>1</askcontainer>
+   <description>Identity Provider: User modification</description>
+   <icon>ldap-user.png</icon>
+   <invalid>0</invalid>
+   <rdn>uid</rdn>
+   <regexp>^uid=.*,ou=people,dc=.*</regexp>
+   <title>Identity Provider: User modification</title>
+   <visible>1</visible>
+
+   <objectClasses>
+      <objectClass id="inetOrgPerson"></objectClass>
+      <objectClass id="eduPerson"></objectClass>
+      <objectClass id="schacPersonalCharacteristics"></objectClass>
+      <objectClass id="schacLinkageIdentifiers"></objectClass>
+      <objectClass id="schacContactLocation"></objectClass>
+      <objectClass id="schacEmployeeInfo"></objectClass>
+      <objectClass id="schacExperimentalOC"></objectClass>
+      <objectClass id="schacEntryMetadata"></objectClass>
+   </objectClasses>
+   <attributes>
+
+      <attribute id="sn">
+         <hint>Example: Rossi</hint>
+         <display>Surname *</display>
+         <icon>ldap-uid.png</icon>
+         <onchange>=autoFill(cn;%givenName% %sn%)</onchange>
+         <order>1</order>
+         <page>1</page>
+      </attribute>
+      
+      <attribute id="givenName">
+         <hint>Example: Mario</hint>
+         <display>Name *</display>
+         <icon>ldap-uid.png</icon>
+         <onchange>=autoFill(cn;%givenName% %sn%)</onchange>
+         <order>2</order>
+         <page>1</page>
+      </attribute>
+      
+      <attribute id="cn">
+         <hint>Example: Mario Rossi</hint>
+         <display>Name and Surname</display>
+         <icon>ldap-uid.png</icon>
+         <onchange>=autoFill(displayName;%cn%)</onchange>
+         <order>3</order>
+         <page>1</page>
+         <spacer>1</spacer>
+      </attribute>
+      
+      <attribute id="displayName">
+         <hint>Example: Mario Rossi</hint>
+         <display>Display name</display>
+         <icon>ldap-uid.png</icon>
+         <order>4</order>
+         <page>1</page>
+         <spacer>1</spacer>
+      </attribute>
+      
+      <attribute id="schacDateOfBirth">
+         <hint>Example: 19600225</hint>
+         <display>Date of birth *</display>
+         <icon>timeout.png</icon>
+         <onchange>=autoFill(schacYearOfBirth;%schacDateOfBirth|0-4%)</onchange>
+         <order>5</order>
+         <page>1</page>
+      </attribute>
+      
+      <attribute id="schacYearOfBirth">
+         <hint>Example: 1960</hint>
+         <display>Year of birth</display>
+         <icon>timeout.png</icon>
+         <order>6</order>
+         <page>1</page>
+      </attribute>
+      
+      <attribute id="schacPlaceOfBirth">
+         <hint>Example: Milano</hint>
+         <display>Province of birth *</display>
+         <icon>locality.png</icon>
+         <order>7</order>
+         <page>1</page>
+      </attribute>
+      
+      <attribute id="schacPersonalUniqueID">
+         <hint>Example: RSSMRA60B25F205H</hint>
+         <display>Fiscal code *</display>
+         <icon>rfc.png</icon>
+         <order>8</order>
+         <page>1</page>
+      </attribute>
+      
+      <attribute id="street">
+         <hint>Example: Piazza Duomo, 2</hint>
+         <display>Address *</display>
+         <icon>home.png</icon>
+         <order>9</order>
+         <page>1</page>
+      </attribute>
+      
+      <attribute id="l">
+         <hint>Example: Milano</hint>
+         <display>City *</display>
+         <icon>home.png</icon>
+         <order>10</order>
+         <page>1</page>
+      </attribute>
+      
+      <attribute id="postalCode">
+         <hint>Example: 20121</hint>
+         <display>Postal code *</display>
+         <icon>home.png</icon>
+         <order>11</order>
+         <page>1</page>
+      </attribute>
+      
+      <attribute id="st">
+         <hint>Example: Milano</hint>
+         <display>Province *</display>
+         <icon>locality.png</icon>
+         <order>12</order>
+         <page>1</page>
+      </attribute>
+      
+      <attribute id="mail">
+         <hint>Example: mario.rossi@{{ ldap['domain'] }}</hint>
+         <display>E-mail address *</display>
+         <icon>mail.png</icon>
+         <order>13</order>
+         <page>1</page>
+      </attribute>
+      
+      <attribute id="telephoneNumber">
+         <hint>Example: 0233220022</hint>
+         <display>Telephone *</display>
+         <icon>phone.png</icon>
+         <order>14</order>
+         <page>1</page>
+      </attribute>
+      
+      <attribute id="schacPersonalPosition">
+         <hint>Example: Medical researcher</hint>
+         <display>Personal Position</display>
+         <icon>ldap-ou.png</icon>
+         <order>15</order>
+         <page>1</page>
+      </attribute>
+      
+      <attribute id="ou">
+         <hint>Example: Medical Research Division</hint>
+         <display>Organizational Unit *</display>
+         <icon>ldap-ou.png</icon>
+         <order>16</order>
+         <page>1</page>
+      </attribute>
+      
+      <attribute id="o">
+         <hint>Example: IRCCS of Milan</hint>
+         <display>Organization *</display>
+         <icon>ldap-ou.png</icon>
+         <value>{{ ldap['org'] }}</value>
+         <order>17</order>
+         <page>1</page>
+      </attribute>
+      
+      <attribute id="schacHomeOrganization">
+         <display>schacHomeOrganization</display>
+         <hint>Example: {{ ldap['domain'] }}</hint>
+         <icon>home-big.png</icon>
+         <value>{{ ldap['domain'] }}</value>
+         <order>18</order>
+         <page>1</page>
+      </attribute>
+      
+      <attribute id="schacHomeOrganizationType">
+         <display>schacHomeOrganizationType</display>
+         <hint>Example: urn:schac:homeOrganizationType:int:researchHospital</hint>
+         <icon>home-big.png</icon>
+         <value>urn:schac:homeOrganizationType:int:researchHospital</value>
+         <order>19</order>
+         <page>1</page>
+      </attribute>
+
+      <attribute id="eduPersonAffiliation">
+         <display>eduPersonAffiliation *</display>
+         <hint>Example: member</hint>
+         <icon>ldap-ou.png</icon>
+         <order>20</order>
+         <page>1</page>
+      </attribute>
+
+      <attribute id="eduPersonEntitlement">
+         <display>eduPersonEntitlement</display>
+         <hint>Example: urn:mace:internet2:terena:nl:garr:service</hint>
+         <icon>ldap-uid.png</icon>
+         <order>21</order>
+         <page>1</page>
+      </attribute>
+
+      <attribute id="eduPersonOrcid">
+         <display>eduPersonOrcid</display>
+         <hint>Example: http://orcid.org/0000-0002-1825-0097 </hint>
+         <icon>ldap-uid.png</icon>
+         <order>22</order>
+         <page>1</page>
+      </attribute>
+
+   </attributes>
+</template>

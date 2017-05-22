@@ -192,7 +192,7 @@
    - { src: "conf/attribute-resolver-v3-custom.xml.j2", dest: "/opt/shibboleth-idp/conf/attribute-resolver-v3-custom.xml" }
    - { src: "conf/metadata-providers.xml.j2", dest: "/opt/shibboleth-idp/conf/metadata-providers.xml" }
    - { src: "idp-metadata.xml.j2", dest: "/opt/shibboleth-idp/metadata/idp-metadata.xml" }
-   - { src: "idp.conf.j2", dest: "/etc/apache2/sites-enabled/idp.conf" }
+   - { src: "idp.conf.j2", dest: "/etc/apache2/conf-enabled/idp.conf" }
   notify:
     - "Restart Jetty"
     - "Restart Apache"
@@ -425,7 +425,7 @@
   with_items:
    - { src: "files/statistics/conf/", dest: "/opt/loganalysis/", owner: "root", group: "root", mode: "0644" }
    - { src: "files/statistics/cron/cron-idp-stats", dest: "/etc/cron.daily/cron-idp-stats", owner: "root", group: "root", mode: "0755" }
-   - { src: "files/statistics/apache/idp-stats.conf", dest: "/etc/apache2/sites-enabled/idp-stats.conf", owner: "root", group: "root", mode: "0644" }
+   - { src: "files/statistics/apache/idp-stats.conf", dest: "/etc/apache2/conf-enabled/idp-stats.conf", owner: "root", group: "root", mode: "0644" }
   notify:
    - "Restart Apache"
   tags: idp

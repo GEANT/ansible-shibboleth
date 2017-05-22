@@ -91,23 +91,23 @@ $config->custom->appearance['language'] = 'auto';
 /* Command availability ; if you don't authorize a command the command
    links will not be shown and the command action will not be permitted.
    For better security, set also ACL in your ldap directory. */
-/*
+
 $config->custom->commands['cmd'] = array(
-        'entry_internal_attributes_show' => true,
+        'entry_internal_attributes_show' => false,
         'entry_refresh' => true,
-        'oslinks' => true,
-        'switch_template' => true
+        'oslinks' => false,
+        'switch_template' => false
 );
 
 $config->custom->commands['script'] = array(
-        'add_attr_form' => true,
-        'add_oclass_form' => true,
+        'add_attr_form' => false,
+        'add_oclass_form' => false,
         'add_value_form' => true,
         'collapse' => true,
-        'compare' => true,
-        'compare_form' => true,
-        'copy' => true,
-        'copy_form' => true,
+        'compare' => false,
+        'compare_form' => false,
+        'copy' => false,
+        'copy_form' => false,
         'create' => true,
         'create_confirm' => true,
         'delete' => true,
@@ -115,32 +115,31 @@ $config->custom->commands['script'] = array(
         'delete_form' => true,
         'draw_tree_node' => true,
         'expand' => true,
-        'export' => true,
+        'export' => false,
         'export_form' => true,
-        'import' => true,
-        'import_form' => true,
+        'import' => false,
+        'import_form' => false,
         'login' => true,
         'logout' => true,
         'login_form' => true,
-        'mass_delete' => true,
-        'mass_edit' => true,
-        'mass_update' => true,
+        'mass_delete' => false,
+        'mass_edit' => false,
+        'mass_update' => false,
         'modify_member_form' => true,
-        'monitor' => true,
-        'purge_cache' => true,
+        'monitor' => false,
+        'purge_cache' => false,
         'query_engine' => true,
         'rename' => true,
         'rename_form' => true,
         'rdelete' => true,
         'refresh' => true,
-        'schema' => true,
-        'server_info' => true,
-        'show_cache' => true,
+        'schema' => false,
+        'server_info' => false,
+        'show_cache' => false,
         'template_engine' => true,
         'update_confirm' => true,
         'update' => true
 );
-*/
 
 /*********************************************
  * Appearance                                *
@@ -152,14 +151,14 @@ $config->custom->commands['script'] = array(
 #  $config->custom->appearance['tree'] = 'HTMLTree';
 
 /* Just show your custom templates. */
-// $config->custom->appearance['custom_templates_only'] = false;
+$config->custom->appearance['custom_templates_only'] = true;
 
 /* Disable the default template. */
-// $config->custom->appearance['disable_default_template'] = false;
+$config->custom->appearance['disable_default_template'] = true;
 
 /* Hide the warnings for invalid objectClasses/attributes in templates. */
-$config->custom->appearance['hide_template_warning'] = True;
-$config->custom->appearance['show_top_create'] = False;
+$config->custom->appearance['hide_template_warning'] = true;
+$config->custom->appearance['show_top_create'] = false;
 
 /* Set to true if you would like to hide header and footer parts. */
 // $config->custom->appearance['minimalMode'] = false;
@@ -261,8 +260,9 @@ $config->custom->appearance['date'] = '%e %B %Y';
 // $config->custom->modify_member['posixfilter'] = '(uid=*)';
 // $config->custom->modify_member['posixgroupattr'] = 'memberUid';
 
-#$config->custom->appearance['stylesheet'] = 'garr.css';
-#$config->custom->appearance['action_after_creation'] = 1;
+### TODO - ENABLE FOR CUSTOM CREATION PAGES
+$config->custom->appearance['stylesheet'] = 'custom.css';
+$config->custom->appearance['action_after_creation'] = 1;
 
 /*********************************************
  * Support for attrs display order           *
@@ -274,22 +274,10 @@ $config->custom->appearance['date'] = '%e %B %Y';
    attributes that are not specified in this array will be displayed after in
    alphabetical order. */
 // $config->custom->appearance['attr_display_order'] = array();
-#  $config->custom->appearance['attr_display_order'] = array(
-#   'givenName',
-#   'sn',
-#   'cn',
-#   'displayName',
-#   'uid',
-#   'uidNumber',
-#   'gidNumber',
-#   'homeDirectory',
-#   'mail',
-#   'userPassword'
-#  );
 
-  $config->custom->appearance['attr_display_order'] = array(
-   'sn',
+$config->custom->appearance['attr_display_order'] = array(
    'givenName',
+   'sn',
    'cn',
    'displayName',
    'uid',
@@ -298,7 +286,6 @@ $config->custom->appearance['date'] = '%e %B %Y';
    'schacYearOfBirth',
    'schacPlaceOfBirth',
    'schacPersonalUniqueID',
-   'eduPersonPrincipalName',
    'street',
    'houseIdentifier',
    'l',
@@ -315,8 +302,10 @@ $config->custom->appearance['date'] = '%e %B %Y';
    'schacHomeOrganization',
    'schacHomeOrganizationType',
    'eduPersonAffiliation',
-   'eduPersonEntitlement'
+   'eduPersonEntitlement',
+   'eduPersonOrcid'
   );
+
 
 /*********************************************
  * Define your LDAP servers in this section  *
@@ -344,7 +333,7 @@ $servers->setValue('server','port',389);
 
 /* Array of base DNs of your LDAP server. Leave this blank to have phpLDAPadmin
    auto-detect it for you. */
-$servers->setValue('server','base',array('{{ ldap['basedn'] }}'));
+$servers->setValue('server','base',array('ou=people,'.'{{ ldap['basedn'] }}'));
 
 /* Five options for auth_type:
    1. 'cookie': you will login via a web form, and a client-side cookie will
@@ -380,7 +369,7 @@ $servers->setValue('login','bind_pass','{{ ldap['root_pw'] }}');
 #  $servers->setValue('login','bind_pass','secret');
 
 /* Use TLS (Transport Layer Security) to connect to the LDAP server. */
-// $servers->setValue('server','tls',false);
+$servers->setValue('server','tls',true);
 
 /************************************
  *      SASL Authentication         *

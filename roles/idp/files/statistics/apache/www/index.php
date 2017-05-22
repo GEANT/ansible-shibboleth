@@ -47,9 +47,8 @@
         <div id="menu">
                 <div id="logo"><img src="shibboleth.png"/></div>
                 <ul>
-                        <li><a href="index.php?dati=sp" <?php if ($dati == "sp") echo "class=\"current\""; ?>>Datas grouped by SP</a></li>
-                        <li><a href="index.php?dati=user" <?php if ($dati == "user") echo "class=\"current\""; ?>>Datas grouped by user</a></li>
-                        <li><a href="index.php?dati=questionnaire" <?php if ($dati == "questionnaire") echo "class=\"current\""; ?>>Datas for IDEM questionnaire</a></li>
+                        <li><a href="index.php?dati=sp" <?php if ($dati == "sp") echo "class=\"current\""; ?>>Num Logins grouped by SP</a></li>
+                        <li><a href="index.php?dati=totals" <?php if ($dati == "totals") echo "class=\"current\""; ?>>Total Logins for SPs</a></li>
                 </ul>
         </div>
 
@@ -82,16 +81,7 @@
                         $titlepie = "\"Login to:<br/> \" + item + \"<br/> on date:<br/> \" + data";
                         $graph = True;
 
-                } elseif ($dati == "user") {
-                        addSubmitForm($dati, $months);
-
-                        $query1 = "SELECT DISTINCT user FROM logins WHERE data LIKE '$year-$month-%';";
-                        $query2 = "SELECT data, user, SUM(logins) from logins WHERE data LIKE '$year-$month-%' GROUP BY data, user";
-                        $title = "# Login grouped by date and by user";
-                        $titlepie = "\"Login of:<br/> \" + item + \"<br/> on date:<br/> \" + data";
-                        $graph = True;
-
-                } elseif ($dati == "questionnaire") {
+                } elseif ($dati == "totals") {
                         addSubmitForm($dati, $months);
 
                         $result = mysql_query("SELECT SUM(logins) from logins WHERE YEAR(data) = ".$year." AND MONTH(data) = ".$month);
@@ -141,7 +131,6 @@
                                 <h2>Usage Statistics of the IdP in <?php echo $months[intval($month)]; ?> <?php echo intval($year); ?> grouped by date and by
                                 <?php
                                         if($dati == 'sp') echo "service provider";
-                                        elseif ($dati == 'user') echo "user";
                                 ?>:</h2>
 
                                 <div id="timeline"></div>
@@ -179,7 +168,7 @@
                 $result = mysql_query($query2);
                 $fields_num = mysql_num_fields($result);
                 while($row = mysql_fetch_row($result)) {
-                        if ($dati == "questionnaire") {
+                        if ($dati == "totals") {
                                 $datatable[$row[0]] = "". $row[1];
                         } else {
                                 $curitem = $row[1];
@@ -192,7 +181,7 @@
                 mysql_free_result($result);
                 foreach ($datatable as $data => $itemtable) {
                         echo "arrdate.push('".$data."');\n";
-                        if ($dati == "questionnaire") {
+                        if ($dati == "totals") {
                                 echo "dataItems['Logins']['".$data."'] = ".$itemtable.";\n";
                         } else {
                                 foreach ($items as $itemname) {
@@ -207,7 +196,7 @@
                 var data = new google.visualization.DataTable();
                 var dataAll = new google.visualization.DataTable();
                 <?php
-                        if ($dati == "questionnaire") {
+                        if ($dati == "totals") {
                                 echo "data.addColumn('string', 'Service Provider');";
                                 echo "dataAll.addColumn('string', 'Service Provider');";
                         } else {
@@ -295,7 +284,7 @@
                                 }
                 var newdata = new google.visualization.DataTable();
                 <?php
-                if ($dati == "questionnaire") {
+                if ($dati == "totals") {
                         echo "data.addColumn('string', 'Service Provider');";
                 } else {
                         echo "data.addColumn('string', 'Date');";
