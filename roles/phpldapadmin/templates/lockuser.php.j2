@@ -12,7 +12,7 @@ session_start();
         <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
         <script type="text/javascript" src="js/jquery-ui-1.9.1.min.js"></script>
         <script type="text/javascript" src="js/livevalidation_standalone.compressed.js"></script>
-        <meta name="peoplebase" value="ou=people,{{ ldap['basedn'] }}"/>
+        <meta name="peoplebase" value="ou=people,{{ pla['ldap']['basedn'] }}"/>
 </head>
 <body>
         <script language="javascript">
@@ -192,7 +192,7 @@ session_start();
                                                 <td><center>
         <h3 class="title">Lock/Unlock of the users</h3>
         <h3 class="subtitle">
-                Server: <b>My LDAP Server</b>&nbsp;&nbsp;&nbsp;Contenitore: <b>ou=people,{{ ldap['basedn'] }}</b></h3>
+                Server: <b>My LDAP Server</b>&nbsp;&nbsp;&nbsp;Contenitore: <b>ou=people,{{ pla['ldap']['basedn'] }}</b></h3>
                 <center><h4>Identity Provider: Locking/Unlocking Users</h4></center>
 
                 <table class="entry" cellspacing="0" align="center" border="0">
@@ -209,14 +209,14 @@ session_start();
                                 <tbody>
                                         <?php
                                         ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
-                                        $connuser = "{{ ldap['root_dn'] }}";
-                                        $connpasswd = "{{ ldap['root_pw'] }}";
+                                        $connuser = "{{ pla['ldap']['root_dn'] }}";
+                                        $connpasswd = "{{ pla['ldap']['root_pw'] }}";
                                         $r = ldap_bind($ds, $connuser, $connpasswd);
                                         if(!$r) die("ldap_bind failed<br>");
 
                                         $users = array();
                                         $filter = "(objectClass=*)";
-                                        $dn = "ou=people,{{ ldap['basedn'] }}";
+                                        $dn = "ou=people,{{ pla['ldap']['basedn'] }}";
                $ldap_result = ldap_search($ds, $dn, $filter, Array('uid', 'cn', 'pwdAccountLockedTime', 'schacExpiryDate'));
                                         $curusers = ldap_get_entries($ds, $ldap_result);
 

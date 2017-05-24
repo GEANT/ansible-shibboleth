@@ -91,11 +91,11 @@ $(document).ready(function() {
    try {
       if($('input').length && $('input').eq(0).attr('value')=='create'){
          if ($('#new_values_schacpersonalposition_0').attr('value').length > 0)
-            $('#new_values_schacpersonalposition_0').attr('value', 'urn:schac:personalPosition:it:{{ ldap['domain'] }}:' + $('#new_values_schacpersonalposition_0').attr('value'));
+            $('#new_values_schacpersonalposition_0').attr('value', 'urn:schac:personalPosition:it:{{ pla['ldap']['domain'] }}:' + $('#new_values_schacpersonalposition_0').attr('value'));
          $('table.result_table tr').each(function(){
             if($(this).children().eq(0).children().eq(0).text() == lblRole){
                if ($(this).children().eq(1).children().eq(0).text().length > 0 && !$(this).children().eq(1).children().eq(0).text().charAt(0)!='[')
-                  $(this).children().eq(1).children().eq(0).text('urn:schac:personalPosition:it:{{ ldap['domain'] }}:' + $(this).children().eq(1).children().eq(0).text());
+                  $(this).children().eq(1).children().eq(0).text('urn:schac:personalPosition:it:{{ pla['ldap']['domain'] }}:' + $(this).children().eq(1).children().eq(0).text());
             }
          });
       }
@@ -107,11 +107,11 @@ $(document).ready(function() {
    try {
       if($('input').length && $('input').eq(0).attr('value')=='update'){
          if ($('#new_values_schacpersonalposition_0').attr('value').length > 0)
-            $('#new_values_schacpersonalposition_0').attr('value', 'urn:schac:personalPosition:it:{{ ldap['domain'] }}:' + $('#new_values_schacpersonalposition_0').attr('value'));
+            $('#new_values_schacpersonalposition_0').attr('value', 'urn:schac:personalPosition:it:{{ pla['ldap']['domain'] }}:' + $('#new_values_schacpersonalposition_0').attr('value'));
          $('table.result_table tr').each(function(){
             if($(this).children().eq(0).children().eq(0).text() == lblRole){
                if ($(this).children().eq(2).children().eq(0).text().length > 0 && !$(this).children().eq(2).children().eq(0).text().charAt(0)!='[')
-                  $(this).children().eq(2).children().eq(0).text('urn:schac:personalPosition:it:{{ ldap['domain'] }}:' + $(this).children().eq(2).children().eq(0).text());
+                  $(this).children().eq(2).children().eq(0).text('urn:schac:personalPosition:it:{{ pla['ldap']['domain'] }}:' + $(this).children().eq(2).children().eq(0).text());
             }
          });
       }

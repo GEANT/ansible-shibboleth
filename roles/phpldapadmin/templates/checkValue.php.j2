@@ -29,10 +29,10 @@
                 if ($ds) {
                         ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
 
-                        $r = ldap_bind($ds, "{{ ldap['root_dn'] }}", "{{ ldap['root_pw'] }}");
+                        $r = ldap_bind($ds, "{{ pla['ldap']['root_dn'] }}", "{{ pla['ldap']['root_pw'] }}");
                         if($r) {
                                 $filter = "uid=" . $value;
-                                $ldap_result = ldap_list($ds, "ou=people,{{ ldap['basedn'] }}", $filter);
+                                $ldap_result = ldap_list($ds, "ou=people,{{ pla['ldap']['basedn'] }}", $filter);
                                 $info = ldap_get_entries($ds, $ldap_result);
 
                                 if ($info['count'] == 0) {

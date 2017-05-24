@@ -1,3 +1,10 @@
+# Proprietà che sostituiscono quelli in messages_it
+
+idp.logo={{ idp_metadata['it']['mdui_logo'] }}
+idp.logo.alt-text={{ idp_metadata['it']['org_displayName'] }}
+idp.footer={{ idp['login']['footer']['it']['text'] }}
+
+# Nuove proprietà personali
 idp.favicon={{ idp_metadata['it']['mdui_favicon'] }}
 idp.infoUrl={{ idp_metadata['it']['mdui_infoUrl'] }}
 idp.privacyPage={{ idp_metadata['it']['mdui_privacyUrl'] }}
@@ -11,7 +18,6 @@ idp.contacts={{ idp_contacts['technical']['mail'] }}
 idp.nocontacts=Nessun Contatto
 idp.noprivacy=Nessuna Privacy Policy
 idp.noinfopage=Nessuna Pagina di Informazioni
-idp.footer=FOOTER ITA
 sp.description=Descrizione SP
 sp.organization=Organizzazione di appartenenza della risorsa
 sp.contacts=Contatti della risorsa
@@ -25,3 +31,10 @@ sp.noprivacypage=Nessuna Politica sulla Privacy definita dalla risorsa
 {{ fed }}.logo={{ idp['login']['fed_info'][fed]['it']['logo'] }}
 {{ fed }}.name={{ idp['login']['fed_info'][fed]['it']['name'] }}
 {% endfor%}
+
+# Messaggi per il cambio password sfruttando le PPolicy di OpenLDAP
+{% if idp['ldap']['ppolicy']['change_password_url'] %}
+ChangePassword=change-password
+change-password.message=Cambia la tua password!
+change-password.linkText=Clicca Qui
+{% endif %}

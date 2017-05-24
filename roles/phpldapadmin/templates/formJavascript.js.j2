@@ -67,7 +67,7 @@ $(document).ready(function() {
    try {
       // Changes to personalPosition field
       var personalPositionText = $('#new_values_schacpersonalposition_0');
-      var ppPrefixLen = "urn:schac:personalPosition:it:{{ ldap['domain'] }}:".length;
+      var ppPrefixLen = "urn:schac:personalPosition:it:{{ pla['ldap']['domain'] }}:".length;
       if(personalPositionText.val() && personalPositionText.val().length > ppPrefixLen){
          $('#new_values_schacpersonalposition_0').val(personalPositionText.val().substr(ppPrefixLen));
       }

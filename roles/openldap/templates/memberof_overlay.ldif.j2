@@ -1,10 +1,4 @@
-dn: cn=module,cn=config
-cn: module
-objectClass: olcModuleList
-olcModuleLoad: memberof
-olcModulePath: /usr/lib/ldap
-
-dn: olcOverlay={0}memberof,olcDatabase={1}mdb,cn=config
+dn: olcOverlay=memberof,olcDatabase={1}mdb,cn=config
 objectClass: olcConfig
 objectClass: olcMemberOf
 objectClass: olcOverlayConfig
@@ -15,3 +9,4 @@ olcMemberOfRefInt: TRUE
 olcMemberOfGroupOC: groupOfNames
 olcMemberOfMemberAD: member
 olcMemberOfMemberOfAD: memberOf
+

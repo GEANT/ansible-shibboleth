@@ -126,7 +126,7 @@
       </attribute>
       
       <attribute id="mail">
-         <hint>Example: mario.rossi@{{ ldap['domain'] }}</hint>
+         <hint>Example: mario.rossi@{{ pla['ldap']['domain'] }}</hint>
          <display>E-mail address *</display>
          <icon>mail.png</icon>
          <order>13</order>
@@ -161,16 +161,16 @@
          <hint>Example: IRCCS of Milan</hint>
          <display>Organization *</display>
          <icon>ldap-ou.png</icon>
-         <value>{{ ldap['org'] }}</value>
+         <value>{{ pla['ldap']['org'] }}</value>
          <order>17</order>
          <page>1</page>
       </attribute>
       
       <attribute id="schacHomeOrganization">
          <display>schacHomeOrganization</display>
-         <hint>Example: {{ ldap['domain'] }}</hint>
+         <hint>Example: {{ pla['ldap']['domain'] }}</hint>
          <icon>home-big.png</icon>
-         <value>{{ ldap['domain'] }}</value>
+         <value>{{ pla['ldap']['domain'] }}</value>
          <order>18</order>
          <page>1</page>
       </attribute>

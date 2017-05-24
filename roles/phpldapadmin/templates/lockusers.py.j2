@@ -7,9 +7,9 @@ from datetime import datetime
 try:
         l = ldap.open("{{ fqdn }}", 389)
         l.protocol_version = ldap.VERSION3
-        l.simple_bind('{{ ldap['root_dn'] }}','{{ ldap['root_pw'] }}')
+        l.simple_bind('{{ pla['ldap']['root_dn'] }}','{{ pla['ldap']['root_pw'] }}')
 
-        search_base = "ou=people,{{ ldap['basedn'] }}"
+        search_base = "ou=people,{{ pla['ldap']['basedn'] }}"
         search_scope = ldap.SCOPE_SUBTREE
         retrieve_attributes = [ 'uid', 'cn', 'pwdAccountLockedTime', 'schacExpiryDate' ]
         search_filter = "uid=*"

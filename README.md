@@ -36,14 +36,16 @@
 8. Insert the IdP style's file (flag, favicon and logo) in the "```roles/idp/files/restore/FQDN/styles```" by following the ```README.md``` file. A "hostname-sample" has been created to help you with this.
 (If you have chosen to create an IdP with LDAP, **be sure** to put the organization logo in the ```roles/phpldapadmin/files/restore/FQDN/images/logo.png``` file. An organization logo MUST BE, at least, an image with dimensions 80x60 or their multiples)
 
-9. Add the IdP Information and Privacy Policy page templates in the "```roles/idp/templates/styles/```" in your language by copying the english '```en/```' sample and changing each "```idp_metadata['en']```" (inside the "```info.html.j2```" and "```privacy.html.j2```" pages) and be sure to adapt the text of the pages to your needs. This step can be avoided if you have already your pages by turning to ```"no"``` the variable "```create_info_and_pp_pages```".
+9. If you install also phpLDAPadmin, remember to put the logo (80x60 or its multiples) into the "```roles/phpldapadmin/files/restore/FQDN/logo.png```" file.
+
+10. Add the IdP Information and Privacy Policy page templates in the "```roles/idp/templates/styles/```" in your language by copying the english '```en/```' sample and changing each "```idp_metadata['en']```" (inside the "```info.html.j2```" and "```privacy.html.j2```" pages) and be sure to adapt the text of the pages to your needs. This step can be avoided if you have already your pages by turning to ```"no"``` the variable "```create_info_and_pp_pages```".
 
 The ansible recipes use the languages provided by the "```idp_metadata```" dictionary so you **HAVE TO LEAVE** the default language "en" and add all other languages that your IdP will support and for which you have provided the needed files. (Point ```7.```)
 
-10. Run this command to run Ansible on develoment inventory and to install and configure an IdP only on a specific server:
+11. Run this command to run Ansible on develoment inventory and to install and configure an IdP only on a specific server:
     ```ansible-playbook site.yml -i inventories/development/development.ini --limit FQDN --vault-password-file .vault_pass.txt```
 
-11. Run this command to run Ansible on develoment inventory and to install and configure an IdP on all development servers:
+12. Run this command to run Ansible on develoment inventory and to install and configure an IdP on all development servers:
     ```ansible-playbook site.yml -i inventories/development/development.ini --vault-password-file .vault_pass.txt```
 
 ## Documentation ##

@@ -45,10 +45,17 @@ idp:
       bindDNCredential: "idpuserpassword"
       searchFilter: "(uid=$resolutionContext.principal)"
       returnAttributes: "*"
+      ppolicy:
+         change_password_url: "#"
    login:
       create_info_and_pp_pages: "True"
       footer_text_color: "#ffffff"
       footer_background_color: "#717171"
+      footer:
+         en:
+            text: "<p><strong>FOOTER TEXT</strong> in english language</p>"
+         it:
+            text: "<p><strong>FOOTER TEXT</strong> in italian language</p>"
       fed_info:
          edugain:
             en:
@@ -183,3 +190,14 @@ check_mk:
    idp_scope: "{{ idp['scope'] }}"
    check_rs: "yes"
    check_coco: "yes"
+
+pla:
+   orgUrl: "https://www.orgUrl.it"
+   easy_idm: "False"
+   ldap:
+      basedn: "{{ ldap['basedn'] }}"
+      domain: "{{ ldap['domain'] }}"
+      org: "{{ ldap['org'] }}"
+      url: "{{ ldap['url'] }}"
+      root_dn: "{{ ldap['root_dn'] }}"
+      root_pw: "{{ ldap['root_pw'] }}"

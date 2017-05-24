@@ -98,9 +98,13 @@
      dest: "/root/ldap-configs/directory-content.ldif"
    - src: "passwordpolicy.ldif.j2"
      dest: "/root/ldap-configs/passwordpolicy.ldif"
+   - src: "memberof_overlay.ldif.j2"
+     dest: "/root/ldap-configs/memberof_overlay.ldif"
+   - src: "ppolicy_overlay.ldif.j2"
+     dest: "/root/ldap-configs/ppolicy_overlay.ldif"
   tags: openldap 
 
-- name: "Be sure that eduPerson, schac schema and member-overlay are stored into /root/ldap-configs"
+- name: "Be sure that eduPerson, schac schema and overlay are stored into /root/ldap-configs"
   copy:
    src: "files/{{ item }}"
    dest: "/root/ldap-configs"
@@ -110,7 +114,6 @@
   with_items:
    - eduperson-201602.ldif
    - schac-20150413.ldif
-   - memberof-overlay.ldif
   tags: openldap
 
 - name: "Be sure that 'ldap.conf' is configured correctly"
@@ -125,7 +128,7 @@
   tags: openldap
 
 - name: "Check if LDAP has alread the olcTLSCertificateKeyFile needed for STARTTLS and store the result on 'olc_cert_key' ansible variable"
-  shell: "ldapsearch -H ldapi:// -Y EXTERNAL -b cn=config -LLL -Q '(olcTLSCertificateKeyFile=*)' dn olcTLSCertificateKeyFile | grep olcTLSCertificateKeyFile | wc -l"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=config '(olcTLSCertificateKeyFile=*)' dn olcTLSCertificateKeyFile"
   register: olc_cert_key
   changed_when: false
   tags: openldap
@@ -134,25 +137,12 @@
   service:
     name: "slapd"
     state: "restarted"
-  when: olc_cert_key.stdout == "0"
+  when: olc_cert_key.stdout == ""
   tags: openldap
 
 - name: "Be sure that the Directory is configured correctly"
   command: "ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/directory-config.ldif"
-  when: olc_cert_key.stdout == "0"
-  notify: 
-   - "Restart slapd"
-  tags: openldap
-
-- name: "Check memberof overlay into LDAP and store the result on 'memberof_overlay' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=config  olcOverlay=memberof"
-  register: memberof_overlay
-  changed_when: false
-  tags: openldap
-  
-- name: "Add memberOf overlay to openldap"
-  command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/memberof-overlay.ldif"
-  when: memberof_overlay.stdout == ""
+  when: olc_cert_key.stdout == ""
   notify: 
    - "Restart slapd"
   tags: openldap
@@ -187,7 +177,7 @@
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=schema,cn=config cn=*ppolicy dn"
   register: ppolicy_schema
   changed_when: false
-  tags: openldap
+  tags: openldap 
  
 - name: "Be sure that the Password Policy are enabled on OpenLDAP"
   command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/ppolicy.ldif"
@@ -197,32 +187,38 @@
   tags: openldap
 
 - name: "Check the existance of branch 'people' inside LDAP and store the result into 'people_in_ldap' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} objectClass=organizationalUnit dn | grep ou=people,{{ ldap['basedn'] }} | wc -l"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} '(ou:dn:=people)'"
   register: people_in_ldap
   changed_when: false
   tags: openldap
 
 - name: "Check the existance of branch 'groups' inside LDAP and store the result into 'groups_in_ldap' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} objectClass=organizationalUnit dn | grep ou=groups,{{ ldap['basedn'] }} | wc -l"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} '(ou:dn:=groups)'"
   register: groups_in_ldap
   changed_when: false
   tags: openldap
 
 - name: "Check the existance of branch 'system' inside LDAP and store the result into 'system_in_ldap' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} objectClass=organizationalUnit dn | grep ou=system,{{ ldap['basedn'] }} | wc -l"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} '(ou:dn:=system)'"
   register: system_in_ldap
   changed_when: false
   tags: openldap
 
-- name: "Be sure that Directory contains the standard 'people', 'groups', 'system' branches"
+- name: "Check the existance of branch 'policies' inside LDAP and store the result into 'policies_in_ldap' ansible variable"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} '(ou:dn:=policies)'"
+  register: policies_in_ldap
+  changed_when: false
+  tags: openldap
+
+- name: "Be sure that Directory contains the standard 'people', 'groups', 'system', and 'policies' branches"
   command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/directory-content.ldif"
-  when: (people_in_ldap.stdout == "0" and groups_in_ldap.stdout == "0" and system_in_ldap.stdout == "0")
+  when: (people_in_ldap.stdout == "" and groups_in_ldap.stdout == "" and system_in_ldap.stdout == "" and policies_in_ldap.stdout == "")
   notify: 
    - "Restart slapd"
   tags: openldap
 
 - name: "Check the existance of the Test User inside LDAP and store the result into 'testuser_in_ldap' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} dn | grep testuser | wc -l"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} '(uid=testuser)'"
   register: testuser_in_ldap
   changed_when: false
   when: ldap['create_test_user']
@@ -240,20 +236,46 @@
 
 - name: "Be sure that the Test User is created"
   command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/testuser.ldif"
-  when: (ldap['create_test_user'] and testuser_in_ldap.stdout == "0")
+  when: (ldap['create_test_user'] and testuser_in_ldap.stdout == "")
   notify: 
    - "Restart slapd"
   tags: openldap
 
-- name: "Check the existance of branch 'policies' inside LDAP and store the result into 'ppolicy_in_ldap' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} objectClass=organizationalUnit dn | grep ou=policies,{{ ldap['basedn'] }} | wc -l"
+- name: "Check that memberOf openLDAP overlays are loaded"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=config '(olcOverlay=memberOf)'"
+  register: memberof_overlay
+  changed_when: false
+  tags: openldap
+  
+- name: "Add memberOf overlay to openldap"
+  command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/memberof_overlay.ldif"
+  when: memberof_overlay.stdout == ""
+  notify: 
+   - "Restart slapd"
+  tags: openldap
+
+- name: "Check that ppolicy openLDAP overlays are loaded"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=config '(olcOverlay=ppolicy)'"
+  register: ppolicy_overlay
+  changed_when: false
+  tags: openldap
+  
+- name: "Add ppolicy overlay to openldap"
+  command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/ppolicy_overlay.ldif"
+  when: ppolicy_overlay.stdout == ""
+  notify: 
+   - "Restart slapd"
+  tags: openldap
+
+- name: "Check the existance of a policy under the branch 'policies' inside LDAP and store the result into 'ppolicy_in_ldap' ansible variable"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b ou=policies,{{ ldap['basedn'] }} '(!(objectClass=organizationalUnit))'" 
   register: ppolicy_in_ldap
   changed_when: false
   tags: openldap
 
 - name: "Be sure that Password Policy default is configured"
   command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/passwordpolicy.ldif"
-  when: (ppolicy_in_ldap.stdout == "0")
+  when: ppolicy_in_ldap.stdout == ""
   notify: 
    - "Restart slapd"
   tags: openldap
@@ -280,7 +302,7 @@
   tags: openldap 
 
 - name: "Check if the Directory is not empty"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b '{{ ldap['basedn'] }}' '(&(|(ou:dn:=people)(ou:dn:=groups))(!(objectClass=organizationalUnit))(!(uid=testuser)))' | wc -l"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b '{{ ldap['basedn'] }}' '(&(|(ou:dn:=people)(ou:dn:=groups))(!(objectClass=organizationalUnit))(!(uid=testuser)))'" 
   register: ldap_is_empty
   changed_when: false
   tags: openldap
@@ -292,12 +314,18 @@
    owner: "root"
    group: "root"
    mode: "0600"
-  when: ldap['restore'] and ldap_is_empty.stdout == "0"
+  when:
+   - ldap['restore'] is defined
+   - ldap['restore'] in ["Yes","yes","True","true"]
+   - ldap_is_empty.stdout == ""
   tags: openldap
 
 - name: "RESTORE - Be sure to extract the LDAP Backup into the right position"
   command: "gunzip /root/ldap-users.ldif.gz"
-  when: ldap['restore'] and ldap_is_empty.stdout == "0"
+  when:
+   - ldap['restore'] is defined
+   - ldap['restore'] in ["Yes","yes","True","true"]
+   - ldap_is_empty.stdout == ""
   tags: openldap
 
 - name: "RESTORE - Be sure that the ldap-users has the right permission"
@@ -306,26 +334,38 @@
    owner: "root"
    group: "root"
    mode: "600"
-  when: ldap['restore'] and ldap_is_empty.stdout == "0"
+  when:
+   - ldap['restore'] is defined
+   - ldap['restore'] in ["Yes","yes","True","true"]
+   - ldap_is_empty.stdout == ""
   tags: openldap
 
 - name: "RESTORE - Be sure to stop SLAPD before to restore entries"
   service:
    name: slapd
    state: stopped
-  when: ldap['restore'] and ldap_is_empty.stdout == "0"
+  when:
+   - ldap['restore'] is defined
+   - ldap['restore'] in ["Yes","yes","True","true"]
+   - ldap_is_empty.stdout == ""
   tags: openldap
 
 - name: "RESTORE - Be sure to restore ldap entries"
   command: "slapadd -c -l /root/ldap-users.ldif"
-  when: ldap['restore'] and ldap_is_empty.stdout == "0"
+  when:
+   - ldap['restore'] is defined
+   - ldap['restore'] in ["Yes","yes","True","true"]
+   - ldap_is_empty.stdout == ""
   tags: openldap
 
 - name: "RESTORE - Be sure to remove the ldap-users.ldif restored"
   file:
    dest: "/root/ldap-users.ldif" 
    state: "absent"
-  when: ldap['restore'] and ldap_is_empty.stdout == "0"
+  when:
+   - ldap['restore'] is defined
+   - ldap['restore'] in ["Yes","yes","True","true"]
+   - ldap_is_empty.stdout == ""
   tags: openldap
 
 - name: "Be sure that OpenLDAP is up and running"

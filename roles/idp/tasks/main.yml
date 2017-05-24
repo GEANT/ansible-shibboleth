@@ -220,6 +220,50 @@
     - "Restart Jetty"
   tags: idp
 
+- name: "Be sure that IdP supports OpenLDAP Password Policy - Part 1"
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "{{ item.owner }}"
+   group: "{{ item.group }}"
+   mode: "{{ item.mode }}"
+  with_items:
+   - { src: "files/conf/authn/password-authn-config.xml", dest: "/opt/shibboleth-idp/conf/authn/password-authn-config.xml", owner: "jetty", group: "root", mode: "0600" }
+   - { src: "files/conf/authn/ldap-authn-config.xml", dest: "/opt/shibboleth-idp/conf/authn/ldap-authn-config.xml", owner: "jetty", group: "root", mode: "0600" }
+   - { src: "files/flows/authn/conditions/conditions-flow.xml", dest: "/opt/shibboleth-idp/flows/authn/conditions/conditions-flow.xml", owner: "root", group: "root", mode: "0755" }
+   - { src: "files/views/login-error.vm", dest: "/opt/shibboleth-idp/views/login-error.vm", owner: "root", group: "root", mode: "0644" }
+  when:
+   - idp['ldap']['ppolicy']['change_password_url'] is defined
+   - idp['ldap']['ppolicy']['change_password_url'] != ""
+  notify:
+    - "Restart Jetty"
+  tags: idp
+
+- name: "Be sure that 'change-password' directory is created"
+  file:
+    dest: "/opt/shibboleth-idp/flows/authn/conditions/change-password"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+    state: directory
+  when:
+   - idp['ldap']['ppolicy']['change_password_url'] is defined
+   - idp['ldap']['ppolicy']['change_password_url'] != ""
+  tags: idp
+
+- name: "Copy Expired password flow to Change password flow"
+  copy:
+    src: "/opt/shibboleth-idp/flows/authn/conditions/expired-password/expired-password-flow.xml"
+    dest: "/opt/shibboleth-idp/flows/authn/conditions/change-password/change-password-flow.xml"
+    owner: root
+    group: root
+    mode: 0755
+    remote_src: "True"
+  when:
+   - idp['ldap']['ppolicy']['change_password_url'] is defined
+   - idp['ldap']['ppolicy']['change_password_url'] != ""
+  tags: idp
+
 - name: "Be sure that Federation logo, eduGAIN logo and other images are present"
   copy:
    src: "files/restore/{{ fqdn }}/styles/images"
@@ -260,15 +304,14 @@
    - { src: "views/intercept/attribute-release.vm.j2", dest: "/opt/shibboleth-idp/views/intercept/attribute-release.vm" }
    - { src: "messages/cookie_policy.properties.j2", dest: "/opt/shibboleth-idp/messages/cookie_policy.properties" }
    - { src: "messages/custom.properties.j2", dest: "/opt/shibboleth-idp/messages/custom.properties" }
-   - { src: "messages/messages.properties.j2", dest: "/opt/shibboleth-idp/messages/messages.properties" }
   notify:
     - "Restart Jetty"
     - "Restart Apache"
   tags: idp
 
 - name: "Be sure that messages for interested languages are present"
-  template:
-   src: "messages/messages_{{ item.key }}.properties.j2"
+  copy:
+   src: "files/messages/messages_{{ item.key }}.properties"
    dest: "/opt/shibboleth-idp/messages/messages_{{ item.key }}.properties"
    owner: "root"
    group: "root"

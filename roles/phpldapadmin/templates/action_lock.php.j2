@@ -30,8 +30,8 @@ $ds = ldap_connect("localhost", 389);
 
 if ($ds) {
         ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
-        $connuser = "{{ ldap['root_dn'] }}";
-        $connpasswd = "{{ ldap['root_pw'] }}";
+        $connuser = "{{ pla['ldap']['root_dn'] }}";
+        $connpasswd = "{{ pla['ldap']['root_pw'] }}";
         $r = ldap_bind($ds, $connuser, $connpasswd);
 
         if($r) {
@@ -55,7 +55,7 @@ if ($ds) {
             exit(json_encode($jsonout));
       }
 
-                $user_dn = "uid=" . $userid . ",ou=people,{{ ldap['basedn'] }}";
+                $user_dn = "uid=" . $userid . ",ou=people,{{ pla['ldap']['basedn'] }}";
 
                 if ($action == "lock" || $action == "setdate") {
                          $result = ldap_mod_add($ds, $user_dn, $userdata);

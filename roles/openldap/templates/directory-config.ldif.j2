@@ -1,11 +1,11 @@
 dn: cn=config
-add: olcTLSCACertificateFile
+replace: olcTLSCACertificateFile
 olcTLSCACertificateFile: /etc/ssl/certs/cacert.pem
 -
-add: olcTLSCertificateFile
+replace: olcTLSCertificateFile
 olcTLSCertificateFile: /etc/ssl/certs/ssl-cert.crt
 -
-add: olcTLSCertificateKeyFile
+replace: olcTLSCertificateKeyFile
 olcTLSCertificateKeyFile: /etc/ssl/private/ssl-cert.key
 -
 replace: olcLogLevel
@@ -29,4 +29,10 @@ olcDbIndex: uid pres,eq
 olcDbIndex: entryUUID eq
 olcDbIndex: sn pres,eq,sub
 olcDbIndex: mail pres,eq,sub
+
+dn: cn=module{0},cn=config
+changeType: modify
+add: olcModuleLoad
+olcModuleLoad: memberof
+olcModuleLoad: ppolicy
 

@@ -1,3 +1,11 @@
+# Overridden default properties
+
+idp.logo={{ idp_metadata['en']['mdui_logo'] }}
+idp.logo.alt-text={{ idp_metadata['en']['org_displayName'] }}
+idp.footer={{ idp['login']['footer']['en']['text'] }}
+idp.url.helpdesk=mailto:{{ idp_contacts['technical']['mail'] }}
+
+# New custom properties
 idp.favicon={{ idp_metadata['en']['mdui_favicon'] }}
 idp.infoUrl={{ idp_metadata['en']['mdui_infoUrl'] }}
 idp.privacyPage={{ idp_metadata['en']['mdui_privacyUrl'] }}
@@ -11,7 +19,6 @@ idp.contacts={{ idp_contacts['technical']['mail'] }}
 idp.nocontacts=No Contacts
 idp.noprivacy=No Privacy Policy
 idp.noinfopage=No Information Page
-idp.footer=FOOTER ENG
 sp.description=SP Description
 sp.organization=SP Organization
 sp.contacts=SP Contacts
@@ -25,3 +32,11 @@ sp.noprivacypage=SP Privacy Policy absent
 {{ fed }}.logo={{ idp['login']['fed_info'][fed]['en']['logo'] }}
 {{ fed }}.name={{ idp['login']['fed_info'][fed]['en']['name'] }}
 {% endfor %}
+
+# Messages for changing password
+{% if idp['ldap']['ppolicy']['change_password_url'] %}
+ChangePassword=change-password
+change-password.message=Change your password!
+change-password.linkText=Click Here
+change-password.url={{ idp['ldap']['ppolicy']['change_password_url'] }}
+{% endif %}
