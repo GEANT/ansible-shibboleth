@@ -34,7 +34,7 @@ sp.noprivacypage=SP Privacy Policy absent
 {% endfor %}
 
 # Messages for changing password
-{% if idp['ldap']['ppolicy']['change_password_url'] %}
+{% if idp['ldap']['ppolicy'] is defined and idp['ldap']['ppolicy']['change_password_url'] is defined and idp['ldap']['ppolicy']['change_password_url'] != "" %}
 ChangePassword=change-password
 change-password.message=Change your password!
 change-password.linkText=Click Here

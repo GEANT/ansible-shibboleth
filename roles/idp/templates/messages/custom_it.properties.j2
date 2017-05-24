@@ -33,7 +33,7 @@ sp.noprivacypage=Nessuna Politica sulla Privacy definita dalla risorsa
 {% endfor%}
 
 # Messaggi per il cambio password sfruttando le PPolicy di OpenLDAP
-{% if idp['ldap']['ppolicy']['change_password_url'] %}
+{% if idp['ldap']['ppolicy'] is defined and idp['ldap']['ppolicy']['change_password_url'] is defined and idp['ldap']['ppolicy']['change_password_url'] != "" %}
 ChangePassword=change-password
 change-password.message=Cambia la tua password!
 change-password.linkText=Clicca Qui

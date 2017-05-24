@@ -233,6 +233,7 @@
    - { src: "files/flows/authn/conditions/conditions-flow.xml", dest: "/opt/shibboleth-idp/flows/authn/conditions/conditions-flow.xml", owner: "root", group: "root", mode: "0755" }
    - { src: "files/views/login-error.vm", dest: "/opt/shibboleth-idp/views/login-error.vm", owner: "root", group: "root", mode: "0644" }
   when:
+   - idp['ldap']['ppolicy'] is defined
    - idp['ldap']['ppolicy']['change_password_url'] is defined
    - idp['ldap']['ppolicy']['change_password_url'] != ""
   notify:
@@ -247,6 +248,7 @@
     mode: "0755"
     state: directory
   when:
+   - idp['ldap']['ppolicy'] is defined
    - idp['ldap']['ppolicy']['change_password_url'] is defined
    - idp['ldap']['ppolicy']['change_password_url'] != ""
   tags: idp
@@ -260,6 +262,7 @@
     mode: 0755
     remote_src: "True"
   when:
+   - idp['ldap']['ppolicy'] is defined
    - idp['ldap']['ppolicy']['change_password_url'] is defined
    - idp['ldap']['ppolicy']['change_password_url'] != ""
   tags: idp
