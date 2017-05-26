@@ -36,9 +36,17 @@
    - aptitude
    - debconf
    - debconf-utils
+   - apt-transport-https
   notify:
    - "Safe Upgrade"
   tags: common
+
+- name: "Be sure to use the preferred mirror for packages"
+  replace:
+   dest: /etc/apt/sources.list
+   regexp: "http[:][/][/]http.debian.net[/]debian"
+   replace: "{{ mirror }}"
+  tags: common 
 
 - name: "Be sure ntp is configured"
   template: 
@@ -105,3 +113,5 @@
   shell: "/usr/sbin/update-ca-certificates"
   when: cacert.stat.islnk is not defined
   tags: common
+
+

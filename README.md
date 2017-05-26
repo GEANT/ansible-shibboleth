@@ -80,6 +80,8 @@ The "```host_vars/```" directory contains one ```FQDN.yml``` file for each serve
 The "```roles/idp/vars/attr-defs-dict.yml```" contains all the attribute definitions supported by default on an IdP. 
 If you need to limit or change the default Attribute Definitions provided, you have to implement your "```idp_attrDef```" dictionary on the IdP "*FQDN.yml*" file.
 
+The default mirror site is "```https://mi.mirror.garr.it/mirrors/debian/```". If you want to change it, modify "```roles/common/defaults/main.yml```" and "```roles/jdk/defaults/main.yml```".
+
 ## Restore Procedures ##
 
 ### Databases Restore

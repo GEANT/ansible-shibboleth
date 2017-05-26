@@ -5,13 +5,15 @@
    name: "apache2"
    groups: "ssl-cert"
 
-- name: "Be sure to have SSL, headers and Proxy modules enabled"
+- name: "Be sure to have SSL, include, negotiation, headers and Proxy modules enabled"
   apache2_module:
    name: "{{ item }}"
    state: present
   with_items:
    - alias
    - ssl
+   - include
+   - negotiation
    - headers
    - proxy_http
   notify:
@@ -31,6 +33,16 @@
   template:
    src: default.conf.j2
    dest: /etc/apache2/sites-enabled/000-default.conf
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  notify:
+   - "Restart Apache"
+
+- name: "Be sure to have enabled Apache localized error pages"
+  copy:
+   src: files/localized-error-pages.conf
+   dest: /etc/apache2/conf-enabled/localized-error-pages.conf
    owner: "root"
    group: "root"
    mode: "0644"
