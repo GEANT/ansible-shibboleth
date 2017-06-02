@@ -82,6 +82,8 @@ If you need to limit or change the default Attribute Definitions provided, you h
 
 The default mirror site is "```https://mi.mirror.garr.it/mirrors/debian/```". If you want to change it, modify "```roles/common/defaults/main.yml```" and "```roles/jdk/defaults/main.yml```".
 
+The openLDAP logs will be stored on "```/var/log/slapd/```" directory.
+
 ## Restore Procedures ##
 
 ### Databases Restore

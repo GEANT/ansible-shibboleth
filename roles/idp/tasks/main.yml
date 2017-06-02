@@ -233,6 +233,8 @@
    - { src: "files/flows/authn/conditions/conditions-flow.xml", dest: "/opt/shibboleth-idp/flows/authn/conditions/conditions-flow.xml", owner: "root", group: "root", mode: "0755" }
    - { src: "files/views/login-error.vm", dest: "/opt/shibboleth-idp/views/login-error.vm", owner: "root", group: "root", mode: "0644" }
   when:
+   - idp is defined
+   - idp['ldap'] is defined
    - idp['ldap']['ppolicy'] is defined
    - idp['ldap']['ppolicy']['change_password_url'] is defined
    - idp['ldap']['ppolicy']['change_password_url'] != ""
@@ -248,6 +250,8 @@
     mode: "0755"
     state: directory
   when:
+   - idp is defined
+   - idp['ldap'] is defined
    - idp['ldap']['ppolicy'] is defined
    - idp['ldap']['ppolicy']['change_password_url'] is defined
    - idp['ldap']['ppolicy']['change_password_url'] != ""
@@ -262,6 +266,8 @@
     mode: 0755
     remote_src: "True"
   when:
+   - idp is defined
+   - idp['ldap'] is defined
    - idp['ldap']['ppolicy'] is defined
    - idp['ldap']['ppolicy']['change_password_url'] is defined
    - idp['ldap']['ppolicy']['change_password_url'] != ""
@@ -360,6 +366,8 @@
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
   when:
+   - idp is defined
+   - idp['login'] is defined
    - idp['login']['create_info_and_pp_pages'] is defined
    - idp['login']['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
   notify:
@@ -375,6 +383,8 @@
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
   when: 
+   - idp is defined
+   - idp['login'] is defined
    - idp['login']['create_info_and_pp_pages'] is defined
    - idp['login']['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
   notify:
@@ -387,6 +397,8 @@
    state: "absent"
   with_dict: "{{ idp_metadata }}"
   when: 
+   - idp is defined
+   - idp['login'] is defined
    - idp['login']['create_info_and_pp_pages'] is not defined or idp['login']['create_info_and_pp_pages'] in ["No","no","False","false"]
   tags: idp
 
@@ -396,7 +408,9 @@
    state: "absent"
   with_dict: "{{ idp_metadata }}"
   when: 
-   - idp['login']['create_info_and_pp_pages'] is not defined or idp['login']['create_info_and_pp_pages'] in ["No","no","False","false"]
+   - idp is defined
+   - idp['login'] is defined
+   - idp['login']['create_info_and_pp_pages'] is undefined or idp['login']['create_info_and_pp_pages'] in ["No","no","False","false"]
   tags: idp
 
 - name: "Be sure that needed packages for statistics are installed"
@@ -517,6 +531,7 @@
    - { src: "files/restore/{{ fqdn }}/mysql-backup/shibboleth-db.sql.gz", dest: "/root/shibboleth-db.sql.gz" }
    - { src: "files/restore/{{ fqdn }}/mysql-backup/statistics-db.sql.gz", dest: "/root/statistics-db.sql.gz" }
   when: 
+   - idp_db_restore is defined
    - idp_db_restore in ["True","true","Yes","yes"] 
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
@@ -527,6 +542,7 @@
    - "/root/shibboleth-db.sql.gz"
    - "/root/statistics-db.sql.gz"
   when: 
+   - idp_db_restore is defined
    - idp_db_restore in ["True","true","Yes","yes"] 
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
@@ -541,6 +557,7 @@
    - "/root/shibboleth-db.sql"
    - "/root/statistics-db.sql"
   when: 
+   - idp_db_restore is defined
    - idp_db_restore in ["True","true","Yes","yes"] 
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
@@ -555,6 +572,7 @@
    - "/root/shibboleth-db.sql"
    - "/root/statistics-db.sql"
   when: 
+   - idp_db_restore is defined
    - idp_db_restore in ["True","true","Yes","yes"] 
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
@@ -567,6 +585,7 @@
    - "/root/shibboleth-db.sql"
    - "/root/statistics-db.sql"
   when: 
+   - idp_db_restore is defined
    - idp_db_restore in ["True","true","Yes","yes"] 
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
@@ -578,8 +597,8 @@
    update_cache: yes
   with_items:
    - python-ldap
-   - python-mechanize
   when: 
+   - check_mk is defined
    - check_mk['srv'] is defined
   notify:
    - "Safe Upgrade"
@@ -591,17 +610,39 @@
     owner: "root"
     group: "root"
     state: directory
-  when: check_mk['srv'] is defined
+  when:
+   - check_mk is defined
+   - check_mk['srv'] is defined
   tags: idp
- 
-- name: "Be sure that the Check_MK 'check_aacli' plugin is installed in the right position"
+
+- name: "Be sure that the Check_MK 'check_aacli' and 'check_mysql' plugin are installed in the right position"
   template:
-    src: "monitoring/check_mk_plugins/check_aacli.py.j2"
-    dest: "/usr/lib/check_mk_agent/local/check_aacli.py"
+    src: "{{ item['src'] }}"
+    dest: "{{ item['dest'] }}"
     owner: "root"
     group: "root"
     mode: "0755"
-  when: check_mk['srv'] is defined
+  with_items:
+   - { src: "monitoring/check_mk_plugins/check_aacli.py.j2", dest: "/usr/lib/check_mk_agent/local/check_aacli.py" }
+   - { src: "monitoring/check_mk_plugins/check_mysql.py.j2", dest: "/usr/lib/check_mk_agent/local/check_mysql.py" }
+  when:
+   - check_mk is defined
+   - check_mk['srv'] is defined
+  tags: idp
+
+- name: "Be sure that the Check_MK 'check_ldap' plugin is installed in the right position"
+  template:
+    src: "monitoring/check_mk_plugins/check_ldap.py.j2"
+    dest: "/usr/lib/check_mk_agent/local/check_ldap.py"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  when:
+   - check_mk is defined
+   - check_mk['srv'] is defined
+   - ldap is defined
+   - ldap['create_test_user'] is defined
+   - ldap['create_test_user'] in ["Yes","yes","True","true"]
   tags: idp
 
 - name: "Be sure that the Check_MK 'check_rs' plugin is installed in the right position"
@@ -612,6 +653,7 @@
     group: "root"
     mode: "0755"
   when:
+   - check_mk is defined
    - check_mk['srv'] is defined
    - check_mk['check_rs'] is defined
    - check_mk['check_rs'] in ["Yes","yes","True","true"]
@@ -625,6 +667,7 @@
    group: "root"
    mode: 0644
   when:
+   - check_mk is defined
    - check_mk['srv'] is defined
    - check_mk['check_rs'] is defined
    - check_mk['check_rs'] in ["Yes","yes","True","true"]
@@ -638,6 +681,7 @@
     group: "root"
     mode: "0755"
   when: 
+   - check_mk is defined
    - check_mk['srv'] is defined
    - check_mk['check_coco'] is defined
    - check_mk['check_coco'] in ["Yes","yes","True","true"]
@@ -651,6 +695,7 @@
    group: "root"
    mode: 0644
   when: 
+   - check_mk is defined
    - check_mk['srv'] is defined
    - check_mk['check_coco'] is defined
    - check_mk['check_coco'] in ["Yes","yes","True","true"]
@@ -664,6 +709,7 @@
    - "/usr/lib/check_mk_agent/local/check_coco.py"
    - "/opt/shibboleth-idp/metadata/fake-coco-sp.xml"
   when: 
+   - check_mk is defined
    - check_mk['srv'] is not defined or check_mk['check_coco'] is not defined or check_mk['check_coco'] in ["No","no","False","false"]
   tags: idp
 
@@ -675,5 +721,6 @@
    - "/usr/lib/check_mk_agent/local/check_rs.py"
    - "/opt/shibboleth-idp/metadata/fake-rs-sp.xml"
   when: 
+   - check_mk is defined
    - check_mk['srv'] is not defined or check_mk['check_rs'] is not defined or check_mk['check_rs'] in ["No","no","False","false"]
   tags: idp

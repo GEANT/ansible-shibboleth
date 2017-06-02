@@ -4,11 +4,14 @@
   include_vars: "{{ ansible_os_family }}.yml"
   tags: openldap
 
-- name: "Be sure that the package 'debconf-utils' is installed"
+- name: "Be sure that the package 'debconf-utils' and 'python-ldap' is installed"
   apt: 
-   name: "debconf-utils"
+   name: "{{ item }}"
    state: latest
    update_cache: yes
+  with_items:
+   - debconf-utils
+   - python-ldap
   notify:
    - "Safe Upgrade"
   tags: openldap
@@ -69,6 +72,24 @@
     - ldap-utils
   tags: openldap
 
+- name: "Be sure that the directory '/var/log/slapd' is present or create it"
+  file:
+    path: /var/log/slapd
+    state: directory
+  tags: openldap
+
+- name: "Be sure that logs of OpenLDAP are stored into /var/log/slapd/slapd.log"
+  copy:
+   src: "files/99-slapd.conf"
+   dest: "/etc/rsyslog.d/99-slapd.conf"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  notify:
+   - "Restart rsyslogd"
+   - "Restart slapd"
+  tags: openldap
+
 - name: "Be sure that the OpenLDAP user is added to 'ssl-cert' group"
   user: 
    name: openldap
@@ -94,14 +115,6 @@
   with_items:
    - src: "directory-config.ldif.j2"
      dest: "/root/ldap-configs/directory-config.ldif"
-   - src: "directory-content.ldif.j2"
-     dest: "/root/ldap-configs/directory-content.ldif"
-   - src: "passwordpolicy.ldif.j2"
-     dest: "/root/ldap-configs/passwordpolicy.ldif"
-   - src: "memberof_overlay.ldif.j2"
-     dest: "/root/ldap-configs/memberof_overlay.ldif"
-   - src: "ppolicy_overlay.ldif.j2"
-     dest: "/root/ldap-configs/ppolicy_overlay.ldif"
   tags: openldap 
 
 - name: "Be sure that eduPerson, schac schema and overlay are stored into /root/ldap-configs"
@@ -186,97 +199,36 @@
    - "Restart slapd"
   tags: openldap
 
-- name: "Check the existance of branch 'people' inside LDAP and store the result into 'people_in_ldap' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} '(ou:dn:=people)'"
-  register: people_in_ldap
-  changed_when: false
+- include: add_people_groups_system_policies_branches.yml
+  notify:
+   - "Restart slapd"
   tags: openldap
 
-- name: "Check the existance of branch 'groups' inside LDAP and store the result into 'groups_in_ldap' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} '(ou:dn:=groups)'"
-  register: groups_in_ldap
-  changed_when: false
+- include: add_idpuser.yml
+  notify:
+   - "Restart slapd"
   tags: openldap
 
-- name: "Check the existance of branch 'system' inside LDAP and store the result into 'system_in_ldap' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} '(ou:dn:=system)'"
-  register: system_in_ldap
-  changed_when: false
-  tags: openldap
-
-- name: "Check the existance of branch 'policies' inside LDAP and store the result into 'policies_in_ldap' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} '(ou:dn:=policies)'"
-  register: policies_in_ldap
-  changed_when: false
-  tags: openldap
-
-- name: "Be sure that Directory contains the standard 'people', 'groups', 'system', and 'policies' branches"
-  command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/directory-content.ldif"
-  when: (people_in_ldap.stdout == "" and groups_in_ldap.stdout == "" and system_in_ldap.stdout == "" and policies_in_ldap.stdout == "")
+- include: add_testuser.yml
+  when: 
+   - ldap['create_test_user'] is defined
+   - ldap['create_test_user'] in ["Yes","yes","True","true"]
   notify: 
    - "Restart slapd"
   tags: openldap
 
-- name: "Check the existance of the Test User inside LDAP and store the result into 'testuser_in_ldap' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b {{ ldap['basedn'] }} '(uid=testuser)'"
-  register: testuser_in_ldap
-  changed_when: false
-  when: ldap['create_test_user']
-  tags: openldap
-
-- name: "Be sure that the Test User LDIFs is stored into /root/ldap-configs"
-  template:
-   src: "testuser.ldif.j2"
-   dest: "/root/ldap-configs/testuser.ldif"
-   owner: "root"
-   group: "root"
-   mode: "0600"
-  when: ldap['create_test_user']
-  tags: openldap
-
-- name: "Be sure that the Test User is created"
-  command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/testuser.ldif"
-  when: (ldap['create_test_user'] and testuser_in_ldap.stdout == "")
-  notify: 
+- include: add_memberof_overlay.yml
+  notify:
    - "Restart slapd"
   tags: openldap
 
-- name: "Check that memberOf openLDAP overlays are loaded"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=config '(olcOverlay=memberOf)'"
-  register: memberof_overlay
-  changed_when: false
-  tags: openldap
-  
-- name: "Add memberOf overlay to openldap"
-  command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/memberof_overlay.ldif"
-  when: memberof_overlay.stdout == ""
-  notify: 
+- include: add_ppolicy_overlay.yml
+  notify:
    - "Restart slapd"
-  tags: openldap
+  tags: openldap 
 
-- name: "Check that ppolicy openLDAP overlays are loaded"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=config '(olcOverlay=ppolicy)'"
-  register: ppolicy_overlay
-  changed_when: false
-  tags: openldap
-  
-- name: "Add ppolicy overlay to openldap"
-  command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/ppolicy_overlay.ldif"
-  when: ppolicy_overlay.stdout == ""
-  notify: 
-   - "Restart slapd"
-  tags: openldap
-
-- name: "Check the existance of a policy under the branch 'policies' inside LDAP and store the result into 'ppolicy_in_ldap' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b ou=policies,{{ ldap['basedn'] }} '(!(objectClass=organizationalUnit))'" 
-  register: ppolicy_in_ldap
-  changed_when: false
-  tags: openldap
-
-- name: "Be sure that Password Policy default is configured"
-  command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/passwordpolicy.ldif"
-  when: ppolicy_in_ldap.stdout == ""
-  notify: 
+- include: add_password_policy_entry.yml
+  notify:
    - "Restart slapd"
   tags: openldap
 
@@ -374,4 +326,3 @@
    state: started
    enabled: yes
   tags: openldap
-

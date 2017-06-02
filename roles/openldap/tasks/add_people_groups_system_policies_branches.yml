@@ -1,0 +1,15 @@
+---
+- name: "Be sure to add 'people', 'groups', 'system' and 'policies' branches"
+  ldap_entry:
+    dn: "ou={{ item.name }},{{ ldap['basedn'] }}"
+    objectClass:
+      - organizationalUnit
+      - top
+    attributes:
+      ou: "{{ item.ou }}"
+      description: "{{ ldap['org'] }} {{ item.name }}"
+  with_items:
+   - { name: "people", ou: "People" }
+   - { name: "groups", ou: "Groups" }
+   - { name: "system", ou: "System" }
+   - { name: "policies", ou: "Policies" }

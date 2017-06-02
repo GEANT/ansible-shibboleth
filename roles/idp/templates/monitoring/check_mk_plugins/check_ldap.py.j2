@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+#-*- coding: utf-8 -*-
+
+import optparse
+
+# PARAMETERS
+
+user        = "{{ check_mk['testuser'] }}"
+basedn      = "{{ check_mk['baseDN'] }}"
+searchuser  = "{{ check_mk['searchuser'] }}"
+ldappasswd  = "{{ check_mk['searchuser_pw'] }}"
+ldapsrv     = "{{ check_mk['ldap_url'] }}"
+userid_attr = "{{ check_mk['userid_attr'] }}"
+scope       = "{{ check_mk['idp_scope'] }}"
+{% if check_mk['ldap_useStartTLS'] is equalto 'true' or check_mk['ldap_useStartTLS'] is equalto 'True' %}
+tls         = True
+{% else %}
+tls         = False
+{% endif %}
+
+# END PARAMETERS
+
+parser = optparse.OptionParser()
+parser.add_option("-d", "--debug", dest="debug", action="store_true", help="Print debug information", default=False)
+(options, args) = parser.parse_args()
+
+if options.debug:
+    print "Options passed to command:   %s" % options
+    print "Arguments passed to command: %s" % args
+
+validAttrs = False
+
+try:
+   import ldap
+
+   # Connect to LDAP server via plain, ssl or tls.
+   con = ldap.initialize(ldapsrv)
+   if tls: con.set_option(ldap.OPT_X_TLS_DEMAND, True)
+   con.simple_bind_s(searchuser,ldappasswd)
+
+   # Search the LDAP for the right user.
+   filter = '(objectclass=person)'
+   attrs = ['*']
+   searchuser  = userid_attr + '=' + user + ',' + basedn
+   ldapuser = con.search_s(searchuser, ldap.SCOPE_SUBTREE, filter, attrs)[0][1]
+
+   if options.debug: print ldapuser
+
+   if all (key in ldapuser for key in ("givenName","sn","mail")): validAttrs = True
+
+except Exception as e:
+   # In case of an error put validAttrs to False to return exit status 1 below.
+   if options.debug: print e
+   validAttrs = False
+
+if validAttrs:
+   print "0 check_ldap - SUCCESS - LDAP exists and release attributes"
+else:
+   print "1 check_ldap - CRITICAL - LDAP doesn't working correctly"
