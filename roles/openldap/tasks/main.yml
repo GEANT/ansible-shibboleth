@@ -76,6 +76,9 @@
   file:
     path: /var/log/slapd
     state: directory
+  notify:
+   - "Restart rsyslog"
+   - "Restart slapd"
   tags: openldap
 
 - name: "Be sure that logs of OpenLDAP are stored into /var/log/slapd/slapd.log"
@@ -86,7 +89,7 @@
    group: "root"
    mode: "0644"
   notify:
-   - "Restart rsyslogd"
+   - "Restart rsyslog"
    - "Restart slapd"
   tags: openldap
 

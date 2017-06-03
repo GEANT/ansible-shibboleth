@@ -7,7 +7,7 @@
    name: slapd
    state: restarted
 
-- name: "Restart rsyslogd"
+- name: "Restart rsyslog"
   become: yes
   become_method: sudo
   service:
