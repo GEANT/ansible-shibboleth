@@ -37,8 +37,6 @@
    - debconf
    - debconf-utils
    - apt-transport-https
-  notify:
-   - "Safe Upgrade"
   tags: common
 
 - name: "Be sure to use the preferred mirror for packages"

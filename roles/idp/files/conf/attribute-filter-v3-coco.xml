@@ -83,6 +83,9 @@
         <AttributeRule attributeID="eduPersonTargetedID">
             <PermitValueRule xsi:type="AttributeInMetadata" onlyIfRequired="true" />
         </AttributeRule>
+        <AttributeRule attributeID="eduPersonOrcid">
+            <PermitValueRule xsi:type="AttributeInMetadata" onlyIfRequired="true" />
+        </AttributeRule>
     </AttributeFilterPolicy>
 
 </AttributeFilterPolicyGroup>

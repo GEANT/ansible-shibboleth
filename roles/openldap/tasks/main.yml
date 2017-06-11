@@ -12,8 +12,6 @@
   with_items:
    - debconf-utils
    - python-ldap
-  notify:
-   - "Safe Upgrade"
   tags: openldap
 
 - name: "Check if debconf-get-selections has parameters for unattended OpenLDAP installation and store the result on 'debconf' ansible variable"
@@ -65,8 +63,6 @@
    name: "{{ item }}"
    state: latest
    update_cache: yes
-  notify:
-   - "Safe Upgrade"
   with_items:
     - slapd
     - ldap-utils
@@ -116,11 +112,11 @@
    group: "root"
    mode: "0600"
   with_items:
-   - src: "directory-config.ldif.j2"
-     dest: "/root/ldap-configs/directory-config.ldif"
+   - src: "directory-tls-indexes.ldif.j2"
+     dest: "/root/ldap-configs/directory-tls-indexes.ldif"
   tags: openldap 
 
-- name: "Be sure that eduPerson, schac schema and overlay are stored into /root/ldap-configs"
+- name: "Be sure that eduPerson and SCHAC schema are stored into /root/ldap-configs"
   copy:
    src: "files/{{ item }}"
    dest: "/root/ldap-configs"
@@ -143,7 +139,7 @@
    - "Restart slapd"
   tags: openldap
 
-- name: "Check if LDAP has alread the olcTLSCertificateKeyFile needed for STARTTLS and store the result on 'olc_cert_key' ansible variable"
+- name: "Check if LDAP has already the olcTLSCertificateKeyFile needed for STARTTLS and store the result on 'olc_cert_key' ansible variable"
   shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=config '(olcTLSCertificateKeyFile=*)' dn olcTLSCertificateKeyFile"
   register: olc_cert_key
   changed_when: false
@@ -151,15 +147,33 @@
 
 - name: "Be sure that SLAPD is restarted before applying new ldap configuration"
   service:
-    name: "slapd"
+    name: "{{ item }}"
     state: "restarted"
   when: olc_cert_key.stdout == ""
+  with_items:
+   - slapd
+   - rsyslog
   tags: openldap
 
-- name: "Be sure that the Directory is configured correctly"
-  command: "ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/directory-config.ldif"
+- name: "Be sure that the Directory TLS is configured correctly"
+  command: "ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/directory-tls-indexes.ldif"
   when: olc_cert_key.stdout == ""
   notify: 
+   - "Restart slapd"
+  tags: openldap
+
+- include: config_logLevel.yml
+  notify:
+   - "Restart slapd"
+  tags: openldap
+
+- include: config_acl.yml
+  notify:
+   - "Restart slapd"
+  tags: openldap
+
+- include: enable_memberOf_ppolicy_modules.yml
+  notify:
    - "Restart slapd"
   tags: openldap
 

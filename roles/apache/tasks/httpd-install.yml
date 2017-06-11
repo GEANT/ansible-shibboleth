@@ -5,5 +5,3 @@
    name: "{{ httpd_packages }}"
    state: latest
    update_cache: yes
-  notify:
-   - "Safe Upgrade"

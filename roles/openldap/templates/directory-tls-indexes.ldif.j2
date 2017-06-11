@@ -1,0 +1,21 @@
+dn: cn=config
+replace: olcTLSCACertificateFile
+olcTLSCACertificateFile: /etc/ssl/certs/cacert.pem
+-
+replace: olcTLSCertificateFile
+olcTLSCertificateFile: /etc/ssl/certs/ssl-cert.crt
+-
+replace: olcTLSCertificateKeyFile
+olcTLSCertificateKeyFile: /etc/ssl/private/ssl-cert.key
+
+dn: olcDatabase={1}mdb,cn=config
+changeType: modify
+replace: olcDbIndex
+olcDbIndex: objectClass eq
+olcDbIndex: member eq
+olcDbIndex: cn pres,eq,sub
+olcDbIndex: ou pres,eq,sub
+olcDbIndex: uid pres,eq
+olcDbIndex: entryUUID eq
+olcDbIndex: sn pres,eq,sub
+olcDbIndex: mail pres,eq,sub

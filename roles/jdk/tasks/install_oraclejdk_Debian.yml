@@ -6,8 +6,6 @@
    name: "software-properties-common"
    state: latest
    update_cache: yes
-  notify:
-   - "Safe Upgrade"
 
 - name: "Add Oracle Java Repository"
   apt_repository:
@@ -26,8 +24,6 @@
    name: "{{ item }}"
    state: latest
    update_cache: yes
-  notify:
-   - "Safe Upgrade"
   with_items:
     - "oracle-java{{ jdk_version }}-installer"
     - "ca-certificates"

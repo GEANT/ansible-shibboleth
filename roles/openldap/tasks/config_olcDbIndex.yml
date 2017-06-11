@@ -1,0 +1,15 @@
+- name: "Be sure to have set up the olcDbIndex correctly"
+  ldap_attr:
+   dn: "olcDatabase={1}mdb,cn=config"
+   name: "olcDbIndex"
+   values: "{{ item.value }}"
+   state: "{{ item.state }}" 
+  with_items:
+   - { value: 'objectClass eq', state: "present" }
+   - { value: 'member eq', state: "exact" }
+   - { value: 'cn pres,eq,sub', state: "exact" }
+   - { value: 'ou pres,eq,sub', state: "present" }
+   - { value: 'uid pres,eq', state: "exact" }
+   - { value: 'entryUUID eq', state: "present" }
+   - { value: 'sn pres,eq,sub', state: "present" }
+   - { value: 'mail pres,eq,sub', state: "present"}

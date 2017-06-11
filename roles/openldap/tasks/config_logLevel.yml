@@ -1,0 +1,8 @@
+- name: "Be sure to set correctly the TLS credentials"
+  ldap_attr:
+    dn: "cn=config"
+    name: "{{ item.key }}"
+    values: "{{ item.value }}"
+    state: present 
+  with_dict:
+    olcLogLevel: "256"

@@ -6,7 +6,7 @@
 
 - name: "Include attribute resolver default dictionary if a custom one is not provided on the host_vars of IdP"
   include_vars:
-    file: "attr-defs-dict-java{{ jdk_version}}.yml"
+   file: "attr-defs-dict-java{{ jdk_version }}.yml"
   when: idp_attrDef is undefined or idp_attrDef == ""
   tags: idp
 
@@ -25,8 +25,6 @@
    - { src: '/usr/share/java/commons-dbcp.jar' , dest: '/opt/jetty/lib/ext/common-dbcp.jar' }
    - { src: '/usr/share/java/commons-pool.jar' , dest: '/opt/jetty/lib/ext/commons-pool.jar' }
    - { src: '/usr/share/java/mysql.jar' , dest: '/opt/jetty/lib/ext/mysql-connector-java.jar' }
-  notify:
-   - "Restart Jetty"
   tags: idp
 
 - name: "Check if Shibboleth IdP directory exists and store the result into 'shib_idp_dir' ansible variable"
@@ -36,7 +34,7 @@
   changed_when: false
   tags: idp
 
-- name: "Stat Shibboleth IdP tarball in /opt" 
+- name: "Check if Shibboleth IdP tarball exists" 
   stat: 
    path: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"
   register: shib_tarball
@@ -47,17 +45,19 @@
    url: "{{ idp_dl_url }}"
    dest: "/usr/local/src"
    checksum: "sha256:{{ shib_idp_checksum }}"
-  when: shib_tarball.stat.exists == False
+  when:
+   - shib_tarball.stat.exists == False
   tags: idp
 
 - name: "Be sure that the Shibboleth Identity Provider is downloaded and extracted into the right position"
   unarchive:
     src: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"
-    dest: /usr/local/src
+    dest: "/usr/local/src"
     owner: "root"
     group: "root"
     remote_src: yes
-  when: shib_idp_dir.stat.isdir is undefined
+  when: 
+   - shib_idp_dir.stat.isdir is undefined
   tags: idp
 
 - name: "Be sure that the Shibboleth Identity Provider installer properties' files exists in the right position"
@@ -71,10 +71,11 @@
    - { src: "shib-idp-install.properties.j2", dest: "/tmp/shib-idp-install.properties", mode: "0644" }
    - { src: "installer.properties.j2", dest: "/tmp/installer.properties", mode: "0644" } 
    - { src: "shib-idp-persistentId-db.sql.j2", dest: "/root/shib-idp-persistentId-db.sql", mode: "0600" }
-  when: shib_idp_dir.stat.isdir is undefined
+  when: 
+   - shib_idp_dir.stat.isdir is undefined
   tags: idp
 
-- name: "Be sure that Jetty is configured correctly for Shibboleth IdP"
+- name: "Be sure to load JSTL libraries for Shibboleth IdP Status page"
   copy:
    src: "{{ item.src }}"
    dest: "{{ item.dest }}"
@@ -83,10 +84,20 @@
    mode: 0644
   with_items:
    - { src: "files/jstl-1.2.jar", dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/jstl-1.2.jar" }
-   - { src: "files/idp.xml", dest: "/opt/jetty/webapps/idp.xml" }
-  notify:
-   - "Restart Jetty"
   tags: idp 
+
+- name: "Be sure that Shibboleth has the right libraries"
+  file:
+   src: "{{ item.src }}" 
+   dest: "{{ item.dest }}"
+   owner: "jetty"
+   group: "jetty"
+   state: link
+  with_items:
+   - { src: '/usr/share/java/commons-dbcp.jar' ,dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/common-dbcp.jar" }
+   - { src: '/usr/share/java/commons-pool.jar' ,dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/commons-pool.jar" }
+   - { src: '/usr/share/java/mysql.jar' ,dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/mysql-connector-java.jar" }
+  tags: idp
 
 - name: "Be sure to install Shibboleth IdP"
   shell: "./install.sh -Didp.property.file=/tmp/installer.properties"
@@ -94,24 +105,22 @@
     chdir: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/bin"
   environment:
     JAVA_HOME: "{{ java_home_dir }}"
-  notify:
-    - "Restart Jetty"
   when: shib_idp_dir.stat.isdir is undefined
   tags: idp
 
-- name: "Be sure that the Shibboleth IdP directories have the right permissions"
+- name: "Be sure that the Shibboleth IdP directories have right permissions"
   file:
     path: "/opt/shibboleth-idp/{{ item }}"
     owner: "jetty"
     recurse: "yes"
     state: directory
   with_items:
-    - logs
-    - metadata
-    - credentials
-    - conf
-    - system
-    - war
+    - "logs"
+    - "metadata"
+    - "credentials"
+    - "conf"
+    - "system"
+    - "war"
   tags: idp
 
 - name: "Be sure to set the credentials generated for Shibboleth IdP"
@@ -130,8 +139,6 @@
    - { src: "files/credentials/{{ fqdn }}/idp-backchannel.p12", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.p12", mode: "0644" }
    - { src: "files/credentials/{{ fqdn }}/sealer.jks", dest: "/opt/shibboleth-idp/credentials/sealer.jks", mode: "0644" }
    - { src: "files/credentials/{{ fqdn }}/sealer.kver", dest: "/opt/shibboleth-idp/credentials/sealer.kver", mode: "0644" }
-  notify:
-   - "Restart Jetty"
   tags: idp
 
 - name: "Check if 'shibboleth' DB is already created and store the result into 'shib_db' ansible variable"
@@ -145,7 +152,7 @@
     encoding: "utf8"
     state: import
     name: all
-    target: /root/shib-idp-persistentId-db.sql
+    target: "/root/shib-idp-persistentId-db.sql"
   when: shib_db.stdout != 'shibboleth' 
   tags: idp
 
@@ -191,11 +198,30 @@
    - { src: "conf/attribute-filter-v3-federation.xml.j2", dest: "/opt/shibboleth-idp/conf/attribute-filter-v3-federation.xml" }
    - { src: "conf/attribute-resolver-v3-custom.xml.j2", dest: "/opt/shibboleth-idp/conf/attribute-resolver-v3-custom.xml" }
    - { src: "conf/metadata-providers.xml.j2", dest: "/opt/shibboleth-idp/conf/metadata-providers.xml" }
+  tags: idp
+
+- name: "Be sure to configure correctly the IdP Metadata"
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "jetty"
+    group: "root"
+    mode: "0600"
+  with_items:
    - { src: "idp-metadata.xml.j2", dest: "/opt/shibboleth-idp/metadata/idp-metadata.xml" }
+  tags: idp
+
+- name: "Be sure to configure correctly Apache2 to enable Shibboleth IdP application"
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+  with_items:
    - { src: "idp.conf.j2", dest: "/etc/apache2/conf-enabled/idp.conf" }
   notify:
-    - "Restart Jetty"
-    - "Restart Apache"
+   - "Restart Apache"
   tags: idp
 
 - name: "Be sure to download Metadata files and put them into the right directory"
@@ -209,15 +235,13 @@
   with_items: "{{ idp_metadata_providers }}"
   tags: idp
 
-- name: "Be sure that IdP configurations are present - Part 2"
+- name: "Be sure that IdP configurations files are present - Part 2"
   copy:
    src: "files/conf/"
    dest: "/opt/shibboleth-idp/conf/"
    owner: "jetty"
    group: "root"
    mode: "0600"
-  notify:
-    - "Restart Jetty"
   tags: idp
 
 - name: "Be sure that IdP supports OpenLDAP Password Policy - Part 1"
@@ -238,8 +262,6 @@
    - idp['ldap']['ppolicy'] is defined
    - idp['ldap']['ppolicy']['change_password_url'] is defined
    - idp['ldap']['ppolicy']['change_password_url'] != ""
-  notify:
-    - "Restart Jetty"
   tags: idp
 
 - name: "Be sure that 'change-password' directory is created"
@@ -314,7 +336,6 @@
    - { src: "messages/cookie_policy.properties.j2", dest: "/opt/shibboleth-idp/messages/cookie_policy.properties" }
    - { src: "messages/custom.properties.j2", dest: "/opt/shibboleth-idp/messages/custom.properties" }
   notify:
-    - "Restart Jetty"
     - "Restart Apache"
   tags: idp
 
@@ -327,8 +348,6 @@
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
   when: "item.key != 'en'"
-  notify:
-    - "Restart Jetty"
   tags: idp
 
 - name: "Be sure that custom messages for interested languages are present"
@@ -340,8 +359,6 @@
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
   when: "item.key != 'en'"
-  notify:
-    - "Restart Jetty"
   tags: idp
 
 - name: "Be sure that cookie_policy messages for interested languages are present"
@@ -353,8 +370,6 @@
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
   when: "item.key != 'en'"
-  notify:
-    - "Restart Jetty"
   tags: idp
 
 - name: "Be sure that Information Page for interested languages are present"
@@ -400,6 +415,8 @@
    - idp is defined
    - idp['login'] is defined
    - idp['login']['create_info_and_pp_pages'] is not defined or idp['login']['create_info_and_pp_pages'] in ["No","no","False","false"]
+  notify:
+    - "Restart Apache"
   tags: idp
 
 - name: "Be sure to remove Information Page if already ones are provided"
@@ -411,6 +428,8 @@
    - idp is defined
    - idp['login'] is defined
    - idp['login']['create_info_and_pp_pages'] is undefined or idp['login']['create_info_and_pp_pages'] in ["No","no","False","false"]
+  notify:
+    - "Restart Apache"
   tags: idp
 
 - name: "Be sure that needed packages for statistics are installed"
@@ -422,8 +441,6 @@
    - python-mysqldb
    - php5-mysql
    - php5
-  notify:
-   - "Safe Upgrade"
   tags: idp
 
 - name: "Check if 'statistics' DB is already created and store the result into 'statistics_db' ansible variable"
@@ -448,9 +465,11 @@
     group: "root"
     mode: "0755" 
     state: directory
+  notify:
+    - "Restart Apache"
   tags: idp
 
-- name: "Be sure that the files needed for statistics application are in ther right position - Part 1"
+- name: "Be sure that the needed files for statistics application are in the right place - Part 1"
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -471,11 +490,11 @@
     encoding: "utf8"
     state: import
     name: all
-    target: /root/statistics-idp-db.sql
+    target: "/root/statistics-idp-db.sql"
   when: statistics_db.stdout != 'statistics'
   tags: idp
 
-- name: "Be sure that the files needed for statistics application are in ther right position - Part 2"
+- name: "Be sure that the needed files for statistics application are in the right place - Part 2"
   copy:
    src: "{{ item.src }}"
    dest: "{{ item.dest }}"
@@ -499,13 +518,15 @@
    state: "link"
   tags: idp
 
-- name: "Be sure to put the Statistic Web Application in the right position"
+- name: "Be sure to put the Statistic Web Application in the right place"
   copy:
    src: "files/statistics/apache/www/"
    dest: "/var/www/html/statistics/"
    owner: "root"
    group: "root"
    mode: "0644"
+  notify:
+   - "Restart Apache"
   tags: idp
 
 - name: "RESTORE - Be sure that 'shibboleth' database is empty"
@@ -590,18 +611,27 @@
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
 
+- name: "Be sure to configure Jetty to load IdP war file correctly"
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: 0644
+  with_items:
+   - { src: "files/idp.xml", dest: "/opt/jetty/webapps/idp.xml" }
+  tags: idp 
+
 - name: "Be sure that needed packages for Check MK plugin are installed"
   apt:
    name: "{{ item }}"
    state: latest
    update_cache: yes
   with_items:
-   - python-ldap
+   - "python-ldap"
   when: 
    - check_mk is defined
    - check_mk['srv'] is defined
-  notify:
-   - "Safe Upgrade"
   tags: idp
 
 - name: "Be sure that the Check_MK plugin directory exists"

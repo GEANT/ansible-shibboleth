@@ -5,8 +5,6 @@
    name: "{{ check_mk_agent_packages }}"
    state: latest
    update_cache: yes
-  notify:
-   - "Safe Upgrade"
   tags: check_mk_agent
 
 - name: "Check if the Monitoring Agent of Check_MK is already downloaded"
