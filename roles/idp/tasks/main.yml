@@ -14,19 +14,6 @@
   include_vars: shib-idp-vars.yml
   tags: idp
 
-- name: "Be sure that Jetty has the right libraries imported"
-  file:
-   src: "{{ item.src }}" 
-   dest: "{{ item.dest }}"
-   owner: "jetty"
-   group: "jetty"
-   state: link
-  with_items:
-   - { src: '/usr/share/java/commons-dbcp.jar' , dest: '/opt/jetty/lib/ext/common-dbcp.jar' }
-   - { src: '/usr/share/java/commons-pool.jar' , dest: '/opt/jetty/lib/ext/commons-pool.jar' }
-   - { src: '/usr/share/java/mysql.jar' , dest: '/opt/jetty/lib/ext/mysql-connector-java.jar' }
-  tags: idp
-
 - name: "Check if Shibboleth IdP directory exists and store the result into 'shib_idp_dir' ansible variable"
   stat:
     path: "/opt/shibboleth-idp"
@@ -86,7 +73,7 @@
    - { src: "files/jstl-1.2.jar", dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/jstl-1.2.jar" }
   tags: idp 
 
-- name: "Be sure that Shibboleth has the right libraries"
+- name: "Be sure that Shibboleth IdP has the right libraries"
   file:
    src: "{{ item.src }}" 
    dest: "{{ item.dest }}"
@@ -622,7 +609,7 @@
    - { src: "files/idp.xml", dest: "/opt/jetty/webapps/idp.xml" }
   tags: idp 
 
-- name: "Be sure that needed packages for Check MK plugin are installed"
+- name: "Be sure that needed packages for Check MK plugins are installed"
   apt:
    name: "{{ item }}"
    state: latest

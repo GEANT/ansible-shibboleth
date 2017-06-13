@@ -12,8 +12,8 @@
   include: check_mk_agent-configure.yml
   tags: check_mk_agent
 
-- name: "Upgrade all packages"
-  apt:
-    upgrade: safe
-    update_cache: yes
-  tags: check_mk_agent
+#- name: "Upgrade all packages"
+#  apt:
+#    upgrade: safe
+#    update_cache: yes
+#  tags: check_mk_agent

@@ -124,12 +124,12 @@ idp_metadata_providers:
    file: "custom-fed-metadata.xml"
    url: "## CUSTOM FEDERATION METADATA URL ##"
    maxValidInterval: "P5D"
-   disregardTLSCertificate: "false"
+   disregardTLSCertificate: "true"
  - id: "IDEM-TEST-FEDERATION"
    file: "idem-test-metadata-sha256.xml"
    url: "http://www.garr.it/idem-metadata/idem-test-metadata-sha256.xml"
    maxValidInterval: "P5D"
-   disregardTLSCertificate: "true"
+   disregardTLSCertificate: "false"
    pubKey: |
     MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxrLc3bV+zC7cATqGoI9R
     WO8LKiXk4pMez0JcMgXICiKA/5hJ2WgtIbDHqfqSz1oFsmqXNEEgR3cKkHK9fsaY
@@ -142,7 +142,7 @@ idp_metadata_providers:
    file: "idem-metadata-sha256.xml"
    url: "http://www.garr.it/idem-metadata/idem-metadata-sha256.xml"
    maxValidInterval: "P5D"
-   disregardTLSCertificate: "true"
+   disregardTLSCertificate: "false"
    pubKey: |
     MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxrLc3bV+zC7cATqGoI9R
     WO8LKiXk4pMez0JcMgXICiKA/5hJ2WgtIbDHqfqSz1oFsmqXNEEgR3cKkHK9fsaY

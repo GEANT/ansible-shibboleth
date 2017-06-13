@@ -155,7 +155,7 @@
    - rsyslog
   tags: openldap
 
-- name: "Be sure that the Directory TLS is configured correctly"
+- name: "Be sure that the Directory TLS and Indexes are configured correctly"
   command: "ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/directory-tls-indexes.ldif"
   when: olc_cert_key.stdout == ""
   notify: 

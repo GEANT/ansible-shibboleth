@@ -111,5 +111,3 @@
   shell: "/usr/sbin/update-ca-certificates"
   when: cacert.stat.islnk is not defined
   tags: common
-
-

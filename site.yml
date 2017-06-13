@@ -1,4 +1,4 @@
 ---
 # file: site.yml
 - include: shib-idp-servers.yml
-- include: shib-idp-ldap-servers.yml
+- include: shib-idp-idm-servers.yml
