@@ -16,7 +16,7 @@
 
 - name: "Check if Shibboleth IdP directory exists and store the result into 'shib_idp_dir' ansible variable"
   stat:
-    path: "/opt/shibboleth-idp"
+   path: "/opt/shibboleth-idp"
   register: shib_idp_dir
   changed_when: false
   tags: idp
@@ -38,22 +38,22 @@
 
 - name: "Be sure that the Shibboleth Identity Provider is downloaded and extracted into the right position"
   unarchive:
-    src: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"
-    dest: "/usr/local/src"
-    owner: "root"
-    group: "root"
-    remote_src: yes
+   src: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"
+   dest: "/usr/local/src"
+   owner: "root"
+   group: "root"
+   remote_src: yes
   when: 
    - shib_idp_dir.stat.isdir is undefined
   tags: idp
 
 - name: "Be sure that the Shibboleth Identity Provider installer properties' files exists in the right position"
   template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    owner: "root"
-    group: "root"
-    mode: "{{ item.mode }}"
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: "{{ item.mode }}"
   with_items:
    - { src: "shib-idp-install.properties.j2", dest: "/tmp/shib-idp-install.properties", mode: "0644" }
    - { src: "installer.properties.j2", dest: "/tmp/installer.properties", mode: "0644" } 
@@ -97,10 +97,10 @@
 
 - name: "Be sure that the Shibboleth IdP directories have right permissions"
   file:
-    path: "/opt/shibboleth-idp/{{ item }}"
-    owner: "jetty"
-    recurse: "yes"
-    state: directory
+   path: "/opt/shibboleth-idp/{{ item }}"
+   owner: "jetty"
+   recurse: "yes"
+   state: directory
   with_items:
     - "logs"
     - "metadata"
@@ -136,10 +136,10 @@
 
 - name: "Be sure that the persistent identifiers 'shibboleth' database is created"
   mysql_db:
-    encoding: "utf8"
-    state: import
-    name: all
-    target: "/root/shib-idp-persistentId-db.sql"
+   encoding: "utf8"
+   state: import
+   name: all
+   target: "/root/shib-idp-persistentId-db.sql"
   when: shib_db.stdout != 'shibboleth' 
   tags: idp
 
@@ -163,19 +163,19 @@
 
 - name: "Be sure to create 'css' directory needed by Login Page"
   file:
-    path: "/var/www/html/css"
-    state: directory
+   path: "/var/www/html/css"
+   state: directory
   notify:
-    - "Restart Apache"
+   - "Restart Apache"
   tags: idp
 
 - name: "Be sure that IdP configurations files are present - Part 1"
   template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    owner: "jetty"
-    group: "root"
-    mode: "0600"
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
   with_items:
    - { src: "conf/saml-nameid.properties.j2", dest: "/opt/shibboleth-idp/conf/saml-nameid.properties" }
    - { src: "conf/global.xml.j2", dest: "/opt/shibboleth-idp/conf/global.xml" }
@@ -189,22 +189,22 @@
 
 - name: "Be sure to configure correctly the IdP Metadata"
   template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    owner: "jetty"
-    group: "root"
-    mode: "0600"
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
   with_items:
    - { src: "idp-metadata.xml.j2", dest: "/opt/shibboleth-idp/metadata/idp-metadata.xml" }
   tags: idp
 
 - name: "Be sure to configure correctly Apache2 to enable Shibboleth IdP application"
   template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    owner: "root"
-    group: "root"
-    mode: "0600"
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: "0600"
   with_items:
    - { src: "idp.conf.j2", dest: "/etc/apache2/conf-enabled/idp.conf" }
   notify:
@@ -213,12 +213,12 @@
 
 - name: "Be sure to download Metadata files and put them into the right directory"
   get_url:
-    url: "{{ item.url }}"
-    dest: "/opt/shibboleth-idp/metadata/{{ item.file }}"
-    owner: "jetty"
-    group: "root"
-    mode: "0644"
-    validate_certs: "{{ item.disregardTLSCertificate }}"
+   url: "{{ item.url }}"
+   dest: "/opt/shibboleth-idp/metadata/{{ item.file }}"
+   owner: "jetty"
+   group: "root"
+   mode: "0644"
+   validate_certs: "{{ item.disregardTLSCertificate }}"
   with_items: "{{ idp_metadata_providers }}"
   tags: idp
 
@@ -253,11 +253,11 @@
 
 - name: "Be sure that 'change-password' directory is created"
   file:
-    dest: "/opt/shibboleth-idp/flows/authn/conditions/change-password"
-    owner: "root"
-    group: "root"
-    mode: "0755"
-    state: directory
+   dest: "/opt/shibboleth-idp/flows/authn/conditions/change-password"
+   owner: "root"
+   group: "root"
+   mode: "0755"
+   state: directory
   when:
    - idp is defined
    - idp['ldap'] is defined
@@ -268,12 +268,12 @@
 
 - name: "Copy Expired password flow to Change password flow"
   copy:
-    src: "/opt/shibboleth-idp/flows/authn/conditions/expired-password/expired-password-flow.xml"
-    dest: "/opt/shibboleth-idp/flows/authn/conditions/change-password/change-password-flow.xml"
-    owner: root
-    group: root
-    mode: 0755
-    remote_src: "True"
+   src: "/opt/shibboleth-idp/flows/authn/conditions/expired-password/expired-password-flow.xml"
+   dest: "/opt/shibboleth-idp/flows/authn/conditions/change-password/change-password-flow.xml"
+   owner: root
+   group: root
+   mode: 0755
+   remote_src: "True"
   when:
    - idp is defined
    - idp['ldap'] is defined
@@ -290,7 +290,7 @@
    group: "root"
    mode: "0644"
   notify:
-    - "Restart Apache"
+   - "Restart Apache"
   tags: idp
 
 - name: "Be sure that IdP image files are present"
@@ -302,7 +302,7 @@
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
   notify:
-    - "Restart Apache"
+   - "Restart Apache"
   tags: idp
 
 - name: "Be sure that default english messages and IdP style files are present"
@@ -323,7 +323,7 @@
    - { src: "messages/cookie_policy.properties.j2", dest: "/opt/shibboleth-idp/messages/cookie_policy.properties" }
    - { src: "messages/custom.properties.j2", dest: "/opt/shibboleth-idp/messages/custom.properties" }
   notify:
-    - "Restart Apache"
+   - "Restart Apache"
   tags: idp
 
 - name: "Be sure that messages for interested languages are present"
@@ -373,7 +373,7 @@
    - idp['login']['create_info_and_pp_pages'] is defined
    - idp['login']['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
   notify:
-    - "Restart Apache"
+   - "Restart Apache"
   tags: idp
 
 - name: "Be sure that Privacy Policy Page for interested languages are present"
@@ -390,7 +390,7 @@
    - idp['login']['create_info_and_pp_pages'] is defined
    - idp['login']['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
   notify:
-    - "Restart Apache"
+   - "Restart Apache"
   tags: idp
 
 - name: "Be sure to remove Privacy Policy Page if already ones are provided"
@@ -403,7 +403,7 @@
    - idp['login'] is defined
    - idp['login']['create_info_and_pp_pages'] is not defined or idp['login']['create_info_and_pp_pages'] in ["No","no","False","false"]
   notify:
-    - "Restart Apache"
+   - "Restart Apache"
   tags: idp
 
 - name: "Be sure to remove Information Page if already ones are provided"
@@ -416,7 +416,7 @@
    - idp['login'] is defined
    - idp['login']['create_info_and_pp_pages'] is undefined or idp['login']['create_info_and_pp_pages'] in ["No","no","False","false"]
   notify:
-    - "Restart Apache"
+   - "Restart Apache"
   tags: idp
 
 - name: "Be sure that needed packages for statistics are installed"
@@ -438,31 +438,31 @@
 
 - name: "Be sure that 'loganalysis' directory is created"
   file:
-    dest: "/opt/loganalysis"
-    owner: "root"
-    group: "root"
-    mode: "0644" 
-    state: directory
+   dest: "/opt/loganalysis"
+   owner: "root"
+   group: "root"
+   mode: "0644" 
+   state: directory
   tags: idp
 
 - name: "Be sure that 'statistics' directory is created"
   file:
-    dest: "/var/www/html/statistics"
-    owner: "root"
-    group: "root"
-    mode: "0755" 
-    state: directory
+   dest: "/var/www/html/statistics"
+   owner: "root"
+   group: "root"
+   mode: "0755" 
+   state: directory
   notify:
-    - "Restart Apache"
+   - "Restart Apache"
   tags: idp
 
 - name: "Be sure that the needed files for statistics application are in the right place - Part 1"
   template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    owner: "root"
-    group: "root"
-    mode: "{{ item.mode }}"
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: "{{ item.mode }}"
   with_items:
    - { src: "statistics/statistics-idp-db.sql.j2", dest: "/root/statistics-idp-db.sql", mode: "0600" }
    - { src: "statistics/dbanalysis.py.j2", dest: "/opt/loganalysis/dbanalysis.py", mode: "0600" }
@@ -474,10 +474,10 @@
 
 - name: "Be sure that the 'statistics' database is created"
   mysql_db:
-    encoding: "utf8"
-    state: import
-    name: all
-    target: "/root/statistics-idp-db.sql"
+   encoding: "utf8"
+   state: import
+   name: all
+   target: "/root/statistics-idp-db.sql"
   when: statistics_db.stdout != 'statistics'
   tags: idp
 
@@ -572,10 +572,10 @@
 
 - name: "RESTORE - Be sure to restore databases"
   mysql_db:
-    encoding: "utf8"
-    state: import
-    name: all
-    target: "{{ item }}"
+   encoding: "utf8"
+   state: import
+   name: all
+   target: "{{ item }}"
   with_items:
    - "/root/shibboleth-db.sql"
    - "/root/statistics-db.sql"
@@ -623,10 +623,10 @@
 
 - name: "Be sure that the Check_MK plugin directory exists"
   file:
-    path: "/usr/lib/check_mk_agent/local"
-    owner: "root"
-    group: "root"
-    state: directory
+   path: "/usr/lib/check_mk_agent/local"
+   owner: "root"
+   group: "root"
+   state: directory
   when:
    - check_mk is defined
    - check_mk['srv'] is defined
@@ -634,11 +634,11 @@
 
 - name: "Be sure that the Check_MK 'check_aacli' and 'check_mysql' plugin are installed in the right position"
   template:
-    src: "{{ item['src'] }}"
-    dest: "{{ item['dest'] }}"
-    owner: "root"
-    group: "root"
-    mode: "0755"
+   src: "{{ item['src'] }}"
+   dest: "{{ item['dest'] }}"
+   owner: "root"
+   group: "root"
+   mode: "0755"
   with_items:
    - { src: "monitoring/check_mk_plugins/check_aacli.py.j2", dest: "/usr/lib/check_mk_agent/local/check_aacli.py" }
    - { src: "monitoring/check_mk_plugins/check_mysql.py.j2", dest: "/usr/lib/check_mk_agent/local/check_mysql.py" }
@@ -649,11 +649,11 @@
 
 - name: "Be sure that the Check_MK 'check_ldap' plugin is installed in the right position"
   template:
-    src: "monitoring/check_mk_plugins/check_ldap.py.j2"
-    dest: "/usr/lib/check_mk_agent/local/check_ldap.py"
-    owner: "root"
-    group: "root"
-    mode: "0755"
+   src: "monitoring/check_mk_plugins/check_ldap.py.j2"
+   dest: "/usr/lib/check_mk_agent/local/check_ldap.py"
+   owner: "root"
+   group: "root"
+   mode: "0755"
   when:
    - check_mk is defined
    - check_mk['srv'] is defined
@@ -664,11 +664,11 @@
 
 - name: "Be sure that the Check_MK 'check_rs' plugin is installed in the right position"
   template:
-    src: "monitoring/check_mk_plugins/check_rs.py.j2"
-    dest: "/usr/lib/check_mk_agent/local/check_rs.py"
-    owner: "root"
-    group: "root"
-    mode: "0755"
+   src: "monitoring/check_mk_plugins/check_rs.py.j2"
+   dest: "/usr/lib/check_mk_agent/local/check_rs.py"
+   owner: "root"
+   group: "root"
+   mode: "0755"
   when:
    - check_mk is defined
    - check_mk['srv'] is defined
@@ -692,11 +692,11 @@
 
 - name: "Be sure that the Check_MK 'check_coco' plugin is installed in the right position"
   template:
-    src: "monitoring/check_mk_plugins/check_coco.py.j2"
-    dest: "/usr/lib/check_mk_agent/local/check_coco.py"
-    owner: "root"
-    group: "root"
-    mode: "0755"
+   src: "monitoring/check_mk_plugins/check_coco.py.j2"
+   dest: "/usr/lib/check_mk_agent/local/check_coco.py"
+   owner: "root"
+   group: "root"
+   mode: "0755"
   when: 
    - check_mk is defined
    - check_mk['srv'] is defined
@@ -740,4 +740,43 @@
   when: 
    - check_mk is defined
    - check_mk['srv'] is not defined or check_mk['check_rs'] is not defined or check_mk['check_rs'] in ["No","no","False","false"]
+  tags: idp
+
+- name: "Be sure to enable RELP to be able to send logs to centralized remote server"
+  apt:
+   name: "rsyslog-relp"
+   state: latest
+   update_cache: yes
+  when: 
+   - idp is defined
+   - idp['rsyslog_srv'] is defined
+   - idp['rsyslog_srv']['ip'] is defined 
+   - idp['rsyslog_srv']['ip'] != ""
+   - idp['rsyslog_srv']['port'] is defined
+   - idp['rsyslog_srv']['port'] != ""
+  tags: idp
+
+- name: "Be sure to configure Rsyslog to send logs to a centralized remote server"
+  template:
+   src: "monitoring/rsyslog/22-idpcloud.conf.j2"
+   dest: "/etc/rsyslog.d/22-idpcloud.conf"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  when:
+   - idp is defined
+   - idp['rsyslog_srv'] is defined
+   - idp['rsyslog_srv']['ip'] is defined 
+   - idp['rsyslog_srv']['ip'] != ""
+   - idp['rsyslog_srv']['port'] is defined
+   - idp['rsyslog_srv']['port'] != ""
+  register: rsyslog_template
+  tags: idp
+
+- name: "Restart Rsyslog to start sending logs to the centralized remote server"
+  service:
+   name: rsyslog
+   state: restarted
+  when:
+   - rsyslog_template.changed 
   tags: idp

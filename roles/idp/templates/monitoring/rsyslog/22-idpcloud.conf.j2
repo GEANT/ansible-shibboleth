@@ -1,0 +1,39 @@
+# Load RELP output module and text file input module
+# http://www.rsyslog.com/doc/v8-stable/configuration/modules/omrelp.html
+# http://www.rsyslog.com/doc/v8-stable/configuration/modules/imfile.html
+module(load="omrelp")
+module(load="imfile" PollingInterval="10")
+
+# define new ruleset to send data to the Rsyslog Server
+# http://www.rsyslog.com/doc/v8-stable/configuration/modules/omrelp.html
+ruleset(name="sendToLogserver") {
+   action(type="omrelp" Target="{{ idp['rsyslog_srv']['ip'] }}" Port="{{ idp['rsyslog_srv']['port'] }}")
+}
+
+# Auth Log
+input(type="imfile" File="/var/log/auth.log" Tag="auth" Ruleset="sendToLogserver" stateFile="/tmp/auth.state")
+
+# Apache2 Logs
+input(type="imfile" File="/var/log/apache2/access.log" Tag="apache2access" Ruleset="sendToLogserver" stateFile="/tmp/apache2access.state")
+input(type="imfile" File="/var/log/apache2/error.log" Tag="apache2error" Ruleset="sendToLogserver" stateFile="/tmp/apache2error.state")
+input(type="imfile" File="/var/log/apache2/other_vhost_access.log" Tag="apache2other" Ruleset="sendToLogserver" stateFile="/tmp/apache2other.state")
+
+# Jetty Logs
+input(type="imfile" File="/var/log/jetty/*.jetty.log" Tag="jettyLog" Ruleset="sendToLogserver" stateFile="/tmp/jettyLog.state")
+input(type="imfile" File="/var/log/jetty/*.stderrout.log" Tag="jettyError" Ruleset="sendToLogserver" stateFile="/tmp/jettyError.state")
+
+# MySQL Log
+input(type="imfile" File="/var/log/mysql/error.log" Tag="mysqlError" Ruleset="sendToLogserver" stateFile="/tmp/mysqlError.state")
+
+{% if ldap is defined and ldap['url'] is defined %}
+# LDAP Log
+input(type="imfile" File="/var/log/slapd/slapd.log" Tag="slapdLog" Ruleset="sendToLogserver" stateFile="/tmp/slapdLog.state")
+
+{% endif %}
+# Syslog
+input(type="imfile" File="/var/log/syslog" Tag="syslog" Ruleset="sendToLogserver" stateFile="/tmp/syslog.state")
+
+# IdP Logs
+input(type="imfile" File="/opt/shibboleth-idp/logs/idp-audit.log" Tag="idpAudit" Ruleset="sendToLogserver" stateFile="/tmp/idpAudit.state")
+input(type="imfile" File="/opt/shibboleth-idp/logs/idp-consent-audit.log" Tag="idpConsent" Ruleset="sendToLogserver" stateFile="/tmp/idpConsent.state")
+input(type="imfile" File="/opt/shibboleth-idp/logs/idp-warn.log" Tag="idpWarn" Ruleset="sendToLogserver" stateFile="/tmp/idpWarn.state")

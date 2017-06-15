@@ -19,6 +19,9 @@ idp_db_restore: "false"
 
 idp:
    scope: "example.org"
+   rsyslog_srv:
+      ip: "192.168.1.25"
+      port: "20514"
    ldap:
       authenticator: "bindSearchAuthenticator"
       url: "ldap://host:port_or_ldaps://host:port"

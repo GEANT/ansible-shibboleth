@@ -1,8 +1,9 @@
 # ANSIBLE CODE TO INSTALL SHIBBOLETH PRODUCTS
 
 ## Requirements
-* [Ansible][https://www.ansible.com/] <= 2.3.0
-* [Shibboleth IdP source][https://shibboleth.net/downloads/identity-provider/latest/]
+
+* [Ansible](https://www.ansible.com/) <= 2.3.0
+* [Shibboleth IdP source](https://shibboleth.net/downloads/identity-provider/latest/)
 
 ## Simple flow to install and configure a Shibboleth IdP
 
@@ -58,7 +59,8 @@ The ansible recipes use the languages provided by the "```idp_metadata```" dicti
 13. Execute this command to run Ansible on develoment inventory and to install and configure an IdP on all development servers:
     ```ansible-playbook site.yml -i inventories/development/development.ini --vault-password-file .vault_pass.txt```
 
-## Documentation ##
+## Documentation
+
 The inventories are located into different environments (production,development, test, ...):
    - ```inventories/development/development.ini```
    - ```inventories/production/production.ini```
@@ -94,7 +96,7 @@ The default mirror site is "```https://mi.mirror.garr.it/mirrors/debian/```". If
 
 The openLDAP logs will be stored on "```/var/log/slapd/```" directory.
 
-## Restore Procedures ##
+## Restore Procedures
 
 ### Databases Restore
 
@@ -116,7 +118,7 @@ The openLDAP logs will be stored on "```/var/log/slapd/```" directory.
 4. Run again the playbook
 
 
-## Useful Commands ##
+## Useful Commands
 
 ```
 --- development.ini ---
@@ -151,3 +153,56 @@ ansible-slave-1.example.garr.it
 
 5. View Encrypted files:
    * ```ansible-vault view inventories/#_environment_#/host_vars/#_full.qualified.domain.name_#.yml --vault-password-file .vault_pass.txt```
+
+
+## HOWTO Deploy a Debian Rsyslog Server to centralize IdPs logs
+
+**RECOMMENDED: DON'T USE THE SAME HOSTNAME FOR DIFFERENT IDP, ALSO IF THEY WILL NOT HAVE THE SAME DOMAIN**
+
+1. Become SUDO:
+   * ```sudo su -```
+
+2. Install RELP package:
+   * ```apt-get install rsyslog-relp```
+
+3. Configure Rsyslog:
+   * ```vim /etc/rsyslog.d/22-idpcloud.conf```
+
+     ```bash
+     # Load RELP input module
+     # http://www.rsyslog.com/doc/v8-stable/configuration/modules/imrelp.html?highlight=imrelp
+     module(load="imrelp") # needs to be done just once
+
+     # http://www.rsyslog.com/doc/v8-stable/configuration/properties.html
+     # http://www.rsyslog.com/doc/v8-stable/configuration/templates.html
+     template(name="RemoteLogSavePath" type="list") {
+        constant(value="/var/log/")
+        property(name="hostname")
+        constant(value="/")
+        property(name="timegenerated" dateFormat="year")
+        constant(value="/")
+        property(name="timegenerated" dateFormat="month")
+        constant(value="/")
+        property(name="programname")
+        constant(value=".log.")
+        property(name="timegenerated" dateFormat="year")
+        property(name="timegenerated" dateFormat="month")
+        property(name="timegenerated" dateFormat="day")
+     }
+
+     # define new ruleset and add rules to it
+     # http://www.rsyslog.com/doc/v8-stable/configuration/modules/omfile.html
+     ruleset(name="remote"){
+        action(type="omfile" dynaFile="RemoteLogSavePath")
+     }
+
+     # http://www.rsyslog.com/doc/v8-stable/configuration/modules/imrelp.html?highlight=imrelp
+     # link the input to the rulset 'remote'
+     input(type="imrelp" port="20514" ruleset="remote")
+     ```
+
+4. Check Rsyslog Syntax:
+   * ```rsyslog -N1```
+
+5. Restart Rsyslog demon:
+   * ```service rsyslog restart```

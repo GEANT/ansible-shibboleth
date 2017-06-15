@@ -1,5 +1,5 @@
 <IfModule mod_proxy.c>
-    ProxyPreserveHost On
+    ProxyPreserveHost Off
     RequestHeader set X-Forwarded-Proto "https"
     ProxyPass /idp http://localhost:8080/idp retry=5
     ProxyPassReverse /idp http://localhost:8080/idp retry=5
