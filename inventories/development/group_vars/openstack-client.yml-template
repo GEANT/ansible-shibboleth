@@ -1,0 +1,15 @@
+---
+# "openstack-client" group vars
+#
+# Example Values:
+#
+# fqdn: "idp.example.org"
+# ip_pub: "69.89.31.226"
+# ip_priv: "192.168.1.54"
+# volume_name: "data-idp.example.org"
+# volume_size: 250      (size in GigaByte)
+# port_name: "port-idp.example.org"
+# state: "present"      (or "absent" to remove it")
+
+os_vms:
+   - { fqdn: "FQDN", ip_pub: "public-ip-address", ip_priv: "private-ip-address", volume_name: "volume-name", volume_size: "volume-size", port_name: "port-name", state: "present" }

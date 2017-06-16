@@ -1,0 +1,29 @@
+---
+# tasks file for openstack
+
+- name: "Be sure that necessary variables are set"
+  set_fact:
+   os_auth:
+    auth_url: "{{ os['auth_url'] }}"
+    username: "{{ os['username'] }}"
+    password: "{{ os['password'] }}"
+    user_domain_name: "{{ os['user_domain_name'] }}"    
+    project_name: "{{ os['project_name'] }}"    
+    project_id: "{{ os['project_id'] }}"
+  tags: openstack
+
+- name: "Be sure to create fact used to create or delete vms"
+  set_fact:
+   vm_state: "{{ item['state'] }}"
+  with_items: "{{ os_vms }}"
+  tags: openstack
+
+- name: "Be sure to create vm if wanted"
+  include: "openstack_create_vm.yml"
+  when: vm_state == "present"
+  tags: openstack
+
+- name: "Be sure to delete vm if wanted"
+  include: "openstack_delete_vm.yml"
+  when: vm_state == "absent"
+  tags: openstack

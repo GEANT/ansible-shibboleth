@@ -1,0 +1,37 @@
+---
+# tasks file for openstack_delete_vms 
+- name: "Be sure to have created the new instance"
+  os_server:
+   state: "absent"
+   auth: "{{ os_auth }}"
+   name: "{{ item['fqdn'] }}"
+   image: "{{ os['image'] }}"
+   flavor: "{{ os['flavor'] }}"
+   nics:
+    - port-name: "{{ item['port_name'] }}"
+   timeout: "{{ os['timeout'] }}"
+   floating_ips: "{{ item['ip_pub'] }}"
+   key_name: "{{ os['key_name'] }}"
+   security_groups: "{{ os['security_groups'] }}"
+   volumes: "{{ item['volume_name'] }}"
+  with_items: "{{ os_vms }}"
+
+- name: "Be sure to have set right fixed IP on the IdP"
+  os_port:
+   state: "absent"
+   auth: "{{ os_auth }}"
+   name: "{{ item['port_name'] }}"
+   network: "{{ os['network']}}"
+   fixed_ips:
+    - ip_address: "{{ item['ip_priv'] }}"
+  with_items: "{{ os_vms }}"
+
+- name: "Be sure to have created the virtual machine volume"
+  os_volume:
+   state: "absent"
+   auth: "{{ os_auth }}"
+   size: "{{ item['volume_size'] }}"
+   display_name: "{{ item['volume_name'] }}"
+   display_description: "Volume used by {{ item['fqdn'] }}"
+  with_items: "{{ os_vms }}"
+

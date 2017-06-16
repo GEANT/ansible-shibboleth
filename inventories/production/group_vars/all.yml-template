@@ -1,0 +1,35 @@
+---
+# "all" group vars
+#
+# Example Values:
+#
+# auth_url: "https://horizon.cloud.example.org/v3"
+# project_id: "Zr5tr4LE5Rm3rAjiUcpo2WC60TsF+k9S"
+# project_name: "cloudidp"
+# user_domain_name: "cloudusers"
+# username: "clouduser"
+# password: "P0mz8mQwgNXABd8xu3rcPA=="
+# region_name: "cloud-region"
+# timeout: 500
+# image: "Debian-8.7.0"
+# key_name: "user-key"
+# flavor: "m1.medium"
+# network: "cloud-pub"
+# security_groups: "Cloud-Sec-Group"
+# identity_api_version: "3"
+
+os:
+   auth_url: "https://openstack.identity.example.org/v3"
+   project_id: "Zr5tr4LE5Rm3rAjiUcpo2WC60TsF+k9S"
+   project_name: "projectName"
+   user_domain_name: "userDomainName"
+   username: "userName"
+   password: "password"
+   region_name: "regionName"
+   timeout: 500
+   image: "imageName"
+   key_name: "sshKeyName"
+   flavor: "flavorName"
+   network: "networkName"
+   security_groups: "secGroupName"
+   identity_api_version: "3"

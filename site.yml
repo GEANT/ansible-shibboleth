@@ -1,4 +1,5 @@
 ---
 # file: site.yml
+- include: openstack-vms.yml
 - include: shib-idp-servers.yml
 - include: shib-idp-idm-servers.yml

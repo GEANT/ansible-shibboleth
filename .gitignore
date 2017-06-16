@@ -31,6 +31,14 @@ inventories/*/host_vars/*
 !host_vars/FQDN.yml-template-no-ldap
 
 
+# group_vars
+inventories/*/group_vars/*
+
+# Exclude
+!group_vars/all.yml-template
+!group_vars/openstack-client.yml-template
+
+
 # ignore Ansible inventories
 *.ini
 
