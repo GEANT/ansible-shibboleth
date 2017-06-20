@@ -1,5 +1,14 @@
 ---
 # Install OpenJDK on Debian
+
+# Debian 9 has already OpenJDK 8
+#- name: "Be sure to install OpenJDK"
+#  apt:
+#   name: "default-jdk"
+#   state: latest
+#   update_cache: "yes"
+#  when: ansible_distribution_release == "stretch"
+
 - name: "Be sure to install OpenJDK 8 backports APT repository"
   apt_repository:
     repo: "deb {{ mirror }} {{ ansible_distribution_release}}-backports main"
@@ -13,7 +22,7 @@
    name: "default-jdk"
    state: latest
    update_cache: "yes"
-  when: jdk_version == "7" and ansible_distribution_release == "jessie"
+  when: (jdk_version == "7" and ansible_distribution_release == "jessie")
 
 - name: "Be sure to install OpenJDK 8"
   apt:
