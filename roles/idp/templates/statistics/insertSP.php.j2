@@ -2,10 +2,11 @@
 include "SProvider.conf.php";
 include "SProvider.metadata.php";
 
-if (!mysql_connect("localhost", "statistics", "{{ idp_stats_db_pw }}"))
-        die("Unable to connect to database 'statistics'");
-if (!mysql_select_db("statistics"))
-        die("Unable to select 'statistics' database");
+$db = mysqli_connect("localhost", "statistics", "{{ idp_stats_db_pw }}", "statistics");
+
+if (!$db){
+ die("Unable to connect to database 'statistics'");
+}
 
 $sps = array();
 foreach ($SProviders as $key=>$value) {
@@ -15,15 +16,14 @@ foreach ($metadataSProviders as $key=>$value) {
         if (!array_key_exists(trim($key), $sps)) $sps[trim($key)] = trim($value['Name']);
 }
 
-mysql_query("SET AUTOCOMMIT=0");
-mysql_query("START TRANSACTION");
-mysql_query("DELETE FROM sps");
+mysqli_query($db, "SET AUTOCOMMIT=0");
+mysqli_query($db, "START TRANSACTION");
+mysqli_query($db, "DELETE FROM sps");
 
 $count = 0;
 foreach ($sps as $key=>$value) {
         $query = "INSERT INTO sps VALUES ('".$key."', '".$value."')";
-        #print $query . "\n";
-        mysql_query($query);
+        mysqli_query($db, $query);
         /*
         if (!$result) {
                 print "Error in updating SP database.\n";
@@ -34,6 +34,7 @@ foreach ($sps as $key=>$value) {
         $count++;
 }
 
-mysql_query("COMMIT");
+mysqli_query($db, "COMMIT");
+mysqli_close($db);
 print "Update OK, inserted $count SPs.\n";
 ?>

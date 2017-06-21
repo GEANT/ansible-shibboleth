@@ -1,6 +1,6 @@
 ---
 # tasks file for openstack_delete_vms 
-- name: "Be sure to have created the new instance"
+- name: "Be sure to have deleted the new instance"
   os_server:
    state: "absent"
    auth: "{{ os_auth }}"
@@ -16,7 +16,7 @@
    volumes: "{{ item['volume_name'] }}"
   with_items: "{{ os_vms }}"
 
-- name: "Be sure to have set right fixed IP on the IdP"
+- name: "Be sure to have removed right fixed IP on the IdP"
   os_port:
    state: "absent"
    auth: "{{ os_auth }}"
@@ -26,7 +26,7 @@
     - ip_address: "{{ item['ip_priv'] }}"
   with_items: "{{ os_vms }}"
 
-- name: "Be sure to have created the virtual machine volume"
+- name: "Be sure to have deleted the virtual machine volume"
   os_volume:
    state: "absent"
    auth: "{{ os_auth }}"
