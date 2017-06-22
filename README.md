@@ -5,8 +5,6 @@
 * [Ansible](https://www.ansible.com/) <= 2.3.0
 * [Shibboleth IdP source](https://shibboleth.net/downloads/identity-provider/latest/)
 
-## Simple flow to Instance new virtual Machine on and configure a Shibboleth IdP
-
 ## Simple flow to install and configure a Shibboleth IdP
 
 1. Become ROOT:
@@ -35,7 +33,7 @@
     * ```cd /opt/ansible-shibbleth/scripts```
     * ```python create-credentials.py FQDN```
 
-   and obtain the password you must set on "```idp_sealer_pw```" and the "```idp_keystore_pw```" host vars (Point ```6.```)
+   and obtain the password you must set on "```idp_sealer_pw```" and the "```idp_keystore_pw```" host vars (Point ```7.```)
 
 7. Create the IdP configuration file by copying one of these templates:
     * ```/opt/ansible-shibboleth/#_environment_#/host_vars/FQDN.yml-template```
@@ -114,30 +112,30 @@ The recipes offer the possibility to configure the IdP to send its logs to a Rsy
 To use this feature fill the rsyslog server ```ip``` and ```port``` on your ```FQDN.yml``` file.
 
 
-The recipes contain also an ```openstack``` role that you can use to create and delete virtual machine on a OpenStack platform.
-This is reached with the OpenStack API and Ansible OS Modules (os_server, os_port, os_volume) and needs the OpenStack Client to perform the operations on OpenStack platform.
-In our production environment, we decided to install the OpenStack Client on the "```localhost```" machine and use inventory ```group_vars``` to provide the needed variables.
-
-
 ## Restore Procedures
 
 ### Databases Restore
 
 1. Retrieve database backup files from ```/var/local/backups/mysql/``` on the IdP:
+
 2. Put the backups file (for shibboleth and statistics database) into:
-  - ```roles/idp/files/restore/FDQN/mysql-backup/shibboleth-db.sql.gz```
-  - ```roles/idp/files/restore/FQDN/mysql-backup/statistics-db.sql.gz```
+   * ```roles/idp/files/restore/FDQN/mysql-backup/shibboleth-db.sql.gz```
+   * ```roles/idp/files/restore/FQDN/mysql-backup/statistics-db.sql.gz```
 
 3. Set the IDP configuration variable ```idp_db_restore``` to ```"True"``` on its ```host_vars``` file
+
 4. Run again the playbook
 
 
 ### LDAP Restore
 
 1. Retrieve LDAP backup files from ```/var/local/backups/ldap/``` on the IdP:
+
 2. Put the LDAP backup into:
-  - ```roles/openldap/files/restore/FQDN/ldap-backup/ldap-users.ldif.gz```
+   * ```roles/openldap/files/restore/FQDN/ldap-backup/ldap-users.ldif.gz```
+
 3. Set the IDP configuration variable ```ldap['restore']``` to ```"True"``` on its ```host_vars``` file
+
 4. Run again the playbook
 
 
@@ -177,3 +175,8 @@ ansible-slave-1.example.garr.it
 5. View Encrypted files:
    * ```ansible-vault view inventories/#_environment_#/host_vars/#_full.qualified.domain.name_#.yml --vault-password-file .vault_pass.txt```
 
+## Authors
+
+#### Original Author and Development Lead
+
+* Marco Malavolti (marco.malavolti@gmail.com)

@@ -1,7 +1,0 @@
----
-# file: openstack-vms.yml
-- hosts: openstack-client
-  become: yes
-  become_method: sudo
-  roles:
-    - openstack

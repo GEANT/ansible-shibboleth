@@ -4,6 +4,32 @@
   include_vars: "{{ ansible_os_family }}.yml"
   tags: common
 
+## ELASTICSEARCH PART
+#- name: "Be sure to format correctly the volume, if exists"
+#  filesystem:
+#   fstype: "{{ hostvars['localhost']['volume_fs'] }}"
+#   dev: "{{ hostvars['localhost']['volume_dev'] }}"
+#  when:
+#   - hostvars['localhost']['volume_dev'] is defined
+#   - hostvars['localhost']['volume_dev'] != ""
+#   - hostvars['localhost']['volume_fs'] is defined
+#   - hostvars['localhost']['volume_fs'] != ""
+#  tags: common_vol
+
+#- name: "Be sure to mount the volume on its directory and with its FileSystem type"
+#  mount:
+#   state: "mounted"
+#   src: "{{ hostvars['localhost']['volume_dev'] }}"
+#   path: "/data"
+#   fstype: "{{ hostvars['localhost']['volume_fs'] }}"
+#  when:
+#   - hostvars['localhost']['volume_dev'] is defined
+#   - hostvars['localhost']['volume_dev'] != ""
+#   - hostvars['localhost']['volume_fs'] is defined
+#   - hostvars['localhost']['volume_fs'] != ""
+#  tags: common_vol
+# ELASTICSEARCH PART
+
 - name: "Be sure that the FQDN is configured"
   template:
    src: hosts.j2
