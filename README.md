@@ -2,7 +2,7 @@
 
 ## Requirements
 
-* [Ansible](https://www.ansible.com/) <= 2.3.0
+* [Ansible](https://www.ansible.com/) - Tested with Ansible v2.3.1.0
 * [Shibboleth IdP source](https://shibboleth.net/downloads/identity-provider/latest/)
 
 ## Simple flow to install and configure a Shibboleth IdP
