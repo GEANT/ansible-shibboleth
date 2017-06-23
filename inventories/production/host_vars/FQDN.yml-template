@@ -5,9 +5,8 @@
 
 fqdn: FQDN
 
-# JDK Variables - Default "oraclejdk", "8"
-jdk_type: "openjdk"
-jdk_version: "8"
+# JDK Variables - Default "openjdk"
+jdk_type: "oraclejdk"
 
 # LDAP Variables
 ldap:

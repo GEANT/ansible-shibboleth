@@ -4,13 +4,10 @@
 #
 # OpenJDK: 
 #   jdk_type: "openjdk"
-#   jdk_version: "7", "8"
 #
 # Oracle JDK: 
 #   jdk_type: "oraclejdk"
-#   jdk_version: "7" or "8"
 
 jdk_type: "openjdk"
-jdk_version: "8"
 
 mirror: "https://mi.mirror.garr.it/mirrors/debian/"
