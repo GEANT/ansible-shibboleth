@@ -99,7 +99,7 @@
 
 - name: "Install CA Certificate"
   copy: 
-   src: "files/{{ ca }}"
+   src: "files/{{ common['ca'] }}"
    dest: "/usr/local/share/ca-certificates/cacert.crt"
    owner: "root"
    group: "root"
