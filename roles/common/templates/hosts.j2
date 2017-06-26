@@ -1,4 +1,4 @@
-127.0.1.1 {{ fqdn }} {{ ansible_hostname }}
+{{ ansible_default_ipv4['address'] }} {{ fqdn }} {{ ansible_hostname }}
 127.0.0.1 localhost
 
 # The following lines are desirable for IPv6 capable hosts

@@ -5,6 +5,15 @@
 
 fqdn: FQDN
 
+## For self-signed certs use ca: "{{ fqdn }}.crt"
+common:
+   ca: "ca.crt"
+   ssl_cert: "{{ fqdn }}.crt"
+   ssl_key: "{{ fqdn }}.key"
+
+apache:
+   admin_email: "{{ idp_contacts['technical']['mail'] }}"
+
 # JDK Variables - Default "openjdk"
 jdk_type: "oraclejdk"
 
@@ -164,13 +173,6 @@ idp_metadata_providers:
     xUcaMUAAjkRvqnBAQQ+PXKpbnaCAz4Ac0VjpsAL1FftC/wyidBnBek00E0v5RycY
     tUFe0F+13jOrtfE8030X8SV7dgkZo5WTxwIQm3lJ9N6C7NRoDKHx/8F8SzoLC5wJ
     KwIDAQAB
-
-### WEB SERVER
-## For self-signed certs use ca: "{{ fqdn }}.crt"
-ca: "ca.crt"
-
-https_cert: "{{ fqdn }}.crt"
-https_key: "{{ fqdn }}.key"
 
 ## Statistics Web App
 fed_name: "{{ idp_metadata_providers[1]['id'] }}"

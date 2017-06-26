@@ -1,7 +1,7 @@
 <IfModule mod_ssl.c>
         <VirtualHost _default_:443>
                 ServerName {{ fqdn }}
-                ServerAdmin {{ idp_contacts['technical']['mail'] }}
+                ServerAdmin {{ apache['admin_email'] }}
 
                 DocumentRoot /var/www/html
 
