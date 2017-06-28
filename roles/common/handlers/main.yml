@@ -7,7 +7,3 @@
 
 - name: "Update Timezone"
   shell: dpkg-reconfigure --frontend noninteractive tzdata
-
-- name: "Safe Upgrade"
-  apt:
-    upgrade: safe

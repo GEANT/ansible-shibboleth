@@ -1,0 +1,6 @@
+---
+# tasks file for sys-update
+- name: "Be sure to upgrade all packages"
+  apt:
+   upgrade: dist
+   update_cache: yes

@@ -538,13 +538,13 @@
   changed_when: false
   tags: idp
 
-- name: "RESTORE - Be sure that 'shibboleth' database is empty"
+- name: "RESTORE - Be sure that 'statistics' database is empty"
   shell: "mysql statistics -e 'SELECT * FROM sps' | wc -l"
   register: statistics_db_is_empty
   changed_when: false
   tags: idp
 
-- name: "RESTORE - Be sure to put the backup into the /root directory"
+- name: "RESTORE - Be sure to put backups into the /root directory"
   copy:
    src: "{{ item.src }}"
    dest: "{{ item.dest }}"
@@ -560,7 +560,7 @@
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
 
-- name: "RESTORE - Be sure to extract the Databases Backup into the right position"
+- name: "RESTORE - Be sure to extract Databases Backup into the right position"
   command: "gunzip {{ item }}"
   with_items:
    - "/root/shibboleth-db.sql.gz"
@@ -571,7 +571,7 @@
    - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
   tags: idp
 
-- name: "RESTORE - Be sure that the Databases Backup have the right permission"
+- name: "RESTORE - Be sure that Databases Backup have the right permission"
   file:
    dest: "{{ item }}"
    owner: "root"
