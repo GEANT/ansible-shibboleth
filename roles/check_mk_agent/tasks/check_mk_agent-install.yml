@@ -9,7 +9,7 @@
 
 - name: "Check if the Monitoring Agent of Check_MK is already downloaded"
   stat:
-    path: "/usr/local/src/{{ check_mk_agent_version }}.deb"
+    path: "/usr/local/src/{{ check_mk['check_mk_agent_version'] }}.deb"
   register: agent
   tags: check_mk_agent
 
@@ -21,6 +21,6 @@
   tags: check_mk_agent
 
 - name: "Install Check_MK Agent"
-  command: "gdebi /usr/local/src/{{ check_mk_agent_version }}.deb -n"
+  command: "gdebi /usr/local/src/{{ check_mk['check_mk_agent_version'] }}.deb -n"
   when: agent.stat.exists == False 
   tags: check_mk_agent
