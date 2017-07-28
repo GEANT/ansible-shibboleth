@@ -81,11 +81,11 @@
    group: "{{ item.group }}"
    mode: "{{ item.mode }}"
   with_items:
-   - { src: "files/{{ common['ssl_cert'] }}", dest: "/etc/ssl/certs/ssl-cert.crt", owner: "root" , group: "ssl-cert" , mode: "0644"  }
-   - { src: "files/{{ common['ssl_key'] }}", dest: "/etc/ssl/private/ssl-cert.key", owner: "root" , group: "ssl-cert" , mode: "0440"  }
+   - { src: "files/{{ fqdn }}/{{ common['ssl_cert'] }}", dest: "/etc/ssl/certs/ssl-cert.crt", owner: "root" , group: "ssl-cert" , mode: "0644"  }
+   - { src: "files/{{ fqdn }}/{{ common['ssl_key'] }}", dest: "/etc/ssl/private/ssl-cert.key", owner: "root" , group: "ssl-cert" , mode: "0440"  }
   tags: common
 
-- name: "Ensure local certs directory exists"
+- name: "Ensure local ca-certificates directory exists"
   file: 
    state: "directory"
    path: "/usr/local/share/ca-certificates"
@@ -99,7 +99,7 @@
 
 - name: "Install CA Certificate"
   copy: 
-   src: "files/{{ common['ca'] }}"
+   src: "files/{{ fqdn }}/{{ common['ca'] }}"
    dest: "/usr/local/share/ca-certificates/cacert.crt"
    owner: "root"
    group: "root"
@@ -107,7 +107,7 @@
   when: cacert.stat.islnk is not defined
   tags: common
 
-- name: "Update cert index"
+- name: "Update certificates index"
   shell: "/usr/sbin/update-ca-certificates"
   when: cacert.stat.islnk is not defined
   tags: common

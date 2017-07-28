@@ -22,6 +22,9 @@
 # ignore .git_ignore files
 *.git_ignore
 
+# ignore RSYNC ssh credentials
+ssh_priv_key
+ssh_pub_key
 
 # host_vars
 inventories/*/host_vars/*

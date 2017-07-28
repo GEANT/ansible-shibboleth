@@ -29,13 +29,13 @@
     * ```tar xzf /usr/local/src/shibboleth-identity-provider-3.3.1.tar.gz```
     * ```rm -f /usr/local/src/shibboleth-identity-provider-3.3.1.tar.gz```
 
-6. Generate the IdP Metadata Certificates and Keys by running these commands:
+6. Generate each IdP Metadata Certificates and Keys by running these commands:
     * ```cd /opt/ansible-shibbleth/scripts```
     * ```python create-credentials.py FQDN```
 
    and obtain the password you must set on "```idp_sealer_pw```" and the "```idp_keystore_pw```" host vars (Point ```7.```)
 
-7. Create the IdP configuration file by copying one of these templates:
+7. Create each IdP configuration file by copying one of these templates:
     * ```/opt/ansible-shibboleth/#_environment_#/host_vars/FQDN.yml-template```
     * ```/opt/ansible-shibboleth/#_environment_#/host_vars/FQDN.yml-template-no-ldap```
 
@@ -46,14 +46,14 @@
     * ```cd /opt/ansible-shibboleth```
     * ```ansible-vault encrypt inventories/#_environment_#/host_vars/FQDN.yml --vault-password-file .vault_pass.txt```
 
-9. Insert the IdP's SSL Certificate renamed into "```FQDN.crt```", the IdP's SSL Certificate Key renamed into "```FQDN.key```" and the Certification Authority certificate renamed into "```ca.crt```" inside ```/opt/ansible-shibboleth/roles/common/files``` directory.
+9. Insert the IdP's SSL Certificate renamed into "```FQDN.crt```", the IdP's SSL Certificate Key renamed into "```FQDN.key```" and the Certification Authority certificate inside ```/opt/ansible-shibboleth/roles/common/files/FQDN/``` directory. (be sure to replace FQDN value with full qualified domain nameof the IdP)
 
 10. Insert the IdP style files (flag, favicon and logo) in the "```roles/idp/files/restore/FQDN/styles```" by following the ```README.md``` file. A "hostname-sample" has been created to help you with this.
 (If you have chosen to create an IdP with LDAP, **be sure** to put the organization logo in the ```roles/phpldapadmin/files/restore/FQDN/images/logo.png``` file. An organization logo MUST BE, at least, an image with dimensions 80x60 pixels or their multiples)
 
 11. If you install also phpLDAPadmin, remember to put the logo (80x60 pixels or its multiples) into the "```roles/phpldapadmin/files/restore/FQDN/images/logo.png```" file.
 
-12. Add the IdP Information and Privacy Policy page templates in the "```roles/idp/templates/styles/```" in your language by copying the english '```en/```' sample and changing each "```idp_metadata['en']```" (inside the "```info.html.j2```" and "```privacy.html.j2```" pages) and be sure to adapt the text of the pages to your needs. This step can be avoided if you have already your pages by turning to ```"no"``` the variable "```create_info_and_pp_pages```".
+12. Add the IdP Information and Privacy Policy page templates in the "```roles/idp/templates/styles/```" in your language by copying the english '```en/```' sample and changing each "```idp_metadata['en']```" (inside the "```info.html.j2```" and "```privacy.html.j2```" pages) and be sure to adapt the text of the pages to your needs. This step can be avoided if you have already info and privacy pages by setting to ```"no"``` the variable "```create_info_and_pp_pages```".
 
 The ansible recipes use the languages provided by the "```idp_metadata```" dictionary so you **HAVE TO LEAVE** the default language "en" and add all other languages that your IdP will support and for which you have provided the needed files. (Point ```7.```)
 
@@ -109,8 +109,12 @@ To reach this, it is needed to configure ```check_mk``` dictionary on your ```FQ
 
 
 The recipes offer the possibility to configure the IdP to send its logs to a Rsyslog Server through RELP protocol.
-To use this feature fill the rsyslog server ```ip``` and ```port``` on your ```FQDN.yml``` file.
+To use this feature fill the rsyslog server ```ip``` and ```port``` parameters on your ```FQDN.yml``` file.
 
+The recipes offer the possibility to configure the IdP to send its mysql and ldap backups to a Backups Server through RSYNC.
+The best way found to offer this feature on each IdP is to share a pair of SSH credentials, authorized by backups server, on all IdP and consent them to write their own backups on a specific directory named with their FQDN.
+The SSH credentials (SSH-CERT and SSH-KEY) HAVE TO BE generate and placed into ```roles/rsync/files/ssh``` renamed as README says.
+To use this feature fill the backups server ```ip``` and ```remote_path``` parameters on your ```FQDN.yml``` file, where ```remote_path``` is the directory on the backups server where every IdP will create their own directory and put their mysql/ldap backups. 
 
 ## Restore Procedures
 

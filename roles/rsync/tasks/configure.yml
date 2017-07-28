@@ -1,0 +1,32 @@
+---
+# tasks for configure
+
+- name: "Be sure to copy the SSH Public and Private keys"
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: "{{ item.mode }}"
+  with_items:
+   - { src: "files/ssh/ssh_pub_key", dest: "/root/.ssh/id_rsa.pub", mode: "0644" }
+   - { src: "files/ssh/ssh_priv_key", dest: "/root/.ssh/id_rsa", mode: "0600" }
+
+- name: "Be sure that RSYNC cron job is configured"
+  template:
+   src: "rsync-data-backups.j2"
+   dest: "/etc/cron.d/rsync-data-backups"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  when:
+   - idp['backups_srv'] is defined
+   - idp['backups_srv']['ip'] is defined and idp['backups_srv']['ip'] != ''
+   - idp['backups_srv']['remote_path'] is defined and idp['backups_srv']['remote_path'] != ''
+
+- name: "Be sure to remove RSYNC cron job if backups server is not provided"
+  file:
+    path: "/etc/cron.d/rsync-data-backups"
+    state: absent
+  when:
+   - idp['backups_srv'] is undefined or idp['backups_srv']['ip'] is undefined or idp['backups_srv']['ip'] == '' 

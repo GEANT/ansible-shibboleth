@@ -758,19 +758,38 @@
    - check_mk['srv'] is not defined or check_mk['check_rs'] is not defined or check_mk['check_rs'] in ["No","no","False","false"]
   tags: idp
 
-- name: "Be sure to enable RELP to be able to send logs to centralized remote server"
-  apt:
-   name: "rsyslog-relp"
-   state: latest
-   update_cache: yes
-  when: 
+- name: "Be sure to install backports APT repository"
+  apt_repository:
+    repo: "deb {{ mirror }} {{ ansible_distribution_release}}-backports main"
+    state: present
+    update_cache: "yes"
+    filename: '{{ ansible_distribution_release }}-backports'
+  when:
+   - ansible_distribution_release == "jessie"
    - idp is defined
    - idp['rsyslog_srv'] is defined
    - idp['rsyslog_srv']['ip'] is defined 
    - idp['rsyslog_srv']['ip'] != ""
    - idp['rsyslog_srv']['port'] is defined
    - idp['rsyslog_srv']['port'] != ""
-  tags: idp
+
+- name: "Be sure to install rsyslog with RELP from backports to centralized logs on a remote server"
+  apt:
+   name: "{{ item }}"
+   state: latest
+   update_cache: "yes"
+   default_release: "{{ ansible_distribution_release }}-backports"
+  with_items:
+   - "rsyslog"
+   - "rsyslog-relp"
+  when: 
+   - ansible_distribution_release == "jessie"
+   - idp is defined
+   - idp['rsyslog_srv'] is defined
+   - idp['rsyslog_srv']['ip'] is defined 
+   - idp['rsyslog_srv']['ip'] != ""
+   - idp['rsyslog_srv']['port'] is defined
+   - idp['rsyslog_srv']['port'] != ""
 
 - name: "Be sure to configure Rsyslog to send logs to a centralized remote server"
   template:

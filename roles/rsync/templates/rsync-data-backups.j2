@@ -1,0 +1,18 @@
+# RSYNC to send mysql and ldap backups to a centralized backup server.
+
+# * * * * * user      command to be executed
+# - - - - - -
+# | | | | | +--- user that runs the command
+# | | | | +----- day of week (0 - 6) (Sunday=0)
+# | | | +------- month (1 - 12)
+# | | +--------- day of month (1 - 31)
+# | +----------- hour (0 - 23)
+# +------------- min (0 - 59)
+#
+# * == everything
+
+25 07 * * * root rsync -a --rsync-path="mkdir -p {{ idp['backups_srv']['remote_path'] }}/{{ fqdn }} && rsync" /var/local/backups/mysql root@{{ idp['backups_srv']['ip'] }}:{{ idp['backups_srv']['remote_path'] }}/{{ fqdn }}
+
+{% if (ldap is defined and ldap['url'] != "") %}
+25 07 * * * root rsync -a --rsync-path="mkdir -p {{ idp['backups_srv']['remote_path'] }}/{{ fqdn  }} && rsync" /var/local/backups/ldap root@{{ idp['backups_srv']['ip'] }}:{{ idp['backups_srv']['remote_path'] }}/{{ fqdn }}
+{% endif %}

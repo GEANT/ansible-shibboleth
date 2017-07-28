@@ -1,0 +1,48 @@
+---
+# tasks file for pla-install
+- name: "Be sure that phpLDAPadmin required packages are installed"
+  apt:
+   name: "{{ item }}"
+   state: latest
+   update_cache: yes
+  with_items:
+   - apache2-utils
+   - python-passlib
+   - gettext
+  notify:
+   - "Restart Apache"
+  tags: pla
+
+- name: "Be sure that PHP5 LDAP support is installed"
+  apt:
+   name: "php5-ldap"
+   state: latest
+   update_cache: yes
+  notify:
+   - "Restart Apache"
+  when: ansible_distribution_release == "jessie"
+  tags: pla
+
+- name: "Be sure that PHP7 LDAP support is installed"
+  apt:
+   name: "php7.0-ldap"
+   state: latest
+   update_cache: yes
+  notify:
+   - "Restart Apache"
+  when: ansible_distribution_release == "stretch"
+  tags: pla
+
+- name: "Be sure to have LDAP module enabled"
+  apache2_module:
+   name: "ldap"
+   state: present
+  notify:
+   - "Restart Apache"
+  tags: pla
+
+- name: "Be sure that phpLDAPadmin is installed"
+  unarchive:
+   src: "files/phpldapadmin.tar.gz"
+   dest: "/opt/"
+  tags: pla 

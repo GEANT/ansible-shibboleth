@@ -28,8 +28,11 @@ idp_db_restore: "false"
 idp:
    scope: "example.org"
    rsyslog_srv:
-      ip: "192.168.1.25"
+      ip: "## RSYSLOG_SRV_IP_FROM_INTERNAL_NETWORK ##"
       port: "20514"
+   backups_srv:
+      ip: "## MYSQL_LDAP_BACKUPS_SRV_IP_FROM_INTERNAL_NETWORK ##"
+      remote_path: "## BACKUPS_DIR_ON_BACKUPS_SRV ##"
    ldap:
       authenticator: "bindSearchAuthenticator"
       url: "ldap://host:port_or_ldaps://host:port"
@@ -172,6 +175,7 @@ idp_stats_db_pw: "## STATISTICS DB PASSWORD ##"
 ### CHECK_MK Monitoring Server
 check_mk:
    srv: "## FQDN OF CHECK_MK SERVER ##"
+   site: "## YOUR OMD SITE ##"
    spEntityID: "## ENTITYID OF TEST SP ##"
    testuser: "## UNIQUE-ID OF LDAP TEST USER ##"
    baseDN: "{{ idp['ldap']['baseDN'] }}"

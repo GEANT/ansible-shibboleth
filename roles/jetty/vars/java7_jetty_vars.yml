@@ -1,3 +1,4 @@
 ---
 # defaults file for jetty
-jetty_distribution: "jetty-distribution-9.2.21.v20170120"
+#jetty_distribution: "jetty-distribution-9.2.21.v20170120"
+jetty_distribution: "jetty-distribution-9.2.22.v20170606"

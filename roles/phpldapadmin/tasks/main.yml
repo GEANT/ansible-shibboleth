@@ -1,23 +1,8 @@
 ---
 # tasks file for phpldapadmin
-- name: "Be sure that phpLDAPadmin required packages are installed"
-  apt:
-   name: "{{ item }}"
-   state: latest
-   update_cache: yes
-  with_items:
-   - apache2-utils
-   - python-passlib
-   - gettext
-  notify:
-   - "Restart Apache"
+- name: "Install phpLDAPadmin"
+  include: "pla-install.yml"
   tags: pla
-
-- name: "Be sure that phpLDAPadmin is installed"
-  unarchive:
-   src: "files/phpldapadmin.tar.gz"
-   dest: "/opt/"
-  tags: pla 
 
 - name: "Be sure to configure phpLDAPadmin correctly"
   template:
@@ -29,15 +14,15 @@
    - "Restart Apache"
   tags: pla
 
-#- name: "Be sure to configure 'admin' user for phpLDAPadmin"
-#  htpasswd:
-#   path: /etc/apache2/htpasswd
-#   name: admin
-#   password: "{{ ldap['root_pw'] }}"
-#   owner: root
-#   group: root
-#   mode: 0644
-#  tags: pla
+- name: "Be sure to configure 'admin' user for phpLDAPadmin"
+  htpasswd:
+   path: /etc/apache2/htpasswd
+   name: admin
+   password: "{{ ldap['root_pw'] }}"
+   owner: root
+   group: root
+   mode: 0644
+  tags: pla
 
 - name: "Be sure to change '/phpldapadmin' into '/idm' to prevent random login attempts"
   copy:
