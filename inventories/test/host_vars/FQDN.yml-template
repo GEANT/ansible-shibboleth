@@ -188,6 +188,7 @@ idp_stats_db_pw: "## STATISTICS DB PASSWORD ##"
 check_mk:
    srv: "## FQDN OF CHECK_MK SERVER ##"
    site: "## YOUR OMD SITE ##"
+   check_mk_agent_version: "check-mk-agent_1.4.0p9-1_all"
    spEntityID: "## ENTITYID OF TEST SP ##"
    testuser: "## UNIQUE-ID OF LDAP TEST USER ##"
    baseDN: "{{ idp['ldap']['baseDN'] }}"

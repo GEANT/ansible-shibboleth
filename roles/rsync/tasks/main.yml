@@ -7,8 +7,16 @@
 
 - name: "Install Rsync"
   include: "install.yml"
+  when:
+   - idp is defined
+   - idp['backups_srv'] is defined
+   - idp['backups_srv']['ip'] != ''
   tags: rsync
 
 - name: "Configure Rsync"
   include: "configure.yml"
+  when:
+   - idp is defined
+   - idp['backups_srv'] is defined
+   - idp['backups_srv']['ip'] != ''
   tags: rsync
