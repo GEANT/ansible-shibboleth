@@ -105,6 +105,7 @@ The openLDAP logs will be stored on "```/var/log/slapd/```" directory.
 
 
 The recipes can configure an IdP to be monitored through [Check_MK](https://mathias-kettner.de/check_mk.html).
+To be able to add the IdP hosts on the check_mk centralized server, it is needed create an automation user on check_mk server and provide its username and secret as requested by FQDN.yml
 To reach this, it is needed to configure ```check_mk``` dictionary on your ```FQDN.yml``` file.
 
 

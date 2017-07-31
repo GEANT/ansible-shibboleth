@@ -174,8 +174,12 @@ idp_stats_db_pw: "## STATISTICS DB PASSWORD ##"
 
 ### CHECK_MK Monitoring Server
 check_mk:
+   check_idp: "## 'yes' or 'no' ##"
    srv: "## FQDN OF CHECK_MK SERVER ##"
    site: "## YOUR OMD SITE ##"
+   api_user_name: "## API USERNAME ##"
+   api_user_secret: "## API USER SECRET ##"
+   folder: "## 'idp-all-in-one' or 'idp-only' ##"
    check_mk_agent_version: "check-mk-agent_1.4.0p9-1_all"
    spEntityID: "## ENTITYID OF TEST SP ##"
    testuser: "## UNIQUE-ID OF LDAP TEST USER ##"
