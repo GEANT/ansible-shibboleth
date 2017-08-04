@@ -5,12 +5,12 @@
 *.vault_pass.txt
 
 # ignore crt and key files
-*.crt
-*.key
-*.pem
-*.jks
-*.kver
-*.p12
+#*.crt
+#*.key
+#*.pem
+#*.jks
+#*.kver
+#*.p12
 *_pw.txt
 
 # ignore swp files
@@ -26,42 +26,34 @@
 ssh_priv_key
 ssh_pub_key
 
-# host_vars
+# ignore all 'host_vars' files except samples
 inventories/*/host_vars/*
-
-# Exclude
 !host_vars/FQDN.yml-template
 !host_vars/FQDN.yml-template-no-ldap
-
-
-# group_vars
-inventories/*/group_vars/*
-
-# Exclude
-!group_vars/all.yml-template
-!group_vars/openstack-client.yml-template
 
 
 # ignore Ansible inventories
 *.ini
 
 # ignore gunzip files
-*.gz
+#*.gz
 
+# ignore entire 'common' directory except README
+roles/common/files/*
+!roles/common/files/README.md
 
-# ignore entire 'restore' idp directory 
+# ignore entire 'restore' idp directory except sample dir
 roles/idp/files/restore/*
-roles/idp/files/credentials/*.txt
-
-# ignore entire 'restore' openldap directory
-roles/openldap/files/restore/*
-
-# Exclude
 !roles/idp/files/restore/sample-FQDN-dir/
+
+# ignore entire 'credentials' idp directory except README
+roles/idp/files/credentials/*
+!roles/idp/files/credentials/README.md
+
+# ignore entire 'restore' openldap directory except sample dir
+roles/openldap/files/restore/*
 !roles/openldap/files/restore/sample-FQDN-dir/
 
-# ignore entire 'restore' phpldapadmin directory
+# ignore entire 'restore' phpldapadmin directory except sample dir
 roles/phpldapadmin/files/restore/*
-
-# Exclude
 !roles/phpldapadmin/files/restore/sample-FQDN-dir/
