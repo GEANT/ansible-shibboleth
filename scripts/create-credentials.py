@@ -12,7 +12,7 @@ from cStringIO import StringIO
 # PARAMETERS
 
 os.environ["JAVA_HOME"] = "/usr/lib/jvm/default-java/jre"
-ansible_src = "/opt/ansible-shibboleth"
+ansible_src = "/opt/idpcloud-data/ansible-shibboleth"
 
 # END PARAMETERS
 
