@@ -5,7 +5,7 @@ idp.additionalProperties= /conf/ldap.properties, /conf/saml-nameid.properties, /
 idp.entityID= https://{{ fqdn }}/idp/shibboleth
 
 # Set the scope used in the attribute resolver for scoped attributes
-idp.scope= {{ idp['scope'] }}
+idp.scope= {{ idp_config['scope'] }}
 
 # General cookie properties (maxAge only applies to persistent cookies)
 #idp.cookie.secure = false
@@ -26,8 +26,8 @@ idp.scope= {{ idp['scope'] }}
 #idp.sealer.aliasBase = secret
 idp.sealer.storeResource= %{idp.home}/credentials/sealer.jks
 idp.sealer.versionResource= %{idp.home}/credentials/sealer.kver
-idp.sealer.storePassword= {{ idp_sealer_pw }}
-idp.sealer.keyPassword= {{ idp_sealer_pw }}
+idp.sealer.storePassword= {{ idp_config['sealer_pw'] }}
+idp.sealer.keyPassword= {{ idp_config['sealer_pw'] }}
 
 # Settings for public/private signing and encryption key(s)
 # During decryption key rollover, point the ".2" properties at a second
@@ -193,6 +193,8 @@ idp.ui.fallbackLanguages= en,fr,de
 #idp.profile.exposeProfileRequestContextInServletRequest = SAML2/POST/SSO,SAML2/Redirect/SSO
 
 # F-TICKS auditing - set salt to include hashed username
-#idp.fticks.federation=MyFederation
-#idp.fticks.algorithm=SHA-256
-#idp.fticks.salt=somethingsecret
+idp.fticks.federation={{ idp_config['fticks']['federation'] }}
+idp.fticks.algorithm={{ idp_config['fticks']['alg'] }}
+idp.fticks.salt={{ idp_config['fticks']['salt'] }}
+idp.fticks.loghost={{ idp_config['fticks']['loghost'] }}
+idp.fticks.logport={{ idp_config['fticks']['logport'] }}

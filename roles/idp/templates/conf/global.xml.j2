@@ -54,7 +54,7 @@
           p:driverClassName="com.mysql.jdbc.Driver"
           p:url="jdbc:mysql://localhost:3306/shibboleth?autoReconnect=true"
           p:username="shibboleth"
-          p:password="{{ idp_shibboleth_db_password }}"
+          p:password="{{ idp_config['shibboleth_db_password'] }}"
           p:maxActive="10"
           p:maxIdle="5"
           p:maxWait="15000"

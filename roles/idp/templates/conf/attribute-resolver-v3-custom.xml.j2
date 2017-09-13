@@ -53,7 +53,7 @@
                 %{idp.attribute.resolver.LDAP.searchFilter}
             ]]>
         </FilterTemplate>
-{% if ((idp['ldap']['useStartTLS'] or idp['ldap']['useSSL']) in ['Yes','yes','True','true']) and idp['ldap']['trustCertificates'] %}
+{% if ((idp_config['ldap']['useStartTLS'] or idp_config['ldap']['useSSL']) in ['Yes','yes','True','true']) and idp_config['ldap']['trustCertificates'] %}
         <StartTLSTrustCredential id="LDAPtoIdPCredential" xsi:type="sec:X509ResourceBacked">
             <sec:Certificate>%{idp.attribute.resolver.LDAP.trustCertificates}</sec:Certificate>
         </StartTLSTrustCredential>

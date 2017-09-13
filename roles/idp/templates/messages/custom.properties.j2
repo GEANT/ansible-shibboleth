@@ -2,7 +2,7 @@
 
 idp.logo={{ idp_metadata['en']['mdui_logo'] }}
 idp.logo.alt-text={{ idp_metadata['en']['org_displayName'] }}
-idp.footer={{ idp['login']['footer']['en']['text'] }}
+idp.footer={{ idp_login['footer']['en']['text'] }}
 idp.url.helpdesk=mailto:{{ idp_contacts['technical']['mail'] }}
 
 # New custom properties
@@ -27,16 +27,16 @@ sp.infopage=SP Information Page
 sp.noinfopage=SP Information Page absent
 sp.privacypage=SP Privacy Policy
 sp.noprivacypage=SP Privacy Policy absent
-{% for fed, value in idp['login']['fed_info'].iteritems() %}
-{{ fed }}.url={{ idp['login']['fed_info'][fed]['en']['url'] }}
-{{ fed }}.logo={{ idp['login']['fed_info'][fed]['en']['logo'] }}
-{{ fed }}.name={{ idp['login']['fed_info'][fed]['en']['name'] }}
+{% for fed, value in idp_login['fed_info'].iteritems() %}
+{{ fed }}.url={{ idp_login['fed_info'][fed]['en']['url'] }}
+{{ fed }}.logo={{ idp_login['fed_info'][fed]['en']['logo'] }}
+{{ fed }}.name={{ idp_login['fed_info'][fed]['en']['name'] }}
 {% endfor %}
 
 # Messages for changing password
-{% if idp['ldap']['ppolicy'] is defined and idp['ldap']['ppolicy']['change_password_url'] is defined and idp['ldap']['ppolicy']['change_password_url'] != "" %}
+{% if idp_config['ldap']['ppolicy'] is defined and idp_config['ldap']['ppolicy']['change_password_url'] is defined and idp_config['ldap']['ppolicy']['change_password_url'] != "" %}
 ChangePassword=change-password
 change-password.message=Change your password!
 change-password.linkText=Click Here
-change-password.url={{ idp['ldap']['ppolicy']['change_password_url'] }}
+change-password.url={{ idp_config['ldap']['ppolicy']['change_password_url'] }}
 {% endif %}

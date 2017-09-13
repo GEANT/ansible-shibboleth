@@ -273,7 +273,7 @@
                             <a href="javascript:setParam('lang', '{{ language }}');"><img height="16px" src="/{{ language }}/{{ language }}Flag.png"></a>
 {% endfor %}
                         </p>
-{% for fed, value in idp['login']['fed_info'].iteritems() %}
+{% for fed, value in idp_login['fed_info'].iteritems() %}
                         <p><a href="#springMessageText("{{ fed }}.url","#")"><img src="#springMessageText("{{ fed }}.logo" ,"/images/federation-logo.png")" alt="#springMessageText("{{ fed }}.name", "Federation Name")" style="width: 100px"/></a></p>
 {% endfor %}
                     </div> ## column two

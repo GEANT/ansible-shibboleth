@@ -18,10 +18,10 @@ $useLogging = true;
 //**************************
 
 // Name of the federation
-$federationName = '{{ fed_name }}';
+$federationName = '{{ idp_stats['fed_name'] }}';
 
 // URL to send user to when clicking on federation logo
-$federationURL = '{{ fed_site }}';
+$federationURL = '{{ idp_stats['fed_site'] }}';
 
 
 // 5. Files and path settings
@@ -34,7 +34,7 @@ $IDPConfigFile = 'IDProvider.conf.php';
 $backupIDPConfigFile = 'IDProvider.conf.php';
 
 // Use $metadataFile as source federation's metadata.
-$metadataFile = '/opt/shibboleth-idp/metadata/{{ fed_md }}';
+$metadataFile = '/opt/shibboleth-idp/metadata/{{ idp_stats['fed_md'] }}';
 
 // File to store the parsed IdP list
 // Will be updated automatically if the metadataFile modification time

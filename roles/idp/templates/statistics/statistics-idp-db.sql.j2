@@ -4,7 +4,7 @@ SET CHARACTER SET utf8;
 
 CREATE DATABASE IF NOT EXISTS statistics CHARACTER SET=utf8;
 
-GRANT ALL PRIVILEGES ON statistics.* TO statistics@localhost IDENTIFIED BY '{{ idp_stats_db_pw }}';
+GRANT ALL PRIVILEGES ON statistics.* TO statistics@localhost IDENTIFIED BY '{{ idp_stats['db_pw'] }}';
 
 FLUSH PRIVILEGES;
 

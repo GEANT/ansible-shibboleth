@@ -17,13 +17,13 @@ idpEntityId = 'https://{{ fqdn }}/idp/shibboleth'
 spReqInit   = "{{ check_mk['spReqInit'] }}"
 testuser    = "{{ check_mk['testuser'] }}"
 testpass    = "{{ check_mk['testpass'] }}"
-basedn      = "{{ idp['ldap']['baseDN'] }}"
-idpuser     = "{{ idp['ldap']['bindDN'] }}"
-ldappasswd  = "{{ idp['ldap']['bindDNCredential'] }}"
-ldapsrv     = "{{ idp['ldap']['url'] }}"
+basedn      = "{{ idp_config['ldap']['baseDN'] }}"
+idpuser     = "{{ idp_config['ldap']['bindDN'] }}"
+ldappasswd  = "{{ idp_config['ldap']['bindDNCredential'] }}"
+ldapsrv     = "{{ idp_config['ldap']['url'] }}"
 userid_attr = "uid"
-scope       = "{{ idp['scope'] }}"
-{% if idp['ldap']['useStartTLS'] is equalto 'true' or idp['ldap']['useStartTLS'] is equalto 'True' %}
+scope       = "{{ idp_config['scope'] }}"
+{% if idp_config['ldap']['useStartTLS'] is equalto 'true' or idp_config['ldap']['useStartTLS'] is equalto 'True' %}
 tls         = True
 {% else %}
 tls         = False

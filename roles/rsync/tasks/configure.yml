@@ -20,13 +20,13 @@
    group: "root"
    mode: "0644"
   when:
-   - idp['backups_srv'] is defined
-   - idp['backups_srv']['ip'] is defined and idp['backups_srv']['ip'] != ''
-   - idp['backups_srv']['remote_path'] is defined and idp['backups_srv']['remote_path'] != ''
+   - backups_srv is defined
+   - backups_srv['ip'] is defined and backups_srv['ip'] != ''
+   - backups_srv['remote_path'] is defined and backups_srv['remote_path'] != ''
 
 - name: "Be sure to remove RSYNC cron job if backups server is not provided"
   file:
     path: "/etc/cron.d/rsync-data-backups"
     state: absent
   when:
-   - idp['backups_srv'] is undefined or idp['backups_srv']['ip'] is undefined or idp['backups_srv']['ip'] == '' 
+   - backups_srv is undefined or backups_srv['ip'] is undefined or backups_srv['ip'] == '' 

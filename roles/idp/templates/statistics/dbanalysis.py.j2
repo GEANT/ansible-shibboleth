@@ -70,7 +70,7 @@ def parseFiles(files):
             else:
                 dictAll[curdate][rp][user] = 1
 
-    database = MySQLdb.connect(host="localhost", user="statistics", passwd="{{ idp_stats_db_pw }}", db="statistics")
+    database = MySQLdb.connect(host="localhost", user="statistics", passwd="{{ idp_stats['db_pw'] }}", db="statistics")
 
     cursor = database.cursor()
     cursor.execute("SELECT MAX(data) FROM logins")

@@ -6,12 +6,12 @@ module(load="omrelp")
 
 module(load="imfile")
 
-*.*;local4.none                         :omrelp:{{ idp['rsyslog_srv']['ip']}}:{{ idp['rsyslog_srv']['port'] }}
+*.*;local4.none                         :omrelp:{{ rsyslog_srv['ip']}}:{{ rsyslog_srv['port'] }}
 
 # defie new ruleset to send data to the Rsyslog Server
 # http://www.ryslog.com/doc/v8-stable/configuration/modules/omrelp.html
 ruleset(name="sendToLogserver") {
-   action(type="omrelp" Target="{{ idp['rsyslog_srv']['ip'] }}" Port="{{ idp['rsyslog_srv']['port'] }}")
+   action(type="omrelp" Target="{{ rsyslog_srv['ip'] }}" Port="{{ rsyslog_srv['port'] }}")
 }
 
 # Apache2 Logs

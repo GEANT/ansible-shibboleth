@@ -1,11 +1,11 @@
 ---
 - name: "Be sure to have 'idpuser' into LDAP"
   ldap_entry:
-    dn: "{{ idp['ldap']['bindDN'] }}"
+    dn: "{{ idp_config['ldap']['bindDN'] }}"
     objectClass:
       - inetOrgPerson
     attributes:
       cn: "idpuser"
       sn: "idpuser"
       givenName: "idpuser"
-      userPassword: "{{ idp['ldap']['bindDNCredential'] }}"
+      userPassword: "{{ idp_config['ldap']['bindDNCredential'] }}"

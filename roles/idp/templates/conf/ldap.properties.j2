@@ -2,23 +2,23 @@
 # Note, this doesn't apply to the use of JAAS
 
 ## Authenticator strategy, either anonSearchAuthenticator, bindSearchAuthenticator, directAuthenticator, adAuthenticator
-idp.authn.LDAP.authenticator                   = {{ idp['ldap']['authenticator'] | default('AUTHENTICATOR_MISSING') }}
+idp.authn.LDAP.authenticator                   = {{ idp_config['ldap']['authenticator'] | default('AUTHENTICATOR_MISSING') }}
 
 ## Connection properties ##
-idp.authn.LDAP.ldapURL                         = {{ idp['ldap']['url'] }}
-idp.authn.LDAP.useStartTLS                     = {{ idp['ldap']['useStartTLS'] | default('false') }}
-idp.authn.LDAP.useSSL                          = {{ idp['ldap']['useSSL'] | default('false') }}
-idp.authn.LDAP.connectTimeout                  = {{ idp['ldap']['connectTimeout'] | default('3000') }}
+idp.authn.LDAP.ldapURL                         = {{ idp_config['ldap']['url'] }}
+idp.authn.LDAP.useStartTLS                     = {{ idp_config['ldap']['useStartTLS'] | default('false') }}
+idp.authn.LDAP.useSSL                          = {{ idp_config['ldap']['useSSL'] | default('false') }}
+idp.authn.LDAP.connectTimeout                  = {{ idp_config['ldap']['connectTimeout'] | default('3000') }}
 
-{% if (idp['ldap']['useStartTLS'] or idp['ldap']['useSSL']) in ['Yes','yes','True','true'] %}
+{% if (idp_config['ldap']['useStartTLS'] or idp_config['ldap']['useSSL']) in ['Yes','yes','True','true'] %}
 ## SSL configuration, either jvmTrust, certificateTrust, or keyStoreTrust
-idp.authn.LDAP.sslConfig                       = {{ idp['ldap']['sslConfig'] }}
-{% if idp['ldap']['sslConfig'] is equalto "certificateTrust" %}
+idp.authn.LDAP.sslConfig                       = {{ idp_config['ldap']['sslConfig'] }}
+{% if idp_config['ldap']['sslConfig'] is equalto "certificateTrust" %}
 ## If using certificateTrust above, set to the trusted certificate's path
-idp.authn.LDAP.trustCertificates               = {{ idp['ldap']['trustCertificates'] | default("/etc/ssl/certs/ca-certificates.crt") }}
-{% elif idp['ldap']['sslConfig'] is equalto "keyStoreTrust" %}
+idp.authn.LDAP.trustCertificates               = {{ idp_config['ldap']['trustCertificates'] | default("/etc/ssl/certs/ca-certificates.crt") }}
+{% elif idp_config['ldap']['sslConfig'] is equalto "keyStoreTrust" %}
 ## If using keyStoreTrust above, set to the truststore path
-idp.authn.LDAP.trustStore                      = {{ idp['ldap']['trustStore'] | default("%{idp.home}/credentials/ldap-server.truststore") }}
+idp.authn.LDAP.trustStore                      = {{ idp_config['ldap']['trustStore'] | default("%{idp.home}/credentials/ldap-server.truststore") }}
 {% endif %}
 {% endif %}
 
@@ -30,16 +30,16 @@ idp.authn.LDAP.returnAttributes                = passwordExpirationTime,loginGra
 
 # Search DN resolution, used by anonSearchAuthenticator, bindSearchAuthenticator
 # for AD: CN=Users,DC=example,DC=org
-idp.authn.LDAP.baseDN                          = {{ idp['ldap']['baseDN'] | default('IDP_LDAP_BASEDN_MISSING') }}
-{% if idp['ldap']['subtreeSearch'] %}
-idp.authn.LDAP.subtreeSearch                   = {{ idp['ldap']['subtreeSearch'] }}
+idp.authn.LDAP.baseDN                          = {{ idp_config['ldap']['baseDN'] | default('IDP_LDAP_BASEDN_MISSING') }}
+{% if idp_config['ldap']['subtreeSearch'] %}
+idp.authn.LDAP.subtreeSearch                   = {{ idp_config['ldap']['subtreeSearch'] }}
 {% endif %}
-idp.authn.LDAP.userFilter                      = {{ idp['ldap']['userFilter'] | default('USER_FILTER_MISSING') }}
+idp.authn.LDAP.userFilter                      = {{ idp_config['ldap']['userFilter'] | default('USER_FILTER_MISSING') }}
 
 # bind search configuration
 # for AD: idp.authn.LDAP.bindDN=adminuser@domain.com
-idp.authn.LDAP.bindDN                           = {{ idp['ldap']['bindDN'] | default('IDP_LDAP_BINDDN_MISSING') }}
-idp.authn.LDAP.bindDNCredential                 = {{ idp['ldap']['bindDNCredential'] | default('IDP_LDAP_BINDCREDENTIAL_MISSING') }}
+idp.authn.LDAP.bindDN                           = {{ idp_config['ldap']['bindDN'] | default('IDP_LDAP_BINDDN_MISSING') }}
+idp.authn.LDAP.bindDNCredential                 = {{ idp_config['ldap']['bindDNCredential'] | default('IDP_LDAP_BINDCREDENTIAL_MISSING') }}
 
 # Format DN resolution, used by directAuthenticator, adAuthenticator
 # for AD use idp.authn.LDAP.dnFormat=%s@domain.com
@@ -53,8 +53,8 @@ idp.attribute.resolver.LDAP.bindDN              = %{idp.authn.LDAP.bindDN:undefi
 idp.attribute.resolver.LDAP.bindDNCredential    = %{idp.authn.LDAP.bindDNCredential:undefined}
 idp.attribute.resolver.LDAP.useStartTLS         = %{idp.authn.LDAP.useStartTLS:true}
 idp.attribute.resolver.LDAP.trustCertificates   = %{idp.authn.LDAP.trustCertificates:undefined}
-idp.attribute.resolver.LDAP.searchFilter        = {{ idp['ldap']['searchFilter'] | default('IDP_LDAP_SEARCH_FILTER_MISSING') }}
-idp.attribute.resolver.LDAP.returnAttributes    = {{ idp['ldap']['returnAttributes'] | default('*') }}
+idp.attribute.resolver.LDAP.searchFilter        = {{ idp_config['ldap']['searchFilter'] | default('IDP_LDAP_SEARCH_FILTER_MISSING') }}
+idp.attribute.resolver.LDAP.returnAttributes    = {{ idp_config['ldap']['returnAttributes'] | default('*') }}
 
 # LDAP pool configuration, used for both authn and DN resolution
 #idp.pool.LDAP.minSize                          = 3

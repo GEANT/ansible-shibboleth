@@ -244,11 +244,11 @@
    - { src: "files/flows/authn/conditions/conditions-flow.xml", dest: "/opt/shibboleth-idp/flows/authn/conditions/conditions-flow.xml", owner: "root", group: "root", mode: "0755" }
    - { src: "files/views/login-error.vm", dest: "/opt/shibboleth-idp/views/login-error.vm", owner: "root", group: "root", mode: "0644" }
   when:
-   - idp is defined
-   - idp['ldap'] is defined
-   - idp['ldap']['ppolicy'] is defined
-   - idp['ldap']['ppolicy']['change_password_url'] is defined
-   - idp['ldap']['ppolicy']['change_password_url'] != ""
+   - idp_config is defined
+   - idp_config['ldap'] is defined
+   - idp_config['ldap']['ppolicy'] is defined
+   - idp_config['ldap']['ppolicy']['change_password_url'] is defined
+   - idp_config['ldap']['ppolicy']['change_password_url'] != ""
   tags: idp
 
 - name: "Be sure that 'change-password' directory is created"
@@ -259,11 +259,11 @@
    mode: "0755"
    state: directory
   when:
-   - idp is defined
-   - idp['ldap'] is defined
-   - idp['ldap']['ppolicy'] is defined
-   - idp['ldap']['ppolicy']['change_password_url'] is defined
-   - idp['ldap']['ppolicy']['change_password_url'] != ""
+   - idp_config is defined
+   - idp_config['ldap'] is defined
+   - idp_config['ldap']['ppolicy'] is defined
+   - idp_config['ldap']['ppolicy']['change_password_url'] is defined
+   - idp_config['ldap']['ppolicy']['change_password_url'] != ""
   tags: idp
 
 - name: "Copy Expired password flow to Change password flow"
@@ -275,11 +275,11 @@
    mode: 0755
    remote_src: "True"
   when:
-   - idp is defined
-   - idp['ldap'] is defined
-   - idp['ldap']['ppolicy'] is defined
-   - idp['ldap']['ppolicy']['change_password_url'] is defined
-   - idp['ldap']['ppolicy']['change_password_url'] != ""
+   - idp_config is defined
+   - idp_config['ldap'] is defined
+   - idp_config['ldap']['ppolicy'] is defined
+   - idp_config['ldap']['ppolicy']['change_password_url'] is defined
+   - idp_config['ldap']['ppolicy']['change_password_url'] != ""
   tags: idp
 
 - name: "Be sure that Federation logo, eduGAIN logo and other images are present"
@@ -368,10 +368,9 @@
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
   when:
-   - idp is defined
-   - idp['login'] is defined
-   - idp['login']['create_info_and_pp_pages'] is defined
-   - idp['login']['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
+   - idp_login is defined
+   - idp_login['create_info_and_pp_pages'] is defined
+   - idp_login['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
   notify:
    - "Restart Apache"
   tags: idp
@@ -385,10 +384,9 @@
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
   when: 
-   - idp is defined
-   - idp['login'] is defined
-   - idp['login']['create_info_and_pp_pages'] is defined
-   - idp['login']['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
+   - idp_login is defined
+   - idp_login['create_info_and_pp_pages'] is defined
+   - idp_login['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
   notify:
    - "Restart Apache"
   tags: idp
@@ -399,9 +397,8 @@
    state: "absent"
   with_dict: "{{ idp_metadata }}"
   when: 
-   - idp is defined
-   - idp['login'] is defined
-   - idp['login']['create_info_and_pp_pages'] is not defined or idp['login']['create_info_and_pp_pages'] in ["No","no","False","false"]
+   - idp_login is defined
+   - idp_login['create_info_and_pp_pages'] is not defined or idp_login['create_info_and_pp_pages'] in ["No","no","False","false"]
   notify:
    - "Restart Apache"
   tags: idp
@@ -412,9 +409,8 @@
    state: "absent"
   with_dict: "{{ idp_metadata }}"
   when: 
-   - idp is defined
-   - idp['login'] is defined
-   - idp['login']['create_info_and_pp_pages'] is undefined or idp['login']['create_info_and_pp_pages'] in ["No","no","False","false"]
+   - idp_login is defined
+   - idp_login['create_info_and_pp_pages'] is undefined or idp_login['create_info_and_pp_pages'] in ["No","no","False","false"]
   notify:
    - "Restart Apache"
   tags: idp
@@ -514,8 +510,8 @@
 
 - name: "Be sure that needed metadata file is linked correctly"
   file:
-   src: "/opt/shibboleth-idp/metadata/{{ fed_md }}"
-   dest: "/opt/loganalysis/{{ fed_md }}"
+   src: "/opt/shibboleth-idp/metadata/{{ idp_stats['fed_md'] }}"
+   dest: "/opt/loganalysis/{{ idp_stats['fed_md'] }}"
    owner: "root"
    group: "root"
    state: "link"
@@ -766,12 +762,20 @@
     filename: '{{ ansible_distribution_release }}-backports'
   when:
    - ansible_distribution_release == "jessie"
-   - idp is defined
-   - idp['rsyslog_srv'] is defined
-   - idp['rsyslog_srv']['ip'] is defined 
-   - idp['rsyslog_srv']['ip'] != ""
-   - idp['rsyslog_srv']['port'] is defined
-   - idp['rsyslog_srv']['port'] != ""
+   - rsyslog_srv is defined
+   - rsyslog_srv['ip'] is defined 
+   - rsyslog_srv['ip'] != ""
+   - rsyslog_srv['port'] is defined
+   - rsyslog_srv['port'] != ""
+
+- name: "Be sure to configure Rsyslog for F-TICKS"
+  template:
+   src: "monitoring/rsyslog/33-fticks.conf.j2"
+   dest: "/etc/rsyslog.d/33-fticks.conf"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  tags: idp
 
 - name: "Be sure to install rsyslog with RELP from backports to centralized logs on a remote server"
   apt:
@@ -784,12 +788,11 @@
    - "rsyslog-relp"
   when: 
    - ansible_distribution_release == "jessie"
-   - idp is defined
-   - idp['rsyslog_srv'] is defined
-   - idp['rsyslog_srv']['ip'] is defined 
-   - idp['rsyslog_srv']['ip'] != ""
-   - idp['rsyslog_srv']['port'] is defined
-   - idp['rsyslog_srv']['port'] != ""
+   - rsyslog_srv is defined
+   - rsyslog_srv['ip'] is defined 
+   - rsyslog_srv['ip'] != ""
+   - rsyslog_srv['port'] is defined
+   - rsyslog_srv['port'] != ""
 
 - name: "Be sure to configure Rsyslog to send logs to a centralized remote server"
   template:
@@ -799,12 +802,11 @@
    group: "root"
    mode: "0644"
   when:
-   - idp is defined
-   - idp['rsyslog_srv'] is defined
-   - idp['rsyslog_srv']['ip'] is defined 
-   - idp['rsyslog_srv']['ip'] != ""
-   - idp['rsyslog_srv']['port'] is defined
-   - idp['rsyslog_srv']['port'] != ""
+   - rsyslog_srv is defined
+   - rsyslog_srv['ip'] is defined 
+   - rsyslog_srv['ip'] != ""
+   - rsyslog_srv['port'] is defined
+   - rsyslog_srv['port'] != ""
   register: rsyslog_template
   tags: idp
 

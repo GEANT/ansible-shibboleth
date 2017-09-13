@@ -2,7 +2,7 @@
 include "SProvider.conf.php";
 include "SProvider.metadata.php";
 
-$db = mysqli_connect("localhost", "statistics", "{{ idp_stats_db_pw }}", "statistics");
+$db = mysqli_connect("localhost", "statistics", "{{ idp_stats['db_pw'] }}", "statistics");
 
 if (!$db){
  die("Unable to connect to database 'statistics'");

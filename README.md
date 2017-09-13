@@ -33,7 +33,7 @@
     * ```cd /opt/ansible-shibbleth/scripts```
     * ```python create-credentials.py FQDN```
 
-   and obtain the password you must set on "```idp_sealer_pw```" and the "```idp_keystore_pw```" host vars (Point ```7.```)
+   and obtain the password you must set on "```idp_config['sealer_pw']```" and the "```idp_config['keystore_pw']```" host vars (Point ```7.```)
 
 7. Create each IdP configuration file by copying one of these templates:
     * ```/opt/ansible-shibboleth/#_environment_#/host_vars/FQDN.yml-template```

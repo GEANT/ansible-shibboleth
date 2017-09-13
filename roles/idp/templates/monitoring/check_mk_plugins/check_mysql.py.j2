@@ -3,7 +3,7 @@
 
 import MySQLdb
 
-db = MySQLdb.connect("localhost","root","{{ mysql_root_password }}" )
+db = MySQLdb.connect("localhost","root","{{ mysql['root_password'] }}" )
 
 cursor = db.cursor()
 
