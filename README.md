@@ -139,7 +139,7 @@ To use this feature fill the backups server ```ip``` and ```remote_path``` param
 2. Put the LDAP backup into:
    * ```roles/openldap/files/restore/FQDN/ldap-backup/ldap-users.ldif.gz```
 
-3. Set the IDP configuration variable ```ldap['restore']``` to ```"True"``` on its ```host_vars``` file
+3. Set the IDP configuration variable ```idp_ldap_restore``` to ```"True"``` on its ```host_vars``` file
 
 4. Run again the playbook
 

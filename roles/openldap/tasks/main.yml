@@ -284,16 +284,16 @@
    group: "root"
    mode: "0600"
   when:
-   - ldap['restore'] is defined
-   - ldap['restore'] in ["Yes","yes","True","true"]
+   - idp_ldap_restore is defined
+   - idp_ldap_restore in ["Yes","yes","True","true"]
    - ldap_is_empty.stdout == ""
   tags: openldap
 
 - name: "RESTORE - Be sure to extract the LDAP Backup into the right position"
   command: "gunzip /root/ldap-users.ldif.gz"
   when:
-   - ldap['restore'] is defined
-   - ldap['restore'] in ["Yes","yes","True","true"]
+   - idp_ldap_restore is defined
+   - idp_ldap_restore in ["Yes","yes","True","true"]
    - ldap_is_empty.stdout == ""
   tags: openldap
 
@@ -304,8 +304,8 @@
    group: "root"
    mode: "600"
   when:
-   - ldap['restore'] is defined
-   - ldap['restore'] in ["Yes","yes","True","true"]
+   - idp_ldap_restore is defined
+   - idp_ldap_restore in ["Yes","yes","True","true"]
    - ldap_is_empty.stdout == ""
   tags: openldap
 
@@ -314,16 +314,16 @@
    name: slapd
    state: stopped
   when:
-   - ldap['restore'] is defined
-   - ldap['restore'] in ["Yes","yes","True","true"]
+   - idp_ldap_restore is defined
+   - idp_ldap_restore in ["Yes","yes","True","true"]
    - ldap_is_empty.stdout == ""
   tags: openldap
 
 - name: "RESTORE - Be sure to restore ldap entries"
   command: "slapadd -c -l /root/ldap-users.ldif"
   when:
-   - ldap['restore'] is defined
-   - ldap['restore'] in ["Yes","yes","True","true"]
+   - idp_ldap_restore is defined
+   - idp_ldap_restore in ["Yes","yes","True","true"]
    - ldap_is_empty.stdout == ""
   tags: openldap
 
@@ -332,8 +332,8 @@
    dest: "/root/ldap-users.ldif" 
    state: "absent"
   when:
-   - ldap['restore'] is defined
-   - ldap['restore'] in ["Yes","yes","True","true"]
+   - idp_ldap_restore is defined
+   - idp_ldap_restore in ["Yes","yes","True","true"]
    - ldap_is_empty.stdout == ""
   tags: openldap
 

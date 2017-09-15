@@ -259,7 +259,7 @@ session_start();
                                                 <tr id="row_<?= str_replace(".", "_", $user['id']) ?>" height="20" class="<?php if ($user['locked']) { ?>locked<?php } ?>">
                                                         <td class="icon" width="5"><img src="images/default/ldap-uid.png" alt="Icon" align="top">&nbsp;</td>
                                                         <td valign="top" width="250"><?= $user["name"] ?></td>
-                                                        <td valign="top" width="220">Data fine validit&agrave;: <input id="date_<?= str_replace(".", "_", $user['id']) ?>" type="text" value="<?= $user["expiryDate"] ?>" style="width: 70px" /></td>
+                                                        <td valign="top" width="250">User Expiration Date: <input id="date_<?= str_replace(".", "_", $user['id']) ?>" type="text" value="<?= $user["expiryDate"] ?>" style="width: 90px" /></td>
                                                         <td valign="top">
                         <input type="button" value="<?= $user["text2"] ?>" onclick="javascript:dateclick(this, '<?= $user["id"] ?>')" />
                         <input type="button" value="<?= $user["text1"] ?>" onclick="javascript:lockclick(this, '<?= $user["id"] ?>')" />

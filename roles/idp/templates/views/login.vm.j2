@@ -141,14 +141,18 @@
                 <div class="content">
                     #if ($request.getParameter("spinfo") == "true")
                     <ul>
-                        <li><span class="item-marker">&rsaquo;</span> <b>#springMessageText("sp.description", "SP Description"):</b><br/>$rpUIContext.serviceDescription</li>
+                        <li><span class="item-marker">&rsaquo;</span> <b>#springMessageText("sp.name", "SP Service Name"):</b><br/>
+                        #set ($name = $rpUIContext.getServiceName())
+                        #if ($name)
+                        $encoder.encodeForHTML($name)
+                        #end</li>
                         <li><span class="item-marker">&rsaquo;</span> <b>#springMessageText("sp.organization", "SP Organization"):</b><br/>
-                        #if($rpUIContext.organizationDisplayName)
-                        $rpUIContext.organizationDisplayName
+                        #set ($sp_org = $rpUIContext.getOrganizationDisplayName())
+                        #if ($sp_org)
+                        $encoder.encodeForHTML($sp_org)
                         #else
-                        $rpUIContext.organizationName
+                        $encoder.encodeForHTML($rpUIContext.getOrganizationName())
                         #end
-                        </li>
                         <li><span class="item-marker">&rsaquo;</span> <b>#springMessageText("sp.contacts", "SP Contacts"):</b><br/>
                         #set ($technicalEmail = $rpUIContext.getContactEmail("technical"))
                         #set ($technicalName = $rpUIContext.getContactGivenName("technical"))

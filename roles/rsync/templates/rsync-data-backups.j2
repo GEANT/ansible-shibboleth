@@ -11,8 +11,8 @@
 #
 # * == everything
 
-25 07 * * * root rsync --delete -e "ssh -o StrictHostKeyChecking=no" -a --rsync-path="mkdir -p {{ backups_srv['remote_path'] }}/{{ fqdn }} && rsync" /var/local/backups/mysql root@{{ backups_srv['ip'] }}:{{ backups_srv['remote_path'] }}/{{ fqdn }}
+25 07 * * * root rsync -e "ssh -o StrictHostKeyChecking=no" -a --exclude='*.sql' --rsync-path="mkdir -p {{ backups_srv['remote_path'] }}/{{ fqdn }} && rsync" /var/local/backups/mysql root@{{ backups_srv['ip'] }}:{{ backups_srv['remote_path'] }}/{{ fqdn }}
 
 {% if (ldap is defined and ldap['url'] != "") %}
-25 07 * * * root rsync --delete -e "ssh -o StrictHostKeyChecking=no" -a --rsync-path="mkdir -p {{ backups_srv['remote_path'] }}/{{ fqdn  }} && rsync" /var/local/backups/ldap root@{{ backups_srv['ip'] }}:{{ backups_srv['remote_path'] }}/{{ fqdn }}
+25 07 * * * root rsync -e "ssh -o StrictHostKeyChecking=no" -a --exclude='*.ldif' --rsync-path="mkdir -p {{ backups_srv['remote_path'] }}/{{ fqdn  }} && rsync" /var/local/backups/ldap root@{{ backups_srv['ip'] }}:{{ backups_srv['remote_path'] }}/{{ fqdn }}
 {% endif %}

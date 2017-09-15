@@ -50,6 +50,13 @@
     mode: 0600
   tags: mysql
 
+- name: "Be sure that /tmp directory has the right privileges"
+  file:
+    path: "/tmp"
+    state: directory
+    mode: "u+rwx,g+rwx,o+rwt"
+  tags: mysql
+
 - name: "Be sure that MySQL is up and running"
   service:
     name: mysql
