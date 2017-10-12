@@ -7,7 +7,7 @@
    state: latest
    update_cache: yes
 
-- name: "Add Oracle Java Repository"
+- name: "Add webupd8 apt reporitory contained Oracle Java"
   apt_repository:
    repo: "ppa:webupd8team/java"
    codename: "xenial"
@@ -29,13 +29,13 @@
     - "ca-certificates"
     - "oracle-java{{ jdk_version }}-set-default"
 
-- name: "Be sure to set the default-java link"
+- name: "Configure default-java link"
   file:
    src: "/usr/lib/jvm/java-{{ jdk_version }}-oracle"
    dest: "/usr/lib/jvm/default-java"
    state: link
 
-- name: "Be sure to install Oracle Java Cryptography Extension (JCE)"
+- name: "Install Oracle Java Cryptography Extension (JCE)"
   copy:
    src: "{{ item.src }}"
    dest: "{{ item.dest }}"

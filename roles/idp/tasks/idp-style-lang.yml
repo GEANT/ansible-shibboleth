@@ -1,0 +1,177 @@
+---
+# tasks file for IdP Style and Languages
+- name: "Enable Apache configuration for the Shibboleth IdP application"
+  template:
+   src: "idp.conf.j2"
+   dest: "/etc/apache2/conf-enabled/idp.conf"
+   owner: "root"
+   group: "root"
+   mode: "0600"
+  notify:
+   - "Restart Apache"
+  tags: idp
+
+- name: "Put Federation logo and eduGAIN logo in the right position"
+  copy:
+   src: "files/restore/{{ fqdn }}/styles/images"
+   dest: "/var/www/html/"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  notify:
+   - "Restart Apache"
+  tags: idp
+
+- name: "Put the IdP language directories in the right position"
+  copy:
+   src: "files/restore/{{ fqdn }}/styles/{{ item.key }}/"
+   dest: "/var/www/html/{{ item.key }}/"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_dict: "{{ idp_metadata }}"
+  notify:
+   - "Restart Apache"
+  tags: idp
+
+- name: "Create 'css' directory needed by Login Page"
+  file:
+   path: "/var/www/html/css"
+   state: directory
+  notify:
+   - "Restart Apache"
+  tags: idp
+
+- name: "Put the CSS files for Login Page and User Consent Page in the right position"
+  template:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_items:
+   - { src: "views/login.css.j2", dest: "/var/www/html/css/login.css" }
+   - { src: "views/consent.css.j2", dest: "/var/www/html/css/consent.css" }
+  notify:
+   - "Restart Apache"
+  tags: idp
+
+- name: "Put the Shibboleth IdP Views files in the right position"
+  template:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_items:
+   - { src: "views/login.vm.j2", dest: "/opt/shibboleth-idp/views/login.vm" }
+   - { src: "views/logout.vm.j2", dest: "/opt/shibboleth-idp/views/logout.vm" }
+   - { src: "views/logout-complete.vm.j2", dest: "/opt/shibboleth-idp/views/logout-complete.vm" }
+   - { src: "views/logout-propagate.vm.j2", dest: "/opt/shibboleth-idp/views/logout-propagate.vm" }
+   - { src: "views/intercept/attribute-release.vm.j2", dest: "/opt/shibboleth-idp/views/intercept/attribute-release.vm" }
+  notify:
+   - "Restart Apache"
+  tags: idp
+
+- name: "Put default custom.properties and cookie_policy.properties in the right position"
+  template:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_items:
+   - { src: "messages/cookie_policy.properties.j2", dest: "/opt/shibboleth-idp/messages/cookie_policy.properties" }
+   - { src: "messages/custom.properties.j2", dest: "/opt/shibboleth-idp/messages/custom.properties" }
+  notify:
+   - "Restart Apache"
+  tags: idp
+
+- name: "Put severals messages_LANGUAGE.properties in the right position"
+  copy:
+   src: "files/messages/messages_{{ item.key }}.properties"
+   dest: "/opt/shibboleth-idp/messages/messages_{{ item.key }}.properties"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_dict: "{{ idp_metadata }}"
+  when: "item.key != 'en'"
+  tags: idp
+
+- name: "Put several custom_LANGUAGE.properties in the right position"
+  template:
+   src: "messages/custom_{{ item.key }}.properties.j2"
+   dest: "/opt/shibboleth-idp/messages/custom_{{ item.key }}.properties"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_dict: "{{ idp_metadata }}"
+  when: "item.key != 'en'"
+  tags: idp
+
+- name: "Put several cookie_policy_LANGUAGE.properties in the right position"
+  template:
+   src: "messages/cookie_policy_{{ item.key }}.properties.j2"
+   dest: "/opt/shibboleth-idp/messages/cookie_policy_{{ item.key }}.properties"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_dict: "{{ idp_metadata }}"
+  when: "item.key != 'en'"
+  tags: idp
+
+- name: "Put the Information Page in the interested languages in the right position"
+  template:
+   src: "styles/{{ item.key }}/info.html.j2"
+   dest: "/var/www/html/{{ item.key }}/info.html"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_dict: "{{ idp_metadata }}"
+  when:
+   - idp_login is defined
+   - idp_login['create_info_and_pp_pages'] is defined
+   - idp_login['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
+  notify:
+   - "Restart Apache"
+  tags: idp
+
+- name: "Put the Privacy Policy Page in the interested languages in the right position"
+  template:
+   src: "styles/{{ item.key }}/privacy.html.j2"
+   dest: "/var/www/html/{{ item.key }}/privacy.html"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_dict: "{{ idp_metadata }}"
+  when:
+   - idp_login is defined
+   - idp_login['create_info_and_pp_pages'] is defined
+   - idp_login['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
+  notify:
+   - "Restart Apache"
+  tags: idp
+
+- name: "Remove all the Privacy Policy Pages created if they are not needed"
+  file:
+   dest: "/var/www/html/{{ item.key }}/privacy.html"
+   state: "absent"
+  with_dict: "{{ idp_metadata }}"
+  when:
+   - idp_login is defined
+   - idp_login['create_info_and_pp_pages'] is not defined or idp_login['create_info_and_pp_pages'] in ["No","no","False","false"]
+  notify:
+   - "Restart Apache"
+  tags: idp
+
+- name: "Remove all the Information Pages created if they are not needed"
+  file:
+   dest: "/var/www/html/{{ item.key }}/info.html"
+   state: "absent"
+  with_dict: "{{ idp_metadata }}"
+  when:
+   - idp_login is defined
+   - idp_login['create_info_and_pp_pages'] is undefined or idp_login['create_info_and_pp_pages'] in ["No","no","False","false"]
+  notify:
+   - "Restart Apache"
+  tags: idp

@@ -1,6 +1,6 @@
 ---
 # tasks file for apache
-- name: "Be sure that packages needed are installed"
+- name: "Install needed packages"
   apt:
    name: "{{ httpd_packages }}"
    state: latest

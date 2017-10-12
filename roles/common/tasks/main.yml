@@ -4,7 +4,7 @@
   include_vars: "{{ ansible_os_family }}.yml"
   tags: common
 
-- name: "Be sure that the FQDN is configured"
+- name: "Configure the 'hosts' file with the FQDN provided"
   template:
    src: hosts.j2
    dest: /etc/hosts
@@ -13,7 +13,7 @@
    mode: "0644" 
   tags: common
 
-- name: "Be sure to comment out 'manage_etc_host' from /etc/cloud/cloud.cfg"
+- name: "Comment out 'manage_etc_host' from /etc/cloud/cloud.cfg"
   lineinfile:
    dest: /etc/cloud/cloud.cfg
    regexp: "manage_etc_hosts"
@@ -21,7 +21,7 @@
    state: present
   tags: common
 
-- name: "Be sure that needed packages are installed"
+- name: "Install needed common packages"
   apt: 
    name: "{{item}}"
    update_cache: yes
@@ -39,14 +39,14 @@
    - apt-transport-https
   tags: common
 
-- name: "Be sure to use the preferred mirror for packages"
+- name: "Replace default mirror site with the preferred one"
   replace:
    dest: /etc/apt/sources.list
    regexp: "http[:][/][/]http.debian.net[/]debian"
-   replace: "{{ mirror }}"
+   replace: "{{ mirror | default('https://mi.mirror.garr.it/mirrors/debian/') }}"
   tags: common 
 
-- name: "Be sure ntp is configured"
+- name: "Configure NTP service"
   template: 
    src: ntp.conf.j2
    dest: /etc/ntp.conf
@@ -54,7 +54,7 @@
     - "Restart ntp"
   tags: common
 
-- name: "Be sure ntpd is running and enabled"
+- name: "Start NTP service"
   service: 
    name: ntp
    state: started
@@ -73,7 +73,7 @@
    - "Update Timezone"
   tags: common
 
-- name: "Be sure that CA, SSL Certificate and SSL Key are inside the right '/etc/ssl' directories"
+- name: "Load SSL Certificate and SSL Key into '/etc/ssl' right directories"
   copy:
    src: "{{ item.src }}"
    dest: "{{ item.dest }}"
@@ -85,13 +85,13 @@
    - { src: "files/{{ fqdn }}/{{ common['ssl_key'] }}", dest: "/etc/ssl/private/ssl-cert.key", owner: "root" , group: "ssl-cert" , mode: "0440"  }
   tags: common
 
-- name: "Ensure local ca-certificates directory exists"
+- name: "Ensure that the '/usr/local/share/ca-certificates' directory exists"
   file: 
    state: "directory"
    path: "/usr/local/share/ca-certificates"
   tags: common
 
-- name: "Check if the CA is already installed"
+- name: "Check the existance of the CA"
   stat:
     path: "/etc/ssl/certs/cacert.pem"
   register: cacert

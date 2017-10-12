@@ -1,0 +1,68 @@
+---
+# Tasks for openLDAP Restoration
+- name: "Check if the OpenLDAP is not empty and store the result on 'ldap_is_empty' ansible variable"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b '{{ ldap['basedn'] }}' '(&(|(ou:dn:=people)(ou:dn:=groups))(!(objectClass=organizationalUnit))(!(uid=testuser)))'"
+  register: ldap_is_empty
+  changed_when: false
+  tags: openldap
+
+- name: "RESTORE - Retrieve LDAP"
+  copy:
+   src: "files/restore/{{ fqdn }}/ldap-backup/ldap-users.ldif.gz"
+   dest: "/root/ldap-users.ldif.gz"
+   owner: "root"
+   group: "root"
+   mode: "0600"
+  when:
+   - idp_ldap_restore is defined
+   - idp_ldap_restore in ["Yes","yes","True","true"]
+   - ldap_is_empty.stdout == ""
+  tags: openldap
+
+- name: "RESTORE - Extract LDAP backup"
+  command: "gunzip /root/ldap-users.ldif.gz"
+  when:
+   - idp_ldap_restore is defined
+   - idp_ldap_restore in ["Yes","yes","True","true"]
+   - ldap_is_empty.stdout == ""
+  tags: openldap
+
+- name: "RESTORE - Assign to ldap-user the right permissions"
+  file:
+   dest: "/root/ldap-users.ldif"
+   owner: "root"
+   group: "root"
+   mode: "600"
+  when:
+   - idp_ldap_restore is defined
+   - idp_ldap_restore in ["Yes","yes","True","true"]
+   - ldap_is_empty.stdout == ""
+  tags: openldap
+
+- name: "RESTORE - Stop SLAPD service before restoring the entries"
+  service:
+   name: slapd
+   state: stopped
+  when:
+   - idp_ldap_restore is defined
+   - idp_ldap_restore in ["Yes","yes","True","true"]
+   - ldap_is_empty.stdout == ""
+  tags: openldap
+
+- name: "RESTORE - Restore openLDAP entries"
+  command: "slapadd -c -l /root/ldap-users.ldif"
+  when:
+   - idp_ldap_restore is defined
+   - idp_ldap_restore in ["Yes","yes","True","true"]
+   - ldap_is_empty.stdout == ""
+  tags: openldap
+
+- name: "RESTORE - Remove the ldap-users.ldif backup file"
+  file:
+   dest: "/root/ldap-users.ldif"
+   state: "absent"
+  when:
+   - idp_ldap_restore is defined
+   - idp_ldap_restore in ["Yes","yes","True","true"]
+   - ldap_is_empty.stdout == ""
+  tags: openldap

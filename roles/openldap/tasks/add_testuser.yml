@@ -1,6 +1,6 @@
 ---
-- name: "Be sure to add testuser in the LDAP directory"
-  ldap_entry:
+
+- ldap_entry:
     dn: "uid=testuser,ou=people,{{ ldap['basedn'] }}"
     objectClass:
       - inetOrgPerson

@@ -1,0 +1,109 @@
+---
+# Tasks file for idp-install
+- name: "Check if Shibboleth IdP directory exists"
+  stat:
+   path: "/opt/shibboleth-idp"
+  register: shib_idp_dir
+  changed_when: false
+  tags: idp
+
+- name: "Check if Shibboleth IdP tarball exists" 
+  stat: 
+   path: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"
+  register: shib_tarball
+  tags: idp
+
+- name: "Download Shibboleth IdP and check its SHA256 checksum"
+  get_url:
+   url: "{{ idp_dl_url }}"
+   dest: "/usr/local/src"
+   checksum: "sha256:{{ shib_idp_checksum }}"
+  when:
+   - shib_tarball.stat.exists == False
+  tags: idp
+
+- name: "Extract Shibboleth Identity Provider package"
+  unarchive:
+   src: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"
+   dest: "/usr/local/src"
+   owner: "root"
+   group: "root"
+   remote_src: yes
+  when:
+   - shib_idp_dir.stat.isdir is undefined
+  tags: idp
+
+- name: "Put Shibboleth Identity Provider installer properties' files in the right position"
+  template:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: "{{ item.mode }}"
+  with_items:
+   - { src: "shib-idp-install.properties.j2", dest: "/tmp/shib-idp-install.properties", mode: "0644" }
+   - { src: "installer.properties.j2", dest: "/tmp/installer.properties", mode: "0644" } 
+  when: 
+   - shib_idp_dir.stat.isdir is undefined
+  tags: idp
+
+- name: "Put the Shibboleth Identity Provider persistent-id database structure file in the right position"
+  template:
+   src: "shib-idp-persistentId-db.sql.j2"
+   dest: "/root/shib-idp-persistentId-db.sql"
+   owner: "root"
+   group: "root"
+   mode: "0600"
+  when: 
+   - shib_idp_dir.stat.isdir is undefined
+  tags: idp
+
+- name: "Put the JSTL libraries, needed for Shibboleth IdP Status page, in the right position"
+  copy:
+   src: "files/jstl-1.2.jar"
+   dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/jstl-1.2.jar"
+   owner: "root"
+   group: "root"
+   mode: 0644
+  when:
+   - shib_idp_dir.stat.isdir is undefined
+  tags: idp 
+
+- name: "Create link for common-dbcp, common-pool and mysql JAR files used by Shibboleth IdP"
+  file:
+   src: "{{ item.src }}" 
+   dest: "{{ item.dest }}"
+   owner: "jetty"
+   group: "jetty"
+   state: link
+  with_items:
+   - { src: '/usr/share/java/commons-dbcp.jar' ,dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/common-dbcp.jar" }
+   - { src: '/usr/share/java/commons-pool.jar' ,dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/commons-pool.jar" }
+   - { src: '/usr/share/java/mysql.jar' ,dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/mysql-connector-java.jar" }
+  when:
+   - shib_idp_dir.stat.isdir is undefined
+  tags: idp
+
+- name: "Install Shibboleth IdP"
+  shell: "./install.sh -Didp.property.file=/tmp/installer.properties"
+  args:
+    chdir: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/bin"
+  environment:
+    JAVA_HOME: "{{ java_home_dir }}"
+  when: shib_idp_dir.stat.isdir is undefined
+  tags: idp
+
+- name: "Set right permissions to Shibboleth IdP directories"
+  file:
+   path: "/opt/shibboleth-idp/{{ item }}"
+   owner: "jetty"
+   recurse: "yes"
+   state: directory
+  with_items:
+    - "logs"
+    - "metadata"
+    - "credentials"
+    - "conf"
+    - "system"
+    - "war"
+  tags: idp

@@ -1,20 +1,20 @@
 ---
 # Install OpenJDK on Debian
 
-- name: "Be sure to install OpenJDK 8 backports APT repository"
+- name: "Debian 8 - Add OpenJDK 8 backports APT repository"
   apt_repository:
-    repo: "deb {{ mirror }} {{ ansible_distribution_release}}-backports main"
+    repo: "deb {{ mirror | default('https://mi.mirror.garr.it/mirrors/debian/') }} jessie-backports main"
     state: present
     update_cache: "yes"
-    filename: '{{ ansible_distribution_release }}-backports'
+    filename: 'jessie-backports'
   when: ansible_distribution_release == "jessie"
 
-- name: "Be sure to install OpenJDK 8 from backports"
+- name: "Debian 8 - Install OpenJDK 8"
   apt:
    name: "{{ item }}"
    state: latest
    update_cache: "yes"
-   default_release: "{{ ansible_distribution_release }}-backports"
+   default_release: "jessie-backports"
   with_items:
    - "ca-certificates-java"
    - "openjdk-8-jre-headless"
@@ -22,7 +22,7 @@
    - "openjdk-8-jdk"
   when: ansible_distribution_release == "jessie"
 
-- name: "Be sure to install OpenJDK 8"
+- name: "Install OpenJDK 8"
   apt:
    name: "{{ item }}"
    state: latest
@@ -34,7 +34,7 @@
    - "openjdk-8-jdk"
   when: ansible_distribution_release != "jessie"
 
-- name: "Be sure to set the default-java link"
+- name: "Configure default-java link"
   file:
    src: "/usr/lib/jvm/java-8-openjdk-amd64"
    dest: "/usr/lib/jvm/default-java"

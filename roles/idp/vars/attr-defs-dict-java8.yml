@@ -1,3 +1,6 @@
+---
+# AttributeDefinition for Shibboleth IdP Attribute Resolver compliant with Java 8
+
 idp_attrDef:
    uid:
       AttributeDefinition:
@@ -5,7 +8,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "uid"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "UserID"
          it: "UserID"
@@ -24,7 +27,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "sn"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "Surname"
          it: "Cognome"
@@ -43,7 +46,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "givenName"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "Nome"
          it: "Nome"
@@ -62,7 +65,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "cn"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "CommonName"
          it: "Nome e Cognome"
@@ -81,7 +84,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "title"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "Title"
          it: "Titolo"
@@ -100,7 +103,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "mail"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "E-mail"
          it: "E-mail"
@@ -119,7 +122,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "telephoneNumber"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "Telephone Number"
          it: "Numero di Telefono"
@@ -138,7 +141,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "mobile"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "Mobile Telephone Number"
          it: "Numero di Telefono Mobile"
@@ -157,7 +160,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "facsimileTelephoneNumber"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "Facsimile Numbe"
          it: "Numero del FAX"
@@ -173,10 +176,12 @@ idp_attrDef:
    displayName:
       AttributeDefinition:
          id: "displayName"
-         type: "Simple"
-         sourceAttributeID: "displayName"
+         type: "ScriptedAttribute"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
+         - "commonName"
+         - "givenName"
+         - "surname"
       DisplayName:
          en: "Display name"
          it: "Nome visualizzato"
@@ -189,13 +194,67 @@ idp_attrDef:
             name: "urn:oid:2.16.840.1.113730.3.1.241"
             friendlyName: "displayName"
             encodeType: "false"
+      Script: |
+              <![CDATA[
+               logger = Java.type("org.slf4j.LoggerFactory").getLogger("net.shibboleth.idp.attribute.resolver.displayNamebuilder");
+               valueType =  Java.type("net.shibboleth.idp.attribute.StringAttributeValue");
+
+               // This implementation composes the value of the attribute displayName
+               // from the values of the attributes givenName and surname.
+
+               // check existance of commonName attribute and use it to generate displayName attribute
+               if (commonName != null && commonName.getValues().size() > 0) {
+                  cn = commonName.getValues().get(0);
+               } else {
+                  cn = null;
+               }
+
+               // compose value from givenName and surname
+
+               // check whether givenName and surname exist
+               if (givenName != null && givenName.getValues().size() > 0) {
+                  gn = givenName.getValues().get(0);
+               } else {
+                  gn = null;
+               }
+               if (surname != null && surname.getValues().size() > 0) {
+                  sn = surname.getValues().get(0);
+               } else {
+                  sn = null;
+               }
+
+               if (typeof displayName == 'undefined' || displayName.getValues().size() < 1) {
+                  logger.info("No displayName in LDAP found, creating one");
+
+                  if (cn != null) {
+                     displayName.addValue(new valueType(cn));
+                     logger.info('displayName final value: ' + displayName.getValues().get(0));
+
+                  } else if (sn != null && gn != null) {
+                     displayName.addValue(new valueType(gn + ' ' + sn));
+                     logger.info('displayName final value: ' + displayName.getValues().get(0));
+
+                  } else if (sn != null) {
+                     displayName.addValue(new valueType(sn));
+                     logger.info('displayName final value: ' + displayName.getValues().get(0));
+
+                  } else if (gn != null) {
+                     displayName = new IdPAttribute('displayName');
+                     displayName.addValue(new valueType(gn));
+                     logger.info('displayName final value: ' + displayName.getValues().get(0));
+                  }
+
+               } else {
+                  logger.info('displayName had value: ' + displayName.getValues().get(0));
+               }
+              ]]>
    preferredLanguage:
       AttributeDefinition:
          id: "preferredLanguage"
          type: "Simple"
          sourceAttributeID: "preferredLanguage"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "Preferred Language"
          it: "Lingua Preferita"
@@ -214,7 +273,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "eduPersonOrgDN"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "eduPersonOrgDN"
          it: "eduPersonOrgDN"
@@ -233,7 +292,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "eduPersonOrgUnitDN"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "eduPersonOrgUnitDN"
          it: "eduPersonOrgUnitDN"
@@ -252,7 +311,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "eduPersonAffiliation"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "Affiliation"
          it: "Affiliazione"
@@ -272,7 +331,7 @@ idp_attrDef:
          sourceAttributeID: "eduPersonAffiliation"
          scope: "%{idp.scope}"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "Scoped Affiliation"
          it: "Affiliazione con ambito"
@@ -292,7 +351,7 @@ idp_attrDef:
          sourceAttributeID: "uid"
          scope: "%{idp.scope}"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "eduPersonPrincipalName"
          it: "eduPersonPrincipalName"
@@ -311,7 +370,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "eduPersonEntitlement"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "Entitlement"
          it: "Entitlement"
@@ -331,7 +390,7 @@ idp_attrDef:
          nameIdFormat: "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"
          sourceAttributeID: "persistentID"
       Dependency:
-         eef_dc_ldap: "myStoredId"
+         - "myStoredId"
       DisplayName:
          en: "Opaque per-service identifier eduPersonTargetedID"
          it: "Identificatore opaco diverso per ogni servizio eduPersonTargetedID"
@@ -350,7 +409,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "eduPersonOrcid"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "ORCID"
          it: "ORCID"
@@ -369,7 +428,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "schacMotherTongue"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "Mother Tongue"
          it: "Lingua Madre"
@@ -388,7 +447,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "schacPersonalTitle"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "Personal Title"
          it: "Soprannome"
@@ -407,7 +466,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "schacPersonalPosition"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "Personal Position"
          it: "Ruolo ricoperto"
@@ -426,7 +485,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "schacUserPresenceID"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "User Network IDs"
          it: "Il nome a dominio dell’organizzazione di appartenenza dell’utente"
@@ -442,9 +501,10 @@ idp_attrDef:
    schacHomeOrganization:
       AttributeDefinition:
          id: "schacHomeOrganization"
-         type: "ScriptedAttribute"
+         type: "Simple"
+         sourceAttributeID: "schacHomeOrganization"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "staticAttributes"
       DisplayName:
          en: "Institution Domain"
          it: "Dominio Istituzione"
@@ -457,33 +517,13 @@ idp_attrDef:
             name: "urn:oid:1.3.6.1.4.1.25178.1.2.9"
             friendlyName: "schacHomeOrganization"
             encodeType: "false"
-      Script: |
-              <![CDATA[
-               logger = Java.type("org.slf4j.LoggerFactory").getLogger("net.shibboleth.idp.attribute.resolver.schacHomeOrganizationbuilder");
-               valueType = Java.type("net.shibboleth.idp.attribute.StringAttributeValue");
-
-               // This implementation composes the value of the attribute schacHomeOrganization
-               // from the values of the properties idp.scope inside idp.properties.
-
-               if (typeof schacHomeOrganization === 'undefined' || schacHomeOrganization.getValues().size() < 1) {
-
-                  logger.info("No schacHomeOrganization in LDAP found, creating one");
-
-                  // compose value from 'schacHomeOrganization'
-                  schacHomeOrganization.addValue(new valueType("%{idp.scope}"));
-                  logger.info("schacHomeOrganization final value: " + schacHomeOrganization.getValues().get(0));
-
-               } else {
-                  logger.info("schacHomeOrganization has value: " + schacHomeOrganization.getValues().get(0));
-               }
-              ]]>
    schacHomeOrganizationType:
       AttributeDefinition:
          id: "schacHomeOrganizationType"
          type: "Simple"
          sourceAttributeID: "schacHomeOrganizationType"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "staticAttributes"
       DisplayName:
          en: "Home organization type (international)"
          it: "Tipo dell'organizzazione di appartenenza (internazionale)"
@@ -502,7 +542,7 @@ idp_attrDef:
          type: "Simple"
          sourceAttributeID: "schacPersonalUniqueID"
       Dependency:
-         ref_dc_ldap: "myLDAP"
+         - "myLDAP"
       DisplayName:
          en: "Legal Unique ID"
          it: "ID Legale Univoco"

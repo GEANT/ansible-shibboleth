@@ -1,6 +1,6 @@
 ---
 # tasks file for mysql
-- name: "Be sure that 'debconf-utils' package is installed"
+- name: "Install 'debconf-utils' package"
   apt:
    name: "debconf-utils"
    state: latest
@@ -14,7 +14,7 @@
   changed_when: false
   tags: mysql 
 
-- name: "Be sure that MYSQL unattented installation debconf's parameters are set correctly"
+- name: "Set MYSQL unattented installation debconf's parameters"
   debconf:
     name: "mysql-server"
     question: "{{ item.question }}"
@@ -30,7 +30,7 @@
   when: debconf.stdout == "1"
   tags: mysql
 
-- name: "Be sure that Mysql and the needed libraries are installed"
+- name: "Install Mysql server and needed libraries"
   apt:
    name: "{{ item }}"
    state: latest
@@ -43,28 +43,28 @@
    - libcommons-pool-java
   tags: mysql
 
-- name: "Be sure that .my.cnf file is present for MySQL authentication"
+- name: "Configure .my.cnf file for a simple MySQL authentication"
   template: 
     src: "root.cnf.j2" 
     dest: "~/.my.cnf"
     mode: 0600
   tags: mysql
 
-- name: "Be sure that /tmp directory has the right privileges"
+- name: "Assign the right privileges to the /tmp directory"
   file:
     path: "/tmp"
     state: directory
     mode: "u+rwx,g+rwx,o+rwt"
   tags: mysql
 
-- name: "Be sure that MySQL is up and running"
+- name: "Start MySQL service"
   service:
     name: mysql
     state: started
     enabled: yes
   tags: mysql
 
-- name: "Be sure to create directory needed for backups"
+- name: "Create MySQL backups directory"
   file:
    dest: "{{ item }}"
    state: "directory"
@@ -76,7 +76,7 @@
    - "/var/local/backups/mysql"
   tags: mysql
 
-- name: "Be sure to have mysql backup script in the right position"
+- name: "Put mysql backup script in the '/etc/cron.daily' directory to run the script once a day"
   template:
    src: "mysql-backup.sh.j2"
    dest: "/etc/cron.daily/mysql-backup"

@@ -78,7 +78,7 @@ idp_config:
   logport: "514"
 
 idp_login:
- create_info_and_pp_pages: "True"
+ create_info_and_pp_pages: "Yes"
  footer_text_color: "#ffffff"
  footer_background_color: "#717171"
  footer:

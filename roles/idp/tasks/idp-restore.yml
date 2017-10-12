@@ -1,0 +1,83 @@
+---
+# tasks file for IdP Restore
+- name: "RESTORE - Check that 'shibboleth' database is empty and store the result on 'shibboleth_db_is_empty' ansible variable"
+  shell: "mysql shibboleth -e 'SELECT * FROM shibpid' | wc -l"
+  register: shibboleth_db_is_empty
+  changed_when: false
+  tags: idp
+
+- name: "RESTORE - Check that 'statistics' database is empty and store the result on 'statistics_db_is_empty' ansible variable"
+  shell: "mysql statistics -e 'SELECT * FROM sps' | wc -l"
+  register: statistics_db_is_empty
+  changed_when: false
+  tags: idp
+
+- name: "RESTORE - Put 'shibboleth' and 'statistics' database backups in the '/root' directory"
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: "0600"
+  with_items:
+   - { src: "files/restore/{{ fqdn }}/mysql-backup/shibboleth-db.sql.gz", dest: "/root/shibboleth-db.sql.gz" }
+   - { src: "files/restore/{{ fqdn }}/mysql-backup/statistics-db.sql.gz", dest: "/root/statistics-db.sql.gz" }
+  when:
+   - idp_db_restore is defined
+   - idp_db_restore in ["True","true","Yes","yes"]
+   - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
+  tags: idp
+
+- name: "RESTORE - Extract 'shibboleth' and 'statistics' database backups"
+  command: "gunzip {{ item }}"
+  with_items:
+   - "/root/shibboleth-db.sql.gz"
+   - "/root/statistics-db.sql.gz"
+  when:
+   - idp_db_restore is defined
+   - idp_db_restore in ["True","true","Yes","yes"]
+   - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
+  tags: idp
+
+- name: "RESTORE - Assign the right permissions to the 'shibboleth' and 'statistics' backup extracted"
+  file:
+   dest: "{{ item }}"
+   owner: "root"
+   group: "root"
+   mode: "600"
+  with_items:
+   - "/root/shibboleth-db.sql"
+   - "/root/statistics-db.sql"
+  when:
+   - idp_db_restore is defined
+   - idp_db_restore in ["True","true","Yes","yes"]
+   - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
+  tags: idp
+
+- name: "RESTORE - Restore 'shibboleth' and 'statistics' databases"
+  mysql_db:
+   encoding: "utf8"
+   state: import
+   name: all
+   target: "{{ item }}"
+  with_items:
+   - "/root/shibboleth-db.sql"
+   - "/root/statistics-db.sql"
+  when:
+   - idp_db_restore is defined
+   - idp_db_restore in ["True","true","Yes","yes"]
+   - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
+  tags: idp
+
+- name: "RESTORE - Remove the backups restored from /root directory"
+  file:
+   dest: "{{ item }}"
+   state: "absent"
+  with_items:
+   - "/root/shibboleth-db.sql"
+   - "/root/statistics-db.sql"
+  when:
+   - idp_db_restore is defined
+   - idp_db_restore in ["True","true","Yes","yes"]
+   - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
+  tags: idp

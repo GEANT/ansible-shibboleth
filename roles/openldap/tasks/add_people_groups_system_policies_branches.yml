@@ -1,6 +1,6 @@
 ---
-- name: "Be sure to add 'people', 'groups', 'system' and 'policies' branches"
-  ldap_entry:
+
+- ldap_entry:
     dn: "ou={{ item.name }},{{ ldap['basedn'] }}"
     objectClass:
       - organizationalUnit

@@ -1,0 +1,160 @@
+---
+# tasks file for IdP Configuration
+- name: "Configure Shibboleth IdP credentials"
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "jetty"
+   group: "root"
+   mode: "{{ item.mode }}"
+  with_items:
+   - { src: "files/restore/{{ fqdn }}/credentials/idp-signing.crt", dest: "/opt/shibboleth-idp/credentials/idp-signing.crt", mode: "0644" }
+   - { src: "files/restore/{{ fqdn }}/credentials/idp-signing.key", dest: "/opt/shibboleth-idp/credentials/idp-signing.key", mode: "0600" }
+   - { src: "files/restore/{{ fqdn }}/credentials/idp-encryption.crt", dest: "/opt/shibboleth-idp/credentials/idp-encryption.crt", mode: "0644" }
+   - { src: "files/restore/{{ fqdn }}/credentials/idp-encryption.key", dest: "/opt/shibboleth-idp/credentials/idp-encryption.key", mode: "0600" }
+   - { src: "files/restore/{{ fqdn }}/credentials/idp-backchannel.crt", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.crt", mode: "0644" }
+   - { src: "files/restore/{{ fqdn }}/credentials/idp-backchannel.p12", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.p12", mode: "0644" }
+   - { src: "files/restore/{{ fqdn }}/credentials/sealer.jks", dest: "/opt/shibboleth-idp/credentials/sealer.jks", mode: "0644" }
+   - { src: "files/restore/{{ fqdn }}/credentials/sealer.kver", dest: "/opt/shibboleth-idp/credentials/sealer.kver", mode: "0644" }
+  tags: idp
+
+- name: "Store in the 'idp_signing_cert' ansible variable the value of 'idp-signing.crt' needed for building the IDP Metadata"
+  command: "cat /opt/shibboleth-idp/credentials/idp-signing.crt"
+  register: idp_signing_cert
+  changed_when: false
+  tags: idp
+
+- name: "Store in the 'idp_encryption_cert' ansible variable the value of 'idp-encryption.crt' needed for building the IDP Metadata"
+  command: "cat /opt/shibboleth-idp/credentials/idp-encryption.crt"
+  register: idp_encryption_cert
+  changed_when: false
+  tags: idp
+
+- name: "Store in the 'idp_backchannel_cert' ansible variable the value of 'idp-backchannel.crt' needed for building the IDP Metadata"
+  command: "cat /opt/shibboleth-idp/credentials/idp-backchannel.crt"
+  register: idp_backchannel_cert
+  changed_when: false
+  tags: idp
+
+- name: "Generate the Shibboleth IdP Metadata"
+  template:
+   src: "idp-metadata.xml.j2"
+   dest: "/opt/shibboleth-idp/metadata/idp-metadata.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  tags: idp
+
+- name: "Store in the 'shib_db' ansible variable the result of the check on the existance of the 'shibboleth' database"
+  command: mysql -u root -s -N -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='shibboleth'"
+  register: shib_db
+  changed_when: false
+  tags: idp
+
+- name: "Create the persistent identifiers 'shibboleth' database"
+  mysql_db:
+   encoding: "utf8"
+   state: import
+   name: all
+   target: "/root/shib-idp-persistentId-db.sql"
+  when: shib_db.stdout != 'shibboleth'
+  tags: idp
+
+- name: "Load IdP configurations files - Part 1"
+  template:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  with_items:
+   - { src: "conf/saml-nameid.properties.j2", dest: "/opt/shibboleth-idp/conf/saml-nameid.properties" }
+   - { src: "conf/global.xml.j2", dest: "/opt/shibboleth-idp/conf/global.xml" }
+   - { src: "conf/idp.properties.j2", dest: "/opt/shibboleth-idp/conf/idp.properties" }
+   - { src: "conf/ldap.properties.j2", dest: "/opt/shibboleth-idp/conf/ldap.properties" }
+   - { src: "conf/services.xml.j2", dest: "/opt/shibboleth-idp/conf/services.xml" }
+   - { src: "conf/attribute-filter-v3-federation.xml.j2", dest: "/opt/shibboleth-idp/conf/attribute-filter-v3-federation.xml" }
+   - { src: "conf/attribute-resolver-v3-custom.xml.j2", dest: "/opt/shibboleth-idp/conf/attribute-resolver-v3-custom.xml" }
+   - { src: "conf/metadata-providers.xml.j2", dest: "/opt/shibboleth-idp/conf/metadata-providers.xml" }
+  tags: idp
+
+- name: "Load IdP Configurations files - Part 2"
+  copy:
+   src: "files/conf/"
+   dest: "/opt/shibboleth-idp/conf/"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  tags: idp
+
+- name: "Configure Shibboleth IdP to support OpenLDAP Password Policy"
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "{{ item.owner }}"
+   group: "{{ item.group }}"
+   mode: "{{ item.mode }}"
+  with_items:
+   - { src: "files/conf/authn/password-authn-config.xml", dest: "/opt/shibboleth-idp/conf/authn/password-authn-config.xml", owner: "jetty", group: "root", mode: "0600" }
+   - { src: "files/conf/authn/ldap-authn-config.xml", dest: "/opt/shibboleth-idp/conf/authn/ldap-authn-config.xml", owner: "jetty", group: "root", mode: "0600" }
+   - { src: "files/flows/authn/conditions/conditions-flow.xml", dest: "/opt/shibboleth-idp/flows/authn/conditions/conditions-flow.xml", owner: "root", group: "root", mode: "0755" }
+   - { src: "files/views/login-error.vm", dest: "/opt/shibboleth-idp/views/login-error.vm", owner: "root", group: "root", mode: "0644" }
+  when:
+   - idp_config is defined
+   - idp_config['ldap'] is defined
+   - idp_config['ldap']['ppolicy'] is defined
+   - idp_config['ldap']['ppolicy']['change_password_url'] is defined
+   - idp_config['ldap']['ppolicy']['change_password_url'] != ""
+  tags: idp
+
+- name: "Be sure that 'change-password' directory is created"
+  file:
+   dest: "/opt/shibboleth-idp/flows/authn/conditions/change-password"
+   owner: "root"
+   group: "root"
+   mode: "0755"
+   state: directory
+  when:
+   - idp_config is defined
+   - idp_config['ldap'] is defined
+   - idp_config['ldap']['ppolicy'] is defined
+   - idp_config['ldap']['ppolicy']['change_password_url'] is defined
+   - idp_config['ldap']['ppolicy']['change_password_url'] != ""
+  tags: idp
+
+- name: "Copy Expired password flow to Change password flow"
+  copy:
+   src: "/opt/shibboleth-idp/flows/authn/conditions/expired-password/expired-password-flow.xml"
+   dest: "/opt/shibboleth-idp/flows/authn/conditions/change-password/change-password-flow.xml"
+   owner: root
+   group: root
+   mode: 0755
+   remote_src: "True"
+  when:
+   - idp_config is defined
+   - idp_config['ldap'] is defined
+   - idp_config['ldap']['ppolicy'] is defined
+   - idp_config['ldap']['ppolicy']['change_password_url'] is defined
+   - idp_config['ldap']['ppolicy']['change_password_url'] != ""
+  tags: idp
+
+- name: "Download Federation's Metadata files"
+  get_url:
+   url: "{{ item.url }}"
+   dest: "/opt/shibboleth-idp/metadata/{{ item.file }}"
+   owner: "jetty"
+   group: "root"
+   mode: "0644"
+   validate_certs: "{{ item.disregardTLSCertificate }}"
+  with_items: "{{ idp_metadata_providers }}"
+  tags: idp
+
+# Jetty IdP Configuration
+- name: "Configure Jetty to load the IdP war file"
+  copy:
+   src: "files/idp.xml"
+   dest: "/opt/jetty/webapps/idp.xml"
+   owner: "root"
+   group: "root"
+   mode: 0644
+  tags: idp

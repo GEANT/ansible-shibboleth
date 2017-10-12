@@ -1,0 +1,65 @@
+---
+# tasks for IdP Rsyslog and F-TICKS
+- name: "Debian 8 - Install backports APT repository"
+  apt_repository:
+    repo: "deb {{ mirror | default('https://mi.mirror.garr.it/mirrors/debian/') }} jessie-backports main"
+    state: present
+    update_cache: "yes"
+    filename: 'jessie-backports'
+  when:
+   - ansible_distribution_release == "jessie"
+   - rsyslog_srv is defined
+   - rsyslog_srv['ip'] is defined
+   - rsyslog_srv['ip'] != ""
+   - rsyslog_srv['port'] is defined
+   - rsyslog_srv['port'] != ""
+
+- name: "Debian 8 - Install Rsyslog with RELP"
+  apt:
+   name: "{{ item }}"
+   state: latest
+   update_cache: "yes"
+   default_release: "jessie-backports"
+  with_items:
+   - "rsyslog"
+   - "rsyslog-relp"
+  when:
+   - ansible_distribution_release == "jessie"
+   - rsyslog_srv is defined
+   - rsyslog_srv['ip'] is defined
+   - rsyslog_srv['ip'] != ""
+   - rsyslog_srv['port'] is defined
+   - rsyslog_srv['port'] != ""
+
+- name: "Configure Rsyslog for F-TICKS"
+  template:
+   src: "monitoring/rsyslog/33-fticks.conf.j2"
+   dest: "/etc/rsyslog.d/33-fticks.conf"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  tags: idp
+
+- name: "Configure Rsyslog to send IdP logs to the centralized remote server"
+  template:
+   src: "monitoring/rsyslog/22-idpcloud.conf.j2"
+   dest: "/etc/rsyslog.d/22-idpcloud.conf"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  when:
+   - rsyslog_srv is defined
+   - rsyslog_srv['ip'] is defined
+   - rsyslog_srv['ip'] != ""
+   - rsyslog_srv['port'] is defined
+   - rsyslog_srv['port'] != ""
+  register: rsyslog_template
+  tags: idp
+
+- name: "Restart Rsyslog to start sending IdP logs to the centralized remote server if needed"
+  service:
+   name: rsyslog
+   state: restarted
+  when:
+   - rsyslog_template.changed
+  tags: idp

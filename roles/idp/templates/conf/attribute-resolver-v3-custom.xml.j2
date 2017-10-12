@@ -13,8 +13,8 @@
 
 {% for attr, value in idp_attrDef.iteritems() %}
     <AttributeDefinition{{ {'id': idp_attrDef[attr]['AttributeDefinition']['id'], 'xsi:type': idp_attrDef[attr]['AttributeDefinition']['type'], 'scope': idp_attrDef[attr]['AttributeDefinition']['scope'], 'sourceAttributeID': idp_attrDef[attr]['AttributeDefinition']['sourceAttributeID'], 'nameIdFormat': idp_attrDef[attr]['AttributeDefinition']['nameIdFormat'] }|xmlattr }}>
-{% for ref, value in idp_attrDef[attr]['Dependency'].iteritems() %}
-        <Dependency ref="{{ idp_attrDef[attr]['Dependency'][ref] }}" />
+{% for ref in idp_attrDef[attr]['Dependency'] %}
+        <Dependency ref="{{ ref }}" />
 {% endfor %}
 {% if idp_attrDef[attr]['DisplayName'] %}
 {% for lang, value in idp_attrDef[attr]['DisplayName'].iteritems() %}
@@ -70,6 +70,16 @@
         queryTimeout="0">
         <Dependency ref="%{idp.persistentId.sourceAttribute}"/>
         <BeanManagedConnection>MyDataSource</BeanManagedConnection>
+    </DataConnector>
+
+    <DataConnector id="staticAttributes" xsi:type="Static">
+{% for attr in idp_stat_attrs %}
+        <Attribute id="{{ attr['attrName'] }}">
+{% for attrVal in attr['attrValues'] %}
+            <Value>{{ attrVal }}</Value>
+{% endfor %}
+        </Attribute>
+{% endfor %}
     </DataConnector>
 
 </AttributeResolver>

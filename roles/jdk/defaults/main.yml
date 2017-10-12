@@ -11,5 +11,3 @@
 
 jdk_type: "openjdk"
 jdk_version: "8"
-
-mirror: "https://mi.mirror.garr.it/mirrors/debian/"

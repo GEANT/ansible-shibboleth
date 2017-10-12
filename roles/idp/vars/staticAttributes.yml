@@ -1,0 +1,10 @@
+---
+# Static Attributes
+
+idp_stat_attrs:
+   - attrName: "schacHomeOrganization"
+     attrValues: 
+      - "%{idp.scope}"
+   - attrName: "schacHomeOrganizationType"
+     attrValues:
+      - "urn:schac:homeOrganizationType:int:researchHospital"

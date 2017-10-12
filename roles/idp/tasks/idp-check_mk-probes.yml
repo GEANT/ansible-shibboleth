@@ -1,0 +1,134 @@
+---
+# tasks file for IdP Check_MK probes
+- name: "Install needed packages for Check MK plugin"
+  apt:
+   name: "{{ item }}"
+   state: latest
+   update_cache: yes
+  with_items:
+   - "python-ldap"
+  when:
+   - check_mk is defined
+   - check_mk['srv'] is defined
+  tags: idp
+
+- name: "Create '/local' directory needed by Check_MK plugin for customized local probes"
+  file:
+   path: "/usr/lib/check_mk_agent/local"
+   owner: "root"
+   group: "root"
+   state: directory
+  when:
+   - check_mk is defined
+   - check_mk['srv'] is defined
+  tags: idp
+
+- name: "Put 'check_aacli' and 'check_mysql' probe in the Check_MK plugin '/local' directory"
+  template:
+   src: "{{ item['src'] }}"
+   dest: "{{ item['dest'] }}"
+   owner: "root"
+   group: "root"
+   mode: "0755"
+  with_items:
+   - { src: "monitoring/check_mk_plugins/check_aacli.py.j2", dest: "/usr/lib/check_mk_agent/local/check_aacli.py" }
+   - { src: "monitoring/check_mk_plugins/check_mysql.py.j2", dest: "/usr/lib/check_mk_agent/local/check_mysql.py" }
+  when:
+   - check_mk is defined
+   - check_mk['srv'] is defined
+  tags: idp
+
+- name: "Put 'check_ldap' probe in the Check_MK plugin '/local' directory"
+  template:
+   src: "monitoring/check_mk_plugins/check_ldap.py.j2"
+   dest: "/usr/lib/check_mk_agent/local/check_ldap.py"
+   owner: "root"
+   group: "root"
+   mode: "0755"
+  when:
+   - check_mk is defined
+   - check_mk['srv'] is defined
+   - ldap is defined
+   - ldap['create_test_user'] is defined
+   - ldap['create_test_user'] in ["Yes","yes","True","true"]
+  tags: idp
+
+- name: "Put 'check_rs' probe in the Check_MK plugin '/local' directory"
+  template:
+   src: "monitoring/check_mk_plugins/check_rs.py.j2"
+   dest: "/usr/lib/check_mk_agent/local/check_rs.py"
+   owner: "root"
+   group: "root"
+   mode: "0755"
+  when:
+   - check_mk is defined
+   - check_mk['srv'] is defined
+   - check_mk['check_rs'] is defined
+   - check_mk['check_rs'] in ["Yes","yes","True","true"]
+  tags: idp
+
+- name: "Load fake RS SP Metadata in the '/metadata' directory of the IdP"
+  copy:
+   src: "files/metadata/fake-rs-sp.xml"
+   dest: "/opt/shibboleth-idp/metadata/fake-rs-sp.xml"
+   owner: "jetty"
+   group: "root"
+   mode: 0644
+  when:
+   - check_mk is defined
+   - check_mk['srv'] is defined
+   - check_mk['check_rs'] is defined
+   - check_mk['check_rs'] in ["Yes","yes","True","true"]
+  tags: idp
+
+- name: "Remove fake RS SP probe if 'check_rs' is negative"
+  file:
+   dest: "{{ item }}"
+   state: "absent"
+  with_items:
+   - "/usr/lib/check_mk_agent/local/check_rs.py"
+   - "/opt/shibboleth-idp/metadata/fake-rs-sp.xml"
+  when:
+   - check_mk is defined
+   - check_mk['srv'] is not defined or check_mk['check_rs'] is not defined or check_mk['check_rs'] in ["No","no","False","false"]
+  tags: idp
+
+- name: "Put 'check_coco' probe in the Check_MK plugin '/local' directory"
+  template:
+   src: "monitoring/check_mk_plugins/check_coco.py.j2"
+   dest: "/usr/lib/check_mk_agent/local/check_coco.py"
+   owner: "root"
+   group: "root"
+   mode: "0755"
+  when:
+   - check_mk is defined
+   - check_mk['srv'] is defined
+   - check_mk['check_coco'] is defined
+   - check_mk['check_coco'] in ["Yes","yes","True","true"]
+  tags: idp
+
+- name: "Load fake CoCo SP Metadata in the '/metadata' directory of the IdP"
+  copy:
+   src: "files/metadata/fake-coco-sp.xml"
+   dest: "/opt/shibboleth-idp/metadata/fake-coco-sp.xml"
+   owner: "jetty"
+   group: "root"
+   mode: 0644
+  when:
+   - check_mk is defined
+   - check_mk['srv'] is defined
+   - check_mk['check_coco'] is defined
+   - check_mk['check_coco'] in ["Yes","yes","True","true"]
+  tags: idp
+
+- name: "Remove fake CoCo SP probe if 'check_coco' is negative"
+  file:
+   dest: "{{ item }}"
+   state: "absent"
+  with_items:
+   - "/usr/lib/check_mk_agent/local/check_coco.py"
+   - "/opt/shibboleth-idp/metadata/fake-coco-sp.xml"
+  when:
+   - check_mk is defined
+   - check_mk['srv'] is not defined or check_mk['check_coco'] is not defined or check_mk['check_coco'] in ["No","no","False","false"]
+  tags: idp

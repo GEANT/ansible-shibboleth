@@ -1,0 +1,182 @@
+---
+# Tasks for openLDAP Configuration
+- name: "Create '/var/log/slapd' directory"
+  file:
+    path: /var/log/slapd
+    state: directory
+  notify:
+   - "Restart rsyslog"
+   - "Restart slapd"
+
+- name: "Configure Rsyslog to redirect OpenLDAP logs into /var/log/slapd/slapd.log"
+  copy:
+   src: "files/99-slapd.conf"
+   dest: "/etc/rsyslog.d/99-slapd.conf"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  notify:
+   - "Restart rsyslog"
+   - "Restart slapd"
+
+- name: "Add 'openldap' user 'ssl-cert' group"
+  user:
+   name: openldap
+   groups: ssl-cert
+  notify:
+   - "Restart slapd"
+
+- name: "Create '/root/ldap-configs' directory"
+  file:
+    path: /root/ldap-configs
+    state: directory
+    mode: 0600
+
+- name: "Put openLDAP TLS and Indexes configuration file in /root/ldap-configs directory"
+  template:
+   src: "directory-tls-indexes.ldif.j2"
+   dest: "/root/ldap-configs/directory-tls-indexes.ldif"
+   owner: "root"
+   group: "root"
+   mode: "0600"
+
+- name: "Put eduPerson and SCHAC schema in /root/ldap-configs directory"
+  copy:
+   src: "files/{{ item }}"
+   dest: "/root/ldap-configs"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_items:
+   - eduperson-201602.ldif
+   - schac-20150413.ldif
+
+- name: "Configure OpenLDAP"
+  copy:
+   src: "files/ldap.conf"
+   dest: "/etc/ldap/ldap.conf"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  notify:
+   - "Restart slapd"
+
+- name: "Check if LDAP has already the olcTLSCertificateKeyFile needed for STARTTLS and store the result on 'olc_cert_key' ansible variable"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=config '(olcTLSCertificateKeyFile=*)' dn olcTLSCertificateKeyFile"
+  register: olc_cert_key
+  changed_when: false
+
+- name: "Restart OpenLDAP and Rsyslog before applying new ldap configuration"
+  service:
+    name: "{{ item }}"
+    state: "restarted"
+  when: olc_cert_key.stdout == ""
+  with_items:
+   - slapd
+   - rsyslog
+
+- name: "Set OpenLDAP TLS and Indexes"
+  command: "ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/directory-tls-indexes.ldif"
+  when: olc_cert_key.stdout == ""
+  notify:
+   - "Restart slapd"
+
+- name: "Set openLDAD olcLogLevel"
+  include: config_logLevel.yml
+  notify:
+   - "Restart slapd"
+
+- name: "Set openLDAP ACL"
+  include: config_acl.yml
+  notify:
+   - "Restart slapd"
+
+- name: "Enable MemberOf and PPolicy modules"
+  include: enable_memberOf_ppolicy_modules.yml
+  notify:
+   - "Restart slapd"
+
+- name: "Check the existance of 'eduPerson' schema on openLDAP and store the result on 'eduperson_schema' ansible variable"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=schema,cn=config cn=*eduperson dn"
+  register: eduperson_schema
+  changed_when: false
+
+- name: "Add 'eduperson-201602' schema"
+  command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/eduperson-201602.ldif"
+  when: eduperson_schema.stdout == ""
+  notify:
+   - "Restart slapd"
+
+- name: "Check the existance of 'SCHAC' schema on openLDAP and store the result on 'schac_schema' ansible variable"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=schema,cn=config cn=*schac dn"
+  register: schac_schema
+  changed_when: false
+
+- name: "Add 'schac-20150413' schema"
+  command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/schac-20150413.ldif"
+  when: schac_schema.stdout == ""
+  notify:
+   - "Restart slapd"
+
+- name: "Check Password Policy schema on openLDAP and store the result on 'ppolicy_schema' ansible variable"
+  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b cn=schema,cn=config cn=*ppolicy dn"
+  register: ppolicy_schema
+  changed_when: false
+
+- name: "Enable Password Policy on OpenLDAP"
+  command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/ppolicy.ldif"
+  when: ppolicy_schema.stdout == ""
+  notify:
+   - "Restart slapd"
+
+- name: "Add 'people' and 'groups' branches on OpenLDAP"
+  include: add_people_groups_system_policies_branches.yml
+  notify:
+   - "Restart slapd"
+
+- name: "Add 'idpuser' to openLDAP to perform search"
+  include: add_idpuser.yml
+  notify:
+   - "Restart slapd"
+
+- name: "Add 'testuser' used to perform fake login needed to Check_MK probes"
+  include: add_testuser.yml
+  when:
+   - ldap['create_test_user'] is defined
+   - ldap['create_test_user'] in ["Yes","yes","True","true"]
+  notify:
+   - "Restart slapd"
+
+- name: "Add memberOf overlay"
+  include: add_memberof_overlay.yml
+  notify:
+   - "Restart slapd"
+
+- name: "Add PPolicy Overlay"
+  include: add_ppolicy_overlay.yml
+  notify:
+   - "Restart slapd"
+
+- name: "Add the default Password Policy"
+  include: add_password_policy_entry.yml
+  notify:
+   - "Restart slapd"
+
+- name: "Create openLDAP backups directory"
+  file:
+   dest: "{{ item }}"
+   state: "directory"
+   owner: "root"
+   group: "root"
+   mode: "640"
+  with_items:
+   - "/var/local/backups"
+   - "/var/local/backups/ldap"
+
+- name: "Put ldap backup script in the '/etc/cron.daily' directory to run the script once a day"
+  template:
+   src: "ldap-backup.sh.j2"
+   dest: "/etc/cron.daily/ldap-backup"
+   owner: "root"
+   group: "root"
+   mode: "0755"
