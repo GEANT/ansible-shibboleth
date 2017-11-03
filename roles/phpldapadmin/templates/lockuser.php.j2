@@ -72,7 +72,7 @@ session_start();
                         },
                         success: function(data, textStatus, jqXHR) {
                                 if (data["status"] == "ok") {
-                                        button.value = "Set the user expiration date";
+                                        button.value = "Set user expiration date";
                                 }
                                 else {
                                         alert("An error occurred while locking the user " + userid + ":\n" + data["error"]);

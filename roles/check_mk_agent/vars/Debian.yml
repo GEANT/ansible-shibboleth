@@ -2,10 +2,10 @@
 # Debian Variables for Check_MK
 
 check_mk_agent_packages:
-   - wget
-   - gdebi
-   - xinetd
+ - wget
+ - gdebi
+ - xinetd
 
-check_mk_agent_version: "check-mk-agent_1.4.0p10-1_all"
+check_mk_agent_version: "check-mk-agent_1.4.0p16-1_all"
 
 check_mk_agent_dl_url: "https://{{ check_mk['srv'] }}/{{ check_mk['site'] }}/check_mk/agents/{{ check_mk_agent_version }}.deb"

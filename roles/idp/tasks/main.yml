@@ -21,29 +21,29 @@
   tags: idp
 
 - name: "Install Shibboleth IdP"
-  include: idp-install.yml
+  import_tasks: idp-install.yml
   tags: idp
 
 - name: "Configure Shibboleth IdP"
-  include: idp-configure.yml
+  import_tasks: idp-configure.yml
   tags: idp
 
 - name: "Configure Styles and Languages of Shibboleth IdP"
-  include: idp-style-lang.yml
+  import_tasks: idp-style-lang.yml
   tags: idp
 
 - name: "Configure Shibboleth IdP /statistics application"
-  include: idp-statistics.yml
+  import_tasks: idp-statistics.yml
   tags: idp
 
 - name: "Restore Shibboleth IdP if needed"
-  include: idp-restore.yml
+  import_tasks: idp-restore.yml
   tags: idp
 
 - name: "Configure Check_MK probes on Shibboleth IdP"
-  include: idp-check_mk-probes.yml
+  import_tasks: idp-check_mk-probes.yml
   tags: idp
 
 - name: "Configure Rsyslog on Shibboleth IdP"
-  include: idp-rsyslog.yml
+  import_tasks: idp-rsyslog.yml
   tags: idp

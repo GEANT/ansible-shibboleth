@@ -14,12 +14,8 @@
    <objectClasses>
       <objectClass id="inetOrgPerson"></objectClass>
       <objectClass id="eduPerson"></objectClass>
-      <objectClass id="schacPersonalCharacteristics"></objectClass>
-      <objectClass id="schacLinkageIdentifiers"></objectClass>
-      <objectClass id="schacContactLocation"></objectClass>
-      <objectClass id="schacEmployeeInfo"></objectClass>
-      <objectClass id="schacExperimentalOC"></objectClass>
       <objectClass id="schacEntryMetadata"></objectClass>
+      <objectClass id="schacLinkageIdentifiers"></objectClass>
    </objectClasses>
    <attributes>
 
@@ -45,53 +41,24 @@
          <hint>Example: Mario Rossi</hint>
          <display>Name and Surname</display>
          <icon>ldap-uid.png</icon>
-         <onchange>=autoFill(displayName;%cn%)</onchange>
          <order>3</order>
          <page>1</page>
          <spacer>1</spacer>
       </attribute>
-      
-      <attribute id="displayName">
-         <hint>Example: Mario Rossi</hint>
-         <display>Display name</display>
+       
+      <attribute id="schacPersonalUniqueID">
+         <hint>Example: RSSMRA60B25F205H</hint>
+         <display>Fiscal code *</display>
          <icon>ldap-uid.png</icon>
          <order>4</order>
          <page>1</page>
-         <spacer>1</spacer>
       </attribute>
-      
-      <attribute id="mail">
-         <hint>Example: mario.rossi@{{ pla['ldap']['domain'] }}</hint>
-         <display>E-mail address *</display>
-         <icon>mail.png</icon>
-         <order>5</order>
-         <page>1</page>
-      </attribute>
-      
-      <attribute id="o">
-         <hint>Example: IRCCS of Milan</hint>
-         <display>Organization *</display>
-         <icon>ldap-ou.png</icon>
-         <value>{{ pla['ldap']['org'] }}</value>
-         <order>6</order>
-         <page>1</page>
-      </attribute>
-      
-      <attribute id="schacHomeOrganization">
-         <hint>Example: {{ pla['ldap']['domain'] }}</hint>
-         <display>schacHomeOrganization</display>
-         <icon>home-big.png</icon>
-         <value>{{ pla['ldap']['domain'] }}</value>
-         <order>7</order>
-         <page>1</page>
-      </attribute>
-      
-      <attribute id="schacHomeOrganizationType">
-         <display>schacHomeOrganizationType</display>
-         <hint>Example: urn:schac:homeOrganizationType:int:library</hint>
-         <icon>home-big.png</icon>
-         <value>urn:schac:homeOrganizationType:int:library</value>
-         <order>8</order>
+
+      <attribute id="eduPersonOrcid">
+         <display>eduPersonOrcid</display>
+         <hint>Example: http://orcid.org/0000-0002-1825-0097</hint>
+         <icon>ldap-uid.png</icon>
+         <order>4</order>
          <page>1</page>
       </attribute>
 
@@ -99,23 +66,15 @@
          <hint>Example: member</hint>
          <display>eduPersonAffiliation *</display>
          <icon>ldap-ou.png</icon>
-         <order>9</order>
+         <order>6</order>
          <page>1</page>
       </attribute>
 
       <attribute id="eduPersonEntitlement">
-         <hint>Example: urn:mace:internet2:terena:nl:garr:service</hint>
+         <hint>Example: urn:mace:internet2:terena:it:garr:service</hint>
          <display>eduPersonEntitlement</display>
          <icon>ldap-uid.png</icon>
-         <order>10</order>
-         <page>1</page>
-      </attribute>
-
-      <attribute id="eduPersonOrcid">
-         <display>eduPersonOrcid</display>
-         <hint>Example: http://orcid.org/0000-0002-1825-0097 </hint>
-         <icon>ldap-uid.png</icon>
-         <order>11</order>
+         <order>7</order>
          <page>1</page>
       </attribute>
 

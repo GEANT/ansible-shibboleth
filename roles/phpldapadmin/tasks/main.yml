@@ -1,7 +1,7 @@
 ---
 # tasks file for phpldapadmin
 - name: "Install phpLDAPadmin"
-  include: "pla-install.yml"
+  import_tasks: "pla-install.yml"
   tags: pla
 
 - name: "Be sure to configure phpLDAPadmin correctly"

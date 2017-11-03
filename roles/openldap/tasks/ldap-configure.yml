@@ -82,17 +82,17 @@
    - "Restart slapd"
 
 - name: "Set openLDAD olcLogLevel"
-  include: config_logLevel.yml
+  import_tasks: config_logLevel.yml
   notify:
    - "Restart slapd"
 
 - name: "Set openLDAP ACL"
-  include: config_acl.yml
+  import_tasks: config_acl.yml
   notify:
    - "Restart slapd"
 
 - name: "Enable MemberOf and PPolicy modules"
-  include: enable_memberOf_ppolicy_modules.yml
+  import_tasks: enable_memberOf_ppolicy_modules.yml
   notify:
    - "Restart slapd"
 
@@ -130,17 +130,17 @@
    - "Restart slapd"
 
 - name: "Add 'people' and 'groups' branches on OpenLDAP"
-  include: add_people_groups_system_policies_branches.yml
+  import_tasks: add_people_groups_system_policies_branches.yml
   notify:
    - "Restart slapd"
 
 - name: "Add 'idpuser' to openLDAP to perform search"
-  include: add_idpuser.yml
+  import_tasks: add_idpuser.yml
   notify:
    - "Restart slapd"
 
 - name: "Add 'testuser' used to perform fake login needed to Check_MK probes"
-  include: add_testuser.yml
+  import_tasks: add_testuser.yml
   when:
    - ldap['create_test_user'] is defined
    - ldap['create_test_user'] in ["Yes","yes","True","true"]
@@ -148,17 +148,17 @@
    - "Restart slapd"
 
 - name: "Add memberOf overlay"
-  include: add_memberof_overlay.yml
+  import_tasks: add_memberof_overlay.yml
   notify:
    - "Restart slapd"
 
 - name: "Add PPolicy Overlay"
-  include: add_ppolicy_overlay.yml
+  import_tasks: add_ppolicy_overlay.yml
   notify:
    - "Restart slapd"
 
 - name: "Add the default Password Policy"
-  include: add_password_policy_entry.yml
+  import_tasks: add_password_policy_entry.yml
   notify:
    - "Restart slapd"
 

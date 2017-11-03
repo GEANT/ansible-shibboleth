@@ -55,10 +55,10 @@ $(document).ready(function() {
    // If I'm creating a new user and I'm in last page I add CF prefix value
    try {
       if($('input').length && $('input').eq(0).attr('value')=='create'){
-         $('#new_values_schacpersonaluniqueid_0').attr('value', 'urn:mace:terena.org:schac:personalUniqueID:IT:CF:' + $('#new_values_schacpersonaluniqueid_0').attr('value'));
+         $('#new_values_schacpersonaluniqueid_0').attr('value', 'urn:schac:personalUniqueID:IT:CF:' + $('#new_values_schacpersonaluniqueid_0').attr('value').toUpperCase());
          $('table.result_table tr').each(function(){
             if($(this).children().eq(0).children().eq(0).text() == lblCF){
-               $(this).children().eq(1).children().eq(0).text('urn:mace:terena.org:schac:personalUniqueID:IT:CF:' + $(this).children().eq(1).children().eq(0).text());
+               $(this).children().eq(1).children().eq(0).text('urn:schac:personalUniqueID:IT:CF:' + $(this).children().eq(1).children().eq(0).text().toUpperCase());
             }
          });
       }
@@ -75,10 +75,10 @@ $(document).ready(function() {
    // If I'm creating a new user and I'm in last page I add CF prefix value
    try {
       if($('input').length && $('input').eq(0).attr('value')=='update'){
-         $('#new_values_schacpersonaluniqueid_0').attr('value', 'urn:mace:terena.org:schac:personalUniqueID:IT:CF:' + $('#new_values_schacpersonaluniqueid_0').attr('value'));
+         $('#new_values_schacpersonaluniqueid_0').attr('value', 'urn:schac:personalUniqueID:IT:CF:' + $('#new_values_schacpersonaluniqueid_0').attr('value').toUpperCase());
          $('table.result_table tr').each(function(){
             if($(this).children().eq(0).children().eq(0).text() == lblCF){
-               $(this).children().eq(2).children().eq(0).text('urn:mace:terena.org:schac:personalUniqueID:IT:CF:' + $(this).children().eq(2).children().eq(0).text());
+               $(this).children().eq(2).children().eq(0).text('urn:schac:personalUniqueID:IT:CF:' + $(this).children().eq(2).children().eq(0).text().toUpperCase());
             }
          });
       }

@@ -6,14 +6,14 @@
 #  tags: rsync
 
 - name: "Install Rsync"
-  include: "install.yml"
+  import_tasks: "install.yml"
   when:
    - backups_srv is defined
    - backups_srv['ip'] != ''
   tags: rsync
 
 - name: "Configure Rsync"
-  include: "configure.yml"
+  import_tasks: "configure.yml"
   when:
    - backups_srv is defined
    - backups_srv['ip'] != ''

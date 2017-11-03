@@ -19,7 +19,7 @@
    <body>
       <div class="container">
          <div class='row'>
-            <div class="col-md-2"><img id="headerLogo" src="{{ idp_metadata['it']['mdui_logo'] }}"/></div>
+            <div class="col-md-2"><a href="{{ idp_metadata['it']['org_url'] }}"><img id="headerLogo" src="{{ idp_metadata['it']['mdui_logo'] }}"/></a></div>
             <div class="col-md-8 text-center">
                <h2>PARTECIPAZIONE AL PROGETTO DI IDEM GARR:<br/>IDP IN THE CLOUD<br/><strong>Pagina Informativa</strong></h2>
                <br/>
@@ -69,8 +69,8 @@
          <br />
          <table class="table table-bordered table-responsive" width="70%">      
             <tr>
-               <td><strong>Nome dell'Attributo</strong></td>
-               <td><strong>Significato</strong></td>
+              <td><strong>Nome dell'Attributo</strong></td>
+              <td><strong>Significato</strong></td>
             </tr>
             <tr>
               <td><code>sn</code></td>
@@ -89,76 +89,12 @@
               <td>Nome Cognome</td>
             </tr>
             <tr>
-              <td><code>schacDateOfBirth</code></td>
-              <td>Data Nascita</td>
-            </tr>
-            <tr>
-              <td><code>schacYearOfBirth</code></td>
-              <td>Anno di Nascita</td>
-            </tr>
-            <tr>
-              <td><code>schacPlaceOfBirth</code></td>
-              <td>Luogo di nascita</td>
-            </tr>
-            <tr>
-              <td><code>schacPersonalUniqueID</code></td>
-              <td>Codice Fiscale</td>
-            </tr>
-            <tr>
-              <td><code>street</code></td>
-              <td>Via</td>
-            </tr>
-            <tr>
-              <td><code>houseIdentifier</code></td>
-              <td>Numero civico</td>
-            </tr>
-            <tr>
-              <td><code>l</code></td>
-              <td>Città</td>
-            </tr>
-            <tr>
-              <td><code>postalCode</code></td>
-              <td>CAP</td>
-            </tr>
-            <tr>
-              <td><code>st</code></td>
-              <td>Provincia</td>
-            </tr>
-            <tr>
-              <td><code>c</code></td>
-              <td>Sigla Nazione</td>
-            </tr>
-            <tr>
-              <td><code>co</code></td>
-              <td>Nazione</td>
-            </tr>
-            <tr>
               <td><code>mail</code></td>
               <td>E-mail</td>
             </tr>
             <tr>
-              <td><code>telephoneNumber</code></td>
-              <td>Telefono</td>
-            </tr>
-            <tr>
-              <td><code>schacPersonalPosition</code></td>
-              <td>Qualifica ricoperta</td>
-            </tr>
-            <tr>
-              <td><code>ou</code></td>
-              <td>Sezione/Divisione/Unità/Laboratorio in cui si svolgono le funzioni di operatore SSN</td>
-            </tr>
-            <tr>
-              <td><code>o</code></td>
-              <td>Struttura con cui si ha un rapporto di lavoro/collaborazione</td>
-            </tr>
-            <tr>
-              <td><code>eduPersonOrgDN</code></td>
-              <td>Identificativo dell'Organizzazione di appartenenza</td>
-            </tr>
-            <tr>
-              <td><code>eduPersonOrgUnitDN</code></td>
-              <td>Identificativo dell'ufficio di appartenenza all'interno dell'organizzazione</td>
+              <td><code>schacPersonalUniqueID</code></td>
+              <td>Codice Fiscale</td>
             </tr>
             <tr>
               <td><code>schacHomeOrganization</code></td>
@@ -179,6 +115,10 @@
             <tr>
               <td><code>eduPersonEntitlement</code></td>
               <td>Valori utilizzati per conferire dei privilegi sulla risorsa a cui si vuole accedere</td>
+            </tr>
+            <tr>
+              <td><code>eduPersonOrcid</code></td>
+              <td>Identificativo ricercatore assegnato e gestito da orcid.org</td>
             </tr>
          </table>
          <p><a href="https://www.idem.garr.it/it/servizi/sp" target="_blank">Elenco delle Risorse associate alla Federazione {{ idp_login['fed_info']['federation']['it']['name'] }}</a> a cui è possibile accedere tramite le credenziali fornite per questo Identity Provider.</p>

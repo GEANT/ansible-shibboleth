@@ -5,15 +5,15 @@
   tags: openldap
 
 - name: "Install openLDAP"
-  include: ldap-install.yml
+  import_tasks: ldap-install.yml
   tags: openldap
 
 - name: "Configure openLDAP"
-  include: ldap-configure.yml
+  import_tasks: ldap-configure.yml
   tags: openldap
 
 - name: "Restore openLDAP"
-  include: ldap-restore.yml
+  import_tasks: ldap-restore.yml
   tags: openldap
 
 - name: "Start OpenLDAP"

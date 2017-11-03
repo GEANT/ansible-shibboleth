@@ -16,7 +16,7 @@
    <body>
       <div class="container">
          <div class="row">
-            <div class="col-md-2"><img id="headerLogo" src="{{ idp_metadata['en']['mdui_logo'] }}"/></div>
+            <div class="col-md-2"><a href="{{ idp_metadata['en']['org_url'] }}"><img id="headerLogo" src="{{ idp_metadata['en']['mdui_logo'] }}"/></a></div>
             <div class="col-md-8 text-center">
                <h2>PARTICIPATION TO THE IDEM GARR PROJECT:<br/>IDP IN THE CLOUD<br/><strong>Information Page</strong></h2>
                <br/>
@@ -82,76 +82,12 @@
              <td>Name Surname</td>
            </tr>
            <tr>
-             <td><code>schacDateOfBirth</code></td>
-             <td>Date of birth</td>
-           </tr>
-           <tr>
-             <td><code>schacYearOfBirth</code></td>
-             <td>Year of birth</td>
-           </tr>
-           <tr>
-             <td><code>schacPlaceOfBirth</code></td>
-             <td>Place of birth</td>
-           </tr>
-           <tr>
-             <td><code>schacPersonalUniqueID</code></td>
-             <td>Personal Unique Identifier</td>
-           </tr>
-           <tr>
-             <td><code>street</code></td>
-             <td>Street</td>
-           </tr>
-           <tr>
-             <td><code>houseIdentifier</code></td>
-             <td>House identifier number</td>
-           </tr>
-           <tr>
-             <td><code>l</code></td>
-             <td>City</td>
-           </tr>
-           <tr>
-             <td><code>postalCode</code></td>
-             <td>Postal code</td>
-           </tr>
-           <tr>
-             <td><code>st</code></td>
-             <td>Province name</td>
-           </tr>
-           <tr>
-             <td><code>c</code></td>
-             <td>Country Name</td>
-           </tr>
-           <tr>
-             <td><code>co</code></td>
-             <td>Nation</td>
-           </tr>
-           <tr>
              <td><code>mail</code></td>
              <td>E-mail</td>
            </tr>
            <tr>
-             <td><code>telephoneNumber</code></td>
-             <td>Telephone Number</td>
-           </tr>
-           <tr>
-             <td><code>schacPersonalPosition</code></td>
-             <td>Personal Position</td>
-           </tr>
-           <tr>
-             <td><code>ou</code></td>
-             <td>Organizational unit(s)</td>
-           </tr>
-           <tr>
-             <td><code>o</code></td>
-             <td>Standard name of the top-level organization (institution) with which you are associated.</td>
-           </tr>
-           <tr>
-             <td><code>eduPersonOrgDN</code></td>
-             <td>The distinguished name (DN) of the directory entry representing the institution with which you are associated.</td>
-           </tr>
-           <tr>
-             <td><code>eduPersonOrgUnitDN</code></td>
-             <td>The distinguished name(s) (DN) of the directory entries representing your Organizational Unit(s).</td>
+             <td><code>schacPersonalUniqueID</code></td>
+             <td>Unique Legal Identifier of a person</td>
            </tr>
            <tr>
              <td><code>schacHomeOrganization</code></td>
@@ -172,6 +108,10 @@
            <tr>
              <td><code>eduPersonEntitlement</code></td>
              <td>A simple example would be a URL for a contract with a licensed resource provider</td>
+           </tr>
+           <tr>
+             <td><code>eduPersonOrcid</code></td>
+             <td>ORCID user identifier released and managed by orcid.org</td>
            </tr>
          </table>
          <p><a href="https://www.idem.garr.it/it/servizi/sp" target="_blank">Resource list available as member of the {{ idp_login['fed_info']['federation']['en']['name'] }}</a> that you can access with this Identity Provider.</p>

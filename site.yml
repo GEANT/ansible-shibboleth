@@ -1,4 +1,4 @@
 ---
 # file: site.yml
-- include: shib-idp-servers.yml
-- include: shib-idp-idm-servers.yml
+- import_playbook: shib-idp-servers.yml
+- import_playbook: shib-idp-idm-servers.yml

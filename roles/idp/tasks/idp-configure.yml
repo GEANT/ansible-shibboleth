@@ -147,6 +147,8 @@
    mode: "0644"
    validate_certs: "{{ item.disregardTLSCertificate }}"
   with_items: "{{ idp_metadata_providers }}"
+  notify:
+   - "Restart Jetty"
   tags: idp
 
 # Jetty IdP Configuration

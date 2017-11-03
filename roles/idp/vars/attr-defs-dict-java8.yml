@@ -415,7 +415,7 @@ idp_attrDef:
          it: "ORCID"
       DisplayDescription:
          en: "ORCID user identifier released and managed by orcid.org"
-         it: "Identificativi ricercatore ORCID dell’utente assegnati e gestiti da orcid.org"
+         it: "Identificativo ORCID del ricercatore assegnato e gestito da orcid.org"
       AttributeEncoder:
          SAML2String:
             type: "SAML2String"

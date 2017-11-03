@@ -1,13 +1,18 @@
 ---
 # tasks file for check_mk
+- name: "DEBUG CheckMK"
+  debug:
+   msg: "ansible_os_family: {{ ansible_os_family }}"
+  tags: check_mk_agent
+
 - name: "Include OS-specific variables."
   include_vars: "{{ ansible_os_family }}.yml"
   tags: check_mk_agent
 
 - name: "Install Check_MK"
-  include: check_mk_agent-install.yml
+  import_tasks: check_mk_agent-install.yml
   tags: check_mk_agent
 
 - name: "Configure Check_MK"
-  include: check_mk_agent-configure.yml
+  import_tasks: check_mk_agent-configure.yml
   tags: check_mk_agent
