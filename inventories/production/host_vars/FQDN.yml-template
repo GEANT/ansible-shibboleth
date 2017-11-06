@@ -91,6 +91,7 @@ idp_config:
 
 idp_login:
  create_info_and_pp_pages: "Yes"
+ idp_url_password_reset: "{{ url_password_reset }}"
  footer_text_color: "#ffffff"
  footer_background_color: "#717171"
  footer:
