@@ -67,30 +67,46 @@
    - check_mk['check_rs'] in ["Yes","yes","True","true"]
   tags: idp
 
-- name: "Load fake RS SP Metadata in the '/metadata' directory of the IdP"
-  copy:
-   src: "files/metadata/fake-rs-sp.xml"
-   dest: "/opt/shibboleth-idp/metadata/fake-rs-sp.xml"
-   owner: "jetty"
-   group: "root"
-   mode: 0644
+- name: "Add 'check_rs' probe to CheckMK for {{ fqdn }}"
+  uri:
+   url: "https://{{ check_mk['srv'] }}/{{ check_mk['site'] }}/check_mk/webapi.py?action=discover_services&_username={{ check_mk['api_user_name'] }}&_secret={{ check_mk['api_user_secret'] }}&mode=new&hostname={{ fqdn }}"
+   method: GET
+   status_code: 200
   when:
    - check_mk is defined
-   - check_mk['srv'] is defined
-   - check_mk['check_rs'] is defined
-   - check_mk['check_rs'] in ["Yes","yes","True","true"]
+   - check_mk['check_idp'] is defined and check_mk['check_idp'] in ["True","true","Yes","yes"]
+   - check_mk['srv'] is defined and check_mk['srv'] != ''
+   - check_mk['site'] is defined and check_mk['site'] != ''
+   - check_mk['api_user_name'] is defined and check_mk['api_user_name'] != ''
+   - check_mk['api_user_secret'] is defined and check_mk['api_user_secret'] != ''
+   - check_mk['check_rs'] is defined and check_mk['check_rs'] in ["Yes","yes","True","true"]
   tags: idp
 
-- name: "Remove fake RS SP probe if 'check_rs' is negative"
+
+- name: "Remove fake RS SP probe from {{ fqdn }}"
   file:
    dest: "{{ item }}"
    state: "absent"
   with_items:
    - "/usr/lib/check_mk_agent/local/check_rs.py"
-   - "/opt/shibboleth-idp/metadata/fake-rs-sp.xml"
   when:
    - check_mk is defined
    - check_mk['srv'] is not defined or check_mk['check_rs'] is not defined or check_mk['check_rs'] in ["No","no","False","false"]
+  tags: idp
+
+- name: "Remove 'check_rs' probe from CheckMK for {{ fqdn }}"
+  uri:
+   url: "https://{{ check_mk['srv'] }}/{{ check_mk['site'] }}/check_mk/webapi.py?action=discover_services&_username={{ check_mk['api_user_name'] }}&_secret={{ check_mk['api_user_secret'] }}&mode=remove&hostname={{ fqdn }}"
+   method: GET
+   status_code: 200
+  when:
+   - check_mk is defined
+   - check_mk['check_idp'] is defined and check_mk['check_idp'] in ["True","true","Yes","yes"]
+   - check_mk['srv'] is defined and check_mk['srv'] != ''
+   - check_mk['site'] is defined and check_mk['site'] != ''
+   - check_mk['api_user_name'] is defined and check_mk['api_user_name'] != ''
+   - check_mk['api_user_secret'] is defined and check_mk['api_user_secret'] != ''
+   - check_mk['check_rs'] is defined and check_mk['check_rs'] in ["No","no","False","false"] or check_mk['check_rs'] is not defined
   tags: idp
 
 - name: "Put 'check_coco' probe in the Check_MK plugin '/local' directory"
@@ -107,32 +123,42 @@
    - check_mk['check_coco'] in ["Yes","yes","True","true"]
   tags: idp
 
-- name: "Load fake CoCo SP Metadata in the '/metadata' directory of the IdP"
-  copy:
-   src: "files/metadata/fake-coco-sp.xml"
-   dest: "/opt/shibboleth-idp/metadata/fake-coco-sp.xml"
-   owner: "jetty"
-   group: "root"
-   mode: 0644
+- name: "Add 'check_coco' probe to CheckMK for {{ fqdn }}"
+  uri:
+   url: "https://{{ check_mk['srv'] }}/{{ check_mk['site'] }}/check_mk/webapi.py?action=discover_services&_username={{ check_mk['api_user_name'] }}&_secret={{ check_mk['api_user_secret'] }}&mode=new&hostname={{ fqdn }}"
+   method: GET
+   status_code: 200
   when:
    - check_mk is defined
-   - check_mk['srv'] is defined
-   - check_mk['check_coco'] is defined
-   - check_mk['check_coco'] in ["Yes","yes","True","true"]
-  notify:
-   - "Restart Jetty"
+   - check_mk['check_idp'] is defined and check_mk['check_idp'] in ["True","true","Yes","yes"]
+   - check_mk['srv'] is defined and check_mk['srv'] != ''
+   - check_mk['site'] is defined and check_mk['site'] != ''
+   - check_mk['api_user_name'] is defined and check_mk['api_user_name'] != ''
+   - check_mk['api_user_secret'] is defined and check_mk['api_user_secret'] != ''
+   - check_mk['check_coco'] is defined and check_mk['check_coco'] in ["Yes","yes","True","true"]
   tags: idp
 
-- name: "Remove fake CoCo SP probe if 'check_coco' is negative"
+- name: "Remove fake CoCo SP probe from {{ fqdn }}"
   file:
    dest: "{{ item }}"
    state: "absent"
   with_items:
    - "/usr/lib/check_mk_agent/local/check_coco.py"
-   - "/opt/shibboleth-idp/metadata/fake-coco-sp.xml"
   when:
    - check_mk is defined
    - check_mk['srv'] is not defined or check_mk['check_coco'] is not defined or check_mk['check_coco'] in ["No","no","False","false"]
-  notify:
-   - "Restart Jetty"
   tags: idp
+
+- name: "Remove 'check_coco' probe from CheckMK for {{ fqdn }}"
+  uri:
+   url: "https://{{ check_mk['srv'] }}/{{ check_mk['site'] }}/check_mk/webapi.py?action=discover_services&_username={{ check_mk['api_user_name'] }}&_secret={{ check_mk['api_user_secret'] }}&mode=remove&hostname={{ fqdn }}"
+   method: GET
+   status_code: 200
+  when:
+   - check_mk is defined
+   - check_mk['check_idp'] is defined and check_mk['check_idp'] in ["True","true","Yes","yes"]
+   - check_mk['srv'] is defined and check_mk['srv'] != ''
+   - check_mk['site'] is defined and check_mk['site'] != ''
+   - check_mk['api_user_name'] is defined and check_mk['api_user_name'] != ''
+   - check_mk['api_user_secret'] is defined and check_mk['api_user_secret'] != ''
+   - check_mk['check_coco'] is defined and check_mk['check_rs'] in ["No","no","False","false"] or check_mk['check_coco'] is not defined

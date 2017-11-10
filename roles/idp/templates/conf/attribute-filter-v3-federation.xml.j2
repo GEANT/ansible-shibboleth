@@ -5,6 +5,38 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
 
+{% if check_mk is defined and check_mk != '' %}
+{% if check_mk['spEntityID'] is defined and check_mk['spEntityID'] != '' %}
+    <AttributeFilterPolicy id="Test SP for Federation CheckMK">
+        <PolicyRequirementRule xsi:type="Requester" value="{{ check_mk['spEntityID'] }}" />
+        <AttributeRule attributeID="givenName">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="surname">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="displayName">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="commonName">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="email">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="eduPersonPrincipalName">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="eduPersonScopedAffiliation">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="eduPersonTargetedID">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+    </AttributeFilterPolicy>
+{% endif %}
+{% endif %}
+
     <!-- Rule for local Federation SPs -->
     <AttributeFilterPolicy id="releaseToFederation">
         <PolicyRequirementRule xsi:type="RegistrationAuthority"
@@ -55,9 +87,12 @@
         <AttributeRule attributeID="eduPersonOrgUnitDN">
             <PermitValueRule xsi:type="AttributeInMetadata" onlyIfRequired="true" />
         </AttributeRule>
+        <AttributeRule attributeID="eduPersonTargetedID">
+            <PermitValueRule xsi:type="AttributeInMetadata" onlyIfRequired="false" />
+        </AttributeRule>
         <AttributeRule attributeID="eduPersonScopedAffiliation">
             <PermitValueRule xsi:type="AND">
-                <Rule xsi:type="AttributeInMetadata" onlyIfRequired="true" />
+                <Rule xsi:type="AttributeInMetadata" onlyIfRequired="false" />
                 <Rule xsi:type="OR">
                     <Rule xsi:type="Value" value="faculty" ignoreCase="true" />
                     <Rule xsi:type="Value" value="student" ignoreCase="true" />

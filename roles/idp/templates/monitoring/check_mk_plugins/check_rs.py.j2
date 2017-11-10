@@ -43,6 +43,9 @@ if options.debug:
 os.environ["JAVA_HOME"] = "/usr/lib/jvm/default-java/jre"
 result = check_output(shlex.split('/opt/shibboleth-idp/bin/aacli.sh --saml2 --principal '+ user +' --requester ' + spEntityId))
 
+if options.debug:
+   print "/opt/shibboleth-idp/bin/aacli.sh --saml2 --principal %s --requester %s" % (user,spEntityId)
+
 namespaces = {
    'saml2': 'urn:oasis:names:tc:SAML:2.0:assertion'
 }
@@ -92,7 +95,6 @@ try:
    attrs = {
             'givenName':'givenName',
             'sn':'sn',
-            'displayName':'displayName',
             'mail':'mail',
             '@uid':'eduPersonPrincipalName'
            }

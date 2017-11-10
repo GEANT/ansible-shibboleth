@@ -196,7 +196,7 @@ idp_attrDef:
             encodeType: "false"
       Script: |
               <![CDATA[
-               logger = Java.type("org.slf4j.LoggerFactory").getLogger("net.shibboleth.idp.attribute.resolver.displayNamebuilder");
+               logger = Java.type("org.slf4j.LoggerFactory").getLogger("net.shibboleth.idp.attribute.resolver.displayNameBuilder");
                valueType =  Java.type("net.shibboleth.idp.attribute.StringAttributeValue");
 
                // This implementation composes the value of the attribute displayName
@@ -239,7 +239,6 @@ idp_attrDef:
                      logger.info('displayName final value: ' + displayName.getValues().get(0));
 
                   } else if (gn != null) {
-                     displayName = new IdPAttribute('displayName');
                      displayName.addValue(new valueType(gn));
                      logger.info('displayName final value: ' + displayName.getValues().get(0));
                   }

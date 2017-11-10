@@ -19,24 +19,26 @@
    </objectClasses>
    <attributes>
 
-      <attribute id="sn">
-         <hint>Example: Rossi</hint>
-         <display>Surname *</display>
-         <icon>ldap-uid.png</icon>
-         <onchange>=autoFill(cn;%givenName% %sn%)</onchange>
-         <order>1</order>
-         <page>1</page>
-      </attribute>
-      
       <attribute id="givenName">
          <hint>Example: Mario</hint>
          <display>Name *</display>
          <icon>ldap-uid.png</icon>
          <onchange>=autoFill(cn;%givenName% %sn%)</onchange>
+         <onchange>=autoFill(uid;%givenName/l%.%sn/l%)</onchange>
+         <order>1</order>
+         <page>1</page>
+      </attribute>
+ 
+      <attribute id="sn">
+         <hint>Example: Rossi</hint>
+         <display>Surname *</display>
+         <icon>ldap-uid.png</icon>
+         <onchange>=autoFill(cn;%givenName% %sn%)</onchange>
+         <onchange>=autoFill(uid;%givenName/l%.%sn/l%)</onchange>
          <order>2</order>
          <page>1</page>
       </attribute>
-      
+
       <attribute id="cn">
          <hint>Example: Mario Rossi</hint>
          <display>Name and Surname</display>
@@ -45,7 +47,7 @@
          <page>1</page>
          <spacer>1</spacer>
       </attribute>
-       
+
       <attribute id="schacPersonalUniqueID">
          <hint>Example: RSSMRA60B25F205H</hint>
          <display>Fiscal code *</display>
@@ -58,7 +60,7 @@
          <display>eduPersonOrcid</display>
          <hint>Example: http://orcid.org/0000-0002-1825-0097</hint>
          <icon>ldap-uid.png</icon>
-         <order>4</order>
+         <order>5</order>
          <page>1</page>
       </attribute>
 

@@ -5,33 +5,13 @@
     objectClass:
       - inetOrgPerson
       - eduPerson
-      - schacPersonalCharacteristics
       - schacLinkageIdentifiers
-      - schacContactLocation
-      - schacEmployeeInfo
-      - schacExperimentalOC
       - schacEntryMetadata
     attributes:
       uid: "testuser"
       sn: "User"
       givenName: "Test"
       cn: "Test User"
-      displayName: "Test User"
-      schacDateOfBirth: "20170501"
-      schacYearOfBirth: "2017"
-      schacPlaceOfBirth: "Rome"
       schacPersonalUniqueID: "urn:schac:personalUniqueID:IT:CF:TSTUSR17F08G321G"
-      street: "Example Street 1"
-      l: "Rome"
-      postalCode: "00000"
-      st: "Rome"
       mail: "testuser@{{ ldap['domain'] }}"
-      telephoneNumber: "+398324732194"
-      schacPersonalPosition: "urn:schac:personalPosition:IT:{{ ldap['domain'] }}:Example Position"
-      o: "Example Organization"
-      ou: "Example Organizational Unit"
-      eduPersonOrgDN: "o=Example Organization,{{ ldap['basedn'] }}"
-      eduPersonOrgUnitDN: "ou=Example Organizational Unit,o=Example Organization,{{ ldap['basedn'] }}"
-      schacHomeOrganization: "{{ ldap['domain'] }}"
-      schacHomeOrganizationType: "urn:schac:homeOrganizationType:it:other"
       eduPersonAffiliation: "member"

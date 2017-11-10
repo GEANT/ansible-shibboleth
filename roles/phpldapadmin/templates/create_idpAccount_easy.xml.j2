@@ -19,20 +19,22 @@
    </objectClasses>
    <attributes>
 
-      <attribute id="sn">
-         <hint>Example: Rossi</hint>
-         <display>Surname *</display>
-         <icon>ldap-uid.png</icon>
-         <onchange>=autoFill(cn;%givenName% %sn%)</onchange>
-         <order>1</order>
-         <page>1</page>
-      </attribute>
-     
       <attribute id="givenName">
          <hint>Example: Mario</hint>
          <display>Name *</display>
          <icon>ldap-uid.png</icon>
          <onchange>=autoFill(cn;%givenName% %sn%)</onchange>
+         <onchange>=autoFill(uid;%givenName/l%.%sn/l%)</onchange>
+         <order>1</order>
+         <page>1</page>
+      </attribute>
+
+      <attribute id="sn">
+         <hint>Example: Rossi</hint>
+         <display>Surname *</display>
+         <icon>ldap-uid.png</icon>
+         <onchange>=autoFill(cn;%givenName% %sn%)</onchange>
+         <onchange>=autoFill(uid;%givenName/l%.%sn/l%)</onchange>
          <order>2</order>
          <page>1</page>
       </attribute>
