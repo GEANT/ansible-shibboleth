@@ -14,11 +14,11 @@
    - "Restart Apache"
   tags: pla
 
-- name: "Be sure to configure 'admin' user for phpLDAPadmin"
+- name: "Be sure to configure '{{ pla['web_gui_user'] }}' user for phpLDAPadmin"
   htpasswd:
    path: /etc/apache2/htpasswd
-   name: admin
-   password: "{{ ldap['root_pw'] }}"
+   name: "{{ pla['web_gui_user'] }}"
+   password: "{{ pla['web_gui_pw'] }}"
    owner: root
    group: root
    mode: 0644

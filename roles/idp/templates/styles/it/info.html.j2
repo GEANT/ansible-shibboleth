@@ -35,8 +35,7 @@
                </a>
             </div>
          </div>
-         Il {{ idp_metadata['it']['mdui_displayName'] }} partecipa a IDEM (IDEntity Management federato per l'accesso ai servizi) 
-         per la realizzazione dell'Infrastruttura di Autenticazione e Autorizzazione federata della rete GARR.
+         <strong>{{ idp_metadata['it']['mdui_displayName'] }}</strong> partecipa a <strong>IDEM</strong> (<strong>IDE</strong>ntity <strong>M</strong>anagement federato per l'accesso ai servizi) per la realizzazione dell'Infrastruttura di Autenticazione e Autorizzazione federata della rete GARR.
          <br/>
          Le credenziali di accesso vengono conferite a [...elencare le tipologie di utenti].
          <br/>
@@ -53,11 +52,11 @@
 
          <h3> REFERENTE TECNICO PER L'IDENTITY PROVIDER: </h3>
          <p> Nome Cognome: {{ idp_contacts['technical']['givenName'] }} {{ idp_contacts['technical']['surName'] }}</p>
-         <p> e-mail: <a href="mailto:{{ idp_contacts['technical']['mail'] }}">Contato Tecnico</a></p>
+         <p> e-mail: <a href="mailto:{{ idp_contacts['technical']['mail'] }}">Contatto Tecnico</a></p>
          <p> tel.:</p>
     
          <h3> INFORMAZIONI SUL RILASCIO DEGLI ATTRIBUTI UTENTE AI FORNITORI DI RISORSE:</h3>
-         <p>Il {{ idp_metadata['it']['mdui_displayName'] }} mediante questo Identity Provider può trasmettere alla Risorsa a cui Lei chiede di accedere alcune informazioni (attributi) su di Lei, su richiesta della Risorsa stessa.<br />
+         <p>{{ idp_metadata['it']['mdui_displayName'] }} mediante questo Identity Provider può trasmettere alla Risorsa a cui Lei chiede di accedere alcune informazioni (attributi) su di Lei, su richiesta della Risorsa stessa.<br />
          Tali informazioni sono:</p>
          <ul>
             <li>Necessarie per ricevere il servizio richiesto</li>

@@ -82,7 +82,6 @@
    - check_mk['check_rs'] is defined and check_mk['check_rs'] in ["Yes","yes","True","true"]
   tags: idp
 
-
 - name: "Remove fake RS SP probe from {{ fqdn }}"
   file:
    dest: "{{ item }}"

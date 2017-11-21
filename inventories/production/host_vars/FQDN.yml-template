@@ -88,6 +88,8 @@ idp_config:
   salt: "random_string"
   loghost: "localhost"
   logport: "514"
+ sup_rs: "yes"
+ sup_coco: "yes"
 
 idp_login:
  create_info_and_pp_pages: "Yes"
@@ -212,8 +214,8 @@ check_mk:
  ldap_url: "{{ idp_config['ldap']['url'] }}"
  ldap_useStartTLS: "{{ idp_config['ldap']['useStartTLS'] }}"
  idp_scope: "{{ idp_config['scope'] }}"
- check_rs: "yes"
- check_coco: "yes"
+ check_rs: "{{ idp_config['sup_rs'] }}"
+ check_coco: "{{ idp_config['sup_coco'] }}"
 
 ### phpLDAPadmin Variables
 pla:
@@ -226,6 +228,8 @@ pla:
   url: "{{ ldap['url'] }}"
   root_dn: "{{ ldap['root_dn'] }}"
   root_pw: "{{ ldap['root_pw'] }}"
+ web_gui_user: "## PLA GUI USER"
+ web_gui_pw: "## PLA GUI PASSWORD ##"
 
 ### RSYNC Variables
 rsync:

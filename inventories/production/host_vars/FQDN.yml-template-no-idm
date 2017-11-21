@@ -76,6 +76,8 @@ idp_config:
   salt: "random_string"
   loghost: "localhost"
   logport: "514"
+ sup_rs: "yes"
+ sup_coco: "yes"
 
 idp_login:
  create_info_and_pp_pages: "Yes"
@@ -200,6 +202,8 @@ check_mk:
  ldap_url: "{{ idp_config['ldap']['url'] }}"
  ldap_useStartTLS: "{{ idp_config['ldap']['useStartTLS'] }}"
  idp_scope: "{{ idp_config['scope'] }}"
+ check_rs: "{{ idp_config['sup_rs'] }}"
+ check_coco: "{{ idp_config['sup_coco'] }}"
 
 ### RSYNC Variables
 rsync:
