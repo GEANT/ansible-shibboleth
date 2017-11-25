@@ -1,0 +1,7 @@
+- name: FLUP environment setup
+  import_tasks: setup.yml
+  tags: flup
+
+- name: FLUP deploy
+  import_tasks: deploy.yml
+  tags: flup

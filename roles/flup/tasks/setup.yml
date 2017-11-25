@@ -1,0 +1,28 @@
+- name: Install debian packages for python application
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - python-dev
+    - python-setuptools
+    - python-mysqldb
+    - libmysqlclient-dev
+    - sqlite3
+    - libxml2-dev
+    - libxslt-dev
+    - libldap2-dev
+    - libsasl2-dev
+    - git
+    - build-essential
+    - apache2
+    - libapache2-mod-wsgi
+  
+- name: install pip
+  easy_install:
+    name: pip
+    state: latest
+  
+- name: install virtualenv
+  pip:
+    name: virtualenv
+

@@ -1,0 +1,10 @@
+Alias /flup/static /opt/flup/flup/static
+
+WSGIDaemonProcess flup threads=10 user=www-data group=www-data
+WSGIScriptAlias /flup /opt/flup/flup.wsgi
+WSGIProcessGroup flup
+WSGIApplicationGroup %{GLOBAL}
+
+<Directory /opt/flup/>
+    Require all granted
+</Directory>

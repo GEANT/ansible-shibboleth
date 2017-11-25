@@ -1,0 +1,42 @@
+# APPLICATION ROOT
+APPLICATION_ROOT = '/flup'
+
+# DEBUG
+DEBUG = False
+TRAP_BAD_REQUEST_ERRORS = False
+
+# DB
+SQLALCHEMY_DATABASE_URI = 'sqlite:////opt/flup/flup/data/app.db'
+SQLALCHEMY_TRACK_MODIFICATIONS = True
+
+# SECRET_KEY
+SECRET_KEY = 'fdadfetre82302394839u0dsfomdovkn23er124'
+
+# SESSION SECURE COOKIE
+#SESSION_COOKIE_SECURE = True
+
+
+# LDAP
+LDAPURI = "{{ ldapuri }}"
+BINDDN = "{{ binddn }}"
+BINDPW = "{{ bindpw }}"
+BASEDN = "{{ basedn }}"
+
+# BABEL
+
+SUPPORTED_LANGUAGES = {'it': 'Italian', 'en': 'English'}
+BABEL_DEFAULT_LOCALE = 'it'
+BABEL_DEFAULT_TIMEZONE = 'Europe/Rome'
+
+# HOSTNAME
+
+IDP_BASE_URL = "{{ idp_base_url }}"
+
+# ORGNAME
+ORGNAME = "{{ orgname }}"
+
+# MAIL
+
+MAIL_SERVER = '{{ mail_server }}'
+MAIL_DEFAULT_SENDER = '{{ mail_default_sender }}'
+MAIL_SIGNATURE = ORGNAME + "\nIdP in the Cloud - GARR IDEM AAI"

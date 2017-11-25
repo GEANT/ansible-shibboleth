@@ -1,0 +1,11 @@
+orgname: "{{ idp_metadata['it']['mdui_description'] }}"
+repo: https://github.com/daserzw/flup.git
+ldapuri: ldap://localhost
+binddn: "{{ ldap['root_dn'] }}"
+bindpw: "{{ ldap['root_pw'] }}"
+basedn: "{{ ldap['basedn'] }}"
+idp_base_url: "https://{{ fqdn }}"
+mail_server: "smtp.aai.garr.it"
+mail_default_sender: "noreply@smtp.aai.garr.it"
+mail_signature: "{{ orgname }}\nIDEM GARR AAI - IdP in the Cloud"
+

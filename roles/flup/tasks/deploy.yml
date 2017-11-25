@@ -1,0 +1,42 @@
+- name: Clone the FLUP repository
+  git:
+    repo: "{{ repo }}"
+    dest: /opt/flup
+    force: yes
+    
+- name: Create app virtualenv
+  shell: virtualenv /opt/flup/venv
+  
+- name: Install pip requirements
+  pip:
+    requirements: /opt/flup/requirements.txt
+    virtualenv: /opt/flup/venv
+    
+- name: Install FLUP configuration
+  template:
+    src: config.py.j2
+    dest: /opt/flup/flup/config.py
+  
+- name: Install FLUP apache2 config
+  template:
+    src: flup.conf.j2
+    dest: /etc/apache2/conf-available/flup.conf
+  
+- name: Enable FLUP apache2 config
+  shell: a2enconf -q flup
+  
+- name: Install FLUP wsgi runner
+  copy:
+    src: flup.wsgi
+    dest: /opt/flup/flup.wsgi
+
+- name: Change permission for db dir
+  file:
+    path: /opt/flup/flup/data
+    owner: www-data
+    group: www-data
+    
+- name: Restart apache2
+  service:
+    name: apache2
+    state: restarted
