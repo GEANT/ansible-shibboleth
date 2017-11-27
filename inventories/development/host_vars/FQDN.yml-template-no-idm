@@ -16,24 +16,24 @@
 ### Machine Variables
 fqdn: FQDN
 
-### For self-signed certs use ca: "{{ fqdn }}.crt
+### For self-signed certs use ca: "{{ fqdn }}.crt"
 common:
-   ca: "ca.crt"
-   ssl_cert: "{{ fqdn }}.crt"
-   ssl_key: "{{ fqdn }}.key"
+ ca: "ca.crt"
+ ssl_cert: "{{ fqdn }}.crt"
+ ssl_key: "{{ fqdn }}.key"
 
 apache:
-   admin_email: "{{ idp_contacts['technical']['mail'] }}"
+ admin_email: "{{ idp_contacts['technical']['mail'] }}"
 
 ### JDK Variables - Default "openjdk"
 jdk_type: "oraclejdk"
 jdk_version: "8"
 
 ### MySQL Variables
-mysql:
-   root_password: "mysql-root-password"
-
 idp_db_restore: "false"
+
+mysql:
+ root_password: "mysql-root-password"
 
 ### RSYSLOG Server
 rsyslog_srv:
@@ -52,28 +52,28 @@ idp_config:
  shibboleth_db_password: "root-db-password"
  scope: "example.org"
  idp_sourceAttribute: "uid"
- idp_persistentId_salt: "OS0wCcdZADpiIR2VqyNKOW62YOPQNYRPDzN1u5uuW-qUkynS"
+ idp_persistentId_salt: "## RANDOM_LONG_STRING_1 ##"
  ldap:
   authenticator: "bindSearchAuthenticator"
-  url: "ldap://host:port_or_ldaps://host:port"
+  url: "## ldap://host:port or ldaps://host:port ##"
   useStartTLS: "false"
   useSSL: "false"
   connectTimeout: "3000"
   sslConfig: "certificateTrust"
   trustCertificates: "/etc/ssl/certs/CAcert.pem"
-  baseDN: "ou=people,dc=example,dc=org"
+  baseDN: "ou=people,{{ ldap['basedn'] }}"
   subtreeSearch: "true"
   userFilter: "(uid={user})"
-  bindDN: "cn=idpuser,ou=system,dc=example,dc=org"
+  bindDN: "cn=idpuser,ou=system,{{ ldap['basedn'] }}"
   bindDNCredential: "idpuserpassword"
   searchFilter: "(uid=$resolutionContext.principal)"
   returnAttributes: "*"
   ppolicy:
    change_password_url: "#"
  fticks:
-  federation: "FederationName"
+  federation: "IDEM GARR AAI"
   alg: "SHA-256"
-  salt: "random_string"
+  salt: "## RANDOM_LONG_STRING_2 ##"
   loghost: "localhost"
   logport: "514"
 
@@ -105,6 +105,8 @@ idp_login:
     name: "IDEM GARR AAI"
     url: "http://www.idem.garr.it/"
     logo: "/images/federation-logo.png"
+ sup_rs: "yes"
+ sup_coco: "yes"
 
 ### IDP Metadata Variables
 idp_federation_regAuth: "https://registration.authority.com/"
@@ -121,7 +123,7 @@ idp_metadata:
   org_displayName: "Organization english Display Name"
   org_url: "http://www.orgUrl.uk/"
  it:
-  mdui_displayName: "Nome IDP in italiano"
+  mdui_displayName: "Nome IdP in italiano"
   mdui_description: "IDP di Test per Nome Organizzazione"
   mdui_infoUrl: "https://{{ fqdn }}/it/info.html"
   mdui_privacyUrl: "https://{{ fqdn }}/it/privacy.html"
@@ -143,9 +145,9 @@ idp_contacts:
 
 ### Federation Metadata URL
 idp_metadata_providers:
- - id:  "CUSTOM-FEDERATION"
-   file: "custom-fed-metadata.xml"
-   url: "## CUSTOM FEDERATION METADATA URL ##"
+ - id: "CUSTOM-FEDERATION"
+   file: "custom-metadata.xml"
+   url: "## CUSTOM-FEDERATION METADATA URL ##"
    maxValidInterval: "P5D"
    disregardTLSCertificate: "true"
  - id: "IDEM-TEST-FEDERATION"
@@ -178,9 +180,9 @@ idp_metadata_providers:
 ### Statistics Web App
 idp_stats:
  fed_name: "{{ idp_metadata_providers[1]['id'] }}"
- fed_site: "## FEDERATION SITE ##"
  fed_md: "{{ idp_metadata_providers[1]['file'] }}"
- idp_stats_db_pw: "## STATISTICS DB PASSWORD ##"
+ fed_site: "## FEDERATION SITE ##"
+ db_pw: "## STATISTICS DB PASSWORD ##"
 
 ### CHECK_MK Monitoring Server
 check_mk:
@@ -195,10 +197,12 @@ check_mk:
  baseDN: "{{ idp_config['ldap']['baseDN'] }}"
  searchuser: "{{ idp_config['ldap']['bindDN'] }}"
  searchuser_pw: "{{ idp_config['ldap']['bindDNCredential'] }}"
- userid_attr: "## UNIQUE-ID ATTRIBUTE OF LDAP USERS ##"
+ userid_attr: "## UNIQUE-ID ATTRIBUTE OF LDAP USERS (uid)##"
  ldap_url: "{{ idp_config['ldap']['url'] }}"
  ldap_useStartTLS: "{{ idp_config['ldap']['useStartTLS'] }}"
  idp_scope: "{{ idp_config['scope'] }}"
+ check_rs: "{{ idp_config['sup_rs'] }}"
+ check_coco: "{{ idp_config['sup_coco'] }}"
 
 ### RSYNC Variables
 rsync:

@@ -1,42 +1,91 @@
-- name: Clone the FLUP repository
+- name: "Check if GIT FLUP repository is already downloaded"
+  stat:
+   path: "/opt/flup"
+  register: flup_git
+  changed_when: false
+   
+- name: "Clone the FLUP repository"
   git:
-    repo: "{{ repo }}"
-    dest: /opt/flup
-    force: yes
-    
-- name: Create app virtualenv
+   repo: "{{ repo }}"
+   dest: /opt/flup
+   force: yes
+  when:
+   - flup_git.stat.isdir is undefined 
+
+- name: "Check if virtualenv is already created"
+  stat:
+   path: "/opt/flup/venv"
+  register: flup_venv
+  changed_when: false
+
+- name: "Create app virtualenv"
   shell: virtualenv /opt/flup/venv
+  when:
+   - flup_venv.stat.isdir is undefined
   
-- name: Install pip requirements
+- name: "Install pip requirements"
   pip:
     requirements: /opt/flup/requirements.txt
     virtualenv: /opt/flup/venv
-    
-- name: Install FLUP configuration
+  when:
+   - flup_venv.stat.isdir is undefined
+
+- name: "Check if FLUP configuration is already created"
+  stat:
+   path: "/opt/flup/flup/config.py"
+  register: flup_config
+  changed_when: false
+
+- name: "Install FLUP configuration"
   template:
     src: config.py.j2
     dest: /opt/flup/flup/config.py
+  when:
+   - flup is defined
+   - flup['secret_key'] is defined and flup['secret_key'] != ''
   
-- name: Install FLUP apache2 config
+- name: "Install FLUP apache2 config"
   template:
     src: flup.conf.j2
     dest: /etc/apache2/conf-available/flup.conf
   
-- name: Enable FLUP apache2 config
-  shell: a2enconf -q flup
-  
-- name: Install FLUP wsgi runner
-  copy:
-    src: flup.wsgi
-    dest: /opt/flup/flup.wsgi
+- name: "Check if Apache FLUP site is already created"
+  stat:
+   path: "/etc/apache2/conf-enabled/flup.conf"
+  register: flup_apache
+  changed_when: false
 
-- name: Change permission for db dir
+- name: "Enable FLUP apache2 config"
+  shell: a2enconf -q flup
+  when: 
+   - flup_apache.stat.exists == False
+  notify:
+   - "Restart Apache"
+  
+- name: "Install FLUP wsgi runner"
+  replace:
+   path: /opt/flup/flup.wsgi
+   regexp: "{{ item['regexp'] }}"
+   replace: "{{ item['replace'] }}"
+  with_items:
+   - { regexp: "/opt/flup-dist/venv/bin/activate_this.py", replace: "/opt/flup/venv/bin/activate_this.py" }
+   - { regexp: "/opt/flup-dist/flup/", replace: "/opt/flup/" }
+  notify:
+   - "Restart Apache"
+
+- name: "Check if 'data' dir has already 'www-data' as owner and group"
+  stat:
+   path: "/opt/flup/flup/data"
+  register: flup_perms
+  changed_when: false
+
+- name: "Change permission for DB dir"
   file:
-    path: /opt/flup/flup/data
-    owner: www-data
-    group: www-data
-    
-- name: Restart apache2
-  service:
-    name: apache2
-    state: restarted
+   path: /opt/flup/flup/data
+   owner: www-data
+   group: www-data
+  when: 
+   - flup_perms.stat.pw_name != "www-data"
+   - flup_perms.stat.gr_name != "www-data"
+  notify:
+   - "Restart Apache"

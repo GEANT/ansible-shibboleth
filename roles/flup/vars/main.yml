@@ -1,3 +1,4 @@
+secret_key: "{{ flup['secret_key'] | default('fdadfetre82302394839u0dsfomdovkn23er124') }}"
 orgname: "{{ idp_metadata['it']['mdui_description'] }}"
 repo: https://github.com/daserzw/flup.git
 ldapuri: ldap://localhost
@@ -7,5 +8,4 @@ basedn: "{{ ldap['basedn'] }}"
 idp_base_url: "https://{{ fqdn }}"
 mail_server: "smtp.aai.garr.it"
 mail_default_sender: "noreply@smtp.aai.garr.it"
-mail_signature: "{{ orgname }}\nIDEM GARR AAI - IdP in the Cloud"
-
+mail_signature: "{{ orgname }}\\nIDEM GARR AAI - IdP in the Cloud"

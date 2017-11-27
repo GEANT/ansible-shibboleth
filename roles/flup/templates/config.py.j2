@@ -10,7 +10,8 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:////opt/flup/flup/data/app.db'
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 # SECRET_KEY
-SECRET_KEY = 'fdadfetre82302394839u0dsfomdovkn23er124'
+#SECRET_KEY = 'fdadfetre82302394839u0dsfomdovkn23er124'
+SECRET_KEY = "{{ flup['secret_key'] }}"
 
 # SESSION SECURE COOKIE
 #SESSION_COOKIE_SECURE = True
@@ -37,6 +38,6 @@ ORGNAME = "{{ orgname }}"
 
 # MAIL
 
-MAIL_SERVER = '{{ mail_server }}'
-MAIL_DEFAULT_SENDER = '{{ mail_default_sender }}'
-MAIL_SIGNATURE = ORGNAME + "\nIdP in the Cloud - GARR IDEM AAI"
+MAIL_SERVER = "{{ mail_server }}"
+MAIL_DEFAULT_SENDER = "{{ mail_default_sender }}"
+MAIL_SIGNATURE = "{{ mail_signature }}"

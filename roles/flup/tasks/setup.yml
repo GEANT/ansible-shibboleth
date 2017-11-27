@@ -1,4 +1,4 @@
-- name: Install debian packages for python application
+- name: "Install debian packages for python application"
   apt:
     name: "{{ item }}"
     state: latest
@@ -17,12 +17,12 @@
     - apache2
     - libapache2-mod-wsgi
   
-- name: install pip
+- name: "Install pip"
   easy_install:
     name: pip
     state: latest
   
-- name: install virtualenv
+- name: "Install virtualenv"
   pip:
     name: virtualenv
 

@@ -10,6 +10,7 @@
     - jdk
     - jetty
     - openldap
+    - flup
     - mysql
     - idp
     - phpldapadmin

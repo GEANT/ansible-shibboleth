@@ -13,6 +13,19 @@
             width: 100%;
             padding: 15%;
          }
+         table {
+            width: 100%;
+            background-color: #FFFFFF;
+            color: #000000;
+            border-color: #000000;
+            border-collapse: collapse;
+         }
+         th, td {
+            width: 40%;
+         }
+         td {
+            padding: 20px;
+         }
       </style>
    </head>
 
@@ -35,85 +48,137 @@
                </a>
             </div>
          </div>
-         <h3>Privacy</h3>
-         La presente informativa è resa ai sensi dell'articolo 13 del Decreto Legislativo n.196 del 2003, Codice in Materia di Protezione dei Dati Personali, a coloro che interagiscono con i servizi web dell'{{ idp_metadata['en']['mdui_displayName'] }} accessibili per via telematica.
+         <h3>Trattamento dei dati personali (Privacy Policy)</h3>
+         <table border="1" cellspacing="0" cellpadding="0">
+            <tbody>
+               <tr>
+                  <td>Nome del Servizio</td>
+                  <td>
+                     <p><strong>Per contraente:</strong> IdP in the Cloud offerto dal Consortium GARR</p>
+                     <p><strong>Per utente (interessato):</strong> Identity Provider</p>
+                  </td>
+               </tr>
+               <tr>
+                  <td>Descrizione del Servizio</td>
+                  <td>
+                     <p><strong>Per contraente:</strong> Servizio di Identity as a Service integrato in una appliance virtualizzata e fornita sulla cloud del GARR.</p>
+                     <p><strong>Per utente (interessato):</strong> Servizio di autenticazione federata offerto dall’organizzazione di appartenenza.</p>
+                  </td>
+               </tr>
+               <tr>
+                  <td>Titolari del Trattamento</td>
+                  <td>
+                     <p><strong>Per contraente:</strong></p>
+                     <ul>
+                        <li><strong>Nome:</strong></li>
+                        <li><strong>Email:</strong></li>
+                     </ul>
+                     <strong>Consortium GARR – Via dei Tizii, 6 – 00185 ROMA, IT</strong>
+                     <ul>
+                        <li><strong>Nome:</strong></li>
+                        <li><strong>Email:</strong></li>
+                     </ul>
+                     <br/>
+                     <p>Il Contraente e il Consortium GARR sono contitolari del trattamento dei dati personali gestiti tramite il Servizio, ai sensi dell’art.26 del GDPR.</p>
+                     <br/>
+                     <p>Il Contraente è responsabile riguardo all'esercizio dei diritti dell'interessato a alla comunicazione delle informazioni di cui agli articoli 13 e 14 del GDPR.</p>
+                  </td>
+               </tr>
+               <tr>
+                  <td>Responsabile della Protezione dei Dati (GDPR Sezione 4) (se applicabile)</td>
+                  <td>Non applicabile</td>
+               </tr>
+               <tr>
+                  <td><p>Giurisdizione e <br/><br/>autorità di controllo</p></td>
+                  <td>
+                     <p><strong><p>IT-IT</p></strong></p>
+                     <p><strong>Garante per la Protezione dei Dati Personali</strong><br/>Come presentare una denuncia all'autorità competente per la protezione dei dati:<br/>
+<a href="http://www.garanteprivacy.it/home/diritti/come-agire-per-tutelare-i-nostri-dati-personali">http://www.garanteprivacy.it/home/diritti/come-agire-per-tutelare-i-nostri-dati-personali</a></p>
+                  </td>
+               </tr>
+               <tr>
+                  <td><p>Dati personali trattati e base legale per il trattamento</p></td>
+                  <td>
+                     <ol>
+                        <li>Alcuni o tutti tra i seguenti dati personali raccolti presso l’interessato da parte del Contraente:
+                           <ol>
+                              <li>
+                                 <strong>uno o più identificativi univoci</strong> (uid, schacPersonalUniqueID, eduPersonOrcid, eduPersonTargetedID, SAML persistent identifier);
+                              </li>
+                              <li><strong>credenziale di riconoscimento</strong> (userPassword);</li>
+                              <li><strong>nome e cognome</strong> (sn, givenName, cn, displayName);</li>
+                              <li><strong>indirizzo di posta elettronica</strong> (mail);</li>
+                              <li><strong>ruolo nell’organizzazione</strong> (eduPersonAffiliation,eduPersonEntitlement);</li>
+                              <li><strong>nome dell’organizzazione</strong> (schacHomeOrganization,schacHomeOrganizationType);</li>
+                           </ol>
+                        </li>
+                        <li>Dati personali raccolti direttamente presso l’interessato durante il normale utilizzo del servizio:
+                           <ol>
+                              <li>Preferenze relative al consenso all’utilizzo di Risorse in rete;</li>
+                              <li>Record di log del servizio IDP: identificativo utente, data e ora di utilizzo,  servizio richiesto, attributi trasmessi al servizio;</li>
+                              <li>Record di log degli altri servizi (http, ldap, …).</li>
+                           </ol>
+                        </li>
+                     </ol>
+                     <br/>
+                     <p>I dati personali raccolti sono raccolti e conservati in Italia in conformità con il GDPR. Il loro trattamento è necessario per fornire il servizio.</p>
+                  </td>
+               </tr>
+               <tr>
+                  <td><p>Scopo per il trattamento dei dati personali</p></td>
+                  <td>
+                     <p>Fornire il servizio di Identity Management as a Service e il servizio di Identity Provider as a Service al fine di autenticare l’interessato per l’accesso ai servizi in rete richiesti dall’interessato stesso.</p>
+                     <p>I dati personali (attributi) vengono trasmessi  a terze parti (Risorse) su richiesta dell’interessato allo scopo di ottenere il servizio richiesto.</p>
+                     <p>I dati di log contengono dati personali dell’interessato che vengono raccolti allo scopo di verificare il funzionamento del servizio e per garantire la sicurezza dello stesso.</p>
+                  </td>
+               </tr>
+               <tr>
+                  <td><p>Terze parti a cui vengono comunicati i dati</p></td>
+                  <td>
+                     <p>Il Contraente decide a quali terze parti comunicare i dati personali degli interessati, rispettando il principio di minimizzazione. I dati personali vengono trasmessi solamente nel momento in cui l’interessato richiede l’accesso alla Risorsa della terza parte ed allo scopo di ottenere il servizio fornito dalla Risorsa.</p>
+                     <p>Tali Risorse sono:
+                        <ul>
+                           <li>Tutte le Risorse della Federazione IDEM;
+                           <li>Le Risorse della Federazione eduGAIN che sono conformi al Data Protection Code of Conduct;
+                           <li>Le Risorse di eduGAIN che sono conformi a Research and Scholarship;
+                           <li>Tutte le Risorse della Federazione eduGAIN;
+                           <li>Altre Risorse specificate dal Contraente  ...
+                        </ul>
+                     </p>
+                     <p>Terze parti fuori dalla EEA:
+                        <ul>
+                           <li>Alcune Risorse conformi al Data Protection Code of Conduct;</li>
+                           <li>Alcune Risorse conformi a Research and Scholarship;</li>
+                           <li>Altre Risorse ...</li>
+                        </ul>
+                     </p>
+                  </td>
+               </tr>
+               <tr>
+                  <td><p>Come accedere, correggere, cancellare i dati personali e opporsi al loro trattamento.</p></td>
+                  <td><p>Contattare i titolari del trattamento indicati precedentemente.</p></td>
+               </tr>
+               <tr>
+                  <td><p>Ritiro del consenso dell’interessato</p></td>
+                  <td><p>Gli unici dati che vengono raccolti con il consenso dell’interessato sono le preferenze riguardo la trasmissione degli attributi a terze parti. Essi vengono raccolti on-line al momento del primo accesso alla Risorsa e possono essere eliminati, con il risultato di ritirare il consenso alla loro trasmissione, iniziando nuovamente la procedura di login e spuntando la casella <strong>"Ripulisci i permessi di rilascio di informazioni dati a questo servizio in precedenza"</strong></p></td>
+               </tr>
+               <tr>
+                  <td><p>Portabilità dei Dati</p></td>
+                  <td><p>Il Contraente può richiedere la portabilità dei dati relativi alle identità digitali, comprese le credenziali e le informazioni relative al consenso, che verranno forniti in formato aperto e ai sensi dell’Art. 20 del GDPR.
+Il servizio di portabilità è gratuito alla cessazione del servizio.</p></td>
+               </tr>
+               <tr>
+                  <td><p>Durata della Conservazione dei Dati</p></td>
+                  <td><p>Tutti i dati personali dell’interessato (attributi) sono conservati per tutto il tempo in cui è necessario fornire il servizio all’interessato. Se non è più necessario fornire il servizio, il contraente può disattivare un utente. Anche l’interessato può chiedere la disattivazione della propria utenza. In caso di disattivazione dell’utenza dell’interessato i dati sono conservati per ulteriori 18 mesi per poter valutare se l’utente deve/può essere riattivato. Dopo 18 mesi dalla disattivazione, se non è stata richiesta una riattivazione, tutti i dati dell’interessato vengono cancellati.</p>
+<p>I dati di log vengono conservati per 1 mese dalla raccolta, dopo di ché vengono anonimizzati con una procedura automatica.</p></td>
+               </tr>
+            </tbody>
+         </table>
 
-         Essa è riferita al solo Sito Istituzionale e non ha valore per siti web esterni eventualmente visitati dall'utente tramite link.
-
-         <a href="http://www.garanteprivacy.it/web/guest/home/docweb/-/docweb-display/docweb/1311248">Codice in Materia di Protezione dei Dati Personali</a>
-         <h3>Titolare del trattamento</h3>
-
-         Il titolare del trattamento dei dati personali è {{ idp_metadata['en']['mdui_displayName'] }} - [inserire l'indirizzo fisico dell'istituto].
-
-         <h3>Luogo di trattamento dei dati</h3>
-
-         I dati personali saranno comunicati dall'Istituto a soggetti, enti ed associazioni esterni per l'utilizzo delle risorse web federate e condivise.
-
-         <h3>Dati di navigazione</h3>
-
-         I sistemi informatici e le procedure software preposte al funzionamento del Sito acquisiscono, nel corso del loro normale esercizio, alcuni dati personali la cui trasmissione è implicita nell'uso dei protocolli di comunicazione di Internet o è utilizzata per migliorare la qualità del servizio offerto.
-
-         <br/>In questa categoria di dati rientrano gli indirizzi IP o i nomi a dominio dei computer utilizzati dagli utenti che si connettono al Sito, l'orario della richiesta, ed altri parametri relativi al sistema operativo e all'ambiente informatico dell'utente.
-
-         <h3>Cookie</h3>
-
-         I cookie utilizzati nei siti web d'Ateneo consentono di migliorare il servizio reso agli utenti, rendendo più efficace l’uso e/o abilitando determinate funzionalità. 
-         <br/>
-         <br><i>Cookie di sessione</i>
-         <br/>
-         I cookie di sessione sono indispensabili per gestire l’autenticazione ai servizi on-line e alle aree riservate. L’uso di tali cookie (che non vengono memorizzati in modo persistente sul computer dell’utente e si eliminano con la chiusura del browser) è strettamente limitato alla trasmissione di identificativi di sessione necessari per consentire l’esplorazione sicura ed efficiente del sito.
-         <br>La disabilitazione e l'assenza di questi cookie non consente l’utilizzo di parte dei servizi on line.
-         <br/>
-         <br/><i>Cookie di monitoraggio</i>
-         <br/>
-         L'{{ idp_metadata['it']['mdui_displayName'] }} si avvale del servizio di Google Analytics, un servizio di analisi dei dati fornito dalla società Google Inc, che consente di raccogliere informazioni, in forma aggregata, sul numero degli utenti e su come questi visitano il sito, e quindi elaborare statistiche generali sul servizio e sul suo utilizzo per finalità migliorative del servizio di comunicazione.
-         <br/>
-         <br/><i>Cookie di terze parti presenti sul sito</i>
-         <br/>
-         Visitando il Sito web {{ idp_metadata['it']['org_url'] }} l’utente potrebbe ricevere sul suo dispositivo anche cookie da siti gestiti da altre organizzazioni ("c.d cookies di "terze parti"): ciò accade perché sul Sito possono essere presenti elementi come, ad esempio, immagini, mappe, specifici link a pagine web di siti o servizi web. 
-         <br/>Questi cookies possono essere inviati al browser dell’utente da società terze direttamente dal loro siti web cui è possibile accedere navigando dal {{ idp_metadata['it']['org_url'] }}. 
-          
-         <br/>Ai fini della trasparenza informativa, di seguito si riporta una lista dei servizi di terze parti presenti sul sito, le finalità e i link alle pagine informative dei diversi servizi.
-          
-         <h3>Dati forniti volontariamente dall'utente</h3>
-
-         I dati personali dei ricercatori acquisiti saranno trattati per lo svolgimento delle proprie attività istituzionali, nei limiti stabiliti dalla legge e dai regolamenti, nel rispetto dei principi generali di trasparenza, correttezza e riservatezza.
-
-         <br/>Specifiche informative di sintesi verranno progressivamente riportate o visualizzate nelle pagine dei siti predisposte per particolari servizi a richiesta.
-
-         <h3>Modalità del trattamento</h3>
-
-         I dati personali sono trattati con strumenti automatizzati per il tempo strettamente necessario a conseguire gli scopi per cui sono stati raccolti. Specifiche misure di sicurezza sono osservate per prevenire la perdita dei dati, usi illeciti o non corretti ed accessi non autorizzati.
-
-         <h3>Diritti degli interessati</h3>
-
-         Ai sensi dell'art. 7 del d. lgs. n. 196/2003, l'interessato può esercitare:
-
-         <br/>il diritto di conoscere:
-         <ol>
-            <li>l'origine dei dati personali,</li>
-            <li>le finalità e modalità del trattamento,</li>
-            <li>la logica applicata in caso di trattamento effettuato con l'ausilio di strumenti elettronici,
-         gli estremi identificativi del titolare, dei responsabili, dei soggetti o delle categorie di soggetti ai quali i dati personali possono essere comunicati o che possono venirne a conoscenza;</li>
-         </ol>
-         <br/>il diritto di ottenere a cura del titolare o del responsabile, senza ritardo:
-         <ol>
-            <li>l'aggiornamento, la rettificazione ovvero, quando vi ha interesse, l'integrazione dei dati,</li>
-            <li>la cancellazione, la trasformazione in forma anonima o il blocco dei dati trattati in violazione di legge, compresi quelli di cui non è necessaria la conservazione in relazione agli scopi per i quali i dati sono stati raccolti o successivamente trattati,</li>
-            <li>l'attestazione che le operazioni di cui alle precedenti lettere a-b sono state portate a conoscenza, anche per quanto riguarda il loro contenuto, di coloro ai quali i dati sono stati comunicati o diffusi, eccettuato il caso in cui tale adempimento si rivela impossibile o comporta un impiego di mezzi manifestamente sproporzionato rispetto al diritto tutelato;</li>
-         </ol>
-         <br>il diritto di opporsi in tutto o in parte:
-         <ol>
-            <li>per motivi legittimi al trattamento dei dati personali che lo riguardano, ancorché pertinenti allo scopo della raccolta,</li>
-            <li>al trattamento dei dati personali che lo riguardano ai fini dell'invio di materiale pubblicitario o di vendita diretta ovvero per il compimento di ricerche di mercato o di comunicazione commerciale.</li>
-         </ol>
-         <br/>
-         I diritti possono essere esercitati con richiesta al Titolare ({{ idp_metadata['it']['mdui_displayName'] }} - [Inserire l'indirizzo del proprio istituto e numero civico]).
-
-         <h3>CONTACTS</h3>
-         <p> Nome Cognome: {{ idp_contacts['support']['givenName'] }} {{ idp_contacts['support']['surName'] }}</p>
-         <p> e-mail: <a href="mailto:{{ idp_contacts['support']['mail'] }}">{{ idp_contacts['support']['mail'] }}</a></p>
-         <p> tel.:</p>
+         <h3>CONTATTI</h3>
+         <p>Nome Cognome: {{ idp_contacts['support']['givenName'] }} {{ idp_contacts['support']['surName'] }}</p>
+         <p>e-mail: <a href="mailto:{{ idp_contacts['support']['mail'] }}">{{ idp_contacts['support']['mail'] }}</a></p>
+         <p>tel.:</p>
          <br/>
          <p>Qui puoi trovare la pagina di informazioni per l'istituto {{ idp_metadata['it']['mdui_displayName'] }}: <a href="{{ idp_metadata['it']['mdui_infoUrl'] | default('/it/info.html') }}">Information Page</a></p>
       </div>

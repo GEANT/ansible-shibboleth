@@ -64,36 +64,33 @@ idp_config:
  shibboleth_db_password: "root-db-password"
  scope: "example.org"
  idp_sourceAttribute: "uid"
- idp_persistentId_salt: "OS0wCcdZADpiIR2VqyNKOW62YOPQNYRPDzN1u5uuW-qUkynS"
+ idp_persistentId_salt: "## RANDOM_LONG_STRING_1 ##"
  ldap:
   authenticator: "bindSearchAuthenticator"
-  url: "ldap://host:port_or_ldaps://host:port"
+  url: "## ldap://host:port or ldaps://host:port ##"
   useStartTLS: "false"
   useSSL: "false"
   connectTimeout: "3000"
   sslConfig: "certificateTrust"
   trustCertificates: "/etc/ssl/certs/CAcert.pem"
-  baseDN: "ou=people,dc=example,dc=org"
+  baseDN: "ou=people,{{ ldap['basedn'] }}"
   subtreeSearch: "true"
   userFilter: "(uid={user})"
-  bindDN: "cn=idpuser,ou=system,dc=example,dc=org"
+  bindDN: "cn=idpuser,ou=system,{{ ldap['basedn'] }}"
   bindDNCredential: "idpuserpassword"
   searchFilter: "(uid=$resolutionContext.principal)"
   returnAttributes: "*"
   ppolicy:
    change_password_url: "#"
  fticks:
-  federation: "FederationName"
+  federation: "IDEM GARR AAI"
   alg: "SHA-256"
-  salt: "random_string"
+  salt: "## RANDOM_LONG_STRING_2 ##"
   loghost: "localhost"
   logport: "514"
- sup_rs: "yes"
- sup_coco: "yes"
 
 idp_login:
  create_info_and_pp_pages: "Yes"
- idp_url_password_reset: "{{ url_password_reset }}"
  footer_text_color: "#ffffff"
  footer_background_color: "#717171"
  footer:
@@ -120,6 +117,8 @@ idp_login:
     name: "IDEM GARR AAI"
     url: "http://www.idem.garr.it/"
     logo: "/images/federation-logo.png"
+ sup_rs: "yes"
+ sup_coco: "yes"
 
 ### IDP Metadata Variables
 idp_federation_regAuth: "https://registration.authority.com/"
@@ -210,7 +209,7 @@ check_mk:
  baseDN: "{{ idp_config['ldap']['baseDN'] }}"
  searchuser: "{{ idp_config['ldap']['bindDN'] }}"
  searchuser_pw: "{{ idp_config['ldap']['bindDNCredential'] }}"
- userid_attr: "## UNIQUE-ID ATTRIBUTE OF LDAP USERS ##"
+ userid_attr: "## UNIQUE-ID ATTRIBUTE OF LDAP USERS (uid)##"
  ldap_url: "{{ idp_config['ldap']['url'] }}"
  ldap_useStartTLS: "{{ idp_config['ldap']['useStartTLS'] }}"
  idp_scope: "{{ idp_config['scope'] }}"
@@ -228,11 +227,13 @@ pla:
   url: "{{ ldap['url'] }}"
   root_dn: "{{ ldap['root_dn'] }}"
   root_pw: "{{ ldap['root_pw'] }}"
- web_gui_user: "## PLA GUI USER"
- web_gui_pw: "## PLA GUI PASSWORD ##"
 
 ### RSYNC Variables
 rsync:
  config:
   ssh_pub_key: "{{ lookup('file', '/opt/ansible-shibboleth/roles/rsync/files/ssh/ssh_pub_key') }}"
   ssh_priv_key: "{{ lookup('file', '/opt/ansible-shibboleth/roles/rsync/files/ssh/ssh_priv_key') }}"
+
+### FLUP Variables
+flup:
+ secret_key: "## RANDOM_LONG_STRING_3 ##"
