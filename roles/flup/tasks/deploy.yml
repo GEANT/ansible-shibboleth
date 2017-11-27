@@ -1,16 +1,8 @@
-- name: "Check if GIT FLUP repository is already downloaded"
-  stat:
-   path: "/opt/flup"
-  register: flup_git
-  changed_when: false
-   
 - name: "Clone the FLUP repository"
   git:
    repo: "{{ repo }}"
    dest: /opt/flup
    force: yes
-  when:
-   - flup_git.stat.isdir is undefined 
 
 - name: "Check if virtualenv is already created"
   stat:
@@ -61,15 +53,11 @@
    - flup_apache.stat.exists == False
   notify:
    - "Restart Apache"
-  
+
 - name: "Install FLUP wsgi runner"
-  replace:
-   path: /opt/flup/flup.wsgi
-   regexp: "{{ item['regexp'] }}"
-   replace: "{{ item['replace'] }}"
-  with_items:
-   - { regexp: "/opt/flup-dist/venv/bin/activate_this.py", replace: "/opt/flup/venv/bin/activate_this.py" }
-   - { regexp: "/opt/flup-dist/flup/", replace: "/opt/flup/" }
+  copy:
+   src: flup.wsgi
+   dest: /opt/flup/flup.wsgi
   notify:
    - "Restart Apache"
 
