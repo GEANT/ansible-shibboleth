@@ -7,5 +7,5 @@ sys.path.insert(0, '/opt/flup/')
 from flup import app
 
 # Debug
-app.debug = False
+app.debug = True
 application = app
