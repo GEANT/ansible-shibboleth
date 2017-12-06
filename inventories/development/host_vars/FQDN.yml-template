@@ -93,6 +93,7 @@ idp_login:
  create_info_and_pp_pages: "Yes"
  footer_text_color: "#ffffff"
  footer_background_color: "#717171"
+ idp_url_password_reset: "{{ url_password_reset }}"
  footer:
   en:
    text: "<p><strong>FOOTER TEXT</strong> in english language</p>"
@@ -227,6 +228,8 @@ pla:
   url: "{{ ldap['url'] }}"
   root_dn: "{{ ldap['root_dn'] }}"
   root_pw: "{{ ldap['root_pw'] }}"
+ web_gui_user: "idm-admin"
+ web_gui_pw: "## RANDOM PASSWORD ##"
 
 ### RSYNC Variables
 rsync:

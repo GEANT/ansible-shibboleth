@@ -134,7 +134,7 @@
                     <br/><br/>
                     <a href="javascript:setParam('spinfo', 'false');"><span class="item-marker">&lsaquo;</span> #springMessageText("idp.login.goback", "Go back to login page")</a>
                     #else
-                    <a href="#springMessageText("idp.infoUrl", "#")"><img src="#springMessageText("idp.logo","$request.getContextPath()/idp/images/dummylogo.png")" alt="#springMessageText("idp.logo.alt-text", "logo")" height="170px"></a>
+                    <a href="#springMessageText("idp.infoUrl", "#")"><img src="#springMessageText("idp.logo","$request.getContextPath()/idp/images/dummylogo.png")" alt="#springMessageText("idp.logo.alt-text", "logo")"></a>
                     #end
                 </header>
 
@@ -253,7 +253,7 @@
                         *#
                             #set ($logo = $rpUIContext.getLogo())
                             #if ($logo)
-                        <img src= "$encoder.encodeForHTMLAttribute($logo)" alt="$encoder.encodeForHTMLAttribute($serviceName)" height="128px"><br/>
+                        <img src= "$encoder.encodeForHTMLAttribute($logo)" alt="$encoder.encodeForHTMLAttribute($serviceName)" height="60px"><br/>
                             #end
                             #set ($desc = $rpUIContext.getServiceDescription())
                             #if ($desc)

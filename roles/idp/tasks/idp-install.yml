@@ -29,8 +29,6 @@
    owner: "root"
    group: "root"
    remote_src: yes
-  when:
-   - shib_idp_dir.stat.isdir is undefined
   tags: idp
 
 - name: "Put Shibboleth Identity Provider installer properties' files in the right position"
@@ -54,8 +52,6 @@
    owner: "root"
    group: "root"
    mode: "0600"
-  when: 
-   - shib_idp_dir.stat.isdir is undefined
   tags: idp
 
 - name: "Put the JSTL libraries, needed for Shibboleth IdP Status page, in the right position"
@@ -65,11 +61,9 @@
    owner: "root"
    group: "root"
    mode: 0644
-  when:
-   - shib_idp_dir.stat.isdir is undefined
   tags: idp 
 
-- name: "Create link for common-dbcp, common-pool and mysql JAR files used by Shibboleth IdP"
+- name: "Create link for commons-dbcp, commons-pool and mysql JAR files used by Shibboleth IdP"
   file:
    src: "{{ item.src }}" 
    dest: "{{ item.dest }}"
@@ -77,11 +71,9 @@
    group: "jetty"
    state: link
   with_items:
-   - { src: '/usr/share/java/commons-dbcp.jar' ,dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/common-dbcp.jar" }
+   - { src: '/usr/share/java/commons-dbcp.jar' ,dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/commons-dbcp.jar" }
    - { src: '/usr/share/java/commons-pool.jar' ,dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/commons-pool.jar" }
    - { src: '/usr/share/java/mysql.jar' ,dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/mysql-connector-java.jar" }
-  when:
-   - shib_idp_dir.stat.isdir is undefined
   tags: idp
 
 - name: "Install Shibboleth IdP"

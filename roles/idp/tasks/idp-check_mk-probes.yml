@@ -71,6 +71,7 @@
   uri:
    url: "https://{{ check_mk['srv'] }}/{{ check_mk['site'] }}/check_mk/webapi.py?action=discover_services&_username={{ check_mk['api_user_name'] }}&_secret={{ check_mk['api_user_secret'] }}&mode=new&hostname={{ fqdn }}"
    method: GET
+   timeout: 500
    status_code: 200
   when:
    - check_mk is defined
@@ -97,6 +98,7 @@
   uri:
    url: "https://{{ check_mk['srv'] }}/{{ check_mk['site'] }}/check_mk/webapi.py?action=discover_services&_username={{ check_mk['api_user_name'] }}&_secret={{ check_mk['api_user_secret'] }}&mode=remove&hostname={{ fqdn }}"
    method: GET
+   timeout: 500
    status_code: 200
   when:
    - check_mk is defined
@@ -126,6 +128,7 @@
   uri:
    url: "https://{{ check_mk['srv'] }}/{{ check_mk['site'] }}/check_mk/webapi.py?action=discover_services&_username={{ check_mk['api_user_name'] }}&_secret={{ check_mk['api_user_secret'] }}&mode=new&hostname={{ fqdn }}"
    method: GET
+   timeout: 500
    status_code: 200
   when:
    - check_mk is defined
@@ -152,6 +155,7 @@
   uri:
    url: "https://{{ check_mk['srv'] }}/{{ check_mk['site'] }}/check_mk/webapi.py?action=discover_services&_username={{ check_mk['api_user_name'] }}&_secret={{ check_mk['api_user_secret'] }}&mode=remove&hostname={{ fqdn }}"
    method: GET
+   timeout: 500
    status_code: 200
   when:
    - check_mk is defined

@@ -54,7 +54,7 @@ if options.debug:
    print "\nCOCO Attribute Set:"
    print coco_set
 
-result = set(attrs_list).issubset(coco_set)
+result = set(coco_set).issubset(attrs_list)
 
 if result and len(attrs_list) != 0:
    print "0 check_coco - SUCCESS - IdP has retrieved metadata of Test COCO SP and is sending attributes to it"

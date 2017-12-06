@@ -182,7 +182,7 @@ session_start();
                 </tr>
                 <tr>
                         <td class="tree"><div id="ajSID_1" style="display: block"><table class="tree" border="0"><tbody><tr class="server"><td class="icon"><img src="images/default/server.png" alt="Server"></td>
-                        <td class="name">My LDAP Server</td>
+                        <td class="name">{{ pla['ldap']['org'] }} LDAP Server</td>
                         </td></tr></table></td>
                         <td class="spacer"></td>
                         <td class="body" width="80%"><div id="ajBODY">
@@ -192,7 +192,7 @@ session_start();
                                                 <td><center>
         <h3 class="title">Lock/Unlock of the users</h3>
         <h3 class="subtitle">
-                Server: <b>My LDAP Server</b>&nbsp;&nbsp;&nbsp;Contenitore: <b>ou=people,{{ pla['ldap']['basedn'] }}</b></h3>
+                Server: <b>{{ pla['ldap']['org'] }} LDAP Server</b>&nbsp;&nbsp;&nbsp;Contenitore: <b>ou=people,{{ pla['ldap']['basedn'] }}</b></h3>
                 <center><h4>Identity Provider: Locking/Unlocking Users</h4></center>
 
                 <table class="entry" cellspacing="0" align="center" border="0">

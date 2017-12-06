@@ -33,8 +33,8 @@
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
-
         </KeyDescriptor>
+
         <KeyDescriptor use="signing">
             <ds:KeyInfo>
                     <ds:X509Data>
@@ -43,8 +43,8 @@
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
-
         </KeyDescriptor>
+
         <KeyDescriptor use="encryption">
             <ds:KeyInfo>
                     <ds:X509Data>
@@ -53,7 +53,6 @@
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
-
         </KeyDescriptor>
 
         <ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://{{ fqdn }}/idp/profile/SAML2/SOAP/ArtifactResolution" index="1"/>
@@ -62,7 +61,7 @@
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://{{ fqdn }}/idp/profile/SAML2/POST/SLO"/>
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" Location="https://{{ fqdn }}/idp/profile/SAML2/POST-SimpleSign/SLO"/>
         <!--
-        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://{{ fqdn }}:8443/idp/profile/SAML2/SOAP/SLO"/>
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://{{ fqdn }}/idp/profile/SAML2/SOAP/SLO"/>
         -->
 
         <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
@@ -87,8 +86,8 @@
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
-
         </KeyDescriptor>
+
         <KeyDescriptor use="signing">
             <ds:KeyInfo>
                     <ds:X509Data>
@@ -97,8 +96,8 @@
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
-
         </KeyDescriptor>
+
         <KeyDescriptor use="encryption">
             <ds:KeyInfo>
                     <ds:X509Data>
@@ -107,11 +106,11 @@
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
-
         </KeyDescriptor>
 
         <AttributeService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://{{ fqdn }}/idp/profile/SAML2/SOAP/AttributeQuery"/>
-
+        <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+        <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</NameIDFormat>
     </AttributeAuthorityDescriptor>
     <Organization>
 {% for field in ["org_name", "org_displayName", "org_url"] %}
