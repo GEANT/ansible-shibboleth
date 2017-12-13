@@ -9,7 +9,7 @@ class TemplateRender extends TemplateRenderOrig {
                 printf('<script type="text/javascript" src="%sformJavascript.js"></script>',JSDIR);
                 // Custom Javascript include end
         }
-        
+
         protected function drawValidateJavascriptAttribute($attribute,$component,$silence,$var_valid) {
                 printf('var vals = getAttributeValues("new","%s");',$attribute->getName());
                 echo 'if (vals.length <= 0) {';
@@ -27,4 +27,3 @@ class TemplateRender extends TemplateRenderOrig {
 }
 
 ?>
-

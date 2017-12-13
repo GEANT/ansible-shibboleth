@@ -1,0 +1,6 @@
+---
+# tasks file for idpcloud_garr
+
+- name: "Configure IdM of IdP-in-the-Cloud"
+  import_tasks: "idm-configure.yml"
+  tags: idpcloud_garr

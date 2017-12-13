@@ -4,105 +4,46 @@
   import_tasks: "pla-install.yml"
   tags: pla
 
-- name: "Be sure to configure phpLDAPadmin correctly"
+- name: "Be sure to load a basic configuration of phpLDAPadmin"
   template:
-   src: config.php.j2
-   dest: /opt/phpldapadmin/config/config.php
+   src: "config/config.php.j2"
+   dest: "/opt/phpldapadmin/config/config.php"
    owner: "root"
    group: "www-data"
   notify:
    - "Restart Apache"
+  changed_when: False
   tags: pla
 
 - name: "Be sure to configure '{{ pla['web_gui_user'] }}' user for phpLDAPadmin"
   htpasswd:
-   path: /etc/apache2/htpasswd
+   path: "/etc/apache2/htpasswd"
    name: "{{ pla['web_gui_user'] }}"
    password: "{{ pla['web_gui_pw'] }}"
-   owner: root
-   group: root
+   owner: "root"
+   group: "root"
    mode: 0644
   tags: pla
 
 - name: "Be sure to change '/phpldapadmin' into '/idm' to prevent random login attempts"
   copy:
-   src: "files/phpldapadmin.conf"
+   src: "files/apache2/conf-enabled/phpldapadmin.conf"
    dest: "/etc/apache2/conf-enabled/phpldapadmin.conf"
   notify:
    - "Restart Apache"
   tags: pla
 
-- name: "Be sure to load the configuration files for phpLDAPadmin"
+- name: "Be sure to load logo and apache2 configuration files of phpLDAPadmin"
   copy:
    src: "{{ item.src }}"
    dest: "{{ item.dest }}"
-   owner: "{{ item.owner }}"
-   group: "{{ item.group }}"
-   mode: "{{ item.mode }}"
-  with_items:
-   - { src: "files/idm.conf", dest: "/etc/apache2/conf-enabled/idm.conf", owner: "root" , group: "root" , mode: "0644"  }
-   - { src: "files/restore/{{ fqdn }}/images/logo.png", dest: "/opt/phpldapadmin/htdocs/images/default/logo-small.png", owner: "root" , group: "root", mode: "0644"  }
-  notify:
-   - "Restart Apache"
-  tags: pla
-
-- name: "Be sure that all templates are present"
-  template:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
-   owner: "root"
-   group: "root"
-   mode: "{{ item.mode }}"
-  with_items:
-   - { src: "homeJavascript.js.j2", dest: "/opt/phpldapadmin/htdocs/js/homeJavascript.js", mode: "0644" }
-   - { src: "formJavascript.js.j2", dest: "/opt/phpldapadmin/htdocs/js/formJavascript.js", mode: "0644" }
-   - { src: "checkValue.php.j2", dest: "/opt/phpldapadmin/htdocs/checkValue.php", mode: "0644" }
-   - { src: "lockuser.php.j2", dest: "/opt/phpldapadmin/htdocs/lockuser.php", mode: "0644" }
-   - { src: "lockusers.py.j2", dest: "/etc/cron.hourly/lockusers.py", mode: "0755" }
-   - { src: "action_lock.php.j2", dest: "/opt/phpldapadmin/htdocs/action_lock.php", mode: "0644" }
-  tags: pla
-
-- name: "Be sure to put easy identity template on PLA"
-  template:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
-   owner: "root"
-   group: "www-data"
-   mode: "{{ item.mode }}"
-  with_items:
-   - { src: "create_idpAccount_easy.xml.j2", dest: "/opt/phpldapadmin/templates/creation/custom_idpAccount.xml", mode: "0640" }
-   - { src: "modify_idpAccount_easy.xml.j2", dest: "/opt/phpldapadmin/templates/modification/custom_idpAccount.xml", mode: "0640" }
-  when: 
-   - pla['easy_idm'] is defined
-   - pla['easy_idm'] in ["Yes","yes","True","true"]
-  tags: pla
- 
-- name: "Be sure to put full identity template on PLA"
-  template:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
-   owner: "root"
-   group: "www-data"
-   mode: "{{ item.mode }}"
-  with_items:
-   - { src: "create_idpAccount.xml.j2", dest: "/opt/phpldapadmin/templates/creation/custom_idpAccount.xml", mode: "0640" }
-   - { src: "modify_idpAccount.xml.j2", dest: "/opt/phpldapadmin/templates/modification/custom_idpAccount.xml", mode: "0640" }
-  when: 
-   - pla['easy_idm'] is not defined or pla['easy_idm'] in ["No","no","False","false"]
-  tags: pla
-
-- name: "Be sure to create 'idm-tools' directory"
-  file:
-   path: "/opt/phpldapadmin/htdocs/idm-tools"
-   state: directory
-   mode: 0755
-  tags: pla
-
-- name: "Be sure that all templates are present"
-  template:
-   src: "idm-tools/index.php.j2"
-   dest: "/opt/phpldapadmin/htdocs/idm-tools/index.php"
    owner: "root"
    group: "root"
    mode: "0644"
+  with_items:
+   - { src: "files/apache2/conf-enabled/idm.conf", dest: "/etc/apache2/conf-enabled/idm.conf"  }
+   - { src: "files/restore/{{ fqdn }}/images/logo.png", dest: "/opt/phpldapadmin/htdocs/images/default/logo-small.png" }
+  notify:
+   - "Restart Apache"
+  changed_when: False
   tags: pla

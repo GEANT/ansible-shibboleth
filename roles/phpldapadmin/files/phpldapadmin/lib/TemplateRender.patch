@@ -1,0 +1,11 @@
+--- TemplateRender.php	2017-12-13 16:46:01.383021007 +0100
++++ TemplateRender-new.php	2017-12-13 16:46:52.526822265 +0100
+@@ -2466,7 +2466,7 @@
+ 		if ($val = $attribute->getValue($i))
+ 			$default = get_enc_type($val);
+ 		else
+-			$default = $this->getServer()->getValue('appearance','password_hash');
++			$default = $this->getServer()->getValue('appearance','password_hash_custom');
+ 
+ 		if (! $attribute->getPostValue())
+ 			printf('<input type="hidden" name="post_value[%s][]" value="%s" />',$attribute->getName(),$i);

@@ -7,7 +7,7 @@ class page extends pageOrig {
                 parent::head_add("<script type='text/javascript' src='".JSDIR."jquery-1.9.1.min.js'></script>");
                 parent::head_add("<script type='text/javascript'>
                var userLang = '" . getenv('LANG') . "';
-               
+
                if (userLang == \"\") {
                   userLang = navigator.language || navigator.userLanguage;
                }

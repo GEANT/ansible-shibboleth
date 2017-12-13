@@ -2,3 +2,4 @@
 # file: site.yml
 - import_playbook: shib-idp-servers.yml
 - import_playbook: shib-idp-idm-servers.yml
+- import_playbook: shib-idp-idm-servers-garr.yml

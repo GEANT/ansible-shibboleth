@@ -11,7 +11,6 @@
    - gettext
   notify:
    - "Restart Apache"
-  tags: pla
 
 - name: "Be sure that PHP5 LDAP support is installed"
   apt:
@@ -21,7 +20,6 @@
   notify:
    - "Restart Apache"
   when: ansible_distribution_release == "jessie"
-  tags: pla
 
 - name: "Be sure that PHP7 LDAP support is installed"
   apt:
@@ -31,7 +29,6 @@
   notify:
    - "Restart Apache"
   when: ansible_distribution_release == "stretch"
-  tags: pla
 
 - name: "Be sure to have LDAP module enabled"
   apache2_module:
@@ -39,10 +36,22 @@
    state: present
   notify:
    - "Restart Apache"
-  tags: pla
 
 - name: "Be sure that phpLDAPadmin is installed"
   unarchive:
    src: "files/phpldapadmin.tar.gz"
    dest: "/opt/"
-  tags: pla 
+  changed_when: False
+
+- name: "Be sure to patch files of phpLDAPadmin"
+  patch:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+  with_items:
+   - { src: "files/phpldapadmin/lib/ds_ldap-idpcloud.patch" ,dest: "/opt/phpldapadmin/lib/ds_ldap.php" }
+   - { src: "files/phpldapadmin/lib/ds_ldap_pla-idpcloud.patch" ,dest: "/opt/phpldapadmin/lib/ds_ldap_pla.php" }
+   - { src: "files/phpldapadmin/lib/HTMLTree-idpcloud.patch" ,dest: "/opt/phpldapadmin/lib/HTMLTree.php" }
+   - { src: "files/phpldapadmin/lib/functions-idpcloud.patch" ,dest: "/opt/phpldapadmin/lib/functions.php" }
+   - { src: "files/phpldapadmin/lib/PageRender.patch" ,dest: "/opt/phpldapadmin/lib/PageRender.php" }
+   - { src: "files/phpldapadmin/lib/TemplateRender.patch" ,dest: "/opt/phpldapadmin/lib/TemplateRender.php" }
+  changed_when: False

@@ -6,6 +6,14 @@ var lblNew = "new";
 var lblCF = "Fiscal code *";
 var lblRole = "Institutional role";
 
+if (userLang == "it_IT") {
+   lblTitle = "Crea nuovo utente";
+   lblLoading = "Caricamento in corso...";
+   lblNew = "nuovo";
+   lblCF = "Fiscal code *";
+   lblRole = "Qualifica ricoperta";
+}
+
 function returnBaseDN(){
    try {
       var basedn = $('meta[name=peoplebase]').attr('value').replace(/=/g,"%3D").replace(/,/g,"%2C");
@@ -51,8 +59,8 @@ $(document).ready(function() {
       console.log("ERROR in homeJavascript.js: Can't create the button \"new\" in the menu");
    }
    
-   // ---- CF
-   // If I'm creating a new user and I'm in last page I add CF prefix value
+   // ---- schacPersonalUniqueID
+   // If I'm creating a new user and I'm in last page I add SCHAC Personal Unique ID prefix value
    try {
       if($('input').length && $('input').eq(0).attr('value')=='create'){
          $('#new_values_schacpersonaluniqueid_0').attr('value', 'urn:schac:personalUniqueID:IT:CF:' + $('#new_values_schacpersonaluniqueid_0').attr('value').toUpperCase());
@@ -63,16 +71,17 @@ $(document).ready(function() {
          });
       }
    } catch (err) {
-      console.log("ERROR in homeJavascript.js: Can't add CF prefix value 01 to store correctly the user in db, when user is created.");
+      console.log("ERROR in homeJavascript.js: Can't add SCHAC Personal Unique ID prefix value 01 to store correctly the user in db, when user is created.");
    }
    
-   // If I'm modyfing a user let me see just my CF and not the prefix
-   /*if($("#new_values_schacpersonaluniqueid_0").length && $('#new_values_schacpersonaluniqueid_0').attr('type')!='hidden' && $('#new_values_schacpersonaluniqueid_0').val().length > 16) {
+   // If I'm modyfing a user let me see just my schacPersonalUniqueID and not the prefix
+/*
+   if($("#new_values_schacpersonaluniqueid_0").length && $('#new_values_schacpersonaluniqueid_0').attr('type')!='hidden' && $('#new_values_schacpersonaluniqueid_0').val().length > 16) {
       $("#new_values_schacpersonaluniqueid_0").val($("#new_values_schacpersonaluniqueid_0").val().split(':')[$("#new_values_schacpersonaluniqueid_0").val().split(':').length - 1]);      
    }
-   */
+*/
    
-   // If I'm creating a new user and I'm in last page I add CF prefix value
+   // If I'm updating a new user and I'm in last page I add SCHAC Personal Unique ID prefix value
    try {
       if($('input').length && $('input').eq(0).attr('value')=='update'){
          $('#new_values_schacpersonaluniqueid_0').attr('value', 'urn:schac:personalUniqueID:IT:CF:' + $('#new_values_schacpersonaluniqueid_0').attr('value').toUpperCase());
@@ -83,11 +92,12 @@ $(document).ready(function() {
          });
       }
    } catch (err) {
-      console.log("ERROR in homeJavascript.js: Can't add CF prefix value 01 to store correctly the user in db, when user is created.");
+      console.log("ERROR in homeJavascript.js: Can't add SCHAC Personal Unique ID prefix value 01 to store correctly the user in db, when user is created.");
    }
    
    // ---- PersonalPosition
    // If I'm creating a new user and I'm in last page personalPosition prefix value
+/*
    try {
       if($('input').length && $('input').eq(0).attr('value')=='create'){
          if ($('#new_values_schacpersonalposition_0').attr('value').length > 0)
@@ -102,8 +112,10 @@ $(document).ready(function() {
    } catch (err) {
       console.log("ERROR in homeJavascript.js: Can't add personalPosition 01 prefix value to store correctly the user in db, when user is created.");
    }
-   
-   // If I'm creating a new user and I'm in last page I add personalposition prefix value
+*/  
+ 
+   // If I'm updating an user and I'm in last page I add personalposition prefix value
+/*
    try {
       if($('input').length && $('input').eq(0).attr('value')=='update'){
          if ($('#new_values_schacpersonalposition_0').attr('value').length > 0)
@@ -118,10 +130,13 @@ $(document).ready(function() {
    } catch (err) {
       console.log("ERROR in homeJavascript.js: Can't add personalPosition 02 prefix value 01 to store correctly the user in db, when user is created.");
    }
-   
+*/  
+ 
    // If I'm modyfing a user let me see just my personalPosition and not the prefix
-   /*if($("#new_values_schacpersonalposition_0").length && $('#new_values_schacpersonalposition_0').attr('type')!='hidden' && $('#new_values_schacpersonalposition_0').val().length > 16) {
+/*
+   if($("#new_values_schacpersonalposition_0").length && $('#new_values_schacpersonalposition_0').attr('type')!='hidden' && $('#new_values_schacpersonalposition_0').val().length > 16) {
       $("#new_values_schacpersonalposition_0").val($("#new_values_schacpersonalposition_0").val().split(':')[$("#new_values_schacpersonalposition_0").val().split(':').length - 1]);      
    }
-   */
+*/
+
 });
