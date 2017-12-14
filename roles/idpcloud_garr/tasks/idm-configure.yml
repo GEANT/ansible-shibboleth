@@ -79,6 +79,14 @@
    - { src: "phpldapadmin/templates/creation/custom_idpAccount.xml.j2", dest: "/opt/phpldapadmin/templates/creation/custom_idpAccount.xml", mode: "0640" }
    - { src: "phpldapadmin/templates/modification/custom_idpAccount.xml.j2", dest: "/opt/phpldapadmin/templates/modification/custom_idpAccount.xml", mode: "0640" }
  
+- name: "Be sure to enrich phpLDAPadmin with IdP-in-the-Cloud italian templates translation"
+  copy:
+   src: "files/phpldapadmin/locale/it_IT/LC_MESSAGES/messages-it.mo"
+   dest: "/opt/phpldapadmin/locale/it_IT/LC_MESSAGES/messages.mo"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+
 - name: "Be sure to create 'idm-tools' directory"
   file:
    path: "/opt/phpldapadmin/htdocs/idm-tools"
