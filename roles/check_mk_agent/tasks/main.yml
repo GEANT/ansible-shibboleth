@@ -1,10 +1,5 @@
 ---
 # tasks file for check_mk
-- name: "DEBUG CheckMK"
-  debug:
-   msg: "ansible_os_family: {{ ansible_os_family }}"
-  tags: check_mk_agent
-
 - name: "Include OS-specific variables."
   include_vars: "{{ ansible_os_family }}.yml"
   tags: check_mk_agent
