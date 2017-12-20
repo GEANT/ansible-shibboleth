@@ -1,12 +1,13 @@
 // Array of regexp to match
 
 var regExp = [
-   /^[A-z]+(\s[A-z]+)*$/, // 0
+   /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/, // 0
    /^[0-9]{8}$/, // 1
    /^[A-z]+$/, // 2
    /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])(?=.*[\W]).*$/, // 3
    /^[0-9]{5}$/, // 4
-   /^([A-z]|[0-9]){16}$/ // 5
+   /^([A-z]|[0-9]){16}$/, // 5
+   /^[a-zA-Z][a-zA-Z.]*$/ //6
 ];
 
 // Array of error messages
@@ -16,7 +17,8 @@ var errorMex = [
    "Username already existent. Specify a different username", // 2
    "The two passwords specified are not equal. Retry", // 3
    "Fiscal code format not valid", //4
-   "Can't contact remote server. Retry later" // 5
+   "Can't contact remote server. Retry later", // 5
+   "Invalid format, special characters must not exist" // 6
 ];
 var lblHint = 'Hint';
 var lblTooFewChars5 = "At least five characters required";
@@ -31,7 +33,8 @@ if (userLang == "it_IT") {
       "Username gi\u00E0 esistente. Inserire un altro username", // 2
       "Le password inserite non corrispondono. Riprovare", // 3
       "Formato codice fiscale non corretto", //4
-      "Non riesco a comunicare con il server remoto. Provare pi\u00F9 tardi" // 5
+      "Non riesco a comunicare con il server remoto. Provare pi\u00F9 tardi", // 5
+      "Formato non valido, i caratteri speciali non possono essere usati" //6
    ];
    lblHint = 'Suggerimento';
    lblTooFewChars5 = "Necessari almeno cinque caratteri";
@@ -86,7 +89,7 @@ $(document).ready(function() {
       if($("#new_values_sn_0").length && $('#new_values_sn_0').attr('type')!='hidden'){
          var sn = new LiveValidation( 'new_values_sn_0', {onlyOnBlur: false, validMessage: "OK" } );
          sn.add( Validate.Presence, {failureMessage: errorMex[0]} );
-         sn.add(Validate.Format, { pattern: regExp[0], failureMessage: errorMex[1] } );
+         sn.add( Validate.Format, { pattern: regExp[0], failureMessage: errorMex[1] } );
       }
    } catch (err) {
       console.log("ERROR in formJavascript.js: Can't validate sn");
@@ -97,7 +100,7 @@ $(document).ready(function() {
       if($("#new_values_givenname_0").length && $('#new_values_givenname_0').attr('type')!='hidden'){
          var givenname = new LiveValidation( 'new_values_givenname_0', {onlyOnBlur: false, validMessage: "OK" } );
          givenname.add( Validate.Presence, {failureMessage: errorMex[0]} );
-         givenname.add(Validate.Format, { pattern: regExp[0], failureMessage: errorMex[1] } );
+         givenname.add( Validate.Format, { pattern: regExp[0], failureMessage: errorMex[1] } );
       }
    } catch (err) {
       console.log("ERROR in formJavascript.js: Can't validate givenname");
@@ -107,8 +110,8 @@ $(document).ready(function() {
    try {
       if($("#new_values_cn_0").length && $('#new_values_cn_0').attr('type')!='hidden'){
          var cn = new LiveValidation( 'new_values_cn_0', {onlyOnBlur: false, validMessage: "OK" } );
-         cn.add(Validate.Presence, {failureMessage: errorMex[0]});
-         cn.add(Validate.Format, { pattern: regExp[0], failureMessage: errorMex[1] } );
+         cn.add( Validate.Presence, {failureMessage: errorMex[0]});
+         cn.add( Validate.Format, { pattern: regExp[0], failureMessage: errorMex[1] } );
       }
    } catch (err) {
       console.log("ERROR in formJavascript.js: Can't validate cn");
@@ -120,6 +123,7 @@ $(document).ready(function() {
          var uid = new LiveValidation( 'new_values_uid_0', {onlyOnBlur: true, validMessage: "OK" } );
          uid.add( Validate.Presence, {failureMessage: errorMex[0]} );
          uid.add( Validate.Length, { minimum: 5, maximum: 50, tooShortMessage: lblTooFewChars5, tooLongMessage: lblTooMuchChars50} );
+         uid.add( Validate.Format, { pattern: regExp[6], failureMessage: errorMex[6] } );
          uid.add( Validate.Custom, { against: function(value,args){
             var esit = false;
             $.ajax({

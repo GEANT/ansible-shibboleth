@@ -101,6 +101,14 @@
    group: "root"
    mode: "0644"
 
+- name: "Be sure to load custom CSS for IdP-in-the-Cloud italian templates"
+  copy:
+   src: "files/phpldapadmin/htdocs/css/default/custom.css"
+   dest: "/opt/phpldapadmin/htdocs/css/default/custom.css"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+
 - name: "Be sure to load 'idm-tools' apache2 configuration files"
   copy:
    src: "{{ item.src }}"

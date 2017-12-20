@@ -6,6 +6,14 @@ var lblNew = "new";
 var lblCF = "Fiscal code *";
 var lblRole = "Institutional role";
 
+if (userLang == "it_IT") {
+   lblTitle = "Crea nuovo utente";
+   lblLoading = "Caricamento in corso...";
+   lblNew = "nuovo";
+   lblRole = "Qualifica ricoperta";
+}
+
+
 function returnBaseDN(){
    try {
       var basedn = $('meta[name=peoplebase]').attr('value').replace(/=/g,"%3D").replace(/,/g,"%2C");

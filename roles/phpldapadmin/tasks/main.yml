@@ -43,6 +43,7 @@
   with_items:
    - { src: "files/apache2/conf-enabled/idm.conf", dest: "/etc/apache2/conf-enabled/idm.conf"  }
    - { src: "files/restore/{{ fqdn }}/images/logo.png", dest: "/opt/phpldapadmin/htdocs/images/default/logo-small.png" }
+   - { src: "files/restore/{{ fqdn }}/images/favicon.png", dest: "/opt/phpldapadmin/htdocs/images/favicon.ico" }
   notify:
    - "Restart Apache"
   changed_when: False
