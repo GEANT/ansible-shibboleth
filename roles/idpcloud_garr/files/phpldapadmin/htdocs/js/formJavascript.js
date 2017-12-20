@@ -1,13 +1,14 @@
 // Array of regexp to match
 
 var regExp = [
-   /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/, // 0
+   /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð']+$/, // 0
    /^[0-9]{8}$/, // 1
    /^[A-z]+$/, // 2
    /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])(?=.*[\W]).*$/, // 3
    /^[0-9]{5}$/, // 4
    /^([A-z]|[0-9]){16}$/, // 5
-   /^[a-zA-Z][a-zA-Z.]*$/ //6
+   /^[a-zA-Z][a-zA-Z.]*$/, //6
+   /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ']+$/ // 7
 ];
 
 // Array of error messages
@@ -111,7 +112,7 @@ $(document).ready(function() {
       if($("#new_values_cn_0").length && $('#new_values_cn_0').attr('type')!='hidden'){
          var cn = new LiveValidation( 'new_values_cn_0', {onlyOnBlur: false, validMessage: "OK" } );
          cn.add( Validate.Presence, {failureMessage: errorMex[0]});
-         cn.add( Validate.Format, { pattern: regExp[0], failureMessage: errorMex[1] } );
+         cn.add( Validate.Format, { pattern: regExp[7], failureMessage: errorMex[1] } );
       }
    } catch (err) {
       console.log("ERROR in formJavascript.js: Can't validate cn");
