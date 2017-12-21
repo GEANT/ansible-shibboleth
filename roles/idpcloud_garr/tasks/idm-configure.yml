@@ -86,6 +86,7 @@
    owner: "root"
    group: "root"
    mode: "0644"
+  changed_when: False
 
 - name: "Be sure to create 'idm-tools' directory"
   file:
