@@ -129,7 +129,7 @@
    <ContactPerson contactType="{{ type }}">
        <GivenName>{{ idp_contacts[type]['givenName'] }}</GivenName>
        <SurName>{{ idp_contacts[type]['surName'] }}</SurName>
-       <EmailAddress>{{ idp_contacts[type]['mail'] }}</EmailAddress>
+       <EmailAddress>mailto:{{ idp_contacts[type]['mail'] }}</EmailAddress>
    </ContactPerson>
 {% endfor %}
 
