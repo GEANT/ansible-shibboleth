@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE template SYSTEM "../template.dtd">
+
+<template>
+   <askcontainer>1</askcontainer>
+   <description>Identity Provider: New user creation</description>
+   <icon>ldap-user.png</icon>
+   <invalid>0</invalid>
+   <rdn>uid</rdn>
+   <regexp>^ou=people,dc=.*</regexp>
+   <title>Identity Provider: New user creation</title>
+   <visible>1</visible>
+
+   <objectClasses>
+      <objectClass id="inetOrgPerson"></objectClass>
+      <objectClass id="eduPerson"></objectClass>
+      <objectClass id="schacEntryMetadata"></objectClass>
+      <objectClass id="schacLinkageIdentifiers"></objectClass>
+   </objectClasses>
+   <attributes>
+
+      <attribute id="givenName">
+         <hint>Example: Mario</hint>
+         <display>Name *</display>
+         <icon>ldap-uid.png</icon>
+         <onchange>=autoFill(cn;%givenName% %sn%)</onchange>
+         <onchange>=autoFill(uid;%givenName/l%.%sn/l%)</onchange>
+         <order>1</order>
+         <page>1</page>
+      </attribute>
+
+      <attribute id="sn">
+         <hint>Example: Rossi</hint>
+         <display>Surname *</display>
+         <icon>ldap-uid.png</icon>
+         <onchange>=autoFill(cn;%givenName% %sn%)</onchange>
+         <onchange>=autoFill(uid;%givenName/l%.%sn/l%)</onchange>
+         <order>2</order>
+         <page>1</page>
+      </attribute>
+     
+      <attribute id="cn">
+         <hint>Example: Mario Rossi</hint>
+         <display>Name and Surname</display>
+         <icon>ldap-uid.png</icon>
+         <order>3</order>
+         <page>1</page>
+         <spacer>1</spacer>
+      </attribute>
+     
+      <attribute id="uid">
+         <hint>Example: mario.rossi</hint>
+         <display>Username *</display>
+         <icon>login.png</icon>
+         <order>4</order>
+         <page>1</page>
+      </attribute>
+     
+      <attribute id="mail">
+         <hint>Example: mario.rossi@example.org</hint>
+         <display>Email address *</display>
+         <icon>mail_account.png</icon>
+         <order>5</order>
+         <page>1</page>
+      </attribute>
+
+      <attribute id="eduPersonOrcid">
+         <hint>Example: http://orcid.org/0000-0002-1825-0097</hint>
+         <display>ORCID</display>
+         <icon>ldap-uid.png</icon>
+         <order>6</order>
+         <page>1</page>
+      </attribute>
+
+      <attribute id="eduPersonAffiliation">
+         <hint>Example: member</hint>
+         <display>eduPersonAffiliation *</display>
+         <icon>ldap-ou.png</icon>
+         <order>7</order>
+         <value>member</value>
+         <page>1</page>
+      </attribute>
+   
+      <attribute id="eduPersonEntitlement">
+         <hint>Example: urn:mace:dir:entitlement:common-lib-terms</hint>
+         <display>eduPersonEntitlement</display>
+         <icon>ldap-uid.png</icon>
+         <order>8</order>
+         <page>1</page>
+      </attribute>
+      
+   </attributes>
+</template>

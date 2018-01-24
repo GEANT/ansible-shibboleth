@@ -218,9 +218,10 @@ check_mk:
  check_coco: "{{ idp_config['sup_coco'] }}"
 
 ### phpLDAPadmin Variables
+### idm: spuid	(Use 'schacPersonalUniqueID' LDAP attribute to authenticate users) (default)
+### idm: email  (user 'email' LDAP attribute to authenticate users)
 pla:
  orgUrl: "https://www.orgUrl.it"
- easy_idm: "False"
  ldap:
   basedn: "{{ ldap['basedn'] }}"
   domain: "{{ ldap['domain'] }}"
@@ -237,6 +238,11 @@ rsync:
   ssh_pub_key: "{{ lookup('file', '/opt/ansible-shibboleth/roles/rsync/files/ssh/ssh_pub_key') }}"
   ssh_priv_key: "{{ lookup('file', '/opt/ansible-shibboleth/roles/rsync/files/ssh/ssh_priv_key') }}"
 
+### idpcloud_garr Variables
+idpcloud_garr:
+ idm: "## 'email' or 'spuid'(default) ##"
+
 ### FLUP Variables
 flup:
  secret_key: "## RANDOM_LONG_STRING_3 ##"
+ activation_key: "## 'spui' or 'email' ##"

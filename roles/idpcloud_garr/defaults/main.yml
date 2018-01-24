@@ -1,2 +1,4 @@
 ---
 # defaults file for idpcloud_garr
+idpcloud_garr:
+ idm: "spuid"
