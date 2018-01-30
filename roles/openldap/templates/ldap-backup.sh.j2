@@ -17,7 +17,7 @@ DATEC="`${WHICH} date`"
 FIND="`${WHICH} find`"
 DATE=`${DATEC} +%Y-%m-%d`
 
-${LDAPSEARCH} -QLLLY EXTERNAL -H ldapi:/// -b ${BASEDN} ${FILTER} > ${BACKUPDIR}/${DATE}_ldap-users.ldif
+${LDAPSEARCH} -QLLLY EXTERNAL -H ldapi:/// -b ${BASEDN} ${FILTER} cn sn givenName schacPersonalUniqueID mail eduPersonEntitlement eduPersonAffiliation userPassword schacExpiryDate pwdAccountLockedTime objectClass > ${BACKUPDIR}/${DATE}_ldap-users.ldif
 
 ${FIND} "${BACKUPDIR}" -type f ! -name '*.gz' -mtime +0 -exec gzip {} \;
 ${FIND} "${BACKUPDIR}" -type f -mtime +30 -delete
