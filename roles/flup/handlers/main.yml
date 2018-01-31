@@ -1,7 +1,8 @@
 ---
 # handlers file for apache
 - name: "Restart Apache"
-  service:
+  systemd:
    name: apache2
+   daemon_reload: yes
    state: restarted
   tags: flup

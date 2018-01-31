@@ -57,9 +57,10 @@
   tags: idp
 
 - name: "Restart Rsyslog to start sending IdP logs to the centralized remote server if needed"
-  service:
-   name: rsyslog
-   state: restarted
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: rsyslog
   when:
    - rsyslog_template.changed
   tags: idp

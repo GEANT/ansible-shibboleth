@@ -17,8 +17,9 @@
   tags: openldap
 
 - name: "Start OpenLDAP"
-  service: 
+  systemd: 
    name: slapd
+   daemon-reload: True
    state: started
-   enabled: yes
+   enabled: True
   tags: openldap

@@ -4,7 +4,8 @@
 - name: "Restart Jetty"
   become: yes
   become_method: sudo
-  service:
+  systemd:
    name: jetty
+   daemon-reload: True
    state: restarted
 

@@ -34,7 +34,7 @@
    group: "jetty"
   tags: jetty
 
-- name: "Create useful links used by Jetty"
+- name: "Create 'jetty-src' link"
   file:
    src: "{{ item.src }}" 
    dest: "{{ item.dest }}"
@@ -43,6 +43,17 @@
    state: link
   with_items:
    - { src: '/usr/local/src/{{ jetty_distribution }}' , dest: '/usr/local/src/jetty-src' }
+  register: jetty_src
+  tags: jetty
+
+- name: "Create '/etc/init.d/jetty' link"
+  file:
+   src: "{{ item.src }}" 
+   dest: "{{ item.dest }}"
+   owner: "jetty"
+   group: "jetty"
+   state: link
+  with_items:
    - { src: '/usr/local/src/jetty-src/bin/jetty.sh' , dest: '/etc/init.d/jetty' }
   tags: jetty
 
@@ -76,25 +87,18 @@
    - { src: "files/{{ ansible_os_family }}/java{{ java_version['stdout'] }}/jetty.xml", dest: '/opt/jetty/etc/jetty.xml' }
   tags: jetty
 
-- name: "Check that 'jetty.service' exists"
-  stat: 
-   path: /run/systemd/generator.late/jetty.service
-  register: jetty_service
+- name: "Stop jetty after an upgrade of its package"
+  systemd: 
+   name: "jetty"
+   state: stopped
+  when:
+   - jetty_src.changed
   tags: jetty
 
-- name: "Be sure that Jetty is bootable at boot time"
-  shell: "update-rc.d jetty defaults"
-  when: jetty_service.stat.exists == False
-  tags: jetty
-
-- name: "Enable Jetty service"
-  service:
-    name: jetty
-    enabled: yes
-  tags: jetty
-
-- name: "Start Jetty service"
-  service:
-    name: jetty
-    state: started
+- name: "Start jetty by re-reading configs (2.4 and above)"
+  systemd: 
+   name: "jetty"
+   daemon_reload: True
+   state: started
+   enabled: True
   tags: jetty

@@ -55,10 +55,11 @@
   tags: common
 
 - name: "Start NTP service"
-  service: 
-   name: ntp
-   state: started
-   enabled: yes
+  systemd:
+    name: ntp
+    daemon_reload: True
+    state: started
+    enabled: True
   tags: common
 
 - name: "Set timezone variable"

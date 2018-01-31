@@ -1,8 +1,9 @@
 ---
 # handlers file for common
 - name: "Restart ntp"
-  service: 
+  systemd: 
    name: ntp 
+   daemon-reload: yes 
    state: restarted
 
 - name: "Update Timezone"

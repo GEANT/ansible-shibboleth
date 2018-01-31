@@ -58,10 +58,11 @@
   tags: mysql
 
 - name: "Start MySQL service"
-  service:
+  systemd:
     name: mysql
+    daemon-reload: True
     state: started
-    enabled: yes
+    enabled: True
   tags: mysql
 
 - name: "Create MySQL backups directory"
