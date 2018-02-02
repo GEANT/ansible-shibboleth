@@ -57,7 +57,7 @@
                 #   the referenced file can be the same as SSLCertificateFile
                 #   when the CA certificates are directly appended to the server
                 #   certificate for convinience.
-                SSLCertificateChainFile /etc/ssl/certs/cacert.pem
+                #SSLCertificateChainFile /etc/apache2/ssl.crt/server-ca.crt
 
                 #   Certificate Authority (CA):
                 #   Set the CA certificate verification path where to find CA
@@ -68,6 +68,7 @@
                 #                Makefile to update the hash symlinks after changes.
                 #SSLCACertificatePath /etc/ssl/certs/
                 #SSLCACertificateFile /etc/apache2/ssl.crt/ca-bundle.crt
+                SSLCACertificateFile /etc/ssl/certs/cacert.pem
 
                 #   Certificate Revocation Lists (CRL):
                 #   Set the CA revocation path where to find CA CRLs for client
