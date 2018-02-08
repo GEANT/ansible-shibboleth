@@ -23,7 +23,7 @@
          <div class='row'>
             <div class="col-md-2"><a href="{{ idp_metadata['it']['org_url'] }}"><img id="headerLogo" src="{{ idp_metadata['it']['mdui_logo'] }}"/></a></div>
             <div class="col-md-8 text-center">
-               <h2>PARTECIPAZIONE AL PROGETTO DI IDEM GARR:<br/>IDP IN THE CLOUD<br/><strong>Pagina Informativa</strong></h2>
+               <h2>PARTECIPAZIONE AL PROGETTO IDEM GARR:<br/>IDP IN THE CLOUD<br/></h2>
                <br/>
                <p class="text-center">
 {% for lang, value in idp_metadata.iteritems() %}
@@ -37,97 +37,106 @@
                </a>
             </div>
          </div>
-         <strong>{{ idp_metadata['it']['mdui_displayName'] }}</strong> partecipa alla Federazione nazionale <strong>IDEM</strong> (<strong>IDE</strong>ntity <strong>M</strong>anagement federato per l'accesso ai servizi), per la realizzazione dell'Infrastruttura di Autenticazione e Autorizzazione federata della rete GARR, e all'interfederazione <strong>eduGAIN</strong>(che collega le federazioni di identità nazionali tra loro per semplificare l'accesso ai contenuti, servizi e risorse per la comunità di Ricerca e Formazione.)
-         <br/>
-         Le credenziali di accesso vengono conferite a [...elencare le tipologie di utenti].
-         <br/>
-         Le modalità di conferimento, utilizzo e revoca delle credenziali sono contenute nel Documento descrittivo del processo di accreditamento degli utenti (DOPAU).
-         <br/>
+         <div class="row">
+            <div class="col-md-12 text-center">
+               <h1><strong>Pagina Informativa</strong></h1>
+            </div>
 
-         <h3>ATTIVAZIONE E GESTIONE ACCOUNT:</h3>
-         <a href="/flup">Gestisci il tuo account</a>
-    
-         <h3> SUPPORTO UTENTE PER CREDENZIALI, RILASCIO ATTRIBUTI, ... </h3>
-         <p> Nome Cognome: {{ idp_contacts['support']['givenName'] }} {{ idp_contacts['support']['surName'] }}</p>
-         <p> e-mail: <a href="mailto:{{ idp_contacts['support']['mail'] }}">Supporto Utenti</a></p>
-         <p> tel.:</p>
+            <strong>{{ idp_metadata['it']['mdui_displayName'] }}</strong> partecipa alla Federazione nazionale <strong>IDEM</strong> (<strong>IDE</strong>ntity <strong>M</strong>anagement federato per l'accesso ai servizi), per la realizzazione dell'Infrastruttura di Autenticazione e Autorizzazione federata della rete GARR, e all'interfederazione <strong>eduGAIN</strong>(che collega le federazioni di identità nazionali tra loro per semplificare l'accesso ai contenuti, servizi e risorse per la comunità di Ricerca e Formazione.)
+            <br/>
+            Le credenziali di accesso vengono conferite a:
+            <ul>
+               <li>Ricercatori</li>
+               <li>Altro personale dipendente/registrato e ospiti</li>
+            </ul>
+            Le modalità di conferimento, utilizzo e revoca delle credenziali sono contenute nel Documento descrittivo del processo di accreditamento degli utenti (DOPAU).
+            <br/>
 
-         <h3> REFERENTE TECNICO PER L'IDENTITY PROVIDER: </h3>
-         <p> Nome Cognome: {{ idp_contacts['technical']['givenName'] }} {{ idp_contacts['technical']['surName'] }}</p>
-         <p> e-mail: <a href="mailto:{{ idp_contacts['technical']['mail'] }}">Contatto Tecnico</a></p>
-         <p> tel.:</p>
-    
-         <h3> INFORMAZIONI SUL RILASCIO DEGLI ATTRIBUTI UTENTE AI FORNITORI DI RISORSE:</h3>
-         <p>{{ idp_metadata['it']['mdui_displayName'] }} mediante questo Identity Provider può trasmettere alla Risorsa a cui Lei chiede di accedere alcune informazioni (attributi) su di Lei, su richiesta della Risorsa stessa.<br />
-         Tali informazioni sono:</p>
-         <ul>
-            <li>Necessarie per ricevere il servizio richiesto</li>
-            <li>Limitate alle sole informazioni strettamente necessarie</li>
-            <li>Verranno trattate dalla Risorsa secondo le norme di legge</li>
-         </ul>
-         <p>L'insieme delle informazioni da trasmettere può variare da Risorsa a Risorsa. <br /> 
-         Questo Identity Provider invierà a ciascuna Risorsa solamente quelle informazioni che la Risorsa richiede di ricevere.<br />
-         Durante il processo di accesso alla Risorsa le verrà mostrato l'elenco esatto delle informazioni che questo Identity Provider trasmetterà alla Risorsa. Lei potrà decidere, prima che l'invio venga effettuato, se acconsentire a tale trasmissione ed accedere alla Risorsa, oppure se negare il consenso alla trasmissione delle informazioni, ed in tal caso rinunciare all'accesso alla Risorsa.<br />
-         Nella tabella seguente vengono elencate tutte le informazioni, ciascuna individuata da un nome identificativo (nome dell'attributo), che questo Identity Provider potrebbe trasmettere ad una Risorsa che ne faccia richiesta. <br />
-         L'Identity Provider potrà trasmettere solo un sottoinsieme di informazioni estratto dal seguente elenco:</p>
-         <br />
-         <table class="table table-bordered table-responsive" width="70%">      
-            <tr>
-              <td><strong>Nome dell'Attributo</strong></td>
-              <td><strong>Significato</strong></td>
-            </tr>
-            <tr>
-              <td><code>sn</code></td>
-              <td>Cognome</td>
-            </tr>
-            <tr>
-              <td><code>givenName</code></td>
-              <td>Nome</td>
-            </tr>
-            <tr>
-              <td><code>cn</code></td>
-              <td>Nome Cognome</td>
-            </tr>
-            <tr>
-              <td><code>displayName</code></td>
-              <td>Nome Cognome</td>
-            </tr>
-            <tr>
-              <td><code>mail</code></td>
-              <td>E-mail</td>
-            </tr>
-            <tr>
-              <td><code>schacPersonalUniqueID</code></td>
-              <td>Codice Fiscale</td>
-            </tr>
-            <tr>
-              <td><code>schacHomeOrganization</code></td>
-              <td>Identificativo dell'organizzazione di appartenenza</td>
-            </tr>
-            <tr>
-              <td><code>schacHomeOrganizationType</code></td>
-              <td>Tipologia a cui appartiene l'organizzazione di appartenenza</td>
-            </tr>
-            <tr>
-              <td><code>eduPersonScopedAffiliation</code></td>
-              <td>Tipologia di affiliazione all'organizzazione di appartenenza</td>
-            </tr>
-            <tr>
-              <td><code>eduPersonPrincipalName</code></td>
-              <td>Identificativo univoco per l'utente</td>
-            </tr>
-            <tr>
-              <td><code>eduPersonEntitlement</code></td>
-              <td>Valori utilizzati per conferire dei privilegi sulla risorsa a cui si vuole accedere</td>
-            </tr>
-            <tr>
-              <td><code>eduPersonOrcid</code></td>
-              <td>Identificativo ricercatore assegnato e gestito da orcid.org</td>
-            </tr>
-         </table>
-         <p><a href="https://www.idem.garr.it/it/servizi/sp" target="_blank">Elenco delle Risorse associate alla Federazione {{ idp_login['fed_info']['federation']['it']['name'] }}</a> a cui è possibile accedere tramite le credenziali fornite per questo Identity Provider.</p>
+            <h3>ATTIVAZIONE E GESTIONE ACCOUNT:</h3>
+            <a href="/flup">Gestisci il tuo account</a>
 
-         <p>La Politica sulla Privacy per gli utenti dell'istituto {{ idp_metadata['it']['mdui_displayName'] }} è consultabile qui: <a href="{{ idp_metadata['it']['mdui_privacyUrl'] | default('/it/privacy.html') }}">Privacy Policy</a></p>
+            <h3> SUPPORTO UTENTE PER CREDENZIALI, RILASCIO ATTRIBUTI, ... </h3>
+            <p> Nome Cognome: {{ idp_contacts['support']['givenName'] }} {{ idp_contacts['support']['surName'] }}</p>
+            <p> e-mail: <a href="mailto:{{ idp_contacts['support']['mail'] }}">Supporto Utenti</a></p>
+            <p> tel.:</p>
+
+            <h3> REFERENTE TECNICO PER L'IDENTITY PROVIDER: </h3>
+            <p> Nome Cognome: {{ idp_contacts['technical']['givenName'] }} {{ idp_contacts['technical']['surName'] }}</p>
+            <p> e-mail: <a href="mailto:{{ idp_contacts['technical']['mail'] }}">Contatto Tecnico</a></p>
+            <p> tel.:</p>
+
+            <h3> INFORMAZIONI SUL RILASCIO DEGLI ATTRIBUTI UTENTE AI FORNITORI DI RISORSE:</h3>
+            <p>{{ idp_metadata['it']['mdui_displayName'] }} mediante questo Identity Provider può trasmettere alla Risorsa a cui Lei chiede di accedere alcune informazioni (attributi) su di Lei, su richiesta della Risorsa stessa.<br />
+            Tali informazioni sono:</p>
+            <ul>
+               <li>Necessarie per ricevere il servizio richiesto</li>
+               <li>Limitate alle sole informazioni strettamente necessarie</li>
+               <li>Verranno trattate dalla Risorsa secondo le norme di legge</li>
+            </ul>
+            <p>L'insieme delle informazioni da trasmettere può variare da Risorsa a Risorsa. <br />
+            Questo Identity Provider invierà a ciascuna Risorsa solamente quelle informazioni che la Risorsa richiede di ricevere.<br />
+            Durante il processo di accesso alla Risorsa le verrà mostrato l'elenco esatto delle informazioni che questo Identity Provider trasmetterà alla Risorsa. Lei potrà decidere, prima che l'invio venga effettuato, se acconsentire a tale trasmissione ed accedere alla Risorsa, oppure se negare il consenso alla trasmissione delle informazioni, ed in tal caso rinunciare all'accesso alla Risorsa.<br />
+            Nella tabella seguente vengono elencate tutte le informazioni, ciascuna individuata da un nome identificativo (nome dell'attributo), che questo Identity Provider potrebbe trasmettere ad una Risorsa che ne faccia richiesta. <br />
+            L'Identity Provider potrà trasmettere solo un sottoinsieme di informazioni estratto dal seguente elenco:</p>
+            <br />
+            <table class="table table-bordered table-responsive" width="70%">
+               <tr>
+                 <td><strong>Nome dell'Attributo</strong></td>
+                 <td><strong>Significato</strong></td>
+               </tr>
+               <tr>
+                 <td><code>sn</code></td>
+                 <td>Cognome</td>
+               </tr>
+               <tr>
+                 <td><code>givenName</code></td>
+                 <td>Nome</td>
+               </tr>
+               <tr>
+                 <td><code>cn</code></td>
+                 <td>Nome Cognome</td>
+               </tr>
+               <tr>
+                 <td><code>displayName</code></td>
+                 <td>Nome Cognome</td>
+               </tr>
+               <tr>
+                 <td><code>mail</code></td>
+                 <td>E-mail</td>
+               </tr>
+               <tr>
+                 <td><code>schacPersonalUniqueID</code></td>
+                 <td>Codice Fiscale</td>
+               </tr>
+               <tr>
+                 <td><code>schacHomeOrganization</code></td>
+                 <td>Identificativo dell'organizzazione di appartenenza</td>
+               </tr>
+               <tr>
+                 <td><code>schacHomeOrganizationType</code></td>
+                 <td>Tipologia a cui appartiene l'organizzazione di appartenenza</td>
+               </tr>
+               <tr>
+                 <td><code>eduPersonScopedAffiliation</code></td>
+                 <td>Tipologia di affiliazione all'organizzazione di appartenenza</td>
+               </tr>
+               <tr>
+                 <td><code>eduPersonPrincipalName</code></td>
+                 <td>Identificativo univoco per l'utente</td>
+               </tr>
+               <tr>
+                 <td><code>eduPersonEntitlement</code></td>
+                 <td>Valori utilizzati per conferire dei privilegi sulla risorsa a cui si vuole accedere</td>
+               </tr>
+               <tr>
+                 <td><code>eduPersonOrcid</code></td>
+                 <td>Identificativo ricercatore assegnato e gestito da orcid.org</td>
+               </tr>
+            </table>
+            <p><a href="https://www.idem.garr.it/it/servizi/sp" target="_blank">Elenco delle Risorse associate alla Federazione {{ idp_login['fed_info']['federation']['it']['name'] }}</a> a cui è possibile accedere tramite le credenziali fornite per questo Identity Provider.</p>
+
+            <p>La Politica sulla Privacy per gli utenti dell'istituto {{ idp_metadata['it']['mdui_displayName'] }} è consultabile qui: <a href="{{ idp_metadata['it']['mdui_privacyUrl'] | default('/it/privacy.html') }}">Privacy Policy</a></p>
+         </div>
       </div>
    </body>
 </html>

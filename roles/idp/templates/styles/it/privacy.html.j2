@@ -36,7 +36,7 @@
          <div class='row'>
             <div class="col-md-2"><img id="headerLogo" src="{{ idp_metadata['it']['mdui_logo'] }}"/></div>
             <div class="col-md-8 text-center">
-               <h2>PARTECIPAZIONE AL PROGETTO DI IDEM GARR:<br/>IDP IN THE CLOUD<br/><strong>Privacy Policy</strong></h2>
+               <h2>PARTECIPAZIONE AL PROGETTO DI IDEM GARR:<br/>IDP IN THE CLOUD<br/></h2>
                <br/>
                <p class="text-center">
 {% for lang, value in idp_metadata.iteritems() %}
@@ -50,139 +50,143 @@
                </a>
             </div>
          </div>
-         <h3>Trattamento dei dati personali (Privacy Policy)</h3>
-         <table border="1" cellspacing="0" cellpadding="0">
-            <tbody>
-               <tr>
-                  <td>Nome del Servizio</td>
-                  <td>
-                     <p><strong>Per contraente:</strong> IdP in the Cloud offerto dal Consortium GARR</p>
-                     <p><strong>Per utente (interessato):</strong> Identity Provider</p>
-                  </td>
-               </tr>
-               <tr>
-                  <td>Descrizione del Servizio</td>
-                  <td>
-                     <p><strong>Per contraente:</strong> Servizio di Identity as a Service integrato in una appliance virtualizzata e fornita sulla cloud del GARR.</p>
-                     <p><strong>Per utente (interessato):</strong> Servizio di autenticazione federata offerto dall’organizzazione di appartenenza.</p>
-                  </td>
-               </tr>
-               <tr>
-                  <td>Titolari del Trattamento</td>
-                  <td>
-                     <p><strong>Per contraente:</strong></p>
-                     <ul>
-                        <li><strong>Nome:</strong></li>
-                        <li><strong>Email:</strong></li>
-                     </ul>
-                     <strong>Consortium GARR – Via dei Tizii, 6 – 00185 ROMA, IT</strong>
-                     <ul>
-                        <li><strong>Nome:</strong></li>
-                        <li><strong>Email:</strong></li>
-                     </ul>
-                     <br/>
-                     <p>Il Contraente e il Consortium GARR sono contitolari del trattamento dei dati personali gestiti tramite il Servizio, ai sensi dell’art.26 del GDPR.</p>
-                     <br/>
-                     <p>Il Contraente è responsabile riguardo all'esercizio dei diritti dell'interessato a alla comunicazione delle informazioni di cui agli articoli 13 e 14 del GDPR.</p>
-                  </td>
-               </tr>
-               <tr>
-                  <td>Responsabile della Protezione dei Dati (GDPR Sezione 4) (se applicabile)</td>
-                  <td>Non applicabile</td>
-               </tr>
-               <tr>
-                  <td><p>Giurisdizione e <br/><br/>autorità di controllo</p></td>
-                  <td>
-                     <p><strong><p>IT-IT</p></strong></p>
-                     <p><strong>Garante per la Protezione dei Dati Personali</strong><br/>Come presentare una denuncia all'autorità competente per la protezione dei dati:<br/>
-<a href="http://www.garanteprivacy.it/home/diritti/come-agire-per-tutelare-i-nostri-dati-personali">http://www.garanteprivacy.it/home/diritti/come-agire-per-tutelare-i-nostri-dati-personali</a></p>
-                  </td>
-               </tr>
-               <tr>
-                  <td><p>Dati personali trattati e base legale per il trattamento</p></td>
-                  <td>
-                     <ol>
-                        <li>Alcuni o tutti tra i seguenti dati personali raccolti presso l’interessato da parte del Contraente:
-                           <ol>
-                              <li>
-                                 <strong>uno o più identificativi univoci</strong> (uid, schacPersonalUniqueID, eduPersonOrcid, eduPersonTargetedID, SAML persistent identifier);
-                              </li>
-                              <li><strong>credenziale di riconoscimento</strong> (userPassword);</li>
-                              <li><strong>nome e cognome</strong> (sn, givenName, cn, displayName);</li>
-                              <li><strong>indirizzo di posta elettronica</strong> (mail);</li>
-                              <li><strong>ruolo nell’organizzazione</strong> (eduPersonAffiliation,eduPersonEntitlement);</li>
-                              <li><strong>nome dell’organizzazione</strong> (schacHomeOrganization,schacHomeOrganizationType);</li>
-                           </ol>
-                        </li>
-                        <li>Dati personali raccolti direttamente presso l’interessato durante il normale utilizzo del servizio:
-                           <ol>
-                              <li>Preferenze relative al consenso all’utilizzo di Risorse in rete;</li>
-                              <li>Record di log del servizio IDP: identificativo utente, data e ora di utilizzo,  servizio richiesto, attributi trasmessi al servizio;</li>
-                              <li>Record di log degli altri servizi (http, ldap, …).</li>
-                           </ol>
-                        </li>
-                     </ol>
-                     <br/>
-                     <p>I dati personali raccolti sono raccolti e conservati in Italia in conformità con il GDPR. Il loro trattamento è necessario per fornire il servizio.</p>
-                  </td>
-               </tr>
-               <tr>
-                  <td><p>Scopo per il trattamento dei dati personali</p></td>
-                  <td>
-                     <p>Fornire il servizio di Identity Management as a Service e il servizio di Identity Provider as a Service al fine di autenticare l’interessato per l’accesso ai servizi in rete richiesti dall’interessato stesso.</p>
-                     <p>I dati personali (attributi) vengono trasmessi  a terze parti (Risorse) su richiesta dell’interessato allo scopo di ottenere il servizio richiesto.</p>
-                     <p>I dati di log contengono dati personali dell’interessato che vengono raccolti allo scopo di verificare il funzionamento del servizio e per garantire la sicurezza dello stesso.</p>
-                  </td>
-               </tr>
-               <tr>
-                  <td><p>Terze parti a cui vengono comunicati i dati</p></td>
-                  <td>
-                     <p>Il Contraente decide a quali terze parti comunicare i dati personali degli interessati, rispettando il principio di minimizzazione. I dati personali vengono trasmessi solamente nel momento in cui l’interessato richiede l’accesso alla Risorsa della terza parte ed allo scopo di ottenere il servizio fornito dalla Risorsa.</p>
-                     <p>Tali Risorse sono:
+         <div class="row">
+            <div class="col-md-12 text-center">
+               <h1><strong>Trattamento dei dati personali (Privacy Policy)</strong></h1>
+            </div>
+            <table border="1" cellspacing="0" cellpadding="0">
+               <tbody>
+                  <tr>
+                     <td>Nome del Servizio</td>
+                     <td>
+                        <p><strong>Per contraente:</strong> IdP in the Cloud offerto dal Consortium GARR</p>
+                        <p><strong>Per utente (interessato):</strong> Identity Provider</p>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>Descrizione del Servizio</td>
+                     <td>
+                        <p><strong>Per contraente:</strong> Servizio di Identity as a Service integrato in una appliance virtualizzata e fornita sulla cloud del GARR.</p>
+                        <p><strong>Per utente (interessato):</strong> Servizio di autenticazione federata offerto dall’organizzazione di appartenenza.</p>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>Titolari del Trattamento</td>
+                     <td>
+                        <p><strong>Per contraente:</strong></p>
                         <ul>
-                           <li>Tutte le Risorse della Federazione IDEM;
-                           <li>Le Risorse della Federazione eduGAIN che sono conformi al Data Protection Code of Conduct;
-                           <li>Le Risorse di eduGAIN che sono conformi a Research and Scholarship;
-                           <li>Tutte le Risorse della Federazione eduGAIN;
-                           <li>Altre Risorse specificate dal Contraente  ...
+                           <li><strong>Nome:</strong></li>
+                           <li><strong>Email:</strong></li>
                         </ul>
-                     </p>
-                     <p>Terze parti fuori dalla EEA:
+                        <strong>Consortium GARR – Via dei Tizii, 6 – 00185 ROMA, IT</strong>
                         <ul>
-                           <li>Alcune Risorse conformi al Data Protection Code of Conduct;</li>
-                           <li>Alcune Risorse conformi a Research and Scholarship;</li>
-                           <li>Altre Risorse ...</li>
+                           <li><strong>Nome:</strong></li>
+                           <li><strong>Email:</strong></li>
                         </ul>
-                     </p>
-                  </td>
-               </tr>
-               <tr>
-                  <td><p>Come accedere, correggere, cancellare i dati personali e opporsi al loro trattamento.</p></td>
-                  <td><p>Contattare i titolari del trattamento indicati precedentemente.</p></td>
-               </tr>
-               <tr>
-                  <td><p>Ritiro del consenso dell’interessato</p></td>
-                  <td><p>Gli unici dati che vengono raccolti con il consenso dell’interessato sono le preferenze riguardo la trasmissione degli attributi a terze parti. Essi vengono raccolti on-line al momento del primo accesso alla Risorsa e possono essere eliminati, con il risultato di ritirare il consenso alla loro trasmissione, iniziando nuovamente la procedura di login e spuntando la casella <strong>"Ripulisci i permessi di rilascio di informazioni dati a questo servizio in precedenza"</strong></p></td>
-               </tr>
-               <tr>
-                  <td><p>Portabilità dei Dati</p></td>
-                  <td><p>Il Contraente può richiedere la portabilità dei dati relativi alle identità digitali, comprese le credenziali e le informazioni relative al consenso, che verranno forniti in formato aperto e ai sensi dell’Art. 20 del GDPR.
-Il servizio di portabilità è gratuito alla cessazione del servizio.</p></td>
-               </tr>
-               <tr>
-                  <td><p>Durata della Conservazione dei Dati</p></td>
-                  <td><p>Tutti i dati personali dell’interessato (attributi) sono conservati per tutto il tempo in cui è necessario fornire il servizio all’interessato. Se non è più necessario fornire il servizio, il contraente può disattivare un utente. Anche l’interessato può chiedere la disattivazione della propria utenza. In caso di disattivazione dell’utenza dell’interessato i dati sono conservati per ulteriori 18 mesi per poter valutare se l’utente deve/può essere riattivato. Dopo 18 mesi dalla disattivazione, se non è stata richiesta una riattivazione, tutti i dati dell’interessato vengono cancellati.</p>
-<p>I dati di log vengono conservati per 1 mese dalla raccolta, dopo di ché vengono anonimizzati con una procedura automatica.</p></td>
-               </tr>
-            </tbody>
-         </table>
+                        <br/>
+                        <p>Il Contraente e il Consortium GARR sono contitolari del trattamento dei dati personali gestiti tramite il Servizio, ai sensi dell’art.26 del GDPR.</p>
+                        <br/>
+                        <p>Il Contraente è responsabile riguardo all'esercizio dei diritti dell'interessato a alla comunicazione delle informazioni di cui agli articoli 13 e 14 del GDPR.</p>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>Responsabile della Protezione dei Dati (GDPR Sezione 4) (se applicabile)</td>
+                     <td>Non applicabile</td>
+                  </tr>
+                  <tr>
+                     <td><p>Giurisdizione e <br/><br/>autorità di controllo</p></td>
+                     <td>
+                        <p><strong><p>IT-IT</p></strong></p>
+                        <p><strong>Garante per la Protezione dei Dati Personali</strong><br/>Come presentare una denuncia all'autorità competente per la protezione dei dati:<br/>
+   <a href="http://www.garanteprivacy.it/home/diritti/come-agire-per-tutelare-i-nostri-dati-personali">http://www.garanteprivacy.it/home/diritti/come-agire-per-tutelare-i-nostri-dati-personali</a></p>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td><p>Dati personali trattati e base legale per il trattamento</p></td>
+                     <td>
+                        <ol>
+                           <li>Alcuni o tutti tra i seguenti dati personali raccolti presso l’interessato da parte del Contraente:
+                              <ol>
+                                 <li>
+                                    <strong>uno o più identificativi univoci</strong> (uid, schacPersonalUniqueID, eduPersonOrcid, eduPersonTargetedID, SAML persistent identifier);
+                                 </li>
+                                 <li><strong>credenziale di riconoscimento</strong> (userPassword);</li>
+                                 <li><strong>nome e cognome</strong> (sn, givenName, cn, displayName);</li>
+                                 <li><strong>indirizzo di posta elettronica</strong> (mail);</li>
+                                 <li><strong>ruolo nell’organizzazione</strong> (eduPersonAffiliation,eduPersonEntitlement);</li>
+                                 <li><strong>nome dell’organizzazione</strong> (schacHomeOrganization,schacHomeOrganizationType);</li>
+                              </ol>
+                           </li>
+                           <li>Dati personali raccolti direttamente presso l’interessato durante il normale utilizzo del servizio:
+                              <ol>
+                                 <li>Preferenze relative al consenso all’utilizzo di Risorse in rete;</li>
+                                 <li>Record di log del servizio IDP: identificativo utente, data e ora di utilizzo,  servizio richiesto, attributi trasmessi al servizio;</li>
+                                 <li>Record di log degli altri servizi (http, ldap, …).</li>
+                              </ol>
+                           </li>
+                        </ol>
+                        <br/>
+                        <p>I dati personali raccolti sono raccolti e conservati in Italia in conformità con il GDPR. Il loro trattamento è necessario per fornire il servizio.</p>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td><p>Scopo per il trattamento dei dati personali</p></td>
+                     <td>
+                        <p>Fornire il servizio di Identity Management as a Service e il servizio di Identity Provider as a Service al fine di autenticare l’interessato per l’accesso ai servizi in rete richiesti dall’interessato stesso.</p>
+                        <p>I dati personali (attributi) vengono trasmessi  a terze parti (Risorse) su richiesta dell’interessato allo scopo di ottenere il servizio richiesto.</p>
+                        <p>I dati di log contengono dati personali dell’interessato che vengono raccolti allo scopo di verificare il funzionamento del servizio e per garantire la sicurezza dello stesso.</p>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td><p>Terze parti a cui vengono comunicati i dati</p></td>
+                     <td>
+                        <p>Il Contraente decide a quali terze parti comunicare i dati personali degli interessati, rispettando il principio di minimizzazione. I dati personali vengono trasmessi solamente nel momento in cui l’interessato richiede l’accesso alla Risorsa della terza parte ed allo scopo di ottenere il servizio fornito dalla Risorsa.</p>
+                        <p>Tali Risorse sono:
+                           <ul>
+                              <li>Tutte le Risorse della Federazione IDEM;
+                              <li>Le Risorse della Federazione eduGAIN che sono conformi al Data Protection Code of Conduct;
+                              <li>Le Risorse di eduGAIN che sono conformi a Research and Scholarship;
+                              <li>Tutte le Risorse della Federazione eduGAIN;
+                              <li>Altre Risorse specificate dal Contraente  ...
+                           </ul>
+                        </p>
+                        <p>Terze parti fuori dalla EEA:
+                           <ul>
+                              <li>Alcune Risorse conformi al Data Protection Code of Conduct;</li>
+                              <li>Alcune Risorse conformi a Research and Scholarship;</li>
+                              <li>Altre Risorse ...</li>
+                           </ul>
+                        </p>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td><p>Come accedere, correggere, cancellare i dati personali e opporsi al loro trattamento.</p></td>
+                     <td><p>Contattare i titolari del trattamento indicati precedentemente.</p></td>
+                  </tr>
+                  <tr>
+                     <td><p>Ritiro del consenso dell’interessato</p></td>
+                     <td><p>Gli unici dati che vengono raccolti con il consenso dell’interessato sono le preferenze riguardo la trasmissione degli attributi a terze parti. Essi vengono raccolti on-line al momento del primo accesso alla Risorsa e possono essere eliminati, con il risultato di ritirare il consenso alla loro trasmissione, iniziando nuovamente la procedura di login e spuntando la casella <strong>"Ripulisci i permessi di rilascio di informazioni dati a questo servizio in precedenza"</strong></p></td>
+                  </tr>
+                  <tr>
+                     <td><p>Portabilità dei Dati</p></td>
+                     <td><p>Il Contraente può richiedere la portabilità dei dati relativi alle identità digitali, comprese le credenziali e le informazioni relative al consenso, che verranno forniti in formato aperto e ai sensi dell’Art. 20 del GDPR.
+   Il servizio di portabilità è gratuito alla cessazione del servizio.</p></td>
+                  </tr>
+                  <tr>
+                     <td><p>Durata della Conservazione dei Dati</p></td>
+                     <td><p>Tutti i dati personali dell’interessato (attributi) sono conservati per tutto il tempo in cui è necessario fornire il servizio all’interessato. Se non è più necessario fornire il servizio, il contraente può disattivare un utente. Anche l’interessato può chiedere la disattivazione della propria utenza. In caso di disattivazione dell’utenza dell’interessato i dati sono conservati per ulteriori 18 mesi per poter valutare se l’utente deve/può essere riattivato. Dopo 18 mesi dalla disattivazione, se non è stata richiesta una riattivazione, tutti i dati dell’interessato vengono cancellati.</p>
+   <p>I dati di log vengono conservati per 1 mese dalla raccolta, dopo di ché vengono anonimizzati con una procedura automatica.</p></td>
+                  </tr>
+               </tbody>
+            </table>
 
-         <h3>CONTATTI</h3>
-         <p>Nome Cognome: {{ idp_contacts['support']['givenName'] }} {{ idp_contacts['support']['surName'] }}</p>
-         <p>e-mail: <a href="mailto:{{ idp_contacts['support']['mail'] }}">{{ idp_contacts['support']['mail'] }}</a></p>
-         <p>tel.:</p>
-         <br/>
-         <p>Qui puoi trovare la pagina di informazioni per l'istituto {{ idp_metadata['it']['mdui_displayName'] }}: <a href="{{ idp_metadata['it']['mdui_infoUrl'] | default('/it/info.html') }}">Information Page</a></p>
+            <h3>CONTATTI</h3>
+            <p>Nome Cognome: {{ idp_contacts['support']['givenName'] }} {{ idp_contacts['support']['surName'] }}</p>
+            <p>e-mail: <a href="mailto:{{ idp_contacts['support']['mail'] }}">{{ idp_contacts['support']['mail'] }}</a></p>
+            <p>tel.:</p>
+            <br/>
+            <p>Qui puoi trovare la pagina di informazioni per l'istituto {{ idp_metadata['it']['mdui_displayName'] }}: <a href="{{ idp_metadata['it']['mdui_infoUrl'] | default('/it/info.html') }}">Pagina Informativa</a></p>
+         </div>
       </div>
    </body>
 </html>
