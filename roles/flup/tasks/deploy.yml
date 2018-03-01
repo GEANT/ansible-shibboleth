@@ -2,8 +2,10 @@
   git:
    repo: "{{ repo }}"
    dest: /opt/flup
-   version: 1.1
+   version: 1.1.1
    depth: 1
+  notify:
+   - "Restart Apache"
 
 - name: "Check if virtualenv is already created"
   stat:
@@ -36,11 +38,15 @@
   when:
    - flup is defined
    - flup['secret_key'] is defined and flup['secret_key'] != ''
+  notify:
+   - "Restart Apache"
   
 - name: "Install FLUP apache2 config"
   template:
     src: flup.conf.j2
     dest: /etc/apache2/conf-available/flup.conf
+  notify:
+   - "Restart Apache"
   
 - name: "Check if Apache FLUP site is already created"
   stat:
@@ -67,6 +73,8 @@
    path: "/opt/flup/flup/data"
   register: flup_perms
   changed_when: false
+  notify:
+   - "Restart Apache"
 
 - name: "Change permission for DB dir"
   file:

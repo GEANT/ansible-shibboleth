@@ -3,3 +3,10 @@
 
 jdk_version: "8"
 url_password_reset: "https://{{ fqdn }}/flup"
+
+idp_login_default:
+ aup:
+  en:
+   aupUrl: "https://www.garr.it/en/acceptable-use-policies"
+  it:
+   aupUrl: "https://www.garr.it/it/regole-di-utilizzo-della-rete-aup"

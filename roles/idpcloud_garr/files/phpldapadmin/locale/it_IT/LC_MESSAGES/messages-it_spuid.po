@@ -3809,3 +3809,15 @@ msgstr "Esempio: member"
 #, no-wrap
 msgid "Example: urn:mace:dir:entitlement:common-lib-terms"
 msgstr "Esempio: urn:mace:dir:entitlement:common-lib-terms"
+
+#: ../../templates/creation/custom_idpAccount.xml:93
+#: ../../templates/modification/custom_idpAccount.xml:84
+#, no-wrap
+msgid "Example: mario.rossi@example.org"
+msgstr "Esempio: mario.rossi@example.org"
+
+#: ../../templates/creation/custom_idpAccount.xml:94
+#: ../../templates/modification/custom_idpAccount.xml:85
+#, no-wrap
+msgid "Email address"
+msgstr "Indirizzo e-mail"

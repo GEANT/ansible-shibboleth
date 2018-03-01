@@ -10,12 +10,18 @@ idp.url.password.reset={{ idp_login['idp_url_password_reset'] }}
 
 # New custom properties
 idp.favicon={{ idp_metadata['en']['mdui_favicon'] }}
+idp.infopage=Informations
 idp.infoUrl={{ idp_metadata['en']['mdui_infoUrl'] }}
+idp.privacypage=Privacy Policy
 idp.privacyPage={{ idp_metadata['en']['mdui_privacyUrl'] }}
+idp.auppage=AUP Policy
+{% if idp_login['aup'] is defined %}
+idp.aupPage={{ idp_login['aup']['en']['aupUrl'] }}
+{% else %}
+idp.aupPage={{ idp_login_default['aup']['en']['aupUrl'] }}
+{% endif %}
 idp.login.moreinfo=Resource informations
 idp.login.goback=Go back to login page
-idp.infopage=Informations
-idp.privacypage=Privacy Policy
 idp.description={{ idp_metadata['en']['mdui_description'] }}
 idp.organization=GARR
 idp.contacts={{ idp_contacts['support']['mail'] }}

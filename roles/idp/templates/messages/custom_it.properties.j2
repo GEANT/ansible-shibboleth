@@ -8,12 +8,18 @@ idp.login.forgotPassword=Password dimenticata<br/>o Attivazione account
 
 # Nuove proprietà personali
 idp.favicon={{ idp_metadata['it']['mdui_favicon'] }}
+idp.infopage=Informazioni
 idp.infoUrl={{ idp_metadata['it']['mdui_infoUrl'] }}
+idp.privacypage=Politica sulla Privacy
 idp.privacyPage={{ idp_metadata['it']['mdui_privacyUrl'] }}
+idp.auppage=Politica di utilizzo (AUP)
+{% if idp_login['aup'] is defined %}
+idp.aupPage={{ idp_login['aup']['it']['aupUrl'] }}
+{% else %}
+idp.aupPage={{ idp_login_default['aup']['it']['aupUrl'] }}
+{% endif %}
 idp.login.moreinfo=Informazioni sulla risorsa
 idp.login.goback=Ritorna alla pagina di Login
-idp.infopage=Informazioni
-idp.privacypage=Politica sulla Privacy
 idp.description={{ idp_metadata['it']['mdui_description'] }}
 idp.organization={{ idp_metadata['it']['org_displayName'] }}
 idp.contacts={{ idp_contacts['technical']['mail'] }}

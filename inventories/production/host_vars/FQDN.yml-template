@@ -94,6 +94,11 @@ idp_login:
  footer_text_color: "#ffffff"
  footer_background_color: "#717171"
  idp_url_password_reset: "{{ url_password_reset }}"
+ aup:
+  en:
+   aupUrl: "https://www.garr.it/en/acceptable-use-policies"
+  it:
+   aupUrl: "https://www.garr.it/it/regole-di-utilizzo-della-rete-aup"
  footer:
   en:
    text: "<p><strong>FOOTER TEXT</strong> in english language</p>"
