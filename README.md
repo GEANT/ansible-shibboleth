@@ -30,7 +30,7 @@
     * ```rm -f /usr/local/src/shibboleth-identity-provider-3.3.1.tar.gz```
 
 6. Generate each IdP Metadata Certificates and Keys by running these commands:
-    * ```cd /opt/ansible-shibbleth/scripts```
+    * ```cd /opt/ansible-shibboleth/scripts```
     * ```python create-credentials.py FQDN```
 
    and obtain the password you must set on "```idp_config['sealer_pw']```" and the "```idp_config['keystore_pw']```" host vars (Point ```7.```)
