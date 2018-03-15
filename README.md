@@ -25,9 +25,9 @@
 
 5. Download the Identity Provider source:
     * ```cd /usr/local/src ```
-    * ```wget https://shibboleth.net/downloads/identity-provider/latest/shibboleth-identity-provider-3.3.1.tar.gz```
-    * ```tar xzf /usr/local/src/shibboleth-identity-provider-3.3.1.tar.gz```
-    * ```rm -f /usr/local/src/shibboleth-identity-provider-3.3.1.tar.gz```
+    * ```wget https://shibboleth.net/downloads/identity-provider/latest/shibboleth-identity-provider-3.3.2.tar.gz```
+    * ```tar xzf /usr/local/src/shibboleth-identity-provider-3.3.2.tar.gz```
+    * ```rm -f /usr/local/src/shibboleth-identity-provider-3.3.2.tar.gz```
 
 6. Generate each IdP Metadata Certificates and Keys by running these commands:
     * ```cd /opt/ansible-shibboleth/scripts```
