@@ -59,29 +59,29 @@
                   <tr>
                      <td>Nome del Servizio</td>
                      <td>
-                        <p><strong>Per contraente:</strong> IdP in the Cloud offerto dal Consortium GARR</p>
-                        <p><strong>Per utente (interessato):</strong> Identity Provider</p>
+                        <p>Identity Provider</p>
                      </td>
                   </tr>
                   <tr>
                      <td>Descrizione del Servizio</td>
                      <td>
-                        <p><strong>Per contraente:</strong> Servizio di Identity as a Service integrato in una appliance virtualizzata e fornita sulla cloud del GARR.</p>
-                        <p><strong>Per utente (interessato):</strong> Servizio di autenticazione federata offerto dall’organizzazione di appartenenza.</p>
+                        <p>Servizio di autenticazione federata offerto dall’organizzazione di appartenenza.</p>
                      </td>
                   </tr>
                   <tr>
                      <td>Titolari del Trattamento</td>
                      <td>
-                        <p><strong>Per contraente:</strong></p>
+                        <p><strong>Contraente:</strong></p>
                         <ul>
-                           <li><strong>Nome:</strong></li>
-                           <li><strong>Email:</strong></li>
+                           <li><strong>Nome: </strong>{{ idp_metadata['it']['mdui_displayName'] }}</li>
+                           <li><strong>Email: </strong><a href="mailto:{{ idp_contacts['support']['mail'] }}">{{ idp_contacts['support']['mail'] }}</a></li>
+                           <li><strong>Indirizzo: </strong>{{ idp_contacts['support']['address'] }}</li>
                         </ul>
-                        <strong>Consortium GARR – Via dei Tizii, 6 – 00185 ROMA, IT</strong>
+                        <p><strong>Fornitore del servizio</strong></p>
                         <ul>
-                           <li><strong>Nome:</strong></li>
-                           <li><strong>Email:</strong></li>
+                           <li><strong>Nome: </strong>Consortium GARR</li>
+                           <li><strong>Email: </strong><a href="mailto:info@garr.it">info@garr.it</a></li>
+                           <li><strong>Indirizzo: </strong>Via dei Tizii, 6 - 00185 ROMA, IT</li>
                         </ul>
                         <br/>
                         <p>Il Contraente e il Consortium GARR sono contitolari del trattamento dei dati personali gestiti tramite il Servizio, ai sensi dell’art.26 del GDPR.</p>
@@ -146,15 +146,12 @@
                               <li>Tutte le Risorse della Federazione IDEM;
                               <li>Le Risorse della Federazione eduGAIN che sono conformi al Data Protection Code of Conduct;
                               <li>Le Risorse di eduGAIN che sono conformi a Research and Scholarship;
-                              <li>Tutte le Risorse della Federazione eduGAIN;
-                              <li>Altre Risorse specificate dal Contraente  ...
                            </ul>
                         </p>
                         <p>Terze parti fuori dalla EEA:
                            <ul>
                               <li>Alcune Risorse conformi al Data Protection Code of Conduct;</li>
                               <li>Alcune Risorse conformi a Research and Scholarship;</li>
-                              <li>Altre Risorse ...</li>
                            </ul>
                         </p>
                      </td>
@@ -165,7 +162,7 @@
                   </tr>
                   <tr>
                      <td><p>Ritiro del consenso dell’interessato</p></td>
-                     <td><p>Gli unici dati che vengono raccolti con il consenso dell’interessato sono le preferenze riguardo la trasmissione degli attributi a terze parti. Essi vengono raccolti on-line al momento del primo accesso alla Risorsa e possono essere eliminati, con il risultato di ritirare il consenso alla loro trasmissione, iniziando nuovamente la procedura di login e spuntando la casella <strong>"Ripulisci i permessi di rilascio di informazioni dati a questo servizio in precedenza"</strong></p></td>
+                     <td><p>Gli unici dati che vengono raccolti con il consenso dell’interessato sono le preferenze riguardo la trasmissione degli attributi a terze parti. Essi vengono raccolti on-line al momento del primo accesso alla Risorsa e possono essere eliminati, con il risultato di ritirare il consenso alla loro trasmissione, iniziando nuovamente la procedura di login e spuntando la casella <strong>"Ripulisci i permessi di rilascio di informazioni dati a questo servizio in precedenza"</strong></p><img src="https://www.garr.it/images/imgPPita.png"></td>
                   </tr>
                   <tr>
                      <td><p>Portabilità dei Dati</p></td>
@@ -179,11 +176,6 @@
                   </tr>
                </tbody>
             </table>
-
-            <h3>CONTATTI</h3>
-            <p>Nome Cognome: {{ idp_contacts['support']['givenName'] }} {{ idp_contacts['support']['surName'] }}</p>
-            <p>e-mail: <a href="mailto:{{ idp_contacts['support']['mail'] }}">{{ idp_contacts['support']['mail'] }}</a></p>
-            <p>tel.:</p>
             <br/>
             <p>Qui puoi trovare la pagina di informazioni per l'istituto {{ idp_metadata['it']['mdui_displayName'] }}: <a href="{{ idp_metadata['it']['mdui_infoUrl'] | default('/it/info.html') }}">Pagina Informativa</a></p>
          </div>

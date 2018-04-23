@@ -59,15 +59,13 @@
                   <tr>
                      <td>Service Name</td>
                      <td>
-                        <p><strong>For contractors:</strong> Cloud based IdP provided by  Consortium GARR</p>
-                        <p><strong>For interested users :</strong> Identity Provider</p>
+                        <p>Identity Provider</p>
                      </td>
                   </tr>
                   <tr>
                      <td>Service Description</td>
                      <td>
-                        <p><strong>For contractors:</strong> Identity Provider  Service embedded in a virtual provided by Consortium GARR.</p>
-                        <p><strong>For the interested user:</strong> Federated Authentication Service offered by the User's Home Organization.</p>
+                        <p>Federated Authentication Service offered by the User's Home Organization.</p>
                      </td>
                   </tr>
                   <tr>
@@ -75,14 +73,17 @@
                      <td>
                         <p><strong>For the contractor:</strong></p>
                         <ul>
-                           <li><strong>Name:</strong></li>
-                           <li><strong>Email:</strong></li>
+                           <li><strong>Name: </strong>{{ idp_metadata['it']['mdui_displayName'] }}</li>
+                           <li><strong>Email: </strong><a href="mailto:{{ idp_contacts['support']['mail'] }}">{{ idp_contacts['support']['mail'] }}</a></li>
+                           <li><strong>Address: </strong>{{ idp_contacts['support']['address'] }}</li>
                         </ul>
-                        <strong>Consortium GARR – Via dei Tizii, 6 – 00185 ROMA, IT</strong>
+                        <strong>Service provider:</strong>
                         <ul>
-                           <li><strong>Name:</strong></li>
-                           <li><strong>Email:</strong></li>
+                           <li><strong>Nome: </strong>Consortium GARR</li>
+                           <li><strong>Email: </strong><a href="mailto:info@garr.it">info@garr.it</a></li>
+                           <li><strong>Address: </strong>Via dei Tizii, 6 - 00185 ROMA, IT</li>
                         </ul>
+
                         <br/>
                         <p>Contractor and Consortium GARR are co-owners  of Personal Data processing provided by the service, following art.26 of GDPR.</p>
                         <br/>
@@ -146,15 +147,12 @@
                               <li>All IDEM Federation resources;
                               <li>Le Resources of the eduGAIN interfederation, compliant with the GDPR DP Code of Conduct;
                               <li>eduGAIN resources compliant with Reserach and Scholarship;
-                              <li>All resources of eduGAIN interfederation ;
-                              <li>Other resources specifid by the contractor
                            </ul>
                         </p>
                         <p>Third parties outside EAA:
                            <ul>
                               <li>Resources compliant to  Data Protection Code of Conduct;</li>
                               <li>Resources compliant with Research and Scholarship;</li>
-                              <li>Other resources...</li>
                            </ul>
                         </p>
                      </td>
@@ -166,7 +164,7 @@
                   <tr>
                      <td><p>How to revoke user consent</p></td>
                      <td><p>
-   The only collected data with user consent are preferences about the transmission of attributes to third parties. Data are gathered online at the time of first access to resources, and can be deleted, with the outcome of eliminating consent to their transmission, starting over the login procedure and checking the <strong> "Clean the consent to release information to this service, previously provided"</strong>  box.</p></td>
+   The only collected data with user consent are preferences about the transmission of attributes to third parties. Data are gathered online at the time of first access to resources, and can be deleted, with the outcome of eliminating consent to their transmission, starting over the login procedure and checking the <strong> "Clean the consent to release information to this service, previously provided"</strong> box.</p><img src="https://www.garr.it/images/imgPPeng.png"></td>
                   </tr>
                   <tr>
                      <td><p>Data portability</p></td>
@@ -183,10 +181,6 @@
                   </tr>
                </tbody>
             </table>
-            <h3>CONTACTS:</h3>
-            <p> Name Surname: {{ idp_contacts['support']['givenName'] }} {{ idp_contacts['support']['surName'] }}</p>
-            <p> e-mail: <a href="mailto:{{ idp_contacts['support']['mail']}}">{{ idp_contacts['support']['mail'] }}</a></p>
-            <p> tel.:</p>
             <br/>
             <p>Here you can find the {{ idp_metadata['en']['mdui_displayName'] }} Information Page: <a href="{{ idp_metadata['en']['mdui_infoUrl'] | default('/en/info.html') }}">Information Page</a></p>
          </div>
