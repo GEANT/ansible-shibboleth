@@ -1,10 +1,16 @@
 ---
 # tasks file for Statistics application
+- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
+  apt:
+   update_cache: yes
+   cache_valid_time: 3600
+  tags: idp
+
 - name: "Debian 8 - Install packages needed by /statistics application"
   apt:
    name: "{{item}}"
    state: latest
-   update_cache: yes
+   install_recommends: no
   with_items:
    - python-mysqldb
    - php5-mysql
@@ -17,7 +23,7 @@
 #   apt:
 #   name: "{{item}}"
 #   state: latest
-#   update_cache: yes
+#   install_recommends: no
 #  with_items:
 #   - python-mysqldb
 #   - php7.0-mysql

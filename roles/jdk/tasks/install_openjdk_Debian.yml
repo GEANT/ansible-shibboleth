@@ -5,15 +5,19 @@
   apt_repository:
     repo: "deb {{ mirror | default('https://mi.mirror.garr.it/mirrors/debian/') }} jessie-backports main"
     state: present
-    update_cache: "yes"
     filename: 'jessie-backports'
   when: ansible_distribution_release == "jessie"
+
+- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
 
 - name: "Debian 8 - Install OpenJDK 8"
   apt:
    name: "{{ item }}"
    state: latest
-   update_cache: "yes"
+   install_recommends: no
    default_release: "jessie-backports"
   with_items:
    - "ca-certificates-java"
@@ -26,7 +30,7 @@
   apt:
    name: "{{ item }}"
    state: latest
-   update_cache: "yes"
+   install_recommends: no
   with_items:
    - "ca-certificates-java"
    - "openjdk-8-jre-headless"

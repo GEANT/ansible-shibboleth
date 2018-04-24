@@ -1,10 +1,15 @@
 ---
 # tasks file for pla-install
+- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
 - name: "Be sure that phpLDAPadmin required packages are installed"
   apt:
    name: "{{ item }}"
    state: latest
-   update_cache: yes
+   install_recommends: no 
   with_items:
    - apache2-utils
    - python-passlib
@@ -16,7 +21,7 @@
   apt:
    name: "php5-ldap"
    state: latest
-   update_cache: yes
+   install_recommends: no
   notify:
    - "Restart Apache"
   when: ansible_distribution_release == "jessie"
@@ -25,7 +30,7 @@
   apt:
    name: "php7.0-ldap"
    state: latest
-   update_cache: yes
+   install_recommends: no
   notify:
    - "Restart Apache"
   when: ansible_distribution_release == "stretch"

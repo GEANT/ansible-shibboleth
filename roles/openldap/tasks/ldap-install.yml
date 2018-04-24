@@ -1,10 +1,15 @@
 ---
 # tasks for openLDAP Installation
+- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
+  apt:
+   update_cache: yes
+   cache_valid_time: 3600
+
 - name: "Install 'debconf-utils' and 'python-ldap' packages"
   apt:
    name: "{{ item }}"
    state: latest
-   update_cache: yes
+   install_recommends: no
   with_items:
    - debconf-utils
    - python-ldap
@@ -55,7 +60,7 @@
   apt:
    name: "{{ item }}"
    state: latest
-   update_cache: yes
+   install_recommends: no
   with_items:
     - slapd
     - ldap-utils

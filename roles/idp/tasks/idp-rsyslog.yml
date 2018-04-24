@@ -4,7 +4,7 @@
   apt_repository:
     repo: "deb {{ mirror | default('https://mi.mirror.garr.it/mirrors/debian/') }} jessie-backports main"
     state: present
-    update_cache: "yes"
+    update_cache: yes
     filename: 'jessie-backports'
   when:
    - ansible_distribution_release == "jessie"
@@ -18,7 +18,7 @@
   apt:
    name: "{{ item }}"
    state: latest
-   update_cache: "yes"
+   install_recommends: no
    default_release: "jessie-backports"
   with_items:
    - "rsyslog"

@@ -1,10 +1,16 @@
 ---
 # tasks file for IdP Check_MK probes
+- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  tags: idp
+
 - name: "Install needed packages for Check MK plugin"
   apt:
    name: "{{ item }}"
    state: latest
-   update_cache: yes
+   install_recommends: no
   with_items:
    - "python-ldap"
   when:

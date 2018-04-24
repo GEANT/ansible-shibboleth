@@ -1,7 +1,12 @@
 ---
 # tasks for install
+- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
+  apt:
+   update_cache: yes
+   cache_valid_time: 3600
+
 - name: "Be sure that packages needed are installed"
   apt:
    name: "rsync"
    state: latest
-   update_cache: yes
+   install_recommends: no

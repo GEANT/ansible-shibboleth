@@ -21,10 +21,16 @@
    state: present
   tags: common
 
+- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
+  apt:
+   update_cache: yes
+   cache_valid_time: 3600
+  tags: common
+
 - name: "Install needed common packages"
   apt: 
    name: "{{ item }}"
-   update_cache: yes
+   install_recommends: no
    state: latest
   with_items:
    - ntp

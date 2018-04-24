@@ -1,10 +1,16 @@
 ---
 # tasks file for check_mk-install
+- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
+  apt:
+   update_cache: yes
+   cache_valid_time: 3600
+  tags: check_mk_agent
+
 - name: "Be sure that packages needed are installed"
   apt:
    name: "{{ check_mk_agent_packages }}"
    state: latest
-   update_cache: yes
+   install_recommends: no
   tags: check_mk_agent
 
 - name: "Check if the Monitoring Agent of Check_MK is already downloaded"

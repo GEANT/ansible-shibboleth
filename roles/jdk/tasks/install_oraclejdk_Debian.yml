@@ -5,7 +5,6 @@
   apt:
    name: "software-properties-common"
    state: latest
-   update_cache: yes
 
 - name: "Add webupd8 apt reporitory contained Oracle Java"
   apt_repository:
@@ -24,6 +23,7 @@
    name: "{{ item }}"
    state: latest
    update_cache: yes
+   install_recommends: no
   with_items:
     - "oracle-java{{ jdk_version }}-installer"
     - "ca-certificates"

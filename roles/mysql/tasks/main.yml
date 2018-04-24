@@ -1,10 +1,16 @@
 ---
 # tasks file for mysql
+- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
+  apt:
+   update_cache: yes
+   cache_valid_time: 3600
+  tags: mysql
+
 - name: "Install 'debconf-utils' package"
   apt:
    name: "debconf-utils"
    state: latest
-   update_cache: yes
+   install_recommends: no
   tags: mysql
 
 - name: "Check if debconf-get-selections has parameters for unattended mysql installation and store the result on 'debconf' ansible variable"
@@ -34,7 +40,7 @@
   apt:
    name: "{{ item }}"
    state: latest
-   update_cache: yes
+   install_recommends: no
   with_items:
    - python-mysqldb
    - mysql-server
