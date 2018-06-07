@@ -16,8 +16,16 @@ LDAPSEARCH="`${WHICH} ldapsearch`"
 DATEC="`${WHICH} date`"
 FIND="`${WHICH} find`"
 DATE=`${DATEC} +%Y-%m-%d`
+FAILFILE="/var/local/backups/LDAP_FAIL"
 
 ${LDAPSEARCH} -QLLLY EXTERNAL -H ldapi:/// -b ${BASEDN} ${FILTER} cn sn givenName schacPersonalUniqueID mail eduPersonEntitlement eduPersonAffiliation userPassword schacExpiryDate pwdAccountLockedTime objectClass > ${BACKUPDIR}/${DATE}_ldap-users.ldif
 
-${FIND} "${BACKUPDIR}" -type f ! -name '*.gz' -mtime +0 -exec gzip {} \;
-${FIND} "${BACKUPDIR}" -type f -mtime +30 -delete
+if [ $? -ne 0 ]
+then
+    echo "LDAP BACKUP FAILED"
+    echo "FAIL" > $FAILFILE
+else
+    echo "LDAP BACKUP SUCCEDED"
+    ${FIND} "${BACKUPDIR}" -type f ! -name '*.gz' -mtime +0 -exec gzip {} \;
+    ${FIND} "${BACKUPDIR}" -type f -mtime +30 -delete
+fi
