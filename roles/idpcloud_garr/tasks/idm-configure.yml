@@ -121,3 +121,26 @@
    - { src: "files/apache2/conf-enabled/idm-tools.conf", dest: "/etc/apache2/conf-enabled/idm-tools.conf"  }
   notify:
    - "Restart Apache"
+
+- name: "Be sure to load 'statistics' apache2 configuration files"
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_items:
+   - { src: "files/apache2/conf-enabled/statistics.conf", dest: "/etc/apache2/conf-enabled/statistics.conf"  }
+  notify:
+   - "Restart Apache"
+
+- name: "Be sure to have 'updates.txt' file for users' updates"
+  lineinfile:
+   dest: "/opt/phpldapadmin/htdocs/idm-tools/updates.txt"
+   line: "{{ item.line }}"
+   create: "yes"
+   state: present
+  with_items:
+   - { line: "# Data: " }
+   - { line: "" }
+   - { line: "Nuovi utenti per {{ ldap['org'] }}:" }

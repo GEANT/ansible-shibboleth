@@ -5,12 +5,12 @@
 	else if ($action_number == 2)
 		$redirect_url = sprintf('cmd.php?%s&template=%s&container=%s',
 -			$href,'default',$request['template']->getContainerEncode());
-+			$href,'custom_idpAccount:0',$request['template']->getContainerEncode());
++			$href,'custom_idpAccount:1',$request['template']->getContainerEncode());
 
 	else
 		$redirect_url = sprintf('cmd.php?%s&template=%s&dn=%s',
 -			$href,'default',$request['template']->getDNEncode());
-+			$href,'custom_idpAccount:0',$request['template']->getDNEncode());
++			$href,'custom_idpAccount:1',$request['template']->getDNEncode());
 
 	if ($action_number == 1 || $action_number == 2)
 		printf('<meta http-equiv="refresh" content="0; url=%s" />',$redirect_url);
