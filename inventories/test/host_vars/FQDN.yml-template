@@ -65,6 +65,7 @@ idp_config:
  scope: "example.org"
  idp_sourceAttribute: "uid"
  idp_persistentId_salt: "## RANDOM_LONG_STRING_1 ##"
+ custom_resolver: "## OPTIONAL: VALUE THIS VARIABLE WITH THE CUSTOM ATTRIBUTE RESOLVER FILE PUT INTO idp-conf DIR ##"
  ldap:
   authenticator: "bindSearchAuthenticator"
   url: "## ldap://host:port or ldaps://host:port ##"

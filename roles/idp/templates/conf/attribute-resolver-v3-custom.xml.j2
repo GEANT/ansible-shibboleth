@@ -37,10 +37,26 @@
 
 {% endfor %}
     <!-- ========================================== -->
-
     <!--      Data Connectors                       -->
     <!-- ========================================== -->
 
+{% if ((idp_config['ldap']['useStartTLS'] or idp_config['ldap']['useSSL']) in ['Yes','yes','True','true']) and idp_config['ldap']['trustCertificates'] %}
+    <!-- LDAP Connector -->
+    <DataConnector id="myLDAP" xsi:type="LDAPDirectory"
+        ldapURL="%{idp.attribute.resolver.LDAP.ldapURL}"
+        baseDN="%{idp.attribute.resolver.LDAP.baseDN}"
+        principal="%{idp.attribute.resolver.LDAP.bindDN}"
+        principalCredential="%{idp.attribute.resolver.LDAP.bindDNCredential}"
+        trustFile="%{idp.attribute.resolver.LDAP.trustCertificates}"
+        useStartTLS="%{idp.attribute.resolver.LDAP.useStartTLS:true}">
+        <FilterTemplate>
+            <![CDATA[
+                %{idp.attribute.resolver.LDAP.searchFilter}
+            ]]>
+        </FilterTemplate>
+        <ReturnAttributes>%{idp.attribute.resolver.LDAP.returnAttributes}</ReturnAttributes>
+    </DataConnector>
+{% else %}
     <!-- LDAP Connector -->
     <DataConnector id="myLDAP" xsi:type="LDAPDirectory"
         ldapURL="%{idp.attribute.resolver.LDAP.ldapURL}"
@@ -53,16 +69,11 @@
                 %{idp.attribute.resolver.LDAP.searchFilter}
             ]]>
         </FilterTemplate>
-{% if ((idp_config['ldap']['useStartTLS'] or idp_config['ldap']['useSSL']) in ['Yes','yes','True','true']) and idp_config['ldap']['trustCertificates'] %}
-        <StartTLSTrustCredential id="LDAPtoIdPCredential" xsi:type="sec:X509ResourceBacked">
-            <sec:Certificate>%{idp.attribute.resolver.LDAP.trustCertificates}</sec:Certificate>
-        </StartTLSTrustCredential>
-{% endif %}
         <ReturnAttributes>%{idp.attribute.resolver.LDAP.returnAttributes}</ReturnAttributes>
     </DataConnector>
+{% endif %}
 
     <!-- Data Connector for eduPersonTargetedID -->
-
     <DataConnector id="myStoredId" xsi:type="StoredId"
         generatedAttributeID="persistentID"
         sourceAttributeID="%{idp.persistentId.sourceAttribute}"

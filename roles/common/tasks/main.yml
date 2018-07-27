@@ -80,40 +80,58 @@
    - "Update Timezone"
   tags: common
 
-- name: "Load SSL Certificate and SSL Key into '/etc/ssl' right directories"
-  copy:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
-   owner: "{{ item.owner }}"
-   group: "{{ item.group }}"
-   mode: "{{ item.mode }}"
-  with_items:
-   - { src: "files/{{ fqdn }}/{{ common['ssl_cert'] }}", dest: "/etc/ssl/certs/ssl-cert.crt", owner: "root" , group: "ssl-cert" , mode: "0644"  }
-   - { src: "files/{{ fqdn }}/{{ common['ssl_key'] }}", dest: "/etc/ssl/private/ssl-cert.key", owner: "root" , group: "ssl-cert" , mode: "0440"  }
+# ADDED ON 24-07-2018
+- name: "Be sure to configure SSL if needed"
+  import_tasks: "configure_ssl.yml"
+  when: 
+   - common is defined
+   - common['ssl'] is defined
+   - common['ssl'] in ["True","true","Yes","yes"]
   tags: common
 
-- name: "Ensure that the '/usr/local/share/ca-certificates' directory exists"
-  file: 
-   state: "directory"
-   path: "/usr/local/share/ca-certificates"
+- name: "Manage SWAP file if needed"
+  import_tasks: "manage_swapfile.yml"
+  when: 
+   - common['swap'] is defined
+   - common['swap']['name_swapfile'] is defined and common['swap']['name_swapfile'] != ''
+   - common['swap']['size_swapfile'] is defined and common['swap']['size_swapfile'] != ''
+   - common['swap']['state'] is defined and (common['swap']['state'] == 'present' or common['swap']['state'] == 'absent')
   tags: common
 
-- name: "Check the existance of the CA"
-  stat:
-    path: "/etc/ssl/certs/cacert.pem"
-  register: cacert
-  tags: common
+#- name: "Load SSL Certificate and SSL Key into '/etc/ssl' right directories"
+#  copy:
+#   src: "{{ item.src }}"
+#   dest: "{{ item.dest }}"
+#   owner: "{{ item.owner }}"
+#   group: "{{ item.group }}"
+#   mode: "{{ item.mode }}"
+#  with_items:
+#   - { src: "files/{{ fqdn }}/{{ common['ssl_cert'] }}", dest: "/etc/ssl/certs/ssl-cert.crt", owner: "root" , group: "ssl-cert" , mode: "0644"  }
+#   - { src: "files/{{ fqdn }}/{{ common['ssl_key'] }}", dest: "/etc/ssl/private/ssl-cert.key", owner: "root" , group: "ssl-cert" , mode: "0440"  }
+#  tags: common
 
-- name: "Install CA Certificate"
-  copy: 
-   src: "files/{{ fqdn }}/{{ common['ca'] }}"
-   dest: "/usr/local/share/ca-certificates/cacert.crt"
-   owner: "root"
-   group: "root"
-   mode: "0644"
-  tags: common
+#- name: "Ensure that the '/usr/local/share/ca-certificates' directory exists"
+#  file: 
+#   state: "directory"
+#   path: "/usr/local/share/ca-certificates"
+#  tags: common
 
-- name: "Update certificates index"
-  shell: "/usr/sbin/update-ca-certificates"
-  changed_when: false
-  tags: common
+#- name: "Check the existance of the CA"
+#  stat:
+#    path: "/etc/ssl/certs/cacert.pem"
+#  register: cacert
+#  tags: common
+
+#- name: "Install CA Certificate"
+#  copy: 
+#   src: "files/{{ fqdn }}/{{ common['ca'] }}"
+#   dest: "/usr/local/share/ca-certificates/cacert.crt"
+#   owner: "root"
+#   group: "root"
+#   mode: "0644"
+#  tags: common
+
+#- name: "Update certificates index"
+#  shell: "/usr/sbin/update-ca-certificates"
+#  changed_when: false
+#  tags: common

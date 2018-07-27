@@ -173,10 +173,10 @@
    - "/var/local/backups"
    - "/var/local/backups/ldap"
 
-- name: "Put ldap backup script in the '/etc/cron.daily' directory to run the script once a day"
+- name: "Put ldap backup script in the '/etc/cron.hourly' directory to run the script once an hour"
   template:
    src: "ldap-backup.sh.j2"
-   dest: "/etc/cron.daily/ldap-backup"
+   dest: "/etc/cron.hourly/ldap-backup"
    owner: "root"
    group: "root"
    mode: "0755"

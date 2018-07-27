@@ -98,10 +98,31 @@
    - { src: "conf/ldap.properties.j2", dest: "/opt/shibboleth-idp/conf/ldap.properties" }
    - { src: "conf/services.xml.j2", dest: "/opt/shibboleth-idp/conf/services.xml" }
    - { src: "conf/attribute-filter-v3-federation.xml.j2", dest: "/opt/shibboleth-idp/conf/attribute-filter-v3-federation.xml" }
-   - { src: "conf/attribute-resolver-v3-custom.xml.j2", dest: "/opt/shibboleth-idp/conf/attribute-resolver-v3-custom.xml" }
    - { src: "conf/metadata-providers.xml.j2", dest: "/opt/shibboleth-idp/conf/metadata-providers.xml" }
   notify:
    - "Restart Jetty"
+  tags: idp
+
+- name: "Load IdP Attribute resolver from file"
+  file:
+   src: "files/restore/{{ fqdn }}/idp-conf/{{ idp_config['custom_resolver'] }}"
+   path: "/opt/shibboleth-idp/conf/attribute-resolver-v3-custom.xml" 
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   - idp_config['custom_resolver'] is defined
+   - idp_config['custom_resolver'] != '' 
+  tags: idp
+
+- name: "Load IdP Attribute resolver from template"
+  template:
+   src: "conf/attribute-resolver-v3-custom.xml.j2"
+   dest: "/opt/shibboleth-idp/conf/attribute-resolver-v3-custom.xml" }
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when: idp_config['custom_resolver'] is not defined OR idp_config['custom_resolver'] == ''
   tags: idp
 
 - name: "Remove fake RS SP Metadata from the '/metadata' directory"

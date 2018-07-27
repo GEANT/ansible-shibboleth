@@ -1,6 +1,7 @@
 # Load RELP output module and text file input module
 # http://www.ryslog.com/doc/v8-stable/configuration/modules/omrelp.html
 # http://www.ryslog.com/doc/v8-stable/configuration/modules/imfile.html
+$LocalHostName {{ fqdn }}
 
 module(load="omrelp")
 

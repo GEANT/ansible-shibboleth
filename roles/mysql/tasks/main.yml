@@ -83,10 +83,10 @@
    - "/var/local/backups/mysql"
   tags: mysql
 
-- name: "Put mysql backup script in the '/etc/cron.daily' directory to run the script once a day"
+- name: "Put mysql backup script in the '/etc/cron.hourly' directory to run the script once an hour"
   template:
    src: "mysql-backup.sh.j2"
-   dest: "/etc/cron.daily/mysql-backup"
+   dest: "/etc/cron.hourly/mysql-backup"
    owner: "root"
    group: "root"
    mode: "0755"

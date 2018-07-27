@@ -18,6 +18,7 @@
 
 # ignore emacs files
 *~
+\#*\#
 
 # ignore .git_ignore files
 *.git_ignore

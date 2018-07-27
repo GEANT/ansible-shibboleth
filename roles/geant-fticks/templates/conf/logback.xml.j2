@@ -162,18 +162,6 @@
     </appender>
 
     <!-- F-TICKS syslog destination. -->
-    <appender name="IDP_FTICKS_GEANT" class="ch.qos.logback.classic.net.SyslogAppender">
-        <syslogHost>90.147.166.156</syslogHost>
-        <port>514</port>
-        <facility>AUTH</facility>
-        <suffixPattern>[%thread] %logger %msg</suffixPattern>
-    </appender>
-
-    <logger name="Shibboleth-FTICKS" level="ALL" additivity="false">
-        <appender-ref ref="IDP_FTICKS_GEANT"/>
-    </logger>
-
-    <!-- F-TICKS syslog destination. -->
     <appender name="IDP_FTICKS" class="ch.qos.logback.classic.net.SyslogAppender">
         <syslogHost>${idp.fticks.loghost:-localhost}</syslogHost>
         <port>${idp.fticks.logport:-514}</port>
@@ -198,4 +186,26 @@
         <appender-ref ref="${idp.warn.appender:-IDP_WARN}" />
     </root>
 
+    <!-- F-TICKS syslog destination for Géant. -->
+    <appender name="IDP_FTICKS_GEANT" class="ch.qos.logback.classic.net.SyslogAppender">
+        <syslogHost>90.147.166.156</syslogHost>
+        <port>514</port>
+        <facility>AUTH</facility>
+        <suffixPattern>[%thread] %logger %msg</suffixPattern>
+    </appender>
+
+    <logger name="Shibboleth-FTICKS" level="ALL" additivity="false">
+        <appender-ref ref="IDP_FTICKS_GEANT"/>
+    </logger>
+
+    <appender name="IDP_FTICKS_GEANT_ELK" class="ch.qos.logback.classic.net.SyslogAppender">
+        <syslogHost>90.147.166.129</syslogHost>
+        <port>514</port>
+        <facility>AUTH</facility>
+        <suffixPattern>[%thread] %logger %msg</suffixPattern>
+    </appender>
+
+    <logger name="Shibboleth-FTICKS" level="ALL" additivity="false">
+        <appender-ref ref="IDP_FTICKS_GEANT_ELK"/>
+    </logger>
 </configuration>
