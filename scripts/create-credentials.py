@@ -12,37 +12,40 @@ from cStringIO import StringIO
 # PARAMETERS
 
 os.environ["JAVA_HOME"] = "/usr/lib/jvm/default-java/jre"
-ansible_src = "/opt/idpcloud-data/ansible-shibboleth"
+ansible_src = "/opt/ansible-shibboleth"
 
 # END PARAMETERS
 
 parser = argparse.ArgumentParser(description='Generates Shibboleth IDP Credentials.')
 parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
 parser.add_argument("fqdn", help="Full Qualified Domain Name of Shibboleth IdP")
+parser.add_argument("--entityid", help="Provide the entityID for the IdP", action="store", default="")
 args = parser.parse_args()
 
 if args.verbose:
     print "verbosity turned on"
 
 idp_fqdn = args.fqdn
+idp_entityID = args.entityid
 idp_cred_pw = check_output(shlex.split("openssl rand -base64 27")).strip()
 
+if (idp_entityID):
+   entityID = idp_entityID
+else:
+   entityID = 'https://' + idp_fqdn + '/idp/shibboleth'
 
 ### Create IDP Credentials DIR
-credentials_dir = ansible_src + "/roles/idp/files/restore/"+ args.fqdn +"/credentials"
+credentials_dir = ansible_src + "/inventories/files/"+ args.fqdn +"/idp/credentials"
 call(["mkdir", "-p", credentials_dir])
 
 if args.verbose:
    print("IdP Credentials directory created in: %s" % credentials_dir)
-
-
 
 ### Find the IDP /bin directory
 idp_bin_dir = check_output(shlex.split('find / -path "*shibboleth-identity-provider-*/bin"')).strip()
 
 if args.verbose:
    print("IdP bin directory found in: %s" % idp_bin_dir)
-
 
 
 ### Generate Sealer JKS and KVER
@@ -61,7 +64,6 @@ if args.verbose:
    print("IdP Sealer KVER created into: %s" % sealer_kver)
 
 
-
 ## Generate IDP Backchannel Certificate
 
 ## Check the existance of IDP Backchannell P12 and CRT
@@ -69,7 +71,7 @@ backchannel_p12_check = check_output(shlex.split('find '+credentials_dir+' -name
 backchannel_crt_check = check_output(shlex.split('find '+credentials_dir+' -name "idp-backchannel.crt"')).strip()
 
 if (not backchannel_p12_check and not backchannel_crt_check):
-   call(["./keygen.sh", "--storefile", credentials_dir + "/idp-backchannel.p12", "--storepass", idp_cred_pw, "--hostname", idp_fqdn, "--lifetime", "30", "--uriAltName", "https://" + idp_fqdn + "/idp/shibboleth", "--certfile", credentials_dir + "/idp-backchannel.crt"], cwd=idp_bin_dir)
+   call(["./keygen.sh", "--storefile", credentials_dir + "/idp-backchannel.p12", "--storepass", idp_cred_pw, "--hostname", idp_fqdn, "--lifetime", "30", "--uriAltName", entityID, "--certfile", credentials_dir + "/idp-backchannel.crt"], cwd=idp_bin_dir)
 
 if args.verbose:
    backchannel_p12 = check_output(shlex.split('find '+credentials_dir+' -name "idp-backchannel.p12"')).strip()
@@ -86,7 +88,7 @@ signing_crt_check = check_output(shlex.split('find '+credentials_dir+' -name "id
 signing_key_check = check_output(shlex.split('find '+credentials_dir+' -name "idp-signing.key"')).strip()
 
 if (not signing_crt_check and not signing_key_check):
-   call(["./keygen.sh", "--hostname", idp_fqdn, "--lifetime", "30", "--uriAltName", "https://" + idp_fqdn + "/idp/shibboleth", "--certfile", credentials_dir + "/idp-signing.crt", "--keyfile", credentials_dir + "/idp-signing.key"], cwd=idp_bin_dir)
+   call(["./keygen.sh", "--hostname", idp_fqdn, "--lifetime", "30", "--uriAltName", entityID, "--certfile", credentials_dir + "/idp-signing.crt", "--keyfile", credentials_dir + "/idp-signing.key"], cwd=idp_bin_dir)
 
 
 
@@ -97,7 +99,7 @@ encryption_crt_check = check_output(shlex.split('find '+credentials_dir+' -name 
 encryption_key_check = check_output(shlex.split('find '+credentials_dir+' -name "idp-encryption.key"')).strip()
 
 if (not encryption_crt_check and not encryption_key_check):
-   call(["./keygen.sh", "--hostname", idp_fqdn, "--lifetime", "30", "--uriAltName", "https://" + idp_fqdn + "/idp/shibboleth", "--certfile", credentials_dir + "/idp-encryption.crt", "--keyfile", credentials_dir + "/idp-encryption.key"], cwd=idp_bin_dir)
+   call(["./keygen.sh", "--hostname", idp_fqdn, "--lifetime", "30", "--uriAltName", entityID, "--certfile", credentials_dir + "/idp-encryption.crt", "--keyfile", credentials_dir + "/idp-encryption.key"], cwd=idp_bin_dir)
 
 if args.verbose:
    signing_crt = check_output(shlex.split('find '+credentials_dir+' -name "idp-signing.crt"')).strip()

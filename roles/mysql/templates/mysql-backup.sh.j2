@@ -6,34 +6,25 @@ if [ -r ${CONFIGFILE} ]; then
    # Read the configfile if it's existing and readable
    source ${CONFIGFILE}
 else
-   BACKUPDIR="/var/local/backups/mysql"
+   BACKUPDIR="/var/local/backups"
 fi
 
 WHICH="`which which`"
 MYSQLDUMP="`${WHICH} mysqldump`"
-DATEC="`${WHICH} date`"
-FIND="`${WHICH} find`"
-DATE=`${DATEC} +%Y-%m-%d`
 DATABASES=`mysql --defaults-file=/etc/mysql/debian.cnf -Bse 'show databases'`
 FAILFILE="/var/local/backups/MYSQL_FAIL"
 
 for db in ${DATABASES}; do
     if [[ "${db}" != "information_schema" ]] && [[ "$db" != "performance_schema" ]] && [[ "${db}" != "mysql" ]] && [[ "${db}" != _* ]] ; then
-        ${MYSQLDUMP} --databases $db > ${BACKUPDIR}/${DATE}_${db}_db.sql
-	STATE="$?"
-	if [ "$STATE" != "0" ]
-	then
-	    echo "MYSQL BACKUP FAILED"
-	    echo "FAIL" > $FAILFILE
-	else
-	    echo "MYSQL BACKUP SUCCEDED"
-	fi
+        ${MYSQLDUMP} --databases $db > ${BACKUPDIR}/${db}_db.sql
+	     STATE="$?"
+	     if [ "$STATE" != "0" ]
+	     then
+	         echo "MYSQL BACKUP ${db} FAILED"
+	         echo "FAIL" > $FAILFILE
+	     else
+            gzip ${BACKUPDIR}/${db}_db.sql
+	         echo "MYSQL BACKUP ${db} SUCCEDED"
+	     fi
     fi
 done
-
-if [ "$STATE" == "0" ]
-then
-    echo "REMOVE OLD BACKUPS"
-    ${FIND} "${BACKUPDIR}" -type f ! -name '*.gz' -mtime +0 -exec gzip {} \;
-    ${FIND} "${BACKUPDIR}" -type f -mtime +30 -delete
-fi

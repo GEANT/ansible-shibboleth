@@ -2,8 +2,9 @@
 
 ## Requirements
 
-* [Ansible](https://www.ansible.com/) - Tested with Ansible v2.3.1.0
+* [Ansible](https://www.ansible.com/) - Tested with Ansible v2.4.0
 * [Shibboleth IdP source](https://shibboleth.net/downloads/identity-provider/latest/)
+* A Debian 8 "Jessie" server/virtual machine where install the Shibboleth IdP v3.x
 
 ## Simple flow to install and configure a Shibboleth IdP
 
@@ -13,6 +14,7 @@
 2. Retrieve GIT repository of the project:
     * ```apt-get install git```
     * ```cd /opt ; git clone https://github.com/[GEANT|malavolti]/ansible-shibboleth.git```
+    * ```cd /opt/ansible-shibboleth ; git clone https://github.com/[GEANT|malavolti]/ansible-shibboleth-inventories.git```
 
 3. Create the right inventory file/files about your IdP servers by following the template provided:
     * ```inventories/development/development.ini``` for your development servers.
@@ -31,7 +33,7 @@
 
 6. Generate each IdP Metadata Certificates and Keys by running these commands:
     * ```cd /opt/ansible-shibboleth/scripts```
-    * ```python create-credentials.py FQDN```
+    * ```python create-credentials.py idp.example.org```
 
    and obtain the password you must set on "```idp_config['sealer_pw']```" and the "```idp_config['keystore_pw']```" host vars (Point ```7.```)
 

@@ -8,7 +8,7 @@
 
 - name: "RESTORE - Retrieve LDAP"
   copy:
-   src: "files/restore/{{ fqdn }}/ldap-backup/ldap-users.ldif.gz"
+   src: "{{ files_dir }}/{{ fqdn }}/openldap/restore/ldap-users.ldif.gz"
    dest: "/root/ldap-users.ldif.gz"
    owner: "root"
    group: "root"

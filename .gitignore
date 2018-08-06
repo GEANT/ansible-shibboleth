@@ -27,6 +27,9 @@
 ssh_priv_key
 ssh_pub_key
 
+# ignore 'inventories' entirely
+inventories*
+
 # ignore all 'host_vars' files except samples
 inventories/*/host_vars/*
 !host_vars/FQDN.yml-template

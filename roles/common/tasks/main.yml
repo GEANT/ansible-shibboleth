@@ -13,12 +13,20 @@
    mode: "0644" 
   tags: common
 
+- name: "Check the existance of cloud-init configuration"
+  stat:
+    path: /etc/cloud/cloud.cfg
+  register: cloud_cfg
+  tags: common
+
 - name: "Comment out 'manage_etc_host' from /etc/cloud/cloud.cfg"
   lineinfile:
    dest: /etc/cloud/cloud.cfg
    regexp: "manage_etc_hosts"
    line: "#manage_etc_hosts"
    state: present
+  when:
+   - cloud_cfg.stat.exists
   tags: common
 
 - name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
@@ -49,7 +57,10 @@
   replace:
    dest: /etc/apt/sources.list
    regexp: "http[:][/][/]http.debian.net[/]debian"
-   replace: "{{ mirror | default('https://mi.mirror.garr.it/mirrors/debian/') }}"
+   replace: "{{ common['mirror'] }}"
+  when:
+   - common is defined
+   - common['mirror'] is defined and common['mirror'] != ''
   tags: common 
 
 - name: "Configure NTP service"

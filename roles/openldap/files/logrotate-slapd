@@ -1,0 +1,13 @@
+/var/log/slapd/slapd.log
+{
+   rotate 4
+   weekly
+   missingok
+   notifempty
+   delaycompress
+   sharedscripts
+   compress
+   postrotate
+      invoke-rc.d rsyslog rotate > /dev/null
+   endscript
+}

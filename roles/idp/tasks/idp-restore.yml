@@ -20,12 +20,12 @@
    group: "root"
    mode: "0600"
   with_items:
-   - { src: "files/restore/{{ fqdn }}/mysql-backup/shibboleth-db.sql.gz", dest: "/root/shibboleth-db.sql.gz" }
-   - { src: "files/restore/{{ fqdn }}/mysql-backup/statistics-db.sql.gz", dest: "/root/statistics-db.sql.gz" }
+   - { src: "{{ files_dir }}/{{ fqdn }}/idp/mysql-restore/shibboleth-db.sql.gz", dest: "/root/shibboleth-db.sql.gz" }
+   - { src: "{{ files_dir }}/{{ fqdn }}/idp/mysql-restore/statistics-db.sql.gz", dest: "/root/statistics-db.sql.gz" }
   when:
    - idp_db_restore is defined
    - idp_db_restore in ["True","true","Yes","yes"]
-   - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
+   - shibboleth_db_is_empty['stdout'] == "0" and statistics_db_is_empty['stdout'] == "0"
   tags: idp
 
 - name: "RESTORE - Extract 'shibboleth' and 'statistics' database backups"
@@ -36,7 +36,7 @@
   when:
    - idp_db_restore is defined
    - idp_db_restore in ["True","true","Yes","yes"]
-   - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
+   - shibboleth_db_is_empty['stdout'] == "0" and statistics_db_is_empty['stdout'] == "0"
   tags: idp
 
 - name: "RESTORE - Assign the right permissions to the 'shibboleth' and 'statistics' backup extracted"
@@ -51,7 +51,7 @@
   when:
    - idp_db_restore is defined
    - idp_db_restore in ["True","true","Yes","yes"]
-   - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
+   - shibboleth_db_is_empty['stdout'] == "0" and statistics_db_is_empty['stdout'] == "0"
   tags: idp
 
 - name: "RESTORE - Restore 'shibboleth' and 'statistics' databases"
@@ -66,7 +66,7 @@
   when:
    - idp_db_restore is defined
    - idp_db_restore in ["True","true","Yes","yes"]
-   - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
+   - shibboleth_db_is_empty['stdout'] == "0" and statistics_db_is_empty['stdout'] == "0"
   tags: idp
 
 - name: "RESTORE - Remove the backups restored from /root directory"
@@ -79,5 +79,5 @@
   when:
    - idp_db_restore is defined
    - idp_db_restore in ["True","true","Yes","yes"]
-   - shibboleth_db_is_empty.stdout == "0" and statistics_db_is_empty.stdout == "0"
+   - shibboleth_db_is_empty['stdout'] == "0" and statistics_db_is_empty['stdout'] == "0"
   tags: idp

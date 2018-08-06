@@ -1,0 +1,25 @@
+---
+# tasks for rsync-backup-configure
+
+- name: "Be sure to have installed rsync"
+  apt:
+   name: rsync
+   state: latest
+   install_recommends: no
+
+- name: "Create the 'rsync-backup' user"
+  user:
+   name: rsync-backup
+
+- name: "Be sure to add the idpcloud-key to root authorized keys"
+  authorized_key:
+   user: rsync-backup
+   state: present
+   key: "{{ lookup('file', files_dir +'/'+ fqdn +'/idpcloud_garr/rsync-backup/'+ idpcloud_garr['rsync_backup_ssh_pub_key'] ) }}"
+
+- name: "Change the owner of '/var/local/backups' to 'rsync-backup' to be able to retrieve backups from rsnapshot server"
+  file:
+   path: /var/local/backups
+   owner: rsync-backup
+   recurse: yes
+   mode: 0750

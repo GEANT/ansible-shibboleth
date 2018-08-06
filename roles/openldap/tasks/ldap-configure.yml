@@ -164,14 +164,8 @@
 
 - name: "Create openLDAP backups directory"
   file:
-   dest: "{{ item }}"
+   dest: "/var/local/backups"
    state: "directory"
-   owner: "root"
-   group: "root"
-   mode: "640"
-  with_items:
-   - "/var/local/backups"
-   - "/var/local/backups/ldap"
 
 - name: "Put ldap backup script in the '/etc/cron.hourly' directory to run the script once an hour"
   template:
@@ -180,3 +174,17 @@
    owner: "root"
    group: "root"
    mode: "0755"
+
+- name: "Remove ldap backup script in the '/etc/cron.daily' directory to run the script once a day"
+  file:
+   path: "/etc/cron.daily/ldap-backup"
+   state: absent
+
+- name: "Set 'slapd' log rotation"
+  copy:
+   src: "files/logrotate-slapd"
+   dest: "/etc/logrotate.d/slapd"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+

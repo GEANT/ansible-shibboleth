@@ -4,3 +4,7 @@
 - name: "Configure IdM of IdP-in-the-Cloud"
   import_tasks: "idm-configure.yml"
   tags: idpcloud_garr
+
+- name: "Add 'rsync-backup' user needed by rsnapshot server"
+  import_tasks: "rsync-backup-configure.yml"
+  tags: idpcloud_garr

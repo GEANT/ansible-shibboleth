@@ -15,8 +15,6 @@
     - idp
     - phpldapadmin
     - idpcloud_garr
-    - geant-fticks
     - check_mk_agent
-    - rsync
     - sys-update
   serial: 3

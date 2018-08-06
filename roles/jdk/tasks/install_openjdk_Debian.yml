@@ -3,7 +3,7 @@
 
 - name: "Debian 8 - Add OpenJDK 8 backports APT repository"
   apt_repository:
-    repo: "deb {{ mirror | default('https://mi.mirror.garr.it/mirrors/debian/') }} jessie-backports main"
+    repo: "deb {{ common['mirror'] | default('http://deb.debian.org/debian/') }} jessie-backports main"
     state: present
     filename: 'jessie-backports'
   when: ansible_distribution_release == "jessie"

@@ -13,7 +13,7 @@
 
 - name: "Put Federation logo and eduGAIN logo in the right position"
   copy:
-   src: "files/restore/{{ fqdn }}/styles/images"
+   src: "{{ files_dir }}/{{ fqdn }}/styles/images"
    dest: "/var/www/html/"
    owner: "root"
    group: "root"
@@ -24,11 +24,10 @@
 
 - name: "Put the IdP language directories in the right position"
   copy:
-   src: "files/restore/{{ fqdn }}/styles/{{ item.key }}/"
+   src: "{{ files_dir }}/{{ fqdn }}/styles/{{ item.key }}/"
    dest: "/var/www/html/{{ item.key }}/"
    owner: "root"
    group: "root"
-   mode: "0644"
   with_dict: "{{ idp_metadata }}"
   notify:
    - "Restart Apache"

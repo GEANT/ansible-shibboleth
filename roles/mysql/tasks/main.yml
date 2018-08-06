@@ -22,17 +22,17 @@
 
 - name: "Set MYSQL unattented installation debconf's parameters"
   debconf:
-    name: "mysql-server"
-    question: "{{ item.question }}"
-    vtype: "{{ item.type }}"
-    value: "{{ item.value }}"
+   name: "mysql-server"
+   question: "{{ item.question }}"
+   vtype: "{{ item.type }}"
+   value: "{{ item.value }}"
   with_items:
-    - question: mysql-server/root_password
-      type: password
-      value: "{{ mysql['root_password'] }}"
-    - question: mysql-server/root_password_again
-      type: password
-      value: "{{ mysql['root_password'] }}"
+   - question: mysql-server/root_password
+     type: password
+     value: "{{ mysql['root_password'] }}"
+   - question: mysql-server/root_password_again
+     type: password
+     value: "{{ mysql['root_password'] }}"
   when: debconf.stdout == "1"
   tags: mysql
 
@@ -51,45 +51,45 @@
 
 - name: "Configure .my.cnf file for a simple MySQL authentication"
   template: 
-    src: "root.cnf.j2" 
-    dest: "~/.my.cnf"
-    mode: 0600
+   src: "root.cnf.j2" 
+   dest: "~/.my.cnf"
+   mode: 0600
   tags: mysql
 
 - name: "Assign the right privileges to the /tmp directory"
   file:
-    path: "/tmp"
-    state: directory
-    mode: "u+rwx,g+rwx,o+rwt"
+   path: "/tmp"
+   state: directory
+   mode: "u+rwx,g+rwx,o+rwt"
   tags: mysql
 
 - name: "Start MySQL service"
   systemd:
-    name: mysql
-    daemon-reload: True
-    state: started
-    enabled: True
+   name: mysql
+   daemon-reload: True
+   state: started
+   enabled: True
   tags: mysql
 
 - name: "Create MySQL backups directory"
   file:
    dest: "{{ item }}"
    state: "directory"
-   owner: "root"
-   group: "root"
-   mode: "640"
   with_items:
    - "/var/local/backups"
-   - "/var/local/backups/mysql"
   tags: mysql
 
 - name: "Put mysql backup script in the '/etc/cron.hourly' directory to run the script once an hour"
   template:
    src: "mysql-backup.sh.j2"
    dest: "/etc/cron.hourly/mysql-backup"
-   owner: "root"
-   group: "root"
    mode: "0755"
+  tags: mysql
+
+- name: "Remove mysql backup script in the '/etc/cron.daily' directory to run the script once a day"
+  file:
+   path: "/etc/cron.daily/mysql-backup"
+   state: "absent"
   tags: mysql
 
 - name: "Be sure that all root accounts receive the root password for database"
@@ -99,8 +99,8 @@
    password: "{{ mysql['root_password'] }}"
    state: present
   with_items:
-     - "{{ fqdn }}"
-     - 127.0.0.1
-     - ::1
-     - localhost
+   - "{{ fqdn }}"
+   - 127.0.0.1
+   - ::1
+   - localhost
   tags: mysql

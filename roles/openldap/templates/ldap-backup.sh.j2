@@ -6,26 +6,22 @@ if [ -r ${CONFIGFILE} ]; then
    # Read the config file if it's existing and readable
    source ${CONFIGFILE}
 else
-   BACKUPDIR="/var/local/backups/ldap"
+   BACKUPDIR="/var/local/backups"
    BASEDN="{{ ldap['basedn'] }}"
    FILTER="(&(|(ou:dn:=people)(ou:dn:=groups))(!(objectClass=organizationalUnit))(!(uid=testuser)))"
 fi
 
 WHICH="`which which`"
 LDAPSEARCH="`${WHICH} ldapsearch`"
-DATEC="`${WHICH} date`"
-FIND="`${WHICH} find`"
-DATE=`${DATEC} +%Y-%m-%d`
 FAILFILE="/var/local/backups/LDAP_FAIL"
 
-${LDAPSEARCH} -QLLLY EXTERNAL -H ldapi:/// -b ${BASEDN} ${FILTER} cn sn givenName schacPersonalUniqueID mail eduPersonEntitlement eduPersonAffiliation userPassword schacExpiryDate pwdAccountLockedTime objectClass > ${BACKUPDIR}/${DATE}_ldap-users.ldif
+${LDAPSEARCH} -QLLLY EXTERNAL -H ldapi:/// -b ${BASEDN} ${FILTER} cn sn givenName schacPersonalUniqueID mail eduPersonEntitlement eduPersonAffiliation userPassword schacExpiryDate pwdAccountLockedTime objectClass > ${BACKUPDIR}/ldap-users.ldif
 
 if [ $? -ne 0 ]
 then
     echo "LDAP BACKUP FAILED"
     echo "FAIL" > $FAILFILE
 else
+    gzip ${BACKUPDIR}/ldap-users.ldif
     echo "LDAP BACKUP SUCCEDED"
-    ${FIND} "${BACKUPDIR}" -type f ! -name '*.gz' -mtime +0 -exec gzip {} \;
-    ${FIND} "${BACKUPDIR}" -type f -mtime +30 -delete
 fi
