@@ -14,5 +14,4 @@
     - mysql
     - idp
     - phpldapadmin
-    - check_mk_agent
     - sys-update
