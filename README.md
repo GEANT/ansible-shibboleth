@@ -14,7 +14,7 @@
 2. Retrieve GIT repository of the project:
     * ```apt-get install git```
     * ```cd /opt ; git clone https://github.com/[GEANT|malavolti]/ansible-shibboleth.git```
-    * ```cd /opt/ansible-shibboleth ; git clone https://github.com/[GEANT|malavolti]/ansible-shibboleth-inventories.git```
+    * ```cd /opt/ansible-shibboleth ; git clone https://github.com/[GEANT|malavolti]/ansible-shibboleth-inventories.git inventories```
 
 3. Create the right inventory file/files about your IdP servers by following the template provided:
     * ```inventories/development/development.ini``` for your development servers.
