@@ -48,14 +48,12 @@
     * ```cd /opt/ansible-shibboleth```
     * ```ansible-vault encrypt inventories/#_environment_#/host_vars/FQDN.yml --vault-password-file .vault_pass.txt```
 
-9. Insert the IdP's SSL Certificate renamed into "```FQDN.crt```", the IdP's SSL Certificate Key renamed into "```FQDN.key```" and the Certification Authority certificate inside ```/opt/ansible-shibboleth/roles/common/files/FQDN/``` directory. (be sure to replace FQDN value with full qualified domain nameof the IdP)
+9. Insert the IdP's SSL Certificate renamed into "```FQDN.crt```", the IdP's SSL Certificate Key renamed into "```FQDN.key```" and the Certification Authority certificate inside ```/opt/ansible-shibboleth/inventories/files/FQDN/common/ssl``` directory. (be sure to replace FQDN value with full qualified domain name of the IdP)
 
-10. Insert the IdP style files (flag, favicon and logo) in the "```roles/idp/files/restore/FQDN/styles```" by following the ```README.md``` file. A "hostname-sample" has been created to help you with this.
-(If you have chosen to create an IdP with LDAP, **be sure** to put the organization logo in the ```roles/phpldapadmin/files/restore/FQDN/images/logo.png``` file. An organization logo MUST BE, at least, an image with dimensions 80x60 pixels or their multiples)
+10. Insert the IdP style files (flag, favicon and logo) in the "```inventories/files/FQDN/idp/styles```" by following the ```README.md``` file. A "sample-FQDN-dir" has been created to help you with this.
+(If you have chosen to create an IdP with LDAP, **be sure** to put the organization logo in the ```inventories/files/FQDN/phpldapadmin/images/logo.png``` and the favicon in ```inventories/files/FQDN/phpldapadmin/images/favicon.png```. An organization logo MUST BE an image 80x60 pixels or its multiples and the favicon MUST BE an image 16x16 pixels or its multiples).
 
-11. If you install also phpLDAPadmin, remember to put the logo (80x60 pixels or its multiples) into the "```roles/phpldapadmin/files/restore/FQDN/images/logo.png```" file.
-
-12. Add the IdP Information and Privacy Policy page templates in the "```roles/idp/templates/styles/```" in your language by copying the english '```en/```' sample and changing each "```idp_metadata['en']```" (inside the "```info.html.j2```" and "```privacy.html.j2```" pages) and be sure to adapt the text of the pages to your needs. This step can be avoided if you have already info and privacy pages by setting to ```"no"``` the variable "```create_info_and_pp_pages```".
+11. Add the IdP Information and Privacy Policy page templates in the "```roles/idp/templates/styles/```" in your language by copying the english '```en/```' sample and changing each "```idp_metadata['en']```" (inside the "```info.html.j2```" and "```privacy.html.j2```" pages) and be sure to adapt the text of the pages to your needs. This step can be avoided if you have already info and privacy pages by setting to ```"no"``` the variable "```create_info_and_pp_pages```".
 
 The ansible recipes use the languages provided by the "```idp_metadata```" dictionary so you **HAVE TO LEAVE** the default language "en" and add all other languages that your IdP will support and for which you have provided the needed files. (Point ```7.```)
 
@@ -81,26 +79,25 @@ Each environment represent the type of IdP to be installed with different labels
 The "```site.yml```" file contains what will be installed on the machine provided by the environment:
    - ```shib-idp-servers.yml``` (Install,Configure and Run Shibboleth IdP servers **without** an Identity Management)
    - ```shib-idp-idm-servers.yml``` (Install,Configure and Run Shibboleth IdP servers with an Identity Management)
-   - ...
+   - ```shib-idp-idm-servers-garr.yml``` (Install,Configure and Run Shibboleth IdP servers with an Identity Management like the IdP-in-the-Cloud project)
 
-The "```shib-idp-servers.yml```" and "```shib-idp-idm-servers.yml```" contains:
+The "```shib-idp-servers.yml```", "```shib-idp-idm-servers.yml```" and "```shib-idp-idm-servers-garr.yml```" contains:
    - ```hosts```        (who will receive the sync)
    - ```remote_user```  (who will access via SSH on the servers)
    - ```roles```        (what will be installed and configured on the servers)
 
 Each "```vars/```" directories contains (at least, for each role):
    - ```Debian.yml```   (will contains all variables debian-oriented)
-   - ```RedHat.yml```   (will contains all variables redhat-oriented)
 
 The "```host_vars/```" directory contains one ```FQDN.yml``` file for each server and it contains specific variables for the host into the specific environment.
 (These files have to be encrypted (you can do this with Ansible Vault) if shared on GitHub or somewhere other)
 
 
 The "```roles/idp/vars/attr-defs-dict-java7.yml```" and "```roles/idp/vars/attr-defs-dict-java8.yml``` contain all the attribute definitions supported by default on an IdP for Java 7 or 8. 
-If you need to limit or change the default Attribute Definitions provided, you have to implement your "```idp_attrDef```" dictionary on the IdP "*FQDN.yml*" file.
+If you need to limit or change the default Attribute Definitions provided, you have to implement your "```idp_attrDef```" dictionary on the IdP "*FQDN.yml*" file or modify the files directly.
 
 
-The default mirror site is "```https://mi.mirror.garr.it/mirrors/debian/```". If you want to change it, add the variable "mirror" on your ```inventories/#_environment_#/host_vars/FQDN.yml```.
+The default mirror site is "```http://deb.debian.org/debian/```". If you want to change it, add the variable "mirror" on your ```inventories/#_environment_#/host_vars/FQDN.yml```.
 
 
 The openLDAP logs will be stored on "```/var/log/slapd/```" directory.
@@ -126,8 +123,8 @@ To use this feature fill the backups server ```ip``` and ```remote_path``` param
 1. Retrieve database backup files from ```/var/local/backups/mysql/``` on the IdP:
 
 2. Put the backups file (for shibboleth and statistics database) into:
-   * ```roles/idp/files/restore/FDQN/mysql-backup/shibboleth-db.sql.gz```
-   * ```roles/idp/files/restore/FQDN/mysql-backup/statistics-db.sql.gz```
+   * ```inventories/files/FQDN/idp/mysql-restore/shibboleth-db.sql.gz```
+   * ```inventories/files/FQDN/idp/mysql-restore/statistics-db.sql.gz```
 
 3. Set the IDP configuration variable ```idp_db_restore``` to ```"True"``` on its ```host_vars``` file
 
@@ -136,10 +133,10 @@ To use this feature fill the backups server ```ip``` and ```remote_path``` param
 
 ### LDAP Restore
 
-1. Retrieve LDAP backup files from ```/var/local/backups/ldap/``` on the IdP:
+1. Retrieve LDAP backup files from ```/var/local/backups/``` on the IdP:
 
 2. Put the LDAP backup into:
-   * ```roles/openldap/files/restore/FQDN/ldap-backup/ldap-users.ldif.gz```
+   * ```inventories/files/FQDN/openldap/restore/ldap-users.ldif.gz```
 
 3. Set the IDP configuration variable ```idp_ldap_restore``` to ```"True"``` on its ```host_vars``` file
 
@@ -151,10 +148,10 @@ To use this feature fill the backups server ```ip``` and ```remote_path``` param
 ```
 --- development.ini ---
 [Debian-IdP-with-IdM]
-ansible-slave-2.test.garr.it
+idp1.example.org
 
 [Debian-IdP-without-IdM]
-ansible-slave-1.example.garr.it
+idp2.example.org
 -----------------------
 ```
 
