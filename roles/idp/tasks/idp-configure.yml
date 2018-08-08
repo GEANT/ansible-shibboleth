@@ -8,14 +8,14 @@
    group: "root"
    mode: "{{ item.mode }}"
   with_items:
-   - { src: "{{ files_dir }}/{{ fqdn }}/credentials/idp-signing.crt", dest: "/opt/shibboleth-idp/credentials/idp-signing.crt", mode: "0644" }
-   - { src: "{{ files_dir }}/{{ fqdn }}/credentials/idp-signing.key", dest: "/opt/shibboleth-idp/credentials/idp-signing.key", mode: "0600" }
-   - { src: "{{ files_dir }}/{{ fqdn }}/credentials/idp-encryption.crt", dest: "/opt/shibboleth-idp/credentials/idp-encryption.crt", mode: "0644" }
-   - { src: "{{ files_dir }}/{{ fqdn }}/credentials/idp-encryption.key", dest: "/opt/shibboleth-idp/credentials/idp-encryption.key", mode: "0600" }
-   - { src: "{{ files_dir }}/{{ fqdn }}/credentials/idp-backchannel.crt", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.crt", mode: "0644" }
-   - { src: "{{ files_dir }}/{{ fqdn }}/credentials/idp-backchannel.p12", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.p12", mode: "0644" }
-   - { src: "{{ files_dir }}/{{ fqdn }}/credentials/sealer.jks", dest: "/opt/shibboleth-idp/credentials/sealer.jks", mode: "0644" }
-   - { src: "{{ files_dir }}/{{ fqdn }}/credentials/sealer.kver", dest: "/opt/shibboleth-idp/credentials/sealer.kver", mode: "0644" }
+   - { src: "{{ files_dir }}/{{ fqdn }}/idp/credentials/idp-signing.crt", dest: "/opt/shibboleth-idp/credentials/idp-signing.crt", mode: "0644" }
+   - { src: "{{ files_dir }}/{{ fqdn }}/idp/credentials/idp-signing.key", dest: "/opt/shibboleth-idp/credentials/idp-signing.key", mode: "0600" }
+   - { src: "{{ files_dir }}/{{ fqdn }}/idp/credentials/idp-encryption.crt", dest: "/opt/shibboleth-idp/credentials/idp-encryption.crt", mode: "0644" }
+   - { src: "{{ files_dir }}/{{ fqdn }}/idp/credentials/idp-encryption.key", dest: "/opt/shibboleth-idp/credentials/idp-encryption.key", mode: "0600" }
+   - { src: "{{ files_dir }}/{{ fqdn }}/idp/credentials/idp-backchannel.crt", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.crt", mode: "0644" }
+   - { src: "{{ files_dir }}/{{ fqdn }}/idp/credentials/idp-backchannel.p12", dest: "/opt/shibboleth-idp/credentials/idp-backchannel.p12", mode: "0644" }
+   - { src: "{{ files_dir }}/{{ fqdn }}/idp/credentials/sealer.jks", dest: "/opt/shibboleth-idp/credentials/sealer.jks", mode: "0644" }
+   - { src: "{{ files_dir }}/{{ fqdn }}/idp/credentials/sealer.kver", dest: "/opt/shibboleth-idp/credentials/sealer.kver", mode: "0644" }
   tags: idp
 
 - name: "Store in the 'idp_signing_cert' ansible variable the value of 'idp-signing.crt' needed for building the IDP Metadata"
