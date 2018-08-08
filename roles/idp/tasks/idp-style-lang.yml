@@ -13,7 +13,7 @@
 
 - name: "Put Federation logo and eduGAIN logo in the right position"
   copy:
-   src: "{{ files_dir }}/{{ fqdn }}/styles/images"
+   src: "{{ files_dir }}/{{ fqdn }}/idp/styles/images"
    dest: "/var/www/html/"
    owner: "root"
    group: "root"
@@ -24,7 +24,7 @@
 
 - name: "Put the IdP language directories in the right position"
   copy:
-   src: "{{ files_dir }}/{{ fqdn }}/styles/{{ item.key }}/"
+   src: "{{ files_dir }}/{{ fqdn }}/idp/styles/{{ item.key }}/"
    dest: "/var/www/html/{{ item.key }}/"
    owner: "root"
    group: "root"
