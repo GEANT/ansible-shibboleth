@@ -4,6 +4,12 @@
   include_vars: "{{ ansible_os_family }}.yml"
   tags: common
 
+- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
+  apt:
+   update_cache: yes
+   cache_valid_time: 3600
+  tags: common
+
 - name: "Configure the 'hosts' file with the FQDN provided"
   template:
    src: hosts.j2
@@ -29,12 +35,6 @@
    - cloud_cfg.stat.exists
   tags: common
 
-- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
-  apt:
-   update_cache: yes
-   cache_valid_time: 3600
-  tags: common
-
 - name: "Install needed common packages"
   apt: 
    name: "{{ item }}"
@@ -56,12 +56,24 @@
 - name: "Replace default mirror site with the preferred one"
   replace:
    dest: /etc/apt/sources.list
-   regexp: "http[:][/][/]http.debian.net[/]debian"
+   regexp: "http[:][/][/]deb.debian.org[/]debian[/]"
    replace: "{{ common['mirror'] }}"
+  register: sources_list
   when:
    - common is defined
    - common['mirror'] is defined and common['mirror'] != ''
   tags: common 
+
+- debug:
+   msg: "sources_list: {{ sources_list }}"
+  tags: common
+
+- name: "Run 'apt-get update' after a sources.list change"
+  apt:
+   update_cache: yes
+  when:  
+   - sources_list.changed
+  tags: common
 
 - name: "Configure NTP service"
   template: 
