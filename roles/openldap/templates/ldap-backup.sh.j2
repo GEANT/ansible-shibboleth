@@ -22,6 +22,6 @@ then
     echo "LDAP BACKUP FAILED"
     echo "FAIL" > $FAILFILE
 else
-    gzip ${BACKUPDIR}/ldap-users.ldif
+    gzip -f ${BACKUPDIR}/ldap-users.ldif
     echo "LDAP BACKUP SUCCEDED"
 fi

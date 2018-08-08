@@ -23,7 +23,7 @@ for db in ${DATABASES}; do
 	         echo "MYSQL BACKUP ${db} FAILED"
 	         echo "FAIL" > $FAILFILE
 	     else
-            gzip ${BACKUPDIR}/${db}_db.sql
+            gzip -f ${BACKUPDIR}/${db}_db.sql
 	         echo "MYSQL BACKUP ${db} SUCCEDED"
 	     fi
     fi
