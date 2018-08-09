@@ -25,3 +25,6 @@
 
 # ignore 'inventories' entirely
 inventories*
+
+# ignore README.md
+README.md
