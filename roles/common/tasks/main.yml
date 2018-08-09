@@ -64,10 +64,6 @@
    - common['mirror'] is defined and common['mirror'] != ''
   tags: common 
 
-- debug:
-   msg: "sources_list: {{ sources_list }}"
-  tags: common
-
 - name: "Run 'apt-get update' after a sources.list change"
   apt:
    update_cache: yes
