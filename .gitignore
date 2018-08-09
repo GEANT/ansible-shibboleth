@@ -23,41 +23,5 @@
 # ignore .git_ignore files
 *.git_ignore
 
-# ignore RSYNC ssh credentials
-ssh_priv_key
-ssh_pub_key
-
 # ignore 'inventories' entirely
 inventories*
-
-# ignore all 'host_vars' files except samples
-inventories/*/host_vars/*
-!host_vars/FQDN.yml-template
-!host_vars/FQDN.yml-template-no-ldap
-
-
-# ignore Ansible inventories
-*.ini
-
-# ignore gunzip files
-#*.gz
-
-# ignore entire 'common' directory except README
-roles/common/files/*
-!roles/common/files/README.md
-
-# ignore entire 'restore' idp directory except sample dir
-roles/idp/files/restore/*
-!roles/idp/files/restore/sample-FQDN-dir/
-
-# ignore entire 'credentials' idp directory except README
-roles/idp/files/credentials/*
-!roles/idp/files/credentials/README.md
-
-# ignore entire 'restore' openldap directory except sample dir
-roles/openldap/files/restore/*
-!roles/openldap/files/restore/sample-FQDN-dir/
-
-# ignore entire 'restore' phpldapadmin directory except sample dir
-roles/phpldapadmin/files/restore/*
-!roles/phpldapadmin/files/restore/sample-FQDN-dir/

@@ -12,5 +12,4 @@
     - mysql
     - idp
     - check_mk_agent
-    - rsync
     - sys-update

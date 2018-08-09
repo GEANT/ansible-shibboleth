@@ -103,8 +103,6 @@
   file:
    src: "/opt/shibboleth-idp/metadata/{{ idp_stats['fed_md'] }}"
    dest: "/opt/loganalysis/{{ idp_stats['fed_md'] }}"
-   owner: "root"
-   group: "root"
    state: "link"
   tags: idp
 
