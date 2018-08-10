@@ -19,7 +19,6 @@
     dest: "{{ item.dest }}"
     owner: "root"
     group: "root"
-    mode: "0600"
   with_items:
     - { src: "rsync://{{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/shibboleth-db.sql.gz", dest: "/root/shibboleth-db.sql.gz" }
     - { src: "rsync://{{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/statistics-db.sql.gz", dest: "/root/statistics-db.sql.gz" }

@@ -13,7 +13,6 @@
     dest: "/root/ldap-users.ldif.gz"
     owner: "root"
     group: "root"
-    mode: "0600"
   when:
     - idp_ldap_restore is defined
     - idp_ldap_restore in ["Yes","yes","True","true"]
