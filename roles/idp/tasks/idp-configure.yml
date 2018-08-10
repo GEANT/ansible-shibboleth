@@ -557,9 +557,9 @@
    group: "root"
    mode: "0600"
   when:
-   - attribute_filter_v3_coco_xml['stdout'] != ''
    - idp_config['sup_coco'] is defined
    - idp_config['sup_coco'] in ["Yes","yes","True","true"]
+   - attribute_filter_v3_coco_xml['stdout'] != ''
   notify:
    - "Restart Jetty"
   tags: idp
@@ -572,9 +572,9 @@
    group: "root"
    mode: "0600"
   when:
-   - attribute_filter_v3_coco_xml['stdout'] == ''
    - idp_config['sup_coco'] is defined
    - idp_config['sup_coco'] in ["Yes","yes","True","true"]
+   - attribute_filter_v3_coco_xml['stdout'] == ''
   notify:
    - "Restart Jetty"
   tags: idp
@@ -600,9 +600,9 @@
    group: "root"
    mode: "0600"
   when:
-   - attribute_filter_v3_rs_xml['stdout'] != ''
    - idp_config['sup_rs'] is defined
    - idp_config['sup_rs'] in ["Yes","yes","True","true"]
+   - attribute_filter_v3_rs_xml['stdout'] != ''
   notify:
    - "Restart Jetty"
   tags: idp
@@ -615,9 +615,9 @@
    group: "root"
    mode: "0600"
   when:
-   - attribute_filter_v3_rs_xml['stdout'] == ''
    - idp_config['sup_rs'] is defined
    - idp_config['sup_rs'] in ["Yes","yes","True","true"]
+   - attribute_filter_v3_rs_xml['stdout'] == ''
   notify:
    - "Restart Jetty"
   tags: idp
