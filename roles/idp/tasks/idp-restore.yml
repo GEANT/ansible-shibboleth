@@ -13,15 +13,16 @@
   tags: idp
 
 - name: "RESTORE - Put 'shibboleth' and 'statistics' database backups in the '/root' directory"
-  copy:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
-   owner: "root"
-   group: "root"
-   mode: "0600"
+  synchronize:
+    mode: pull
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "root"
+    group: "root"
+    mode: "0600"
   with_items:
-   - { src: "{{ files_dir }}/{{ fqdn }}/idp/mysql-restore/shibboleth-db.sql.gz", dest: "/root/shibboleth-db.sql.gz" }
-   - { src: "{{ files_dir }}/{{ fqdn }}/idp/mysql-restore/statistics-db.sql.gz", dest: "/root/statistics-db.sql.gz" }
+    - { src: "rsync://{{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/shibboleth-db.sql.gz", dest: "/root/shibboleth-db.sql.gz" }
+    - { src: "rsync://{{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/statistics-db.sql.gz", dest: "/root/statistics-db.sql.gz" }
   when:
    - idp_db_restore is defined
    - idp_db_restore in ["True","true","Yes","yes"]

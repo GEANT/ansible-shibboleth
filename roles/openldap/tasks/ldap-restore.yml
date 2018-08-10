@@ -7,16 +7,17 @@
   tags: openldap
 
 - name: "RESTORE - Retrieve LDAP"
-  copy:
-   src: "{{ files_dir }}/{{ fqdn }}/openldap/restore/ldap-users.ldif.gz"
-   dest: "/root/ldap-users.ldif.gz"
-   owner: "root"
-   group: "root"
-   mode: "0600"
+  synchronize:
+    mode: pull
+    src: "rsync://{{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/ldap-users.ldif.gz"
+    dest: "/root/ldap-users.ldif.gz"
+    owner: "root"
+    group: "root"
+    mode: "0600"
   when:
-   - idp_ldap_restore is defined
-   - idp_ldap_restore in ["Yes","yes","True","true"]
-   - ldap_is_empty.stdout == ""
+    - idp_ldap_restore is defined
+    - idp_ldap_restore in ["Yes","yes","True","true"]
+    - ldap_is_empty.stdout == ""
   tags: openldap
 
 - name: "RESTORE - Extract LDAP backup"
