@@ -119,7 +119,7 @@
         <value>%{idp.home}/conf/attribute-filter-v3-federation.xml</value>
         <value>%{idp.home}/conf/attribute-filter-v3-rs.xml</value>
         <value>%{idp.home}/conf/attribute-filter-v3-coco.xml</value>
-{% if attribute_filter_xml['stdout']%}
+{% if attribute_filter_xml is defined and attribute_filter_xml['stdout'] != ''%}
         <value>%{idp.home}/conf/attribute-filter-v3-custom.xml</value>
 {% endif %}
     </util:list>
