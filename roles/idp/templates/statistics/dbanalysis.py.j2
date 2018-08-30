@@ -45,7 +45,7 @@ def parseFiles(files):
         try:
             strdatetime,reqBind,reqId,rp,msgProfile,idp,respBind,respId,user,authnMeth,relAttribs,nameId,assertIds,EOL = event
             if (idp == '' or idp == None): continue
-{% if ldap['create_test_user'] in ['Yes','yes','YES'] %}
+{% if ldap['create_test_user'] is defined and ldap['create_test_user'] in ['Yes','yes','YES'] %}
  {% if check_mk is defined and check_mk['spEntityID'] != '' %}
             if (user == "testuser" and rp == "{{ check_mk['spEntityID'] }}"): continue
  {% endif %}
