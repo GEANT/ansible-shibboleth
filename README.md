@@ -11,10 +11,11 @@
 1. Become ROOT:
     * ```sudo su -```
 
-2. Retrieve GIT repository of the project:
+2. Retrieve GIT repositories of the project:
     * ```apt-get install git```
     * ```cd /opt ; git clone https://github.com/[malavolti|ConsortiumGARR|GEANT]/ansible-shibboleth.git```
     * ```cd /opt/ansible-shibboleth ; git clone https://github.com/[malavolti|ConsortiumGARR|GEANT]/ansible-shibboleth-inventories.git inventories```
+    * ```cd /opt/ansible-shibboleth ; git clone https://github.com/[malavolti|ConsortiumGARR|GEANT]/ans-idpcloud-utility.git scripts```
 
 3. Create the right inventory file/files about your IdP servers by following the template provided:
     * ```inventories/development/development.ini``` for your development servers.
@@ -25,43 +26,31 @@
     * ```cd /opt/ansible-shibboleth```
     * ```openssl rand -base64 64 > .vault_pass.txt```
 
-5. Download the Identity Provider source:
+5. Download the Shibboleth Identity Provider source code:
     * ```cd /usr/local/src ```
     * ```wget https://shibboleth.net/downloads/identity-provider/latest/shibboleth-identity-provider-3.3.2.tar.gz```
     * ```tar xzf /usr/local/src/shibboleth-identity-provider-3.3.2.tar.gz```
     * ```rm -f /usr/local/src/shibboleth-identity-provider-3.3.2.tar.gz```
 
-6. Generate each IdP Metadata Certificates and Keys by running these commands:
-    * ```cd /opt/ansible-shibboleth/scripts```
-    * ```python create-credentials.py idp.example.org```
+6. Modify the following file to adapt "```createIdP/createIdP.py```" to your needs:
+    * ```createIdp/utils/langUtils.py```: to support new languages
+    * ```createIdp/utils/ymlUtils.py```: to create correctly the YAML file needed by Ansible
+    * ```createIdp/utils/idpUtils.py```: to change the IDP credentials creation
+    * ```createIdp/utils/csrUtils.py```: to change the IDP SSL credentials creation
 
-   and obtain the password you must set on "```idp_config['sealer_pw']```" and the "```idp_config['keystore_pw']```" host vars (Point ```7.```)
+7. Create all files needed by a new IdP provided via Ansible by running these commands:
+    * ```cd /opt/ansible-shibboleth/scripts/createIdP```
+    * ```python createIdP.py -h``` (e.g.: ```python createIdP.py idp.example.org --everything```)
 
-7. Create each IdP configuration file by copying one of these templates:
-    * ```/opt/ansible-shibboleth/#_environment_#/host_vars/FQDN.yml-template```
-    * ```/opt/ansible-shibboleth/#_environment_#/host_vars/FQDN.yml-template-no-ldap```
+The ansible recipes use the languages provided by the "```idp_metadata```" dictionary so you **HAVE TO LEAVE** the default language "en" and add all other languages that your IdP will support under that)
 
-   into the proper ```/opt/ansible-shibboleth/#_environment_#/host_vars/FQDN.yml```
-   This file will provide to Ansible all variables needed to install and to configure a Shibboleth IdP
+8. Examples of ansible-playbook commands:
 
-8. Encrypt the IdP configuration file with Ansible Vault (Optional: this is needed ONLY when you need Ansible Vault):
-    * ```cd /opt/ansible-shibboleth```
-    * ```ansible-vault encrypt inventories/#_environment_#/host_vars/FQDN.yml --vault-password-file .vault_pass.txt```
+   * Execute this command to run Ansible on develoment inventory and to install and configure an IdP only on a specific server (FQDN):
+     ```ansible-playbook site.yml -i inventories/development/development.ini --limit FQDN --vault-password-file .vault_pass.txt```
 
-9. Insert the IdP's SSL Certificate renamed into "```FQDN.crt```", the IdP's SSL Certificate Key renamed into "```FQDN.key```" and the Certification Authority certificate inside ```/opt/ansible-shibboleth/inventories/files/FQDN/common/ssl``` directory. (be sure to replace FQDN value with full qualified domain name of the IdP)
-
-10. Insert the IdP style files (flag, favicon and logo) in the "```inventories/files/FQDN/idp/styles```" by following the ```README.md``` file. A "sample-FQDN-dir" has been created to help you with this.
-(If you have chosen to create an IdP with LDAP, **be sure** to put the organization logo in the ```inventories/files/FQDN/phpldapadmin/images/logo.png``` and the favicon in ```inventories/files/FQDN/phpldapadmin/images/favicon.png```. An organization logo MUST BE an image 80x60 pixels or its multiples and the favicon MUST BE an image 16x16 pixels or its multiples).
-
-11. Add the IdP Information and Privacy Policy page templates in the "```roles/idp/templates/styles/```" in your language by copying the english '```en/```' sample and changing each "```idp_metadata['en']```" (inside the "```info.html.j2```" and "```privacy.html.j2```" pages) and be sure to adapt the text of the pages to your needs. This step can be avoided if you have already info and privacy pages by setting to ```"no"``` the variable "```create_info_and_pp_pages```".
-
-The ansible recipes use the languages provided by the "```idp_metadata```" dictionary so you **HAVE TO LEAVE** the default language "en" and add all other languages that your IdP will support and for which you have provided the needed files. (Point ```7.```)
-
-13. Execute this command to run Ansible on develoment inventory and to install and configure an IdP only on a specific server (FQDN):
-    ```ansible-playbook site.yml -i inventories/development/development.ini --limit FQDN --vault-password-file .vault_pass.txt```
-
-14. Execute this command to run Ansible on develoment inventory and to install and configure an IdP on all development servers:
-    ```ansible-playbook site.yml -i inventories/development/development.ini --vault-password-file .vault_pass.txt```
+   * Execute this command to run Ansible on develoment inventory and to install and configure several IdPs on more than one development servers:
+     ```ansible-playbook site.yml -i inventories/development/development.ini --vault-password-file .vault_pass.txt```
 
 ## Documentation
 

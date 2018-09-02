@@ -29,3 +29,6 @@ inventories*
 
 # ignore README.md
 README.md
+
+# ignore scripts directory
+scripts*
