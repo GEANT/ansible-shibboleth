@@ -11,5 +11,5 @@
     - jetty
     - mysql
     - idp
-    - check_mk_agent
     - sys-update
+  serial: 3

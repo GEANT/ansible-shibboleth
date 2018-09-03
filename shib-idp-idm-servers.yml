@@ -14,3 +14,4 @@
     - idp
     - phpldapadmin
     - sys-update
+  serial: 3
