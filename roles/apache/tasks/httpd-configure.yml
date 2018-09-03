@@ -48,3 +48,11 @@
    mode: "0644"
   notify:
    - "Restart Apache"
+
+- name: "Restart Apache if CA, CRT or KEY are changed"
+  systemd:
+   state: restarted
+   name: apache2
+   daemon_reload: True
+  when: 
+   - ssl_cert['changed'] == True or ssl_key['changed'] == True or ssl_ca['changed'] == True

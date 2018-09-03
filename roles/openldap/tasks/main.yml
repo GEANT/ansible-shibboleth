@@ -23,3 +23,11 @@
    state: started
    enabled: True
   tags: openldap
+
+- name: "Restart OpenLDAP if CA, CRT or KEY are changed"
+  systemd:
+   state: restarted
+   name: slapd
+   daemon_reload: True
+  when: 
+   - ssl_ca['changed'] == True or ssl_cert['changed'] == True or ssl_key['changed'] == True
