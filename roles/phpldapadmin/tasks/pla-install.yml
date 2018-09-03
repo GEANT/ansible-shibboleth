@@ -14,6 +14,7 @@
    - apache2-utils
    - python-passlib
    - gettext
+   - php
   notify:
    - "Restart Apache"
 
@@ -28,9 +29,12 @@
 
 - name: "Be sure that PHP7 LDAP support is installed"
   apt:
-   name: "php7.0-ldap"
+   name: "{{ item }}"
    state: latest
    install_recommends: no
+  with_items:
+   - php7.0-ldap
+   - php7.0-xml
   notify:
    - "Restart Apache"
   when: ansible_distribution_release == "stretch"

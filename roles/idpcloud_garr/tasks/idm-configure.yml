@@ -101,6 +101,8 @@
    owner: "root"
    group: "root"
    mode: "0644"
+  notify:
+   - "Restart Apache"
 
 - name: "Be sure to load custom CSS for IdP-in-the-Cloud italian templates"
   copy:

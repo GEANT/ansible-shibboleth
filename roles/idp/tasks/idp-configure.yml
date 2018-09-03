@@ -86,9 +86,8 @@
 
 # Load /opt/shibboleth-idp/conf/saml-nameid.properties
 - name: "Check if a custom 'saml-nameid.properties' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
-  command: "find . -name saml-nameid.properties"
-  args: 
-   chdir: "{{ files_dir }}/{{ fqdn }}/idp/conf"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/saml-nameid.properties"
   delegate_to: 127.0.0.1
   register: saml_nameid_properties
   changed_when: false
@@ -102,7 +101,7 @@
    group: "root"
    mode: "0600"
   when:
-   - saml_nameid_properties['stdout'] != ''
+   - saml_nameid_properties.stat.exists == True
   notify:
    - "Restart Jetty"
   tags: idp
@@ -115,16 +114,15 @@
    group: "root"
    mode: "0600"
   when:
-   - saml_nameid_properties['stdout'] == ''
+   - saml_nameid_properties.stat.exists == False
   notify:
    - "Restart Jetty"
   tags: idp
 
 # Load /opt/shibboleth-idp/conf/global.xml
 - name: "Check if a custom 'global.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
-  command: "find . -name global.xml"
-  args: 
-   chdir: "{{ files_dir }}/{{ fqdn }}/idp/conf"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/global.xml"
   delegate_to: 127.0.0.1
   register: global_xml
   changed_when: false
@@ -138,7 +136,7 @@
    group: "root"
    mode: "0600"
   when:
-   - global_xml['stdout'] != ''
+   - global_xml.stat.exists == True
   notify:
    - "Restart Jetty"
   tags: idp
@@ -151,16 +149,15 @@
    group: "root"
    mode: "0600"
   when:
-   - global_xml['stdout'] == ''
+   - global_xml.stat.exists == False
   notify:
    - "Restart Jetty"
   tags: idp
 
 # Load /opt/shibboleth-idp/conf/idp.properties
 - name: "Check if a custom 'idp.properties' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
-  command: "find . -name idp.properties"
-  args: 
-   chdir: "{{ files_dir }}/{{ fqdn }}/idp/conf"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/idp.properties"
   delegate_to: 127.0.0.1
   register: idp_properties
   changed_when: false
@@ -174,7 +171,7 @@
    group: "root"
    mode: "0600"
   when:
-   - idp_properties['stdout'] != ''
+   - idp_properties.stat.exists == True
   notify:
    - "Restart Jetty"
   tags: idp
@@ -187,16 +184,15 @@
    group: "root"
    mode: "0600"
   when:
-   - idp_properties['stdout'] == ''
+   - idp_properties.stat.exists == False
   notify:
    - "Restart Jetty"
   tags: idp
 
 # Load /opt/shibboleth-idp/conf/ldap.properties
 - name: "Check if a custom 'ldap.properties' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
-  command: "find . -name ldap.properties"
-  args: 
-   chdir: "{{ files_dir }}/{{ fqdn }}/idp/conf"
+  stat: 
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/ldap.properties"
   delegate_to: 127.0.0.1
   register: ldap_properties
   changed_when: false
@@ -210,7 +206,7 @@
    group: "root"
    mode: "0600"
   when:
-   - ldap_properties['stdout'] != ''
+   - ldap_properties.stat.exists == True
   notify:
    - "Restart Jetty"
   tags: idp
@@ -223,16 +219,15 @@
    group: "root"
    mode: "0600"
   when:
-   - ldap_properties['stdout'] == ''
+   - ldap_properties.stat.exists == False
   notify:
    - "Restart Jetty"
   tags: idp
 
 # Load /opt/shibboleth-idp/conf/services.properties
 - name: "Check if a custom 'services.properties' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
-  command: "find . -name services.properties"
-  args: 
-   chdir: "{{ files_dir }}/{{ fqdn }}/idp/conf"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/services.properties"
   delegate_to: 127.0.0.1
   register: services_properties
   changed_when: false
@@ -246,16 +241,15 @@
    group: "root"
    mode: "0600"
   when:
-   - services_properties['stdout'] != ''
+   - services_properties.stat.exists == True
   notify:
    - "Restart Jetty"
   tags: idp
 
 # Load /opt/shibboleth-idp/conf/services.xml
 - name: "Check if a custom 'services.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
-  command: "find . -name services.xml"
-  args: 
-   chdir: "{{ files_dir }}/{{ fqdn }}/idp/conf"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/services.xml"
   delegate_to: 127.0.0.1
   register: services_xml
   changed_when: false
@@ -269,7 +263,7 @@
    group: "root"
    mode: "0600"
   when:
-   - services_xml['stdout'] != ''
+   - services_xml.stat.exists == True
   notify:
    - "Restart Jetty"
   tags: idp
@@ -282,7 +276,7 @@
    group: "root"
    mode: "0600"
   when:
-   - services_xml['stdout'] == ''
+   - services_xml.stat.exists == False
   notify:
    - "Restart Jetty"
   tags: idp
@@ -303,9 +297,8 @@
 
 # Load /opt/shibboleth-idp/conf/attribute-resolver.xml
 - name: "Check if a custom 'attribute-resolver.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
-  command: "find . -name attribute-resolver.xml"
-  args: 
-   chdir: "{{ files_dir }}/{{ fqdn }}/idp/conf"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/attribute-resolver.xml"
   delegate_to: 127.0.0.1
   register: attribute_resolver_xml
   changed_when: false
@@ -319,7 +312,7 @@
    group: "root"
    mode: "0600"
   when:
-   - attribute_resolver_xml['stdout'] != ''
+   - attribute_resolver_xml.stat.exists == True
   notify:
    - "Restart Jetty"
   tags: idp
@@ -332,16 +325,15 @@
    group: "root"
    mode: "0600"
   when:
-   - attribute_resolver_xml['stdout'] == ''
+   - attribute_resolver_xml.stat.exists == False
   notify:
    - "Restart Jetty"
   tags: idp
 
 # Load /opt/shibboleth-idp/conf/attribute-filter-custom.xml
 - name: "Check if a custom 'attribute-filter.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
-  command: "find . -name attribute-filter.xml"
-  args: 
-   chdir: "{{ files_dir }}/{{ fqdn }}/idp/conf"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/attribute-filter.xml"
   delegate_to: 127.0.0.1
   register: attribute_filter_xml
   changed_when: false
@@ -355,16 +347,15 @@
    group: "root"
    mode: "0600"
   when:
-   - attribute_filter_xml['stdout'] != ''
+   - attribute_filter_xml.stat.exists == True
   notify:
    - "Restart Jetty"
   tags: idp
 
 # Load /opt/shibboleth-idp/conf/authn/ldap-authn-config.xml
-- name: "Check if a custom 'ldap-authn-config.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf/authn"
-  command: "find . -name ldap-authn-config.xml"
-  args: 
-   chdir: "{{ files_dir }}/{{ fqdn }}/idp/conf/authn"
+- name: "Check if a custom 'ldap-authn-config.xml' is provided under {{ files_dir }}/{{ fqdn }}/idp/conf/authn"
+  stat: 
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/authn/ldap-authn-config.xml"
   delegate_to: 127.0.0.1
   register: ldap_authn_config_xml
   changed_when: false
@@ -384,7 +375,7 @@
    group: "root"
    mode: "0600"
   when:
-   - ldap_authn_config_xml['stdout'] != ''
+   - ldap_authn_config_xml.stat.exists == True
    - idp_config is defined
    - idp_config['ldap'] is defined
    - idp_config['ldap']['ppolicy'] is defined
@@ -402,7 +393,7 @@
    group: "root"
    mode: "0600"
   when:
-   - ldap_authn_config_xml['stdout'] == ''
+   - ldap_authn_config_xml.stat.exists == False
    - idp_config is defined
    - idp_config['ldap'] is defined
    - idp_config['ldap']['ppolicy'] is defined
@@ -414,9 +405,8 @@
 
 # Load /opt/shibboleth-idp/conf/authn/password-authn-config.xml
 - name: "Check if a custom 'password-authn-config.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf/authn"
-  command: "find . -name password-authn-config.xml"
-  args: 
-   chdir: "{{ files_dir }}/{{ fqdn }}/idp/conf/authn"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/authn/password-authn-config.xml"
   delegate_to: 127.0.0.1
   register: password_authn_config_xml
   changed_when: false
@@ -436,7 +426,7 @@
    group: "root"
    mode: "0600"
   when:
-   - password_authn_config_xml['stdout'] != ''
+   - password_authn_config_xml.stat.exists == True
    - idp_config is defined
    - idp_config['ldap'] is defined
    - idp_config['ldap']['ppolicy'] is defined
@@ -454,7 +444,7 @@
    group: "root"
    mode: "0600"
   when:
-   - password_authn_config_xml['stdout'] == ''
+   - password_authn_config_xml.stat.exists == False
    - idp_config is defined
    - idp_config['ldap'] is defined
    - idp_config['ldap']['ppolicy'] is defined
@@ -466,9 +456,8 @@
 
 # Load /opt/shibboleth-idp/conf/c14n/subject-c14n.xml
 - name: "Check if a custom 'subject-c14n.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf/authn"
-  command: "find . -name subject-c14n.xml"
-  args: 
-   chdir: "{{ files_dir }}/{{ fqdn }}/idp/conf/c14n"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/c14n/subject-c14n.xml"
   delegate_to: 127.0.0.1
   register: subject_c14n_xml
   changed_when: false
@@ -482,7 +471,7 @@
    group: "root"
    mode: "0600"
   when:
-   - subject_c14n_xml['stdout'] != ''
+   - subject_c14n_xml.stat.exists == True
   notify:
    - "Restart Jetty"
   tags: idp
@@ -495,16 +484,15 @@
    group: "root"
    mode: "0600"
   when:
-   - subject_c14n_xml['stdout'] == ''
+   - subject_c14n_xml.stat.exists == False
   notify:
    - "Restart Jetty"
   tags: idp
 
 # Load /opt/shibboleth-idp/conf/logback.xml
 - name: "Check if a custom 'logback.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
-  command: "find . -name logback.xml"
-  args: 
-   chdir: "{{ files_dir }}/{{ fqdn }}/idp/conf"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/logback.xml"
   delegate_to: 127.0.0.1
   register: logback_xml
   changed_when: false
@@ -518,7 +506,7 @@
    group: "root"
    mode: "0600"
   when:
-   - logback_xml['stdout'] != ''
+   - logback_xml.stat.exists == True
   notify:
    - "Restart Jetty"
   tags: idp
@@ -531,16 +519,15 @@
    group: "root"
    mode: "0600"
   when:
-   - logback_xml['stdout'] == ''
+   - logback_xml.stat.exists == False
   notify:
    - "Restart Jetty"
   tags: idp
 
 # Load /opt/shibboleth-idp/conf/attribute-filter-v3-coco.xml
 - name: "Check if a custom 'attribute-filter-v3-coco.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
-  command: "find . -name attribute-filter-v3-coco.xml"
-  args: 
-   chdir: "{{ files_dir }}/{{ fqdn }}/idp/conf"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/attribute-filter-v3-coco.xml"
   delegate_to: 127.0.0.1
   register: attribute_filter_v3_coco_xml
   changed_when: false
@@ -559,7 +546,7 @@
   when:
    - idp_config['sup_coco'] is defined
    - idp_config['sup_coco'] in ["Yes","yes","True","true"]
-   - attribute_filter_v3_coco_xml['stdout'] != ''
+   - attribute_filter_v3_coco_xml.stat.exists == True
   notify:
    - "Restart Jetty"
   tags: idp
@@ -574,16 +561,15 @@
   when:
    - idp_config['sup_coco'] is defined
    - idp_config['sup_coco'] in ["Yes","yes","True","true"]
-   - attribute_filter_v3_coco_xml['stdout'] == ''
+   - attribute_filter_v3_coco_xml.stat.exists == False
   notify:
    - "Restart Jetty"
   tags: idp
 
 # Load /opt/shibboleth-idp/conf/attribute-filter-v3-rs.xml
 - name: "Check if a custom 'attribute-filter-v3-rs.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
-  command: "find . -name attribute-filter-v3-rs.xml"
-  args: 
-   chdir: "{{ files_dir }}/{{ fqdn }}/idp/conf"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/attribute-filter-v3-rs.xml"
   delegate_to: 127.0.0.1
   register: attribute_filter_v3_rs_xml
   changed_when: false
@@ -602,7 +588,7 @@
   when:
    - idp_config['sup_rs'] is defined
    - idp_config['sup_rs'] in ["Yes","yes","True","true"]
-   - attribute_filter_v3_rs_xml['stdout'] != ''
+   - attribute_filter_v3_rs_xml.stat.exists == True
   notify:
    - "Restart Jetty"
   tags: idp
@@ -617,16 +603,15 @@
   when:
    - idp_config['sup_rs'] is defined
    - idp_config['sup_rs'] in ["Yes","yes","True","true"]
-   - attribute_filter_v3_rs_xml['stdout'] == ''
+   - attribute_filter_v3_rs_xml.stat.exists == False
   notify:
    - "Restart Jetty"
   tags: idp
 
 # Load /opt/shibboleth-idp/conf/audit.xml
 - name: "Check if a custom 'audit.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
-  command: "find . -name audit.xml"
-  args: 
-   chdir: "{{ files_dir }}/{{ fqdn }}/idp/conf"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/audit.xml"
   delegate_to: 127.0.0.1
   register: audit_xml
   changed_when: false
@@ -640,7 +625,7 @@
    group: "root"
    mode: "0600"
   when:
-   - audit_xml['stdout'] != ''
+   - audit_xml.stat.exists == True
   notify:
    - "Restart Jetty"
   tags: idp
@@ -653,16 +638,15 @@
    group: "root"
    mode: "0600"
   when:
-   - audit_xml['stdout'] == ''
+   - audit_xml.stat.exists == False
   notify:
    - "Restart Jetty"
   tags: idp
 
 # Load /opt/shibboleth-idp/conf/mvc-beans.xml
 - name: "Check if a custom 'mvc-beans.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
-  command: "find . -name mvc-beans.xml"
-  args: 
-   chdir: "{{ files_dir }}/{{ fqdn }}/idp/conf"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/mvc-beans.xml"
   delegate_to: 127.0.0.1
   register: mvc_beans_xml
   changed_when: false
@@ -676,7 +660,7 @@
    group: "root"
    mode: "0600"
   when:
-   - mvc_beans_xml['stdout'] != ''
+   - mvc_beans_xml.stat.exists == True
   notify:
    - "Restart Jetty"
   tags: idp
@@ -689,16 +673,15 @@
    group: "root"
    mode: "0600"
   when:
-   - mvc_beans_xml['stdout'] == ''
+   - mvc_beans_xml.stat.exists == False
   notify:
    - "Restart Jetty"
   tags: idp
 
 # Load /opt/shibboleth-idp/credentials/trustCertificates.crt
 - name: "Check if a custom 'trustCertificates.crt' is provided under {{ files_dir}}/{{ fqdn }}/idp/credentials"
-  command: "find . -name trustCertificates.crt"
-  args: 
-   chdir: "{{ files_dir }}/{{ fqdn }}/idp/credentials"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/credentials/trustCertificates.crt"
   delegate_to: 127.0.0.1
   register: trustCertificates_crt
   changed_when: false
@@ -712,7 +695,7 @@
    group: "root"
    mode: "0600"
   when:
-   - trustCertificates_crt['stdout'] != ''
+   - trustCertificates_crt.stat.exists == True
   notify:
    - "Restart Jetty"
   tags: idp
