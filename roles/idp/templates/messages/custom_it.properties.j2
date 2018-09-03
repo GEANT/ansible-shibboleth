@@ -40,8 +40,8 @@ sp.noprivacypage=Nessuna Politica sulla Privacy definita dalla risorsa
 {{ fed }}.name={{ idp_login['fed_info'][fed]['it']['name'] }}
 {% endfor%}
 
-# Messaggi per il cambio password sfruttando le PPolicy di OpenLDAP
 {% if idp_config['ldap']['ppolicy'] is defined and idp_config['ldap']['ppolicy']['change_password_url'] is defined and idp_config['ldap']['ppolicy']['change_password_url'] != "" %}
+# Messaggi per il cambio password sfruttando le PPolicy di OpenLDAP
 ChangePassword=change-password
 change-password.message=Cambia la tua password!
 change-password.linkText=Clicca Qui

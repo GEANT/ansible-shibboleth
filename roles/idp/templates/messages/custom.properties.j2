@@ -42,8 +42,8 @@ sp.noprivacypage=SP Privacy Policy absent
 {{ fed }}.name={{ idp_login['fed_info'][fed]['en']['name'] }}
 {% endfor %}
 
-# Messages for changing password
 {% if idp_config['ldap']['ppolicy'] is defined and idp_config['ldap']['ppolicy']['change_password_url'] is defined and idp_config['ldap']['ppolicy']['change_password_url'] != "" %}
+# Messages needed for changing password
 ChangePassword=change-password
 change-password.message=Change your password!
 change-password.linkText=Click Here
