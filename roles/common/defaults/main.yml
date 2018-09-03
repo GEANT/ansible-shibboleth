@@ -1,2 +1,28 @@
 ---
 # defaults file for common
+
+# Machine Variables
+fqdn: idp.example.org
+files_dir: "/opt/ansible-shibboleth/inventories/files"
+
+# For self-signed certs use ca: "{{ fqdn }}.crt"
+common:
+ ssl: "True"
+ ca: "ca.crt"
+ ssl_cert: "{{ fqdn }}.crt"
+ ssl_key: "{{ fqdn }}.key"
+ # Add(present) or Remove(absent) SWAP file.
+ # Remove entirely "swap" section if you use a dedicated partition for SWAP or if don't need it.
+ swap:
+  name_swapfile: "swapfile"
+  size_swapfile: "2048"
+  state: present
+ # Remove entirely "mirror" section to use the default distribution repositories
+ mirror: "https://mi.mirror.garr.it/mirrors/debian/"
+
+# NTP
+my_timezone: Europe/Rome
+
+ntp1: ntp1.inrim.it
+ntp2: ntp2.inrim.it
+ntp3: 0.it.pool.ntp.org
