@@ -11,7 +11,7 @@
     - python-dev
     - python-setuptools
     - python-mysqldb
-    - libmysqlclient-dev
+    - default-libmysqlclient-dev
     - sqlite3
     - libxml2-dev
     - libxslt-dev
@@ -21,11 +21,18 @@
     - build-essential
     - apache2
     - libapache2-mod-wsgi
-  
+
+- name: "Check that PIP is not already installed"
+  stat:
+   path: "/usr/local/bin/pip"
+  register: pip_installed
+
 - name: "Install pip"
   easy_install:
-    name: pip
-    state: latest
+   name: pip
+   state: latest
+  when:
+   - pip_installed.stat.exists == False
   
 - name: "Install virtualenv"
   pip:
