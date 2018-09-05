@@ -19,19 +19,19 @@
    - ansible_distribution_release == "jessie"
   tags: idp
 
-#- name: "Debian 9 - Install packages needed by /statistics application"
-#   apt:
-#   name: "{{item}}"
-#   state: latest
-#   install_recommends: no
-#  with_items:
-#   - python-mysqldb
-#   - php7.0-mysql
-#   - php7.0-xml
-#   - php7.0
-#  when:
-#   - ansible_distribution_release == "stretch"
-#  tags: idp
+- name: "Debian 9 - Install packages needed by /statistics application"
+  apt:
+   name: "{{item}}"
+   state: latest
+   install_recommends: no
+  with_items:
+   - python-mysqldb
+   - php7.0-mysql
+   - php7.0-xml
+   - php7.0
+  when:
+   - ansible_distribution_release == "stretch"
+  tags: idp
 
 - name: "Check if 'statistics' DB is already created and store the result into 'statistics_db' ansible variable"
   command: mysql -u root -s -N -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='statistics'"

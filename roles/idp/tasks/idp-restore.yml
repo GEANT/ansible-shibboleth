@@ -12,16 +12,51 @@
   changed_when: false
   tags: idp
 
-- name: "RESTORE - Put 'shibboleth' and 'statistics' database backups in the '/root' directory"
-  synchronize:
-    mode: pull
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    owner: "root"
-    group: "root"
+#- name: "RESTORE - Retrieve 'shibboleth' and 'statistics' database backups and put them on the Ansible-Master server"
+#  synchronize:
+#    mode: push
+#    src: "{{ item.src }}"
+#    dest: "{{ item.dest }}"
+  #delegate_to: 127.0.0.1
+#  with_items:
+#    - { src: "rsync://{{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/shibboleth_db.sql", dest: "{{ files_dir }}/{{ fqdn }}/idp/mysql-restore/shibboleth_db.sql" }
+#    - { src: "rsync://{{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/statistics_db.sql", dest: "{{ files_dir }}/{{ fqdn }}/idp/mysql-restore/statistics_db.sql" }
+#  when:
+#   - bck_uri is defined 
+#   - bck_uri != ""
+#   - host_bck_path is defined
+#   - host_bck_path != ""
+#   - idp_db_restore is defined
+#   - idp_db_restore in ["True","true","Yes","yes"]
+#   - shibboleth_db_is_empty['stdout'] == "0" and statistics_db_is_empty['stdout'] == "0"
+#  tags: idp
+
+- name: "RESTORE - Retrieve MySQL backups"
+  command: "{{ item }}"
   with_items:
-    - { src: "rsync://{{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/shibboleth-db.sql.gz", dest: "/root/shibboleth-db.sql.gz" }
-    - { src: "rsync://{{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/statistics-db.sql.gz", dest: "/root/statistics-db.sql.gz" }
+   - "rsync -avzh {{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/shibboleth_db.sql.gz {{ files_dir }}/{{ fqdn }}/idp/mysql-restore/shibboleth_db.sql.gz"
+   - "rsync -avzh {{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/statistics_db.sql.gz {{ files_dir }}/{{ fqdn }}/idp/mysql-restore/statistics_db.sql.gz"
+  delegate_to: 127.0.0.1
+  when:
+    - bck_uri is defined
+    - bck_uri != ""
+    - host_bck_path is defined
+    - host_bck_path != ""
+    - idp_db_restore is defined
+    - idp_db_restore in ["Yes","yes","True","true"]
+    - shibboleth_db_is_empty['stdout'] == "0" and statistics_db_is_empty['stdout'] == "0"
+  tags: idp
+
+- name: "RESTORE - Put 'shibboleth' and 'statistics' database backups in the '/root' directory"
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: "0600"
+  with_items:
+   - { src: "{{ files_dir }}/{{ fqdn }}/idp/mysql-restore/shibboleth_db.sql.gz", dest: "/root/shibboleth_db.sql.gz" }
+   - { src: "{{ files_dir }}/{{ fqdn }}/idp/mysql-restore/statistics_db.sql.gz", dest: "/root/statistics_db.sql.gz" }
   when:
    - idp_db_restore is defined
    - idp_db_restore in ["True","true","Yes","yes"]
@@ -31,8 +66,8 @@
 - name: "RESTORE - Extract 'shibboleth' and 'statistics' database backups"
   command: "gunzip {{ item }}"
   with_items:
-   - "/root/shibboleth-db.sql.gz"
-   - "/root/statistics-db.sql.gz"
+   - "/root/shibboleth_db.sql.gz"
+   - "/root/statistics_db.sql.gz"
   when:
    - idp_db_restore is defined
    - idp_db_restore in ["True","true","Yes","yes"]
@@ -46,8 +81,8 @@
    group: "root"
    mode: "600"
   with_items:
-   - "/root/shibboleth-db.sql"
-   - "/root/statistics-db.sql"
+   - "/root/shibboleth_db.sql"
+   - "/root/statistics_db.sql"
   when:
    - idp_db_restore is defined
    - idp_db_restore in ["True","true","Yes","yes"]
@@ -61,8 +96,8 @@
    name: all
    target: "{{ item }}"
   with_items:
-   - "/root/shibboleth-db.sql"
-   - "/root/statistics-db.sql"
+   - "/root/shibboleth_db.sql"
+   - "/root/statistics_db.sql"
   when:
    - idp_db_restore is defined
    - idp_db_restore in ["True","true","Yes","yes"]
@@ -74,8 +109,8 @@
    dest: "{{ item }}"
    state: "absent"
   with_items:
-   - "/root/shibboleth-db.sql"
-   - "/root/statistics-db.sql"
+   - "/root/shibboleth_db.sql"
+   - "/root/statistics_db.sql"
   when:
    - idp_db_restore is defined
    - idp_db_restore in ["True","true","Yes","yes"]

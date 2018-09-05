@@ -1,0 +1,9 @@
+---
+
+- ldap_attr:
+    dn: "cn=config"
+    name: "{{ item.key }}"
+    values: "{{ item.value }}"
+    state: present 
+  with_dict:
+    olcSizeLimit: "unlimited"

@@ -6,13 +6,42 @@
   changed_when: false
   tags: openldap
 
-- name: "RESTORE - Retrieve LDAP"
-  synchronize:
-    mode: pull
-    src: "rsync://{{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/ldap-users.ldif.gz"
-    dest: "/root/ldap-users.ldif.gz"
-    owner: "root"
-    group: "root"
+#- name: "RESTORE - Retrieve LDAP backups"
+#  synchronize:
+#    mode: push
+#    src: "rsync://{{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/ldap-users.ldif"
+#    dest: "{{ files_dir }}/{{ fqdn }}/openldap/restore/ldap-users.ldif"
+#  delegate_to: 127.0.0.1
+#  when:
+#    - bck_uri is defined
+#    - bck_uri != ""
+#    - host_bck_path is defined
+#    - host_bck_path != ""
+#    - idp_ldap_restore is defined
+#    - idp_ldap_restore in ["Yes","yes","True","true"]
+#    - ldap_is_empty['stdout'] == ""
+#  tags: openldap
+
+- name: "RESTORE - Retrieve LDAP backups"
+  command: "rsync -avzh {{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/ldap-users.ldif.gz {{ files_dir }}/{{ fqdn }}/openldap/restore/ldap-users.ldif.gz"
+  delegate_to: 127.0.0.1
+  when:
+    - bck_uri is defined
+    - bck_uri != ""
+    - host_bck_path is defined
+    - host_bck_path != ""
+    - idp_ldap_restore is defined
+    - idp_ldap_restore in ["Yes","yes","True","true"]
+    - ldap_is_empty['stdout'] == ""
+  tags: openldap
+
+- name: "RESTORE - Load LDAP backup on IdP"
+  copy:
+   src: "{{ files_dir }}/{{ fqdn }}/openldap/restore/ldap-users.ldif.gz"
+   dest: "/root/ldap-users.ldif.gz"
+   owner: "root"
+   group: "root"
+   mode: "0600"
   when:
     - idp_ldap_restore is defined
     - idp_ldap_restore in ["Yes","yes","True","true"]
@@ -27,7 +56,7 @@
    - ldap_is_empty.stdout == ""
   tags: openldap
 
-- name: "RESTORE - Assign to ldap-user the right permissions"
+- name: "RESTORE - Assign to ldap-users.ldif the right permissions"
   file:
    dest: "/root/ldap-users.ldif"
    owner: "root"

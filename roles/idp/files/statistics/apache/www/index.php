@@ -59,16 +59,18 @@
                 <?php
                 include_once("db.php");
 
-                if (!mysql_connect($sbhost, $dbuser, $dbpasswd))
-                        die("Unable to connect to 'statistics' database");
-                if (!mysql_select_db($dbname))
-                        die("Unable to select 'statistics' database");
+                $conn = mysqli_connect($sbhost, $dbuser, $dbpasswd, $dbname);
+
+                // Check connection
+                if (mysqli_connect_errno()) {
+                  die("Failed to connect to 'statistics' database: " . mysqli_connect_error());
+                }
                 $sps_names = array();
-                $result = mysql_query("SELECT sp, name FROM sps");
-                while($row = mysql_fetch_row($result)) {
+                $result = mysqli_query($conn,"SELECT sp, name FROM sps");
+                while($row = mysqli_fetch_row($result)) {
                         $sps_names[$row[0]] = $row[1];
                 }
-                mysql_free_result($result);
+                mysqli_free_result($result);
                 ?>
 
                 <?php
@@ -84,10 +86,10 @@
                 } elseif ($dati == "totals") {
                         addSubmitForm($dati, $months);
 
-                        $result = mysql_query("SELECT SUM(logins) from logins WHERE YEAR(data) = ".$year." AND MONTH(data) = ".$month);
-                        $row = mysql_fetch_row($result);
+                        $result = mysqli_query($conn,"SELECT SUM(logins) from logins WHERE YEAR(data) = ".$year." AND MONTH(data) = ".$month);
+                        $row = mysqli_fetch_row($result);
                         $totnum = $row[0];
-                        mysql_free_result($result);
+                        mysqli_free_result($result);
                 ?>
                         <br/>
                         <h2>The total number of login in <?php echo $months[intval($month)]; ?> <?php echo intval($year); ?> is:
@@ -108,17 +110,17 @@
                         $graph = False;
                 }
 
-                $result = mysql_query($query1);
+                $result = mysqli_query($conn,$query1);
                 $i = 0;
                 $items = array();
-                while($row = mysql_fetch_row($result)) {
+                while($row = mysqli_fetch_row($result)) {
                         $curitem = $row[0];
                         if ($dati == "sp" and array_key_exists($curitem, $sps_names)) {
                                 $curitem = $sps_names[$curitem];
                         }
                         $items[] = $curitem;
                 }
-                mysql_free_result($result);
+                mysqli_free_result($result);
 
                 if ($graph) {
                         if ($month > date('n') && $year == date('Y')){
@@ -165,9 +167,9 @@
                 }
 
                 $datatable = array();
-                $result = mysql_query($query2);
-                $fields_num = mysql_num_fields($result);
-                while($row = mysql_fetch_row($result)) {
+                $result = mysqli_query($conn,$query2);
+                $fields_num = mysqli_num_fields($result);
+                while($row = mysqli_fetch_row($result)) {
                         if ($dati == "totals") {
                                 $datatable[$row[0]] = "". $row[1];
                         } else {
@@ -178,7 +180,7 @@
                                 $datatable[$row[0]][$curitem] = $row[2];
                         }
                 }
-                mysql_free_result($result);
+                mysqli_free_result($result);
                 foreach ($datatable as $data => $itemtable) {
                         echo "arrdate.push('".$data."');\n";
                         if ($dati == "totals") {

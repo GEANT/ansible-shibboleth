@@ -19,6 +19,15 @@
    mode: "0644" 
   tags: common
 
+- name: "Configure the resolver"
+  file:
+   src: resolv.conf
+   dest: /etc/resolv.conf
+   owner: "root"
+   group: "root"
+   mode: "0644" 
+  tags: common
+
 - name: "Check the existance of cloud-init configuration"
   stat:
     path: /etc/cloud/cloud.cfg
@@ -97,6 +106,14 @@
    backup: "yes"
   notify:
    - "Update Timezone"
+  tags: common
+
+- name: "Set /etc/localtime in Debian Stretch"
+  file:
+   src: "/usr/share/zoneinfo/{{ my_timezone }}"
+   dest: "/etc/localtime"
+   state: link
+  when: ansible_distribution_release != "jessie"
   tags: common
 
 - name: "Be sure to configure SSL if needed"
