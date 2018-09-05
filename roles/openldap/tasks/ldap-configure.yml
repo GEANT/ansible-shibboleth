@@ -81,16 +81,6 @@
   notify:
    - "Restart slapd"
 
-- name: "Set openLDAD olcLogLevel"
-  import_tasks: config_logLevel.yml
-  notify:
-   - "Restart slapd"
-
-- name: "Set openLDAD olcSizeLimit to unilimited"
-  import_tasks: config_sizeLimit.yml
-  notify:
-   - "Restart slapd"
-
 - name: "Set openLDAP ACL"
   import_tasks: config_acl.yml
   notify:

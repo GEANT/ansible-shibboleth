@@ -10,7 +10,7 @@ idp.authn.LDAP.useStartTLS                     = {{ idp_config['ldap']['useStart
 idp.authn.LDAP.useSSL                          = {{ idp_config['ldap']['useSSL'] | default('false') }}
 idp.authn.LDAP.connectTimeout                  = {{ idp_config['ldap']['connectTimeout'] | default('3000') }}
 
-{% if (idp_config['ldap']['useStartTLS'] or idp_config['ldap']['useSSL']) in ['Yes','yes','True','true'] %}
+{% if ((idp_config['ldap']['useStartTLS'] in ['Yes','yes','True','true']) or (idp_config['ldap']['useSSL'] in ['Yes','yes','True','true'])) %}
 ## SSL configuration, either jvmTrust, certificateTrust, or keyStoreTrust
 idp.authn.LDAP.sslConfig                       = {{ idp_config['ldap']['sslConfig'] }}
 {% if idp_config['ldap']['sslConfig'] is equalto "certificateTrust" %}
