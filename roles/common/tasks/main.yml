@@ -20,8 +20,8 @@
   tags: common
 
 - name: "Configure the resolver"
-  file:
-   src: resolv.conf
+  copy:
+   src: "{{ files_dir }}/all/resolv.conf"
    dest: /etc/resolv.conf
    owner: "root"
    group: "root"
