@@ -19,9 +19,17 @@
   register: agent
   tags: check_mk_agent
 
-- name: "Download the Check_MK monitoring agent for Debian"
+- name: "Download the Check_MK monitoring agent for Debian on the Ansible Master"
   get_url:
    url: "{{ check_mk_agent_dl_url }}"
+   dest: "{{ files_dir }}/all"
+  delegate_to: 127.0.0.1
+  when: agent.stat.exists == False 
+  tags: check_mk_agent
+
+- name: "Download the Check_MK monitoring agent for Debian"
+  copy:
+   src: "{{ files_dir }}/all/{{ check_mk_agent_version }}.deb"
    dest: "/usr/local/src"
   when: agent.stat.exists == False 
   tags: check_mk_agent

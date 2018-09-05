@@ -9,6 +9,7 @@
    timeout: 500
    headers:
      Content-Type: "application/json; charset=UTF-8"
+  delegate_to: 127.0.0.1
   when:
    - fqdn is defined and fqdn != ""
    - check_mk is defined
@@ -27,6 +28,7 @@
    timeout: 500
    headers:
      Content-Type: "application/json; charset=UTF-8"
+  delegate_to: 127.0.0.1
   when:
    - fqdn is defined and fqdn != ""
    - check_mk is defined
@@ -44,6 +46,7 @@
    timeout: 500
    headers:
      Content-Type: "application/json; charset=UTF-8"
+  delegate_to: 127.0.0.1
   when:
    - fqdn is defined and fqdn != ""
    - check_mk is defined

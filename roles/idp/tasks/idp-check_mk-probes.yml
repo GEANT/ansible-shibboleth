@@ -79,6 +79,7 @@
    method: GET
    timeout: 500
    status_code: 200
+  delegate_to: 127.0.0.1
   when:
    - check_mk is defined
    - check_mk['check_idp'] is defined and check_mk['check_idp'] in ["True","true","Yes","yes"]
@@ -106,6 +107,7 @@
    method: GET
    timeout: 500
    status_code: 200
+  delegate_to: 127.0.0.1
   when:
    - check_mk is defined
    - check_mk['check_idp'] is defined and check_mk['check_idp'] in ["True","true","Yes","yes"]
@@ -136,6 +138,7 @@
    method: GET
    timeout: 500
    status_code: 200
+  delegate_to: 127.0.0.1
   when:
    - check_mk is defined
    - check_mk['check_idp'] is defined and check_mk['check_idp'] in ["True","true","Yes","yes"]
@@ -163,6 +166,7 @@
    method: GET
    timeout: 500
    status_code: 200
+  delegate_to: 127.0.0.1
   when:
    - check_mk is defined
    - check_mk['check_idp'] is defined and check_mk['check_idp'] in ["True","true","Yes","yes"]
