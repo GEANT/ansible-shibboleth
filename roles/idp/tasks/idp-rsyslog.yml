@@ -31,6 +31,22 @@
    - rsyslog_srv['port'] is defined
    - rsyslog_srv['port'] != ""
 
+- name: "Debian 9 - Install Rsyslog with RELP"
+  apt:
+   name: "{{ item }}"
+   state: latest
+   install_recommends: no
+  with_items:
+   - "rsyslog"
+   - "rsyslog-relp"
+  when:
+   - ansible_distribution_release == "stretch"
+   - rsyslog_srv is defined
+   - rsyslog_srv['ip'] is defined
+   - rsyslog_srv['ip'] != ""
+   - rsyslog_srv['port'] is defined
+   - rsyslog_srv['port'] != ""
+
 - name: "Configure Rsyslog for F-TICKS"
   template:
    src: "monitoring/rsyslog/33-fticks.conf.j2"
