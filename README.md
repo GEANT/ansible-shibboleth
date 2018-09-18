@@ -170,6 +170,7 @@ idp2.example.org
 
 ## Authors
 
-#### Original Author and Development Lead
+#### Original Authors
 
-* Marco Malavolti (marco.malavolti@gmail.com)
+* Marco Malavolti (https://github.com/malavolti)
+* Davide Vaghetti (https://github.com/daserzw)
