@@ -1,0 +1,7 @@
+---
+# Tasks of rm_testuser.xml
+
+- name: "Be sure to remove Test User"
+  ldap_entry:
+   dn: "uid=testuser,ou=people,{{ ldap['basedn'] }}"
+   state: absent

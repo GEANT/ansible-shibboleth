@@ -1,9 +1,8 @@
 ---
 
-- ldap_attr:
-    dn: "cn=config"
-    name: "{{ item.key }}"
-    values: "{{ item.value }}"
-    state: present 
-  with_dict:
-    olcLogLevel: "256"
+- name: "Be sure to configure olcLogLevel"
+  ldap_attr:
+   dn: "cn=config"
+   name: olcLogLevel
+   values: 256
+   state: exact 

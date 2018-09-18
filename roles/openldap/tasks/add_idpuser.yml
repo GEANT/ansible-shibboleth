@@ -1,6 +1,7 @@
 ---
 
-- ldap_entry:
+- name: "Be sure to adde 'idpuser' to LDAP"
+  ldap_entry:
     dn: "{{ idp_config['ldap']['bindDN'] }}"
     objectClass:
       - inetOrgPerson

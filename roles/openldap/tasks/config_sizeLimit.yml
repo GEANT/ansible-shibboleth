@@ -1,9 +1,11 @@
 ---
 
-- ldap_attr:
-    dn: "cn=config"
-    name: "{{ item.key }}"
-    values: "{{ item.value }}"
-    state: present 
-  with_dict:
-    olcSizeLimit: "unlimited"
+- name: "Be sure to configure olcSizeLimit to 'unlimited'"
+  ldap_attr:
+   dn: "{{ item.dn }}"
+   name: olcSizeLimit
+   values: "unlimited"
+   state: exact
+  with_items:
+   - { dn: "cn=config" }
+   - { dn: "olcDatabase={-1}frontend,cn=config" }

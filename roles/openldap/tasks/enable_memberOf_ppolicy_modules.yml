@@ -1,7 +1,10 @@
-- ldap_attr:
-    dn: "cn=module{0},cn=config"
-    name: "olcModuleLoad"
-    values: "{{ item }}"
+---
+
+- name: "Be sure to load 'memberof' and 'ppolicy' OpenLDAP module"
+  ldap_attr:
+   dn: "cn=module{0},cn=config"
+   name: "olcModuleLoad"
+   values: "{{ item }}"
   with_items:
-    - "{1}memberof"
-    - "{2}ppolicy"
+   - "{1}memberof"
+   - "{2}ppolicy"

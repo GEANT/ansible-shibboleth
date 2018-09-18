@@ -1,6 +1,7 @@
 ---
 
-- ldap_attr:
+- name: "Be sure to configure Indexes for OpenLDAP"
+  ldap_attr:
    dn: "olcDatabase={1}mdb,cn=config"
    name: "olcDbIndex"
    values: "{{ item.value }}"

@@ -1,17 +1,18 @@
 ---
 
-- ldap_entry:
-    dn: "uid=testuser,ou=people,{{ ldap['basedn'] }}"
-    objectClass:
-      - inetOrgPerson
-      - eduPerson
-      - schacLinkageIdentifiers
-      - schacEntryMetadata
-    attributes:
-      uid: "testuser"
-      sn: "User"
-      givenName: "Test"
-      cn: "Test User"
-      schacPersonalUniqueID: "urn:schac:personalUniqueID:IT:CF:TSTUSR17F08G321G"
-      mail: "testuser@{{ ldap['domain'] }}"
-      eduPersonAffiliation: "member"
+- name: "Be sure to add the Test User"
+  ldap_entry:
+   dn: "uid=testuser,ou=people,{{ ldap['basedn'] }}"
+   objectClass:
+     - inetOrgPerson
+     - eduPerson
+     - schacLinkageIdentifiers
+     - schacEntryMetadata
+   attributes:
+     uid: "testuser"
+     sn: "User"
+     givenName: "Test"
+     cn: "Test User"
+     schacPersonalUniqueID: "urn:schac:personalUniqueID:IT:CF:TSTUSR17F08G321G"
+     mail: "testuser@{{ ldap['domain'] }}"
+     eduPersonAffiliation: "member"
