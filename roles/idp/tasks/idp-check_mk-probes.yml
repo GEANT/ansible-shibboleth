@@ -38,7 +38,15 @@
    - { src: "monitoring/check_mk_plugins/check_ldap.py.j2", dest: "/usr/lib/check_mk_agent/local/check_ldap.py" }
   when:
    - check_mk is defined
-   - check_mk['srv'] is defined
+   - check_mk['srv'] is defined and check_mk['srv'] != ''
+   - check_mk['spEntityID'] is defined and check_mk['spEntityID'] != ''
+   - check_mk['testuser'] is defined and check_mk['testuser'] != ''
+   - check_mk['baseDN'] is defined and check_mk['baseDN'] != ''
+   - check_mk['searchuser'] is defined and check_mk['searchuser'] != ''
+   - check_mk['searchuser_pw'] is defined and check_mk['searchuser_pw'] != ''
+   - check_mk['ldap_url'] is defined and check_mk['ldap_url'] != ''
+   - check_mk['userid_attr'] is defined and check_mk['userid_attr'] != ''
+   - check_mk['idp_scope'] is defined and check_mk['idp_scope'] != ''
    - ldap is defined
    - ldap['create_test_user'] is defined
    - ldap['create_test_user'] in ["Yes","yes","True","true"]
