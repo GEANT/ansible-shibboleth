@@ -54,7 +54,6 @@
    owner: "root"
    group: "root"
    mode: "0644"
-  tags: idp
 
 - name: "Configure Rsyslog to send IdP logs to the centralized remote server"
   template:
@@ -70,7 +69,6 @@
    - rsyslog_srv['port'] is defined
    - rsyslog_srv['port'] != ""
   register: rsyslog_template
-  tags: idp
 
 - name: "Restart Rsyslog to start sending IdP logs to the centralized remote server if needed"
   systemd:
@@ -79,4 +77,3 @@
     name: rsyslog
   when:
    - rsyslog_template.changed
-  tags: idp

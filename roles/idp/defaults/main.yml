@@ -1,6 +1,10 @@
 ---
 # defaults file for idp
 
+### Machine Variables:
+fqdn: "idp.example.org"
+files_dir: "/opt/ansible-shibboleth/inventories/files"
+
 jdk_version: "8"
 url_password_reset: "https://{{ fqdn }}/flup"
 

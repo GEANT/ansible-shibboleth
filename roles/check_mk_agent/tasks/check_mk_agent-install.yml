@@ -4,20 +4,17 @@
   apt:
    update_cache: yes
    cache_valid_time: 3600
-  tags: check_mk_agent
 
 - name: "Be sure that packages needed are installed"
   apt:
    name: "{{ check_mk_agent_packages }}"
    state: latest
    install_recommends: no
-  tags: check_mk_agent
 
 - name: "Check if the Monitoring Agent of Check_MK is already downloaded"
   stat:
     path: "/usr/local/src/{{ check_mk_agent_version }}.deb"
   register: agent
-  tags: check_mk_agent
 
 - name: "Download the Check_MK monitoring agent for Debian on the Ansible Master"
   get_url:
@@ -25,16 +22,13 @@
    dest: "{{ files_dir }}/all"
   delegate_to: 127.0.0.1
   when: agent.stat.exists == False 
-  tags: check_mk_agent
 
 - name: "Download the Check_MK monitoring agent for Debian"
   copy:
    src: "{{ files_dir }}/all/{{ check_mk_agent_version }}.deb"
    dest: "/usr/local/src"
   when: agent.stat.exists == False 
-  tags: check_mk_agent
 
 - name: "Install Check_MK Agent"
   command: "gdebi /usr/local/src/{{ check_mk_agent_version }}.deb -n"
   when: agent.stat.exists == False 
-  tags: check_mk_agent

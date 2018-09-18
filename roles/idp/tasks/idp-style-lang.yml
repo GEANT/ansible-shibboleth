@@ -9,7 +9,6 @@
    mode: "0600"
   notify:
    - "Restart Apache"
-  tags: idp
 
 - name: "Put Federation logo and eduGAIN logo in the right position"
   copy:
@@ -20,7 +19,6 @@
    mode: "0644"
   notify:
    - "Restart Apache"
-  tags: idp
 
 - name: "Put the IdP language directories in the right position"
   copy:
@@ -31,7 +29,6 @@
   with_dict: "{{ idp_metadata }}"
   notify:
    - "Restart Apache"
-  tags: idp
 
 - name: "Create 'css' directory needed by Login Page"
   file:
@@ -39,7 +36,6 @@
    state: directory
   notify:
    - "Restart Apache"
-  tags: idp
 
 - name: "Put the CSS files for Login Page and User Consent Page in the right position"
   template:
@@ -53,7 +49,6 @@
    - { src: "views/consent.css.j2", dest: "/var/www/html/css/consent.css" }
   notify:
    - "Restart Apache"
-  tags: idp
 
 - name: "Put the Shibboleth IdP Views files in the right position"
   template:
@@ -70,7 +65,6 @@
    - { src: "views/intercept/attribute-release.vm.j2", dest: "/opt/shibboleth-idp/views/intercept/attribute-release.vm" }
   notify:
    - "Restart Apache"
-  tags: idp
 
 - name: "Put default custom.properties and cookie_policy.properties in the right position"
   template:
@@ -84,7 +78,6 @@
    - { src: "messages/custom.properties.j2", dest: "/opt/shibboleth-idp/messages/custom.properties" }
   notify:
    - "Restart Apache"
-  tags: idp
 
 - name: "Put severals messages_LANGUAGE.properties in the right position"
   copy:
@@ -97,7 +90,6 @@
   when: "item.key != 'en'"
   notify:
    - "Restart Apache"
-  tags: idp
 
 - name: "Put several custom_LANGUAGE.properties in the right position"
   template:
@@ -110,7 +102,6 @@
   when: "item.key != 'en'"
   notify:
    - "Restart Apache"
-  tags: idp
 
 - name: "Put several cookie_policy_LANGUAGE.properties in the right position"
   template:
@@ -123,7 +114,6 @@
   when: "item.key != 'en'"
   notify:
    - "Restart Apache"
-  tags: idp
 
 - name: "Put the Information Page in the interested languages in the right position"
   template:
@@ -139,7 +129,6 @@
    - idp_login['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
   notify:
    - "Restart Apache"
-  tags: idp
 
 - name: "Put the Privacy Policy Page in the interested languages in the right position"
   template:
@@ -155,7 +144,6 @@
    - idp_login['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
   notify:
    - "Restart Apache"
-  tags: idp
 
 - name: "Remove all the Privacy Policy Pages created if they are not needed"
   file:
@@ -167,7 +155,6 @@
    - idp_login['create_info_and_pp_pages'] is not defined or idp_login['create_info_and_pp_pages'] in ["No","no","False","false"]
   notify:
    - "Restart Apache"
-  tags: idp
 
 - name: "Remove all the Information Pages created if they are not needed"
   file:
@@ -179,4 +166,3 @@
    - idp_login['create_info_and_pp_pages'] is undefined or idp_login['create_info_and_pp_pages'] in ["No","no","False","false"]
   notify:
    - "Restart Apache"
-  tags: idp

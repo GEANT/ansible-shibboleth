@@ -4,7 +4,6 @@
   apt:
    update_cache: yes
    cache_valid_time: 3600
-  tags: idp
 
 - name: "Install needed packages for Check MK plugin"
   apt:
@@ -16,7 +15,6 @@
   when:
    - check_mk is defined
    - check_mk['srv'] is defined
-  tags: idp
 
 - name: "Create '/local' directory needed by Check_MK plugin for customized local probes"
   file:
@@ -27,7 +25,6 @@
   when:
    - check_mk is defined
    - check_mk['srv'] is defined
-  tags: idp
 
 - name: "Put 'check_aacli' and 'check_ldap' probe in the Check_MK plugin '/local' directory"
   template:
@@ -45,7 +42,6 @@
    - ldap is defined
    - ldap['create_test_user'] is defined
    - ldap['create_test_user'] in ["Yes","yes","True","true"]
-  tags: idp
 
 - name: "Put 'check_mysql' probe in the Check_MK plugin '/local' directory"
   template:
@@ -57,7 +53,6 @@
   when:
    - check_mk is defined
    - check_mk['srv'] is defined
-  tags: idp
 
 - name: "Put 'check_rs' probe in the Check_MK plugin '/local' directory"
   template:
@@ -71,7 +66,6 @@
    - check_mk['srv'] is defined
    - check_mk['check_rs'] is defined
    - check_mk['check_rs'] in ["Yes","yes","True","true"]
-  tags: idp
 
 - name: "Add 'check_rs' probe to CheckMK for {{ fqdn }}"
   uri:
@@ -88,7 +82,6 @@
    - check_mk['api_user_name'] is defined and check_mk['api_user_name'] != ''
    - check_mk['api_user_secret'] is defined and check_mk['api_user_secret'] != ''
    - check_mk['check_rs'] is defined and check_mk['check_rs'] in ["Yes","yes","True","true"]
-  tags: idp
 
 - name: "Remove fake RS SP probe from {{ fqdn }}"
   file:
@@ -99,7 +92,6 @@
   when:
    - check_mk is defined
    - check_mk['srv'] is not defined or check_mk['check_rs'] is not defined or check_mk['check_rs'] in ["No","no","False","false"]
-  tags: idp
 
 - name: "Remove 'check_rs' probe from CheckMK for {{ fqdn }}"
   uri:
@@ -116,7 +108,6 @@
    - check_mk['api_user_name'] is defined and check_mk['api_user_name'] != ''
    - check_mk['api_user_secret'] is defined and check_mk['api_user_secret'] != ''
    - check_mk['check_rs'] is defined and check_mk['check_rs'] in ["No","no","False","false"] or check_mk['check_rs'] is not defined
-  tags: idp
 
 - name: "Put 'check_coco' probe in the Check_MK plugin '/local' directory"
   template:
@@ -130,7 +121,6 @@
    - check_mk['srv'] is defined
    - check_mk['check_coco'] is defined
    - check_mk['check_coco'] in ["Yes","yes","True","true"]
-  tags: idp
 
 - name: "Add 'check_coco' probe to CheckMK for {{ fqdn }}"
   uri:
@@ -147,7 +137,6 @@
    - check_mk['api_user_name'] is defined and check_mk['api_user_name'] != ''
    - check_mk['api_user_secret'] is defined and check_mk['api_user_secret'] != ''
    - check_mk['check_coco'] is defined and check_mk['check_coco'] in ["Yes","yes","True","true"]
-  tags: idp
 
 - name: "Remove fake CoCo SP probe from {{ fqdn }}"
   file:
@@ -158,11 +147,26 @@
   when:
    - check_mk is defined
    - check_mk['srv'] is not defined or check_mk['check_coco'] is not defined or check_mk['check_coco'] in ["No","no","False","false"]
-  tags: idp
 
 - name: "Remove 'check_coco' probe from CheckMK for {{ fqdn }}"
   uri:
    url: "https://{{ check_mk['srv'] }}/{{ check_mk['site'] }}/check_mk/webapi.py?action=discover_services&_username={{ check_mk['api_user_name'] }}&_secret={{ check_mk['api_user_secret'] }}&mode=remove&hostname={{ fqdn }}"
+   method: GET
+   timeout: 500
+   status_code: 200
+  delegate_to: 127.0.0.1
+  when:
+   - check_mk is defined
+   - check_mk['check_idp'] is defined and check_mk['check_idp'] in ["True","true","Yes","yes"]
+   - check_mk['srv'] is defined and check_mk['srv'] != ''
+   - check_mk['site'] is defined and check_mk['site'] != ''
+   - check_mk['api_user_name'] is defined and check_mk['api_user_name'] != ''
+   - check_mk['api_user_secret'] is defined and check_mk['api_user_secret'] != ''
+   - check_mk['check_coco'] is defined and check_mk['check_rs'] in ["No","no","False","false"] or check_mk['check_coco'] is not defined
+
+- name: "Apply changes on CheckMK Server"
+  uri:
+   url: "https://{{ check_mk['srv'] }}/{{ check_mk['site'] }}/check_mk/webapi.py?action=activate_changes&_username={{ check_mk['api_user_name'] }}&_secret={{ check_mk['api_user_secret'] }}"
    method: GET
    timeout: 500
    status_code: 200

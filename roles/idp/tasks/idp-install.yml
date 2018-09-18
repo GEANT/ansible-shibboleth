@@ -5,13 +5,11 @@
    path: "/opt/shibboleth-idp"
   register: shib_idp_dir
   changed_when: false
-  tags: idp
 
 - name: "Check if Shibboleth IdP tarball exists" 
   stat: 
    path: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"
   register: shib_tarball
-  tags: idp
 
 - name: "Download Shibboleth IdP and check its SHA256 checksum"
   get_url:
@@ -20,7 +18,6 @@
    checksum: "sha256:{{ shib_idp_checksum }}"
   when:
    - shib_tarball.stat.exists == False
-  tags: idp
 
 - name: "Extract Shibboleth Identity Provider package"
   unarchive:
@@ -29,7 +26,6 @@
    owner: "root"
    group: "root"
    remote_src: yes
-  tags: idp
 
 - name: "Put Shibboleth Identity Provider installer properties' files in the right position"
   template:
@@ -43,7 +39,6 @@
    - { src: "installer.properties.j2", dest: "/tmp/installer.properties", mode: "0644" } 
   when: 
    - shib_idp_dir.stat.isdir is undefined
-  tags: idp
 
 - name: "Put the Shibboleth Identity Provider persistent-id database structure file in the right position"
   template:
@@ -52,7 +47,6 @@
    owner: "root"
    group: "root"
    mode: "0600"
-  tags: idp
 
 - name: "Put the JSTL libraries, needed for Shibboleth IdP Status page, in the right position"
   copy:
@@ -61,7 +55,6 @@
    owner: "root"
    group: "root"
    mode: 0644
-  tags: idp 
 
 - name: "Create link for commons-dbcp, commons-pool and mysql JAR files used by Shibboleth IdP"
   file:
@@ -74,7 +67,6 @@
    - { src: '/usr/share/java/commons-dbcp.jar' ,dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/commons-dbcp.jar" }
    - { src: '/usr/share/java/commons-pool.jar' ,dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/commons-pool.jar" }
    - { src: '/usr/share/java/mysql.jar' ,dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/mysql-connector-java.jar" }
-  tags: idp
 
 - name: "Install Shibboleth IdP"
   shell: "./install.sh -Didp.property.file=/tmp/installer.properties"
@@ -83,7 +75,6 @@
   environment:
     JAVA_HOME: "{{ java_home_dir }}"
   when: shib_idp_dir.stat.isdir is undefined
-  tags: idp
 
 - name: "Set right permissions to Shibboleth IdP directories"
   file:
@@ -98,4 +89,3 @@
     - "conf"
     - "system"
     - "war"
-  tags: idp
