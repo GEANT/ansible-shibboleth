@@ -117,8 +117,12 @@
     <util:list id ="shibboleth.AttributeFilterResources">
         <value>%{idp.home}/conf/attribute-filter.xml</value>
         <value>%{idp.home}/conf/attribute-filter-v3-federation.xml</value>
+{% if idp_config is defined and idp_config['sup_rs'] in ['Yes','yes','True','true'] %}
         <value>%{idp.home}/conf/attribute-filter-v3-rs.xml</value>
+{% endif %}
+{% if idp_config is defined and idp_config['sup_coco'] in ['Yes','yes','True','true'] %}
         <value>%{idp.home}/conf/attribute-filter-v3-coco.xml</value>
+{% endif %}
 {% if attribute_filter_xml is defined and attribute_filter_xml['stdout'] != ''%}
         <value>%{idp.home}/conf/attribute-filter-v3-custom.xml</value>
 {% endif %}
