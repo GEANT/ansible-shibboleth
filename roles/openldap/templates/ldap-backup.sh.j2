@@ -2,20 +2,21 @@
 
 CONFIGFILE="/etc/ldap-backup/ldap-backup.conf"
 
-if [ -r ${CONFIGFILE} ]; then
+if [ -r ${CONFIGFILE} ]
+then
    # Read the config file if it's existing and readable
    source ${CONFIGFILE}
 else
    BACKUPDIR="/var/local/backups"
    BASEDN="{{ ldap['basedn'] }}"
-   FILTER="(&(|(ou:dn:=people)(ou:dn:=groups))(!(objectClass=organizationalUnit))(!(uid=testuser)))"
+   FILTER="(&(|(ou:dn:=people)(ou:dn:=groups)))"
 fi
 
 WHICH="`which which`"
 LDAPSEARCH="`${WHICH} ldapsearch`"
 FAILFILE="/var/local/backups/LDAP_FAIL"
 
-${LDAPSEARCH} -QLLLY EXTERNAL -H ldapi:/// -b ${BASEDN} ${FILTER} cn sn givenName schacPersonalUniqueID mail eduPersonEntitlement eduPersonAffiliation userPassword schacExpiryDate pwdAccountLockedTime objectClass > ${BACKUPDIR}/ldap-users.ldif
+${LDAPSEARCH} -QLLLY EXTERNAL -H ldapi:/// -b ${BASEDN} ${FILTER} cn sn givenName schacPersonalUniqueID mail eduPersonEntitlement eduPersonAffiliation userPassword schacExpiryDate pwdAccountLockedTime eduPersonOrcid objectClass > ${BACKUPDIR}/ldap-users.ldif
 
 if [ $? -ne 0 ]
 then

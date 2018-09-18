@@ -1,28 +1,6 @@
 ---
 # Tasks for openLDAP Restoration
-- name: "Check if the OpenLDAP is not empty and store the result on 'ldap_is_empty' ansible variable"
-  shell: "ldapsearch -QLLLY EXTERNAL -H ldapi:/// -b '{{ ldap['basedn'] }}' '(&(|(ou:dn:=people)(ou:dn:=groups))(!(objectClass=organizationalUnit))(!(uid=testuser)))'"
-  register: ldap_is_empty
-  changed_when: false
-  tags: openldap
-
-#- name: "RESTORE - Retrieve LDAP backups"
-#  synchronize:
-#    mode: push
-#    src: "rsync://{{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/ldap-users.ldif"
-#    dest: "{{ files_dir }}/{{ fqdn }}/openldap/restore/ldap-users.ldif"
-#  delegate_to: 127.0.0.1
-#  when:
-#    - bck_uri is defined
-#    - bck_uri != ""
-#    - host_bck_path is defined
-#    - host_bck_path != ""
-#    - idp_ldap_restore is defined
-#    - idp_ldap_restore in ["Yes","yes","True","true"]
-#    - ldap_is_empty['stdout'] == ""
-#  tags: openldap
-
-- name: "RESTORE - Retrieve LDAP backups"
+- name: "RESTORE - Retrieve LDAP backup into {{ files_dir }}/{{ fqdn }}/openldap/restore/ldap-users.ldif.gz"
   command: "rsync -avzh {{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/ldap-users.ldif.gz {{ files_dir }}/{{ fqdn }}/openldap/restore/ldap-users.ldif.gz"
   delegate_to: 127.0.0.1
   when:
@@ -30,10 +8,6 @@
     - bck_uri != ""
     - host_bck_path is defined
     - host_bck_path != ""
-    - idp_ldap_restore is defined
-    - idp_ldap_restore in ["Yes","yes","True","true"]
-    - ldap_is_empty['stdout'] == ""
-  tags: openldap
 
 - name: "RESTORE - Load LDAP backup on IdP"
   copy:
@@ -42,19 +16,9 @@
    owner: "root"
    group: "root"
    mode: "0600"
-  when:
-    - idp_ldap_restore is defined
-    - idp_ldap_restore in ["Yes","yes","True","true"]
-    - ldap_is_empty.stdout == ""
-  tags: openldap
 
 - name: "RESTORE - Extract LDAP backup"
   command: "gunzip /root/ldap-users.ldif.gz"
-  when:
-   - idp_ldap_restore is defined
-   - idp_ldap_restore in ["Yes","yes","True","true"]
-   - ldap_is_empty.stdout == ""
-  tags: openldap
 
 - name: "RESTORE - Assign to ldap-users.ldif the right permissions"
   file:
@@ -62,36 +26,52 @@
    owner: "root"
    group: "root"
    mode: "600"
-  when:
-   - idp_ldap_restore is defined
-   - idp_ldap_restore in ["Yes","yes","True","true"]
-   - ldap_is_empty.stdout == ""
-  tags: openldap
+
+- name: "RESTORE - Empty the people and groups Directory branches"
+  shell: "ldapdelete -r -QY EXTERNAL -H ldapi:/// ou=people,{{ ldap['basedn'] }} ou=groups,{{ ldap['basedn'] }}"
+  ignore_errors: True
 
 - name: "RESTORE - Stop SLAPD service before restoring the entries"
   service:
    name: slapd
    state: stopped
-  when:
-   - idp_ldap_restore is defined
-   - idp_ldap_restore in ["Yes","yes","True","true"]
-   - ldap_is_empty.stdout == ""
-  tags: openldap
 
 - name: "RESTORE - Restore openLDAP entries"
   command: "slapadd -c -l /root/ldap-users.ldif"
-  when:
-   - idp_ldap_restore is defined
-   - idp_ldap_restore in ["Yes","yes","True","true"]
-   - ldap_is_empty.stdout == ""
-  tags: openldap
 
-- name: "RESTORE - Remove the ldap-users.ldif backup file"
+- name: "RESTORE - CLEANUP - Remove the ldap-users.ldif backup file"
   file:
    dest: "/root/ldap-users.ldif"
    state: "absent"
-  when:
-   - idp_ldap_restore is defined
-   - idp_ldap_restore in ["Yes","yes","True","true"]
-   - ldap_is_empty.stdout == ""
-  tags: openldap
+
+- name: "RESTORE - CLEANUP - Remove the ldap-users.ldif backup file"
+  file:
+   dest: "/root/ldap-users.ldif.gz"
+   state: "absent"
+
+- name: "RESTORE - Start SLAPD service"
+  service:
+   name: slapd
+   state: started
+
+- name: "RESTORE - Check if the HOST YAML file is encrypted with Vault"
+  command: "cat {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+  delegate_to: 127.0.0.1
+  register: host_yaml
+
+- name: "RESTORE - Descrypt Vaulted HOST YAML file"
+  command: "ansible-vault decrypt --vault-password-file {{ vault_file }} {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+  delegate_to: 127.0.0.1
+  when: "'ANSIBLE_VAULT' in host_yaml.stdout"
+
+- name: "RESTORE - Be sure to set 'idp_ldap_restore' to 'False'"
+  lineinfile:
+   path: "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+   regexp: '^idp_ldap_restore'
+   line: 'idp_ldap_restore: "false"'
+  delegate_to: 127.0.0.1
+
+- name: "RESTORE - Encrypt HOST YAML file with Vault"
+  command: "ansible-vault encrypt --vault-password-file {{ vault_file }} {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+  delegate_to: 127.0.0.1
+  when: "'ANSIBLE_VAULT' in host_yaml.stdout"

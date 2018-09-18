@@ -2,7 +2,8 @@
 
 CONFIGFILE="/etc/mysql-backup/mysql-backup.conf"
 
-if [ -r ${CONFIGFILE} ]; then
+if [ -r ${CONFIGFILE} ]
+then
    # Read the configfile if it's existing and readable
    source ${CONFIGFILE}
 else
@@ -15,16 +16,17 @@ DATABASES=`mysql --defaults-file=/etc/mysql/debian.cnf -Bse 'show databases'`
 FAILFILE="/var/local/backups/MYSQL_FAIL"
 
 for db in ${DATABASES}; do
-    if [[ "${db}" != "information_schema" ]] && [[ "$db" != "performance_schema" ]] && [[ "${db}" != "mysql" ]] && [[ "${db}" != _* ]] ; then
-        ${MYSQLDUMP} --databases $db > ${BACKUPDIR}/${db}_db.sql
-	     STATE="$?"
-	     if [ "$STATE" != "0" ]
-	     then
-	         echo "MYSQL BACKUP ${db} FAILED"
-	         echo "FAIL" > $FAILFILE
-	     else
-            gzip -f ${BACKUPDIR}/${db}_db.sql
-	         echo "MYSQL BACKUP ${db} SUCCEDED"
-	     fi
-    fi
+   if [[ "${db}" != "information_schema" ]] && [[ "$db" != "performance_schema" ]] && [[ "${db}" != "mysql" ]] && [[ "${db}" != _* ]]
+   then
+      ${MYSQLDUMP} --databases $db > ${BACKUPDIR}/${db}_db.sql
+      STATE="$?"
+      if [ "$STATE" != "0" ]
+      then
+         echo "MYSQL BACKUP ${db} FAILED"
+         echo "FAIL" > $FAILFILE
+      else
+         gzip -f ${BACKUPDIR}/${db}_db.sql
+         echo "MYSQL BACKUP ${db} SUCCEDED"
+      fi
+   fi
 done

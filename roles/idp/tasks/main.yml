@@ -38,6 +38,9 @@
 
 - name: "Restore Shibboleth IdP if needed"
   import_tasks: idp-restore.yml
+  when: 
+   - idp_db_restore is defined
+   - idp_db_restore in ["Yes","yes","True","true"]
   tags: idp
 
 - name: "Configure Check_MK probes on Shibboleth IdP"

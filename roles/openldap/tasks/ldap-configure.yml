@@ -75,13 +75,23 @@
    - slapd
    - rsyslog
 
-- name: "Set OpenLDAP TLS and Indexes"
+- name: "Configure OpenLDAP TLS and Indexes"
   command: "ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/ldap-configs/directory-tls-indexes.ldif"
   when: olc_cert_key.stdout == ""
   notify:
    - "Restart slapd"
 
-- name: "Set openLDAP ACL"
+- name: "Configure openLDAP olcLogLevel"
+  import_tasks: config_logLevel.yml
+  notify:
+   - "Restart slapd"
+
+- name: "Configure openLDAP olcSizeLimit"
+  import_tasks: config_sizeLimit.yml
+  notify:
+   - "Restart slapd"
+
+- name: "Configure openLDAP ACL"
   import_tasks: config_acl.yml
   notify:
    - "Restart slapd"
@@ -139,6 +149,14 @@
   when:
    - ldap['create_test_user'] is defined
    - ldap['create_test_user'] in ["Yes","yes","True","true"]
+  notify:
+   - "Restart slapd"
+
+- name: "Remove 'testuser' used to perform fake login needed to Check_MK probes"
+  import_tasks: rm_testuser.yml
+  when:
+   - ldap['create_test_user'] is defined
+   - ldap['create_test_user'] in ["No","no","False","false"]
   notify:
    - "Restart slapd"
 
