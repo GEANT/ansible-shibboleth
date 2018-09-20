@@ -26,6 +26,8 @@
    owner: "root"
    group: "root"
    remote_src: yes
+  when:
+   - shib_tarball.stat.exists == False
 
 - name: "Put Shibboleth Identity Provider installer properties' files in the right position"
   template:
