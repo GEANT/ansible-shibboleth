@@ -107,6 +107,38 @@
   notify:
    - "Restart Jetty"
 
+# Load /opt/shibboleth-idp/conf/saml-nameid.xml
+- name: "Check if a custom 'saml-nameid.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/saml-nameid.xml"
+  delegate_to: 127.0.0.1
+  register: saml_nameid_xml
+  changed_when: false
+
+- name: "Load custom 'saml-nameid.xml' provided"
+  copy:
+   src: "{{ files_dir }}/{{ fqdn }}/idp/conf/saml-nameid.xml"
+   dest: "/opt/shibboleth-idp/conf/saml-nameid.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   - saml_nameid_xml.stat.exists == True
+  notify:
+   - "Reload NameID Generation"
+
+- name: "Load default 'saml-nameid.xml'"
+  copy:
+   src: "files/conf/saml-nameid.xml"
+   dest: "/opt/shibboleth-idp/conf/saml-nameid.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   - saml_nameid_xml.stat.exists == False
+  notify:
+   - "Reload NameID Generation"
+
 # Load /opt/shibboleth-idp/conf/global.xml
 - name: "Check if a custom 'global.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
   stat:

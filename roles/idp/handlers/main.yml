@@ -7,3 +7,38 @@
   shell: "./build.sh -Didp.target.dir=/opt/shibboleth-idp"
   args:
    chdir: "/opt/shibboleth-idp/bin"
+
+- name: "Reload Logging"
+  shell: "./reload-service.sh -id shibboleth.LoggingService"
+  args:
+    chdir: "/opt/shibboleth-idp/bin"
+  environment:
+    JAVA_HOME: "{{ java_home_dir }}"
+
+- name: "Reload Metadata Resolver"
+  shell: "./reload-service.sh -id shibboleth.MetadataResolverService"
+  args:
+    chdir: "/opt/shibboleth-idp/bin"
+  environment:
+    JAVA_HOME: "{{ java_home_dir }}"
+
+- name: "Reload Attribute Resolver"
+  shell: "./reload-service.sh -id shibboleth.AttributeResolverService"
+  args:
+    chdir: "/opt/shibboleth-idp/bin"
+  environment:
+    JAVA_HOME: "{{ java_home_dir }}"
+
+- name: "Reload Attribute Filter"
+  shell: "./reload-service.sh -id shibboleth.AttributeFilterService"
+  args:
+    chdir: "/opt/shibboleth-idp/bin"
+  environment:
+    JAVA_HOME: "{{ java_home_dir }}"
+
+- name: "Reload NameID Generation"
+  shell: "./reload-service.sh -id shibboleth.NameIdentifierGenerationService"
+  args:
+    chdir: "/opt/shibboleth-idp/bin"
+  environment:
+    JAVA_HOME: "{{ java_home_dir }}"
