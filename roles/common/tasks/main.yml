@@ -60,6 +60,7 @@
    - debconf
    - debconf-utils
    - apt-transport-https
+   - patch
   tags: common
 
 - name: "Replace default mirror site with the preferred one"
