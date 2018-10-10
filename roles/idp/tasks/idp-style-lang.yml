@@ -166,3 +166,19 @@
    - idp_login['create_info_and_pp_pages'] is undefined or idp_login['create_info_and_pp_pages'] in ["No","no","False","false"]
   notify:
    - "Restart Apache"
+
+- name: "Add Default Info and Privacy pages"
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_items:
+   - { src: "files/html/no_privacy.html", dest: "/var/www/html/en/privacy.html" }
+   - { src: "files/html/no_info.html", dest: "/var/www/html/en/info.html" }
+  when:
+   - idp_login is defined
+   - idp_login['create_info_and_pp_pages'] is undefined or idp_login['create_info_and_pp_pages'] in ["No","no","False","false"]
+  notify:
+   - "Restart Apache"

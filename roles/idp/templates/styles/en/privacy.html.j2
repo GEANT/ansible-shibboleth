@@ -75,7 +75,7 @@
                         <ul>
                            <li><strong>Name: </strong>{{ idp_metadata['it']['mdui_displayName'] }}</li>
                            <li><strong>Email: </strong><a href="mailto:{{ idp_contacts['support']['mail'] }}">{{ idp_contacts['support']['mail'] }}</a></li>
-                           <li><strong>Address: </strong>{{ idp_contacts['support']['address'] }}</li>
+                           <li><strong>Address: </strong>{{ idp_contacts['support']['address']|default("MISSING",true)}}</li>
                         </ul>
                         <strong>Service provider:</strong>
                         <ul>

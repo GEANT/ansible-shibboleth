@@ -359,12 +359,6 @@
   delegate_to: 127.0.0.1
   register: ldap_authn_config_xml
   changed_when: false
-  when:
-   - idp_config is defined
-   - idp_config['ldap'] is defined
-   - idp_config['ldap']['ppolicy'] is defined
-   - idp_config['ldap']['ppolicy']['change_password_url'] is defined
-   - idp_config['ldap']['ppolicy']['change_password_url'] != ""
 
 - name: "Load custom 'ldap-authn-config.xml' provided"
   copy:
@@ -407,12 +401,6 @@
   delegate_to: 127.0.0.1
   register: password_authn_config_xml
   changed_when: false
-  when:
-   - idp_config is defined
-   - idp_config['ldap'] is defined
-   - idp_config['ldap']['ppolicy'] is defined
-   - idp_config['ldap']['ppolicy']['change_password_url'] is defined
-   - idp_config['ldap']['ppolicy']['change_password_url'] != ""
 
 - name: "Load custom 'password-authn-config.xml' provided"
   copy:
@@ -531,8 +519,6 @@
    group: "root"
    mode: "0600"
   when:
-   - idp_config['sup_coco'] is defined
-   - idp_config['sup_coco'] in ["Yes","yes","True","true"]
    - attribute_filter_v3_coco_xml.stat.exists == True
   notify:
    - "Restart Jetty"
@@ -545,8 +531,6 @@
    group: "root"
    mode: "0600"
   when:
-   - idp_config['sup_coco'] is defined
-   - idp_config['sup_coco'] in ["Yes","yes","True","true"]
    - attribute_filter_v3_coco_xml.stat.exists == False
   notify:
    - "Restart Jetty"
@@ -570,8 +554,6 @@
    group: "root"
    mode: "0600"
   when:
-   - idp_config['sup_rs'] is defined
-   - idp_config['sup_rs'] in ["Yes","yes","True","true"]
    - attribute_filter_v3_rs_xml.stat.exists == True
   notify:
    - "Restart Jetty"
@@ -584,8 +566,6 @@
    group: "root"
    mode: "0600"
   when:
-   - idp_config['sup_rs'] is defined
-   - idp_config['sup_rs'] in ["Yes","yes","True","true"]
    - attribute_filter_v3_rs_xml.stat.exists == False
   notify:
    - "Restart Jetty"
