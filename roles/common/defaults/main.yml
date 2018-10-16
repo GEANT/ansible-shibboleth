@@ -19,10 +19,7 @@ common:
   state: present
  # Remove entirely "mirror" section to use the default distribution repositories
  mirror: "https://mi.mirror.garr.it/mirrors/debian/"
+ root_user_pw: "root_password"
 
 # NTP
 my_timezone: Europe/Rome
-
-ntp1: ntp1.inrim.it
-ntp2: ntp2.inrim.it
-ntp3: 0.it.pool.ntp.org

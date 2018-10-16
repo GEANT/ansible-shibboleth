@@ -28,6 +28,23 @@
    mode: "0644" 
   tags: common
 
+- name: "Add root user's password"
+  user:
+   name: "root"
+   password: "{{ common['root_user_pw'] }}"
+  tags: commoin
+
+- name: "Disable Root SSH Login access"
+  lineinfile:
+   dest: "/etc/ssh/sshd_config"
+   regexp: "^PermitRootLogin"
+   insertafter: "^#PermitRootLogin prohibit-password"
+   line: "PermitRootLogin no"
+   state: present
+  notify: 
+   - "Restart SSH"
+  tags: common
+
 - name: "Check the existance of cloud-init configuration"
   stat:
     path: /etc/cloud/cloud.cfg
@@ -61,6 +78,7 @@
    - debconf-utils
    - apt-transport-https
    - patch
+   - fail2ban
   tags: common
 
 - name: "Replace default mirror site with the preferred one"

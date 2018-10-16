@@ -2,8 +2,14 @@
 # handlers file for common
 - name: "Restart ntp"
   systemd: 
-   name: ntp 
-   daemon-reload: yes 
+   name: ntp
+   daemon-reload: yes
+   state: restarted
+
+- name: "Restart SSH"
+  systemd:
+   name: ssh
+   daemon-reload: yes
    state: restarted
 
 - name: "Update Timezone"
