@@ -21,5 +21,4 @@
   file:
    path: /var/local/backups
    owner: rsync-backup
-   recurse: yes
    mode: 0750
