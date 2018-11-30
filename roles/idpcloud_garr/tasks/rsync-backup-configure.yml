@@ -15,7 +15,7 @@
   authorized_key:
    user: rsync-backup
    state: present
-   key: "{{ lookup('file', files_dir +'/'+ fqdn +'/idpcloud_garr/rsync-backup/'+ idpcloud_garr['rsync_backup_ssh_pub_key'] ) }}"
+   key: "{{ lookup('file', files_dir +'/all/'+ idpcloud_garr['rsync_backup_ssh_pub_key'] ) }}"
 
 - name: "Change the owner of '/var/local/backups' to 'rsync-backup' to be able to retrieve backups from rsnapshot server"
   file:

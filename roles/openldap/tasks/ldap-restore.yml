@@ -44,11 +44,6 @@
    dest: "/root/ldap-users.ldif"
    state: "absent"
 
-- name: "RESTORE - CLEANUP - Remove the ldap-users.ldif backup file"
-  file:
-   dest: "/root/ldap-users.ldif.gz"
-   state: "absent"
-
 - name: "RESTORE - Start SLAPD service"
   service:
    name: slapd
