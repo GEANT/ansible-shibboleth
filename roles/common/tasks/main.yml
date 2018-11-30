@@ -19,13 +19,28 @@
    mode: "0644" 
   tags: common
 
-- name: "Configure the resolver"
+- name: "Configure the resolver for an OpenStack VM"
   copy:
-   src: "{{ files_dir }}/all/resolv.conf"
+   src: "{{ files_dir }}/all/resolv.conf-OpenStack"
+   dest: /etc/resolv.conf
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  when:
+   - ansible_virtualization_type is defined
+   - ansible_virtualization_type == "openstack"
+  tags: common
+
+- name: "Configure the resolver for a VMware VM"
+  copy:
+   src: "{{ files_dir }}/all/resolv.conf-VMware"
    dest: /etc/resolv.conf
    owner: "root"
    group: "root"
    mode: "0644" 
+  when:
+   - ansible_virtualization_type is defined
+   - ansible_virtualization_type == "VMware"
   tags: common
 
 - name: "Add root user's password"
