@@ -19,35 +19,20 @@
    mode: "0644" 
   tags: common
 
-- name: "Configure the resolver for an OpenStack VM"
-  copy:
-   src: "{{ files_dir }}/all/resolv.conf-OpenStack"
+- name: "Configure the nameservers in the resolver"
+  template:
+   src: resolv.conf.j2
    dest: /etc/resolv.conf
    owner: "root"
    group: "root"
    mode: "0644"
-  when:
-   - ansible_virtualization_type is defined
-   - ansible_virtualization_type == "openstack"
-  tags: common
-
-- name: "Configure the resolver for a VMware VM"
-  copy:
-   src: "{{ files_dir }}/all/resolv.conf-VMware"
-   dest: /etc/resolv.conf
-   owner: "root"
-   group: "root"
-   mode: "0644" 
-  when:
-   - ansible_virtualization_type is defined
-   - ansible_virtualization_type == "VMware"
   tags: common
 
 - name: "Add root user's password"
   user:
    name: "root"
-   password: "{{ common['root_user_pw'] }}"
-  tags: commoin
+   password: "{{ common['root_user_pw'] | password_hash('sha512', 65534 | random(seed=inventory_hostname) | string) }}"
+  tags: common
 
 - name: "Disable Root SSH Login access"
   lineinfile:
