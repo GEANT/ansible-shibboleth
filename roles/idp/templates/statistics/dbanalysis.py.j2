@@ -46,17 +46,17 @@ def parseFiles(files):
             strdatetime,reqBind,reqId,rp,msgProfile,idp,respBind,respId,user,authnMeth,relAttribs,nameId,assertIds,EOL = event
             if (idp == '' or idp == None): continue
 {% if ldap is defined %}
- {% if ldap['create_test_user'] is defined and ldap['create_test_user'] in ['Yes','yes','YES'] %}
-  {% if check_mk is defined and check_mk['spEntityID'] != '' %}
+{% if ldap['create_test_user'] is defined and ldap['create_test_user'] in ['Yes','yes','YES'] %}
+{% if check_mk is defined and check_mk['spEntityID'] != '' %}
             if (user == "testuser" and rp == "{{ check_mk['spEntityID'] }}"): continue
-  {% endif %}
-  {% if idp_config['sup_rs'] == 'yes' or idp_config['sup_rs'] == 'Yes' %}
+{% endif %}
+{% if idp_config['sup_rs'] == 'yes' or idp_config['sup_rs'] == 'Yes' %}
             if (user == "testuser" and rp == "https://fake-rs.example.org/shibboleth"): continue
-  {% endif %}
-  {% if idp_config['sup_coco'] == 'yes' or idp_config['sup_coco'] == 'Yes' %}
+{% endif %}
+{% if idp_config['sup_coco'] == 'yes' or idp_config['sup_coco'] == 'Yes' %}
             if (user == "testuser" and rp == "https://fake-coco.example.org/shibboleth"): continue
-  {% endif %}
- {% endif %}
+{% endif %}
+{% endif %}
 {% endif %}
         except ValueError:
             print """ERROR: Unsupported log file format or using compressed log files with Python < 2.5.%s. See the documentation in the Shibboleth wiki.""" % os.linesep
