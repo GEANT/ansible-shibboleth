@@ -8,6 +8,7 @@
     - bck_uri != ""
     - host_bck_path is defined
     - host_bck_path != ""
+  tags: restore
 
 - name: "RESTORE - Load LDAP backup on IdP"
   copy:
@@ -16,48 +17,58 @@
    owner: "root"
    group: "root"
    mode: "0600"
-
+  tags: restore
+  
 - name: "RESTORE - Extract LDAP backup"
   command: "gunzip /root/ldap-users.ldif.gz"
-
+  tags: restore
+  
 - name: "RESTORE - Assign to ldap-users.ldif the right permissions"
   file:
    dest: "/root/ldap-users.ldif"
    owner: "root"
    group: "root"
    mode: "600"
-
+  tags: restore
+  
 - name: "RESTORE - Empty the people and groups Directory branches"
   shell: "ldapdelete -r -QY EXTERNAL -H ldapi:/// ou=people,{{ ldap['basedn'] }} ou=groups,{{ ldap['basedn'] }}"
   ignore_errors: True
-
+  tags: restore
+  
 - name: "RESTORE - Stop SLAPD service before restoring the entries"
   service:
    name: slapd
    state: stopped
-
+  tags: restore
+  
 - name: "RESTORE - Restore openLDAP entries"
   command: "slapadd -c -l /root/ldap-users.ldif"
-
+  tags: restore
+  
 - name: "RESTORE - CLEANUP - Remove the ldap-users.ldif backup file"
   file:
    dest: "/root/ldap-users.ldif"
    state: "absent"
+  tags: restore
 
 - name: "RESTORE - Start SLAPD service"
   service:
    name: slapd
    state: started
+  tags: restore
 
 - name: "RESTORE - Check if the HOST YAML file is encrypted with Vault"
   command: "cat {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
   delegate_to: 127.0.0.1
   register: host_yaml
+  tags: restore
 
 - name: "RESTORE - Descrypt Vaulted HOST YAML file"
   command: "ansible-vault decrypt --vault-password-file {{ vault_file }} {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
   delegate_to: 127.0.0.1
   when: "'ANSIBLE_VAULT' in host_yaml.stdout"
+  tags: restore
 
 - name: "RESTORE - Be sure to set 'idp_ldap_restore' to 'False'"
   lineinfile:
@@ -65,8 +76,10 @@
    regexp: '^idp_ldap_restore'
    line: 'idp_ldap_restore: "false"'
   delegate_to: 127.0.0.1
+  tags: restore
 
 - name: "RESTORE - Encrypt HOST YAML file with Vault"
   command: "ansible-vault encrypt --vault-password-file {{ vault_file }} {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
   delegate_to: 127.0.0.1
   when: "'ANSIBLE_VAULT' in host_yaml.stdout"
+  tags: restore

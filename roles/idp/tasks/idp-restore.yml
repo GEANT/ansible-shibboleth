@@ -11,7 +11,8 @@
     - bck_uri != ""
     - host_bck_path is defined
     - host_bck_path != ""
-
+  tags: restore
+  
 - name: "RESTORE - Put 'shibboleth' and 'statistics' database backups in the '/root' directory"
   copy:
    src: "{{ item.src }}"
@@ -22,12 +23,14 @@
   with_items:
    - { src: "{{ files_dir }}/{{ fqdn }}/idp/mysql-restore/shibboleth_db.sql.gz", dest: "/root/shibboleth_db.sql.gz" }
    - { src: "{{ files_dir }}/{{ fqdn }}/idp/mysql-restore/statistics_db.sql.gz", dest: "/root/statistics_db.sql.gz" }
+  tags: restore
 
 - name: "RESTORE - Extract 'shibboleth' and 'statistics' database backups"
   command: "gunzip {{ item }}"
   with_items:
    - "/root/shibboleth_db.sql.gz"
    - "/root/statistics_db.sql.gz"
+  tags: restore
 
 - name: "RESTORE - Assign the right permissions to the 'shibboleth' and 'statistics' backup extracted"
   file:
@@ -38,6 +41,7 @@
   with_items:
    - "/root/shibboleth_db.sql"
    - "/root/statistics_db.sql"
+  tags: restore
 
 - name: "RESTORE - DROP the existing 'shibboleth' and 'statistics' databases"
   mysql_db:
@@ -46,6 +50,7 @@
   with_items:
    - "shibboleth"
    - "statistics"
+  tags: restore
 
 - name: "RESTORE - Restore 'shibboleth' and 'statistics' databases"
   mysql_db:
@@ -56,6 +61,7 @@
   with_items:
    - "/root/shibboleth_db.sql"
    - "/root/statistics_db.sql"
+  tags: restore
 
 - name: "RESTORE - Remove the backups restored from /root directory"
   file:
@@ -64,16 +70,19 @@
   with_items:
    - "/root/shibboleth_db.sql"
    - "/root/statistics_db.sql"
+  tags: restore
 
 - name: "RESTORE - Check if the HOST YAML file is encrypted with Vault"
   command: "cat {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
   delegate_to: 127.0.0.1
   register: host_yaml
+  tags: restore
 
-- name: "RESTORE - Descrypt Vaulted HOST YAML file"
+- name: "RESTORE - Decrypt Vaulted HOST YAML file"
   command: "ansible-vault decrypt --vault-password-file {{ vault_file }} {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
   delegate_to: 127.0.0.1
   when: "'ANSIBLE_VAULT' in host_yaml.stdout"
+  tags: restore
 
 - name: "RESTORE - Be sure to set 'idp_db_restore' to 'false'"
   lineinfile:
@@ -81,8 +90,10 @@
    regexp: '^idp_db_restore'
    line: 'idp_db_restore: "false"'
   delegate_to: 127.0.0.1
+  tags: restore
 
 - name: "RESTORE - Encrypt HOST YAML file with Vault"
   command: "ansible-vault encrypt --vault-password-file {{ vault_file }} {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
   delegate_to: 127.0.0.1
   when: "'ANSIBLE_VAULT' in host_yaml.stdout"
+  tags: restore
