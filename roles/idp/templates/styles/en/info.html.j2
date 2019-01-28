@@ -43,6 +43,9 @@
             </div>
 
             The <strong>{{ idp_metadata['en']['mdui_displayName'] }}</strong> participate to the national Federation <strong>IDEM</strong> (<strong>IDE</strong>ntity <strong>M</strong>anagement federate do for the access to the resources), to realize the GARR federated AAI, and to interfederation <strong>eduGAIN</strong> (that interconnects identity federations around the world, simplifying access to content, services and resources for the global research and education community).<br/>
+            <br/>
+            <p><a href="https://www.idem.garr.it/it/servizi/sp" target="_blank">Resource list available as member of the {{ idp_login['fed_info']['federation']['en']['name'] }}</a> that you can access with this Identity Provider.</p>
+
             The credentials (username and password) for the access will be provided to:
             <ul>
                <li>Researchers</li>
@@ -53,23 +56,23 @@
             <h3>ACCEPTABLE USE POLICY - AUP</h3>
             <p><a href="https://www.garr.it/en/acceptable-use-policies">Acceptable Use Policies - AUP</a></p>
 
-            <h3>ACCOUNT ACTIVATION AND MANAGEMENT:</h3>
+            <h3>ACCOUNT ACTIVATION AND MANAGEMENT</h3>
             <a href="/flup">Manage your account</a><!-- (<a href="https://wiki.idem.garrservices.it/wiki/index.php/MINSAL:IdpInTheCloudFlupManual">Italian Guide</a>)
 
             <h3>HOWTO ACCESS FEDERATED RESOURCES:</h3>
             <a href="https://wiki.idem.garrservices.it/wiki/index.php/MINSAL:IdpInTheCloudHowToAccessFederatedResources">HOWTO Access federated resources into IDEM and eduGAIN</a>-->
 
-            <h3>USERS SUPPORT FOR CREDENTIALS AND ATTRIBUTE RELEASE PROBLEMS:</h3>
-            <p> Name Surname: {{ idp_contacts['support']['givenName'] }} {{ idp_contacts['support']['surName'] }}</p>
-            <p> e-mail: <a href="mailto:{{ idp_contacts['support']['mail']}}">User Support</a></p>
-            <p> tel.:</p>
+            <h3>USERS SUPPORT</h3>
+            <ul>
+               <li>Technical Contact for {{ idp_metadata['en']['mdui_displayName'] }}: <a href="mailto:{{ idp_contacts['support']['mail']}}">{{ idp_contacts['support']['mail'] }}</a></li>
+            </ul>
 
-            <h3>TECHNICAL CONTACT FOR THE IDENTITY PROVIDER:</h3>
-            <p> Name Surname: {{ idp_contacts['technical']['givenName'] }} {{ idp_contacts['technical']['surName'] }}</p>
-            <p> e-mail: <a href="mailto:{{ idp_contacts['technical']['mail']}}">Technical Support</a></p>
-            <p> tel.:</p>
+            <h3>SERVICE OPERATOR</h3>
+            <ul>
+               <li>GARR: <a href="mailto:{{ idp_contacts['support']['mail']}}">{{ idp_contacts['technical']['mail'] }}</a></li>
+            </ul>
 
-            <h3>INFORMATION ABOUT THE ATTRIBUTE RELEASE TO FEDERATED RESOURCES:</h3>
+            <h3>INFORMATION ABOUT THE ATTRIBUTE RELEASE TO FEDERATED RESOURCES</h3>
             <p>The {{ idp_metadata['en']['mdui_displayName'] }} with this Identity Provider can send to the requested resource some informations (called attributes) about you.<br/>
             These informations are:</p>
             <ul>
@@ -138,7 +141,7 @@
                 <td>ORCID user identifier released and managed by orcid.org</td>
               </tr>
             </table>
-            <p><a href="https://www.idem.garr.it/it/servizi/sp" target="_blank">Resource list available as member of the {{ idp_login['fed_info']['federation']['en']['name'] }}</a> that you can access with this Identity Provider.</p>
+
             <p>The Privacy Policy applied to the users of the institution {{ idp_metadata['en']['mdui_displayName'] }} is located here: <a href="{{ idp_metadata['en']['mdui_privacyUrl'] | default('/en/privacy.html') }}">Privacy Policy</a></p>
          </div>
       </div>

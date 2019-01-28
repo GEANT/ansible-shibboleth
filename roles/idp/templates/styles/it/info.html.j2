@@ -43,7 +43,9 @@
             </div>
 
             <strong>{{ idp_metadata['it']['mdui_displayName'] }}</strong> partecipa alla Federazione nazionale <strong>IDEM</strong> (<strong>IDE</strong>ntity <strong>M</strong>anagement federato per l'accesso ai servizi), per la realizzazione dell'Infrastruttura di Autenticazione e Autorizzazione federata della rete GARR, e all'interfederazione <strong>eduGAIN</strong>(che collega le federazioni di identità nazionali tra loro per semplificare l'accesso ai contenuti, servizi e risorse per la comunità di Ricerca e Formazione.)
-            <br/>
+            
+            <p><a href="https://www.idem.garr.it/it/servizi/sp" target="_blank">Elenco delle Risorse associate alla Federazione {{ idp_login['fed_info']['federation']['it']['name'] }}</a> a cui è possibile accedere tramite le credenziali fornite per questo Identity Provider.</p>
+
             Le credenziali di accesso vengono conferite a:
             <ul>
                <li>Ricercatori</li>
@@ -55,23 +57,23 @@
             <h3>ACCEPTABLE USE POLICY - AUP</h3>
             <p><a href="https://www.garr.it/it/regole-di-utilizzo-della-rete-aup">Regole di utilizzo della rete - AUP</a></p>
 
-            <h3>ATTIVAZIONE E GESTIONE ACCOUNT:</h3>
+            <h3>ATTIVAZIONE E GESTIONE ACCOUNT</h3>
             <a href="/flup">Gestisci il tuo account</a> (<a href="https://wiki.idem.garrservices.it/wiki/index.php/MINSAL:IdpInTheCloudFlupManual">GUIDA</a>)
 
-            <h3>GUIDA ALL'ACCESSO DELLE RISORSE FEDERATE:</h3>
+            <h3>GUIDA ALL'ACCESSO DELLE RISORSE FEDERATE</h3>
             <a href="https://wiki.idem.garrservices.it/wiki/index.php/MINSAL:IdpInTheCloudHowToAccessFederatedResources">Guida all'accesso delle risorse federate IDEM ed eduGAIN</a>
 
-            <h3> SUPPORTO UTENTE PER CREDENZIALI, RILASCIO ATTRIBUTI, ... </h3>
-            <p> Nome Cognome: {{ idp_contacts['support']['givenName'] }} {{ idp_contacts['support']['surName'] }}</p>
-            <p> e-mail: <a href="mailto:{{ idp_contacts['support']['mail'] }}">Supporto Utenti</a></p>
-            <p> tel.:</p>
+            <h3>SUPPORTO UTENTI</h3>
+            <ul>
+               <li>Referente Tecnico per {{ idp_metadata['it']['mdui_displayName'] }}: <a href="mailto:{{ idp_contacts['support']['mail'] }}">{{ idp_contacts['support']['mail']}}</a></li>
+            </ul>
 
-            <h3> REFERENTE TECNICO PER L'IDENTITY PROVIDER: </h3>
-            <p> Nome Cognome: {{ idp_contacts['technical']['givenName'] }} {{ idp_contacts['technical']['surName'] }}</p>
-            <p> e-mail: <a href="mailto:{{ idp_contacts['technical']['mail'] }}">Contatto Tecnico</a></p>
-            <p> tel.:</p>
+            <h3>OPERATORE DEL SERVIZIO</h3>
+            <ul>
+               <li>GARR: <a href="mailto:{{ idp_contacts['technical']['mail'] }}">{{ idp_contacts['technical']['mail']}}</a></li>
+            </ul>
 
-            <h3> INFORMAZIONI SUL RILASCIO DEGLI ATTRIBUTI UTENTE AI FORNITORI DI RISORSE:</h3>
+            <h3> INFORMAZIONI SUL RILASCIO DEGLI ATTRIBUTI UTENTE AI FORNITORI DI RISORSE</h3>
             <p>{{ idp_metadata['it']['mdui_displayName'] }} mediante questo Identity Provider può trasmettere alla Risorsa a cui Lei chiede di accedere alcune informazioni (attributi) su di Lei, su richiesta della Risorsa stessa.<br />
             Tali informazioni sono:</p>
             <ul>
@@ -139,7 +141,6 @@
                  <td>Identificativo ricercatore assegnato e gestito da orcid.org</td>
                </tr>
             </table>
-            <p><a href="https://www.idem.garr.it/it/servizi/sp" target="_blank">Elenco delle Risorse associate alla Federazione {{ idp_login['fed_info']['federation']['it']['name'] }}</a> a cui è possibile accedere tramite le credenziali fornite per questo Identity Provider.</p>
 
             <p>La Politica sulla Privacy per gli utenti dell'istituto {{ idp_metadata['it']['mdui_displayName'] }} è consultabile qui: <a href="{{ idp_metadata['it']['mdui_privacyUrl'] | default('/it/privacy.html') }}">Privacy Policy</a></p>
          </div>
