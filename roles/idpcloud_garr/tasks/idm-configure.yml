@@ -138,7 +138,7 @@
 
 - name: "Be sure to have 'updates.txt' file for users' updates"
   lineinfile:
-   dest: "/opt/phpldapadmin/htdocs/idm-tools/updates.txt"
+   dest: "/var/local/backups/updates.txt"
    line: "{{ item.line }}"
    create: "yes"
    state: present
@@ -146,3 +146,9 @@
    - { line: "# Data: " }
    - { line: "" }
    - { line: "Nuovi utenti per {{ ldap['org'] }}:" }
+
+- name: "Be sure to have an Hard Link for 'updates.txt' file"
+  file:
+   src: "/var/local/backups/updates.txt"
+   dest: "/opt/phpldapadmin/htdocs/idm-tools/updates.txt"
+   state: hard
