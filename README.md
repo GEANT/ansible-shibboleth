@@ -1,6 +1,6 @@
 # ANSIBLE CODE TO INSTALL SHIBBOLETH IDP
 
-This playbook deploies a Shibboleth IdP through Ansible.
+This playbook deploys a Shibboleth IdP through Ansible.
 
 The IdP installed can have or not the Identity Management part provided by OpenLDAP and phpLDAPadmin.
 
