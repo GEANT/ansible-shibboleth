@@ -3,7 +3,11 @@
 1. [Requirements](#requirements)
 2. [Environment Setup](#environment-setup)
 3. [Usage](#usage)
-4. [Authors](#authors)
+4. [Restore Procedures](#restore-procedures)
+   1. [Databases Restore](#databases-restore)
+   2. [Directory Restore](#directory-restore)
+5. [Useful Commands](#useful-commands)
+6. [Authors](#authors)
 
 ## Requirements
 
@@ -61,6 +65,74 @@ The ansible recipes use the languages provided by the "`idp_metadata`" dictionar
 
    * Execute this command to run Ansible on develoment inventory and to install and configure several IdPs on more than one development servers:
      `ansible-playbook site.yml -i inventories/development/development.ini --vault-password-file .vault_pass.txt`
+
+[[TOP](#how-to-use-the-ansible-playbook)]
+
+## Restore Procedures
+
+### Databases Restore
+
+1. Retrieve database backup files from ```/var/local/backups/mysql/``` on the IdP:
+
+2. Put the backups file (for shibboleth and statistics database) into:
+   * ```inventories/files/FQDN/idp/mysql-restore/shibboleth-db.sql.gz```
+   * ```inventories/files/FQDN/idp/mysql-restore/statistics-db.sql.gz```
+
+3. Set the IDP configuration variable ```idp_db_restore``` to ```"True"``` on its ```host_vars``` file
+
+4. Run again the playbook
+
+[[TOP](#how-to-use-the-ansible-playbook)]
+
+### Directory Restore
+
+1. Retrieve LDAP backup files from ```/var/local/backups/``` on the IdP:
+
+2. Put the LDAP backup into:
+   * ```inventories/files/FQDN/openldap/restore/ldap-users.ldif.gz```
+
+3. Set the IDP configuration variable ```idp_ldap_restore``` to ```"True"``` on its ```host_vars``` file
+
+4. Run again the playbook
+
+[[TOP](#how-to-use-the-ansible-playbook)]
+
+
+## Useful Commands
+
+```
+--- development.ini ---
+[Debian-IdP-with-IdM]
+idp1.example.org
+
+[Debian-IdP-without-IdM]
+idp2.example.org
+-----------------------
+```
+
+1. Test that the connection with the server(s) is working:
+   * ```ansible all -m ping -i /opt/ansible-shibboleth/inventories/#_environment_#/#_environment_#.ini -u debian```
+   ("```debian```" is the user used to perform the SSH connection with the client to synchronize)
+
+2. Get the facts from the server(s):
+   * ```ansible GROUP_NAME_or_HOST_NAME -m setup -i /opt/ansible-shibboleth/inventories/#_environment_#/#_environment_#.ini -u debian```
+
+   Examples:
+      * without encrypted files:
+         ```ansible GROUP_NAME_or_HOST_NAME -m setup -i /opt/ansible-shibboleth/inventories/#_environment_#/#_environment_#.ini -u debian```
+      * with encrypted files:
+         ```ansible GROUP_NAME_or_HOST_NAME -m setup -i /opt/ansible-shibboleth/inventories/#_environment_#/#_environment_#.ini -u debian --vault-password-file .vault_pass.txt```
+
+   ("```.vault_pass.txt```" is the file you have created that contains the encryption password)
+
+3. Encrypt files:
+   * ```ansible-vault encrypt inventories/#_environment_#/host_vars/#_full.qualified.domain.name_#.yml --vault-password-file .vault_pass.txt```
+
+4. Decrypt Encrypted files:
+   * ```ansible-vault decrypt inventories/#_environment_#/host_vars/#_full.qualified.domain.name_#.yml --vault-password-file .vault_pass.txt```
+
+5. View Encrypted files:
+   * ```ansible-vault view inventories/#_environment_#/host_vars/#_full.qualified.domain.name_#.yml --vault-password-file .vault_pass.txt```
 
 [[TOP](#how-to-use-the-ansible-playbook)]
 
