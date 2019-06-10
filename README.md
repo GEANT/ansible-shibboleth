@@ -1,4 +1,4 @@
-# ANSIBLE CODE TO INSTALL SHIBBOLETH IDP
+# Ansible Playbook to deploy Shibboleth Identity Provider
 
 This playbook deploys a Shibboleth IdP through Ansible.
 
@@ -12,7 +12,12 @@ The IdP installed can have or not the Identity Management part provided by OpenL
 
 **How to request support**
 
-* Open an issue for bug fixing and/or feature requests
+* Open an [issue](https://github.com/GEANT/ansible-shibboleth/issues) for bug fixing and/or feature requests
+
+**Documentation**
+
+* [Architecture](https://github.com/GEANT/ansible-shibboleth/blob/master/architecture.md)
+* [Instructions](https://github.com/GEANT/ansible-shibboleth/blob/master/instructions.md)
 
 ## Authors
 
