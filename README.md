@@ -17,23 +17,24 @@ It will install and configure:
 4. MySQL server
 5. phpLDAPadmin web-based LDAP client
 6. Shibboleth IdP:
-   * Config files can be retrieved from a directory
-   * Few Login Page customizations are applied (Logo, Favicon, Translations, ...)
+   * Customized config files are loadable.
+   * Login Page customizations are applied (Logo, Favicon, Multilanguage, Footer Text & Background color, ...)
    * `persistentID` stored on database
 7. A set of useful web tools:
    1. `statistics`: A web application that collects authentication statistics.
    2. `lockuser`: A web application that allow to block user's authentication through a button or a date.
-   3. `flup`: A web application used to activate users after their creation and by themselves.
+   3. `flup`: A web application used to activate users by themselves after their creation.
 8. Check_MK Agent (if needed):
    useful to connet towards a Check_MK server to monitor the health of the IdP.
    It is provided with different checks on: COCO, RS, LDAP availability...
 
-The playbook is distributed also with a mechanism of Backup and Restore for Directory and Databases to easily recover them if needed.
+The playbook is distributed also with a mechanism of Backup and Restore that allows to easily recover Directory and Databases if needed.
 
 The user who wants to use this Ansible Playbook needs to know:
 * Linux (Bash terminal)
 * Ansible
 * Shibboleth
+* Python
 
 and has to provide:
 
