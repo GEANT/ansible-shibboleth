@@ -76,7 +76,7 @@ https://github.com/GEANT/ans-idpcloud-utility
 
 1. R&E Home Organization
 2. Identity Federation Operators 
-3. Anyone wants to deploy a Shibboleth Identity Provider
+3. Anyone wants to deploy a Shibboleth Identity Provider with a high level of details
 
 [[TOP](#ansible-playbook-to-deploy-shibboleth-identity-provider)]
 
