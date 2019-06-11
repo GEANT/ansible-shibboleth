@@ -22,7 +22,7 @@ It will install and configure:
 
 The playbook is distributed also with a mechanism of Backup and Restore to allow an easily recover Directory and Databases if needed.
 
-The audience targeted by this playbook is System Administrator and they need to know:
+The target audience of this playbook are Linux System Administrators and they need to know:
 * Ansible
 * Shibboleth:
   * How to configure an Attribute Filter to release attributes to relying-parties
