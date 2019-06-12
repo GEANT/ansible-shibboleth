@@ -4,7 +4,7 @@
 2. [Target Audience](#target-audience)
 3. [How to request support](#how-to-request-support)
 4. [Documentation](#documentation)
-5. [Authors](#authors)
+5. [Contacts](#contacts)
 
 ## The Playbook
 
@@ -53,9 +53,7 @@ The target audience of this playbook are Linux System Administrators and they ne
 
 [[TOP](#ansible-playbook-to-deploy-shibboleth-identity-provider)]
 
-## Authors
-
-#### Original Authors
+## Contacts
 
 * Marco Malavolti (https://github.com/malavolti)
 * Davide Vaghetti (https://github.com/daserzw)
