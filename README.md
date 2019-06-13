@@ -30,7 +30,7 @@ The playbook is distributed also with a mechanism of Backup and Restore to allow
 2. Identity Federation Operators 
 3. Anyone wants to deploy a Shibboleth Identity Provider with a high level of details
 
-This playbook is targeted to Linux System Administrators that know:
+This playbook is targeted to Linux System Administrators that have to know:
 * Ansible
 * Shibboleth:
   * How to configure an Attribute Filter to release attributes to relying-parties
