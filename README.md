@@ -22,14 +22,6 @@ It will install and configure:
 
 The playbook is distributed also with a mechanism of Backup and Restore to allow an easily recover Directory and Databases if needed.
 
-The target audience of this playbook are Linux System Administrators and they need to know:
-* Ansible
-* Shibboleth:
-  * How to configure an Attribute Filter to release attributes to relying-parties
-  * How to configure an Attribute Resolver to define new attributes
-  * How to configure and use a Directory Service (OpenLDAP/AD) for Identity Management scopes
-  * How to configure and use an SQL database
-
 [[TOP](#ansible-playbook-to-deploy-shibboleth-identity-provider)]
 
 ## Target Audience
@@ -37,6 +29,14 @@ The target audience of this playbook are Linux System Administrators and they ne
 1. R&E Home Organization
 2. Identity Federation Operators 
 3. Anyone wants to deploy a Shibboleth Identity Provider with a high level of details
+
+This playbook is targeted to Linux System Administrators that know:
+* Ansible
+* Shibboleth:
+  * How to configure an Attribute Filter to release attributes to relying-parties
+  * How to configure an Attribute Resolver to define new attributes
+  * How to configure and use a Directory Service (OpenLDAP/AD) for Identity Management scopes
+  * How to configure and use an SQL database
 
 [[TOP](#ansible-playbook-to-deploy-shibboleth-identity-provider)]
 
