@@ -1,0 +1,15 @@
+idp.src.dir = /usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}
+
+idp.target.dir = /opt/shibboleth-idp
+
+idp.host.name = {{ fqdn }}
+
+idp.uri.subject.alt.name = {{ idp_entityID }}
+
+idp.sealer.password = {{ idp_config['sealer_pw'] }}
+
+idp.keystore.password = {{ idp_config['keystore_pw'] }}
+
+idp.scope = {{ idp_config['scope'] }}
+
+idp.entityID = {{ idp_entityID }}

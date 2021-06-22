@@ -17,7 +17,12 @@
   shell: virtualenv /opt/flup/venv
   when:
    - flup_venv.stat.isdir is undefined
-  
+
+- name: "Apply patch to build MYSQL-Python against MariaDB mysql.h"
+  patch:
+   src: mysql_h-flup.patch
+   dest: /usr/include/mysql/mysql.h
+
 - name: "Install pip requirements"
   pip:
    requirements: /opt/flup/requirements.txt

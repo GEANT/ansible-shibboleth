@@ -121,7 +121,7 @@ def loginsPerRp(db,options):
 
 def loginsPerRpSorted(db,options):
     """Output sorted list of logins per relying party."""
-    for rp,i in sorted(db['rp'].iteritems(), key=itemgetter(1), reverse=True):
+    for rp,i in sorted(db['rp'].items(), key=itemgetter(1), reverse=True):
         if options.quiet:
             print "%d %s" % (i, rp)
         else:
@@ -131,7 +131,7 @@ def rpPerMessageProfile(db,options):
     """Output usage of SAML message profiles per relying party."""
     for mp,rps in db['msgprof'].items():
         print mp
-        for rp,i in sorted(rps.iteritems(), key=itemgetter(1), reverse=True):
+        for rp,i in sorted(rps.items(), key=itemgetter(1), reverse=True):
             if options.quiet:
                 print "%d %s" % (i, rp)
             else:

@@ -4,7 +4,7 @@
   import_tasks: "pla-install.yml"
   tags: pla
 
-- name: "Be sure to load a basic configuration of phpLDAPadmin"
+- name: "Be sure to load the phpLDAPadmin config.php file"
   template:
    src: "config/config.php.j2"
    dest: "/opt/phpldapadmin/config/config.php"
@@ -25,10 +25,31 @@
    mode: 0644
   tags: pla
 
+- name: "Check if Apache phpLDAPadmin conf is already enabled"
+  stat:
+   path: "/etc/apache2/conf-enabled/phpldapadmin.conf"
+  register: pla_apache
+  changed_when: false
+  tags: pla
+
 - name: "Be sure to change '/phpldapadmin' into '/idm' to prevent random login attempts"
   copy:
-   src: "files/apache2/conf-enabled/phpldapadmin.conf"
-   dest: "/etc/apache2/conf-enabled/phpldapadmin.conf"
+   src: "files/apache2/conf-available/phpldapadmin.conf"
+   dest: "/etc/apache2/conf-available/phpldapadmin.conf"
+  when: pla_apache.stat.islnk is not defined
+  notify:
+   - "Restart Apache"
+  tags: pla
+
+- name: "Add phpLDAPadmin support to Apache HTTPS VirtualHost"
+  blockinfile:
+    path: "/etc/apache2/sites-available/{{ fqdn }}-ssl.conf"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - PLA-IDM"
+    insertbefore: "</VirtualHost>"
+    block: |
+      Include conf-available/phpldapadmin.conf
+  when: 
+   - pla_apache.stat.exists == False
   notify:
    - "Restart Apache"
   tags: pla
@@ -41,7 +62,6 @@
    group: "root"
    mode: "0644"
   with_items:
-   - { src: "files/apache2/conf-enabled/idm.conf", dest: "/etc/apache2/conf-enabled/idm.conf"  }
    - { src: "{{ files_dir }}/{{ fqdn }}/phpldapadmin/images/logo.png", dest: "/opt/phpldapadmin/htdocs/images/default/logo-small.png" }
    - { src: "{{ files_dir }}/{{ fqdn }}/phpldapadmin/images/favicon.png", dest: "/opt/phpldapadmin/htdocs/images/favicon.ico" }
   notify:

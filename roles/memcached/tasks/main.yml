@@ -1,0 +1,15 @@
+---
+# tasks file for memcached
+
+# Include variables and define needed variables.
+- name: Include OS-specific variables.
+  include_vars: "{{ ansible_os_family }}.yml"
+  tags: memcached
+
+- name: "Install Memcached"
+  import_tasks: memcached-install.yml
+  tags: memcached
+
+- name: "Configure Memcached"
+  import_tasks: memcached-configure.yml
+  tags: memcached

@@ -1,11 +1,45 @@
 ---
 # defaults file for idp
 
+idp_dl_url: "https://shibboleth.net/downloads/identity-provider/archive/{{ shib_idp_version }}/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"
+
+# Shibboleth v3.3.2
+#shib_idp_version: "3.3.2"
+#shib_idp_checksum: "ed9fbefd273199d2841d4045b2661671c53825ed3c7d52d38bfe516b39d5fc64"
+
+# Shibboleth v3.3.3
+#shib_idp_version: "3.3.3"
+#shib_idp_checksum: "742a772f19e11c55af8a18f16463b736230fc447cd8c4aaf4bf242c5b074087c"
+
+# Shibboleth v3.4.8
+#shib_idp_version: "3.4.8"
+#shib_idp_checksum: "ad0fcd834d0c6571363d47ad6dde08fbb75cce3202c41f8c64a5b42614f95a27"
+
+# Shibboleth 4.0.1
+shib_idp_version: "4.0.1"
+shib_idp_checksum: "832f73568c5b74a616332258fd9dc555bb20d7dd9056c18dc0ccf52e9292102a"
+
+# Available:
+#
+# OpenJDK: 
+#   jdk_type: "openjdk"
+#   jdk_version: "8"
+#
+# Oracle JDK: 
+#   jdk_type: "oraclejdk"
+#   jdk_version: "8"
+#
+# Amazon Corretto JDK: 
+#   jdk_type: "corretto"
+#   jdk_version: "11"
+
+jdk_type: "corretto"
+jdk_version: "11"
+
 ### Machine Variables:
 fqdn: "idp.example.org"
 files_dir: "/opt/ansible-shibboleth/inventories/files"
 
-jdk_version: "8"
 url_password_reset: "https://{{ fqdn }}/flup"
 
 idp_login_default:
@@ -14,3 +48,38 @@ idp_login_default:
    aupUrl: "https://www.garr.it/en/acceptable-use-policies"
   it:
    aupUrl: "https://www.garr.it/it/regole-di-utilizzo-della-rete-aup"
+
+idp_metadata:
+ en:
+  mdui_displayName: "ENG IdP DisplayName"
+  mdui_description: "ENG IdP Description"
+  mdui_infoUrl: "https://{{ fqdn }}/en/info.html"
+  mdui_privacyUrl: "https://{{ fqdn }}/en/privacy.html"
+  mdui_favicon: "https://{{ fqdn }}/en/favicon.png"
+  mdui_logo: "https://{{ fqdn }}/en/logo.png"
+  org_name: "ENG Organization Name"
+  org_displayName: "ENG Organization DisplayName"
+  org_url: "https://www.organization.org/en"
+ it:
+  mdui_displayName: "ITA IdP DisplayName"
+  mdui_description: "ITA IdP Description"
+  mdui_infoUrl: "https://{{ fqdn }}/it/info.html"
+  mdui_privacyUrl: "https://{{ fqdn }}/it/privacy.html"
+  mdui_favicon: "https://{{ fqdn }}/it/favicon.png"
+  mdui_logo: "https://{{ fqdn }}/it/logo.png"
+  org_name: "ITA Organization Name"
+  org_displayName: "ITA Organization DisplayName"
+  org_url: "https://www.organization.org/it"
+
+
+idp_contacts:
+ technical:
+  givenName: "Example Technical"
+  surName: "User"
+  mail: "technical.user@example.org"
+ support:
+  givenName: "Example Support"
+  surName: "User"
+  mail: "support.user@example.org"
+  address: "Example Address 32, Milan, Italy"
+  telephone: "+393249582321"

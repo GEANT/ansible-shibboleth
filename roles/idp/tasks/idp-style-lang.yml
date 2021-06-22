@@ -1,12 +1,66 @@
 ---
 # tasks file for IdP Style and Languages
-- name: "Enable Apache configuration for the Shibboleth IdP application"
+- name: "Check if Apache IDP conf is already enabled"
+  stat:
+   path: "/etc/apache2/conf-enabled/idp.conf"
+  register: idp_apache
+  changed_when: false
+
+- name: "Remove any 'idp.conf' file into '/etc/apache2/conf-enabled'"
+  file:
+   path: "/etc/apache2/conf-enabled/idp.conf"
+   state: absent
+  when: idp_apache.stat.isreg is defined and idp_apache.stat.isreg
+  notify:
+   - "Restart Apache"
+
+- name: "Add Apache IDP conf"
   template:
    src: "idp.conf.j2"
-   dest: "/etc/apache2/conf-enabled/idp.conf"
+   dest: "/etc/apache2/conf-available/idp.conf"
    owner: "root"
    group: "root"
    mode: "0600"
+  when: idp_apache.stat.islnk is not defined
+  notify:
+   - "Restart Apache"
+
+- name: "Add IDP support to Apache HTTPS VirtualHost"
+  blockinfile:
+    path: "/etc/apache2/sites-available/{{ fqdn }}-ssl.conf"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - IDP"
+    insertbefore: "</VirtualHost>"
+    block: |
+      Include conf-available/idp.conf
+  when: idp_apache.stat.islnk is not defined
+  notify:
+   - "Restart Apache"
+
+- name: "Check if SHIB-LOCALHOST conf is already enabled"
+  stat:
+   path: "/etc/apache2/conf-enabled/shib-localhost.conf"
+  register: shib_lo
+  changed_when: false
+
+- name: "Add Apache SHIB-LOCALHOST conf"
+  copy:
+   src: "files/apache/shib-localhost.conf"
+   dest: "/etc/apache2/conf-available/shib-localhost.conf"
+   owner: "root"
+   group: "root"
+   mode: "0600"
+  when: shib_lo.stat.islnk is not defined
+  notify:
+   - "Restart Apache"
+
+- name: "Add SHIB-LOCALHOST support to Apache HTTPS VirtualHost"
+  blockinfile:
+    path: "/etc/apache2/sites-available/{{ fqdn }}-ssl.conf"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - SHIB-LOCALHOST"
+    insertafter: "</IfModule>"
+    block: |
+      Include conf-available/shib-localhost.conf
+  when: shib_lo.stat.islnk is not defined
   notify:
    - "Restart Apache"
 
@@ -50,7 +104,7 @@
   notify:
    - "Restart Apache"
 
-- name: "Put the Shibboleth IdP Views files in the right position"
+- name: "Put the Shibboleth IdP Views files in the right position for Shibboleth IdP v3.x"
   template:
    src: "{{ item.src }}"
    dest: "{{ item.dest }}"
@@ -58,11 +112,31 @@
    group: "root"
    mode: "0644"
   with_items:
-   - { src: "views/login.vm.j2", dest: "/opt/shibboleth-idp/views/login.vm" }
-   - { src: "views/logout.vm.j2", dest: "/opt/shibboleth-idp/views/logout.vm" }
-   - { src: "views/logout-complete.vm.j2", dest: "/opt/shibboleth-idp/views/logout-complete.vm" }
-   - { src: "views/logout-propagate.vm.j2", dest: "/opt/shibboleth-idp/views/logout-propagate.vm" }
-   - { src: "views/intercept/attribute-release.vm.j2", dest: "/opt/shibboleth-idp/views/intercept/attribute-release.vm" }
+   - { src: "views/login-v3.vm.j2", dest: "/opt/shibboleth-idp/views/login.vm" }
+   - { src: "views/logout-v3.vm.j2", dest: "/opt/shibboleth-idp/views/logout.vm" }
+   - { src: "views/logout-complete-v3.vm.j2", dest: "/opt/shibboleth-idp/views/logout-complete.vm" }
+   - { src: "views/logout-propagate-v3.vm.j2", dest: "/opt/shibboleth-idp/views/logout-propagate.vm" }
+   - { src: "views/intercept/attribute-release-v3.vm.j2", dest: "/opt/shibboleth-idp/views/intercept/attribute-release.vm" }
+  when:
+   - "shib_idp_version is search('^3.')"
+  notify:
+   - "Restart Apache"
+
+- name: "Put the Shibboleth IdP Views files in the right position for Shibboleth IdP v4.x"
+  template:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_items:
+   - { src: "views/login-v4.vm.j2", dest: "/opt/shibboleth-idp/views/login.vm" }
+   - { src: "views/logout-v4.vm.j2", dest: "/opt/shibboleth-idp/views/logout.vm" }
+   - { src: "views/logout-complete-v4.vm.j2", dest: "/opt/shibboleth-idp/views/logout-complete.vm" }
+   - { src: "views/logout-propagate-v4.vm.j2", dest: "/opt/shibboleth-idp/views/logout-propagate.vm" }
+   - { src: "views/intercept/attribute-release-v4.vm.j2", dest: "/opt/shibboleth-idp/views/intercept/attribute-release.vm" }
+  when:
+   - "shib_idp_version is search('^4.')"
   notify:
    - "Restart Apache"
 
@@ -79,15 +153,31 @@
   notify:
    - "Restart Apache"
 
-- name: "Put severals messages_LANGUAGE.properties in the right position"
+- name: "Put severals messages_LANGUAGE.properties in the right position for Shibboleth IdP v3.x"
   copy:
-   src: "files/messages/messages_{{ item.key }}.properties"
+   src: "files/messages/messages_{{ item.key }}-v3.properties"
    dest: "/opt/shibboleth-idp/messages/messages_{{ item.key }}.properties"
    owner: "root"
    group: "root"
    mode: "0644"
   with_dict: "{{ idp_metadata }}"
-  when: "item.key != 'en'"
+  when: 
+   - "item.key != 'en'"
+   - "shib_idp_version is search('^3.')"
+  notify:
+   - "Restart Apache"
+
+- name: "Put severals messages_LANGUAGE.properties in the right position for Shibboleth IdP v4.x"
+  copy:
+   src: "files/messages/messages_{{ item.key }}-v4.properties"
+   dest: "/opt/shibboleth-idp/messages/messages_{{ item.key }}.properties"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_dict: "{{ idp_metadata }}"
+  when: 
+   - "item.key != 'en'"
+   - "shib_idp_version is search('^4.')"
   notify:
    - "Restart Apache"
 
@@ -115,6 +205,26 @@
   notify:
    - "Restart Apache"
 
+- name: "Check if a custom 'info.html' is provided under {{ files_dir }}/{{ fqdn }}/idp/styles/{{ lang }}/"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/styles/{{ item.key }}/info.html"
+  delegate_to: 127.0.0.1
+  with_dict: "{{ idp_metadata }}"
+  register: info_html
+  changed_when: false
+
+- name: "Put the Custom Info Page in the interested languages in the right position"
+  copy:
+   src: "{{ files_dir }}/{{ fqdn }}/idp/styles/{{ item.item.key }}/info.html"
+   dest: "/var/www/html/{{ item.item.key }}/info.html"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_items: "{{ info_html.results }}"
+  when: item.stat.exists
+  notify:
+   - "Restart Apache"
+
 - name: "Put the Information Page in the interested languages in the right position"
   template:
    src: "styles/{{ item.key }}/info.html.j2"
@@ -127,6 +237,24 @@
    - idp_login is defined
    - idp_login['create_info_and_pp_pages'] is defined
    - idp_login['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
+
+- name: "Check if a custom 'privacy.html' is provided under {{ files_dir}}/{{ fqdn }}/idp/styles/{{ lang }}/"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/styles/{{ item.key }}/privacy.html"
+  delegate_to: 127.0.0.1
+  with_dict: "{{ idp_metadata }}"
+  register: privacy_html
+  changed_when: false
+
+- name: "Put the Custom Privacy Policy Page in the interested languages in the right position"
+  copy:
+   src: "{{ files_dir }}/{{ fqdn }}/idp/styles/{{ item.item.key }}/privacy.html"
+   dest: "/var/www/html/{{ item.item.key }}/privacy.html"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  with_items: "{{ privacy_html.results }}"
+  when: item.stat.exists
   notify:
    - "Restart Apache"
 
@@ -142,8 +270,6 @@
    - idp_login is defined
    - idp_login['create_info_and_pp_pages'] is defined
    - idp_login['create_info_and_pp_pages'] in ["True","true","Yes","yes"]
-  notify:
-   - "Restart Apache"
 
 - name: "Remove all the Privacy Policy Pages created if they are not needed"
   file:

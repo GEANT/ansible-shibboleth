@@ -1,4 +1,4 @@
-/var/log/slapd/slapd.log
+/var/log/slapd.log
 {
    rotate 4
    weekly

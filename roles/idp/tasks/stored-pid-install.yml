@@ -1,0 +1,29 @@
+---
+# tasks file for stored-pid-install.yml
+
+- name: "Store in the 'shib_db' ansible variable the result of the check on the existance of the 'shibboleth' database"
+  command: mysql -h {{ idp_config['shibboleth_db_host'] }} -u shibboleth -p{{ idp_config['shibboleth_db_password'] }} -s -N -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='shibboleth'"
+  register: shib_db
+  changed_when: false
+  when:
+   - idp_config is defined
+   - idp_config['shibboleth_db_host'] is defined and idp_config['shibboleth_db_password'] is defined
+   - idp_config['shibboleth_db_host'] != 'localhost'
+
+- name: "Store in the 'shib_db' ansible variable the result of the check on the existance of the 'shibboleth' database"
+  command: mysql -s -N -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='shibboleth'"
+  register: shib_db
+  changed_when: false
+  when:
+   - idp_config is defined
+   - idp_config['shibboleth_db_host'] is defined and idp_config['shibboleth_db_password'] is defined
+   - idp_config['shibboleth_db_host'] == 'localhost'
+
+- name: "Create the persistent identifiers 'shibboleth' database"
+  mysql_db:
+   encoding: "utf8"
+   state: import
+   name: all
+   target: "/root/shib-idp-persistentId-db.sql"
+  when: shib_db.stdout != 'shibboleth'
+

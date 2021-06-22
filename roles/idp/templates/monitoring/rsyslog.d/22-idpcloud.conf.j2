@@ -1,0 +1,40 @@
+# Load RELP output module and text file input module
+# http://www.ryslog.com/doc/v8-stable/configuration/modules/omrelp.html
+# http://www.ryslog.com/doc/v8-stable/configuration/modules/imfile.html
+$LocalHostName {{ fqdn }}
+
+module(load="omrelp")
+
+module(load="imfile")
+
+*.*;local4.none,local7.none      :omrelp:{{ rsyslog_srv['ip']}}:{{ rsyslog_srv['port'] }}
+
+# defie new ruleset to send data to the Rsyslog Server
+# http://www.ryslog.com/doc/v8-stable/configuration/modules/omrelp.html
+ruleset(name="sendToLogserver") {
+   action(type="omrelp" Target="{{ rsyslog_srv['ip'] }}" Port="{{ rsyslog_srv['port'] }}")
+}
+
+# Apache2 Logs
+input(type="imfile" Facility="local0" File="/var/log/apache2/access.log" Tag="apache2access" Ruleset="sendToLogserver")
+input(type="imfile" Facility="local0" File="/var/log/apache2/error.log" Tag="apache2error" Ruleset="sendToLogserver")
+input(type="imfile" Facility="local0" File="/var/log/apache2/other_vhost_access.log" Tag="apache2other" Ruleset="sendToLogserver")
+
+# Jetty Logs
+input(type="imfile" Facility="local0" File="/var/log/jetty/*.jetty.log" Tag="jettyLog" Ruleset="sendToLogserver")
+input(type="imfile" Facility="local0" File="/var/log/jetty/*.stderrout.log" Tag="jettyError" Ruleset="sendToLogserver")
+
+# MYSQL Logs
+input(type="imfile" Facility="local0" File="/var/log/mysql/error.log" Tag="mysqlError" Ruleset="sendToLogserver")
+
+{% if ldap is defined and ldap['url'] is defined %}
+# LDAP Logs
+input(type="imfile" Facility="local0" File="/var/log/slapd.log" Tag="slapdLog" Ruleset="sendToLogserver")
+{% endif %}
+
+# IdP Logs
+input(type="imfile" Facility="local0" File="/opt/shibboleth-idp/logs/idp-audit.log" Tag="idpAudit" Ruleset="sendToLogserver")
+input(type="imfile" Facility="local0" File="/opt/shibboleth-idp/logs/idp-consent-audit.log" Tag="idpConsent" Ruleset="sendToLogserver")
+input(type="imfile" Facility="local0" File="/opt/shibboleth-idp/logs/idp-warn.log" Tag="idpWarn" Ruleset="sendToLogserver")
+input(type="imfile" Facility="local0" File="/opt/shibboleth-idp/logs/idp-process.log" Tag="idpProcess" Ruleset="sendToLogserver")
+input(type="imfile" Facility="local0" File="/var/log/f-ticks.log" Tag="f-ticks" Ruleset="sendToLogserver")

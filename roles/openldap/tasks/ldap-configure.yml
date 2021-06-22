@@ -8,7 +8,7 @@
    - "Restart rsyslog"
    - "Restart slapd"
 
-- name: "Configure Rsyslog to redirect OpenLDAP logs into /var/log/slapd/slapd.log"
+- name: "Configure Rsyslog to redirect OpenLDAP logs into /var/log/slapd.log"
   copy:
    src: "files/99-slapd.conf"
    dest: "/etc/rsyslog.d/99-slapd.conf"

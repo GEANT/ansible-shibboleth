@@ -1,0 +1,19 @@
+---
+# Install tasks
+
+- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
+  apt:
+   update_cache: yes
+   cache_valid_time: 3600
+
+- name: "Install Memcached"
+  package: 
+   name: memcached
+   state: present
+  register: memcached_install
+
+- name: "Ensure Memcached is started and set to run on startup"
+  service: 
+   name: memcached
+   state: started
+   enabled: yes

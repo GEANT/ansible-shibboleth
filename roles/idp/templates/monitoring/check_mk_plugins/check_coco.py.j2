@@ -27,7 +27,7 @@ if options.debug:
     print "\nOptions passed to command:   %s" % options
     print "\nArguments passed to command: %s" % args
 
-os.environ["JAVA_HOME"] = "/usr/lib/jvm/default-java/jre"
+os.environ["JAVA_HOME"] = "{{ java_home_dir }}"
 result = check_output(shlex.split('/opt/shibboleth-idp/bin/aacli.sh --saml2 --principal '+ user +' --requester ' + spEntityId))
 
 if options.debug:
@@ -49,12 +49,13 @@ for samlAttr in attrs:
    attrs_list.append(friendlyName)
 
 if options.debug:
-   print "\nAACLI Attribute List: "
-   print attrs_list
+   print "\nAACLI Attribute List Set: "
+   print set(attrs_list)
    print "\nCOCO Attribute Set:"
    print coco_set
+   print "\n"
 
-result = set(coco_set).issubset(attrs_list)
+result = set(attrs_list).issubset(coco_set)
 
 if result and len(attrs_list) != 0:
    print "0 check_coco - SUCCESS - IdP has retrieved metadata of Test COCO SP and is sending attributes to it"

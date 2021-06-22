@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<AttributeFilterPolicyGroup id="ShibbolethFilterPolicy" xmlns="urn:mace:shibboleth:2.0:afp"
+<AttributeFilterPolicyGroup id="ShibbolethFilterPolicyRandS" xmlns="urn:mace:shibboleth:2.0:afp"
                             xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
                             xmlns:saml="urn:mace:shibboleth:2.0:afp:mf:saml"
                             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -21,7 +21,7 @@
       <AttributeRule attributeID="eduPersonTargetedID">
           <PermitValueRule xsi:type="ANY" />
       </AttributeRule>
-      <AttributeRule attributeID="email">
+      <AttributeRule attributeID="mail">
           <PermitValueRule xsi:type="ANY"/>
       </AttributeRule>
       <AttributeRule attributeID="displayName">
@@ -30,7 +30,7 @@
       <AttributeRule attributeID="givenName">
           <PermitValueRule xsi:type="ANY" />
       </AttributeRule>
-      <AttributeRule attributeID="surname">
+      <AttributeRule attributeID="sn">
           <PermitValueRule xsi:type="ANY" />
       </AttributeRule>
 

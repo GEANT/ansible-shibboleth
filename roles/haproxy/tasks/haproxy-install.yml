@@ -1,0 +1,13 @@
+---
+# tasks file for apache
+
+- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
+  apt:
+   update_cache: yes
+   cache_valid_time: 3600
+
+- name: "Install needed packages"
+  apt:
+   name: "{{ haproxy_packages }}"
+   state: latest
+   install_recommends: no

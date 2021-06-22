@@ -7,7 +7,7 @@
             <shibmd:Scope regexp="false">{{ idp_config['scope'] }}</shibmd:Scope>
             <mdui:UIInfo>
 {% for field in ["mdui_displayName", "mdui_description", "mdui_infoUrl", "mdui_privacyUrl", "mdui_logo", "mdui_favicon"] %}
-{% for lang, value in idp_metadata.iteritems() %}
+{% for lang, value in idp_metadata.items() %}
 {% if field == "mdui_displayName" %}
                <mdui:DisplayName xml:lang="{{ lang }}">{{ idp_metadata[lang]['mdui_displayName'] }}</mdui:DisplayName>
 {% elif field == "mdui_description" %}
@@ -114,7 +114,7 @@
     </AttributeAuthorityDescriptor>
     <Organization>
 {% for field in ["org_name", "org_displayName", "org_url"] %}
-{% for lang, value in idp_metadata.iteritems() %}
+{% for lang, value in idp_metadata.items() %}
 {% if field == "org_name" %}
        <OrganizationName xml:lang="{{ lang }}">{{ idp_metadata[lang]['org_name'] }}</OrganizationName>
 {% elif field == "org_displayName" %}
@@ -125,7 +125,7 @@
 {% endfor %}
 {% endfor %}
    </Organization>
-{% for type, value in idp_contacts.iteritems() %}
+{% for type, value in idp_contacts.items() %}
    <ContactPerson contactType="{{ type }}">
        <GivenName>{{ idp_contacts[type]['givenName'] }}</GivenName>
        <SurName>{{ idp_contacts[type]['surName'] }}</SurName>

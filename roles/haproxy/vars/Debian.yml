@@ -1,0 +1,5 @@
+---
+# Debian Packages for Apache
+
+haproxy_packages:
+  - haproxy

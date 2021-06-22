@@ -1,6 +1,6 @@
 # Overridden default properties
 
-idp.logo={{ idp_metadata['en']['mdui_logo'] }}
+idp.logo=/..{{ idp_metadata['en']['mdui_logo'] | urlsplit('path') }}
 idp.logo.alt-text={{ idp_metadata['en']['org_displayName'] }}
 idp.footer={{ idp_login['footer']['en']['text'] }}
 idp.url.helpdesk=mailto:{{ idp_contacts['support']['mail'] }}
@@ -36,7 +36,7 @@ sp.infopage=SP Information Page
 sp.noinfopage=SP Information Page absent
 sp.privacypage=SP Privacy Policy
 sp.noprivacypage=SP Privacy Policy absent
-{% for fed, value in idp_login['fed_info'].iteritems() %}
+{% for fed, value in idp_login['fed_info'].items() %}
 {{ fed }}.url={{ idp_login['fed_info'][fed]['en']['url'] }}
 {{ fed }}.logo={{ idp_login['fed_info'][fed]['en']['logo'] }}
 {{ fed }}.name={{ idp_login['fed_info'][fed]['en']['name'] }}

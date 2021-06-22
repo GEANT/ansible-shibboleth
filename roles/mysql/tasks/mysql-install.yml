@@ -1,0 +1,50 @@
+---
+# tasks file for mysql-install
+- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
+  apt:
+   update_cache: yes
+   cache_valid_time: 3600
+
+- name: "Install 'debconf-utils' package"
+  apt:
+   name: "debconf-utils"
+   state: latest
+   install_recommends: no
+
+- name: "Check if debconf-get-selections has parameters for unattended mysql installation and store the result on 'debconf' ansible variable"
+  shell: (debconf-get-selections | grep -q -s mysql-server); echo $?
+  register: debconf
+  ignore_errors: yes
+  changed_when: false
+
+- name: "Set MYSQL unattented installation debconf's parameters"
+  debconf:
+   name: "mysql-server"
+   question: "{{ item.question }}"
+   vtype: "{{ item.type }}"
+   value: "{{ item.value }}"
+  with_items:
+   - question: mysql-server/root_password
+     type: password
+     value: "{{ mysql['root_password'] }}"
+   - question: mysql-server/root_password_again
+     type: password
+     value: "{{ mysql['root_password'] }}"
+  when: debconf.stdout == "1"
+
+- name: "Install Mysql server and needed libraries"
+  apt:
+   name: ['python-mysqldb', 'mysql-server', 'libmysql-java', 'libcommons-dbcp-java', 'libcommons-pool-java']
+   state: latest
+   install_recommends: no
+  when:
+   - ansible_distribution_release == 'jessie' or ansible_distribution_release == "stretch"
+
+- name: "Install Mysql server and needed libraries"
+  apt:
+   name: ['python-mysqldb', 'default-mysql-server', 'libcommons-dbcp-java', 'libcommons-pool-java', 'libmariadb-java']
+   state: latest
+   install_recommends: no
+  when:
+   - ansible_distribution_release != 'jessie'
+   - ansible_distribution_release != 'stretch'

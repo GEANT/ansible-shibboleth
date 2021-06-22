@@ -12,7 +12,6 @@
   delegate_to: 127.0.0.1
   when:
    - fqdn is defined and fqdn != ""
-   - check_mk is defined
    - check_mk['check_idp'] is defined and check_mk['check_idp'] in ["True","true","Yes","yes"]
    - check_mk['srv'] is defined and check_mk['srv'] != ''
    - check_mk['site'] is defined and check_mk['site'] != ''
@@ -31,7 +30,6 @@
   delegate_to: 127.0.0.1
   when:
    - fqdn is defined and fqdn != ""
-   - check_mk is defined
    - check_mk['check_idp'] is defined and check_mk['check_idp'] in ["False","false","No","no"]
    - check_mk['srv'] is defined and check_mk['srv'] != ''
    - check_mk['site'] is defined and check_mk['site'] != ''
@@ -49,7 +47,6 @@
   delegate_to: 127.0.0.1
   when:
    - fqdn is defined and fqdn != ""
-   - check_mk is defined
    - check_mk['srv'] is defined and check_mk['srv'] != ''
    - check_mk['site'] is defined and check_mk['site'] != ''
    - check_mk['api_user_name'] is defined and check_mk['api_user_name'] != ''

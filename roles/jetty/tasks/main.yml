@@ -1,15 +1,9 @@
 ---
 # tasks file for jetty
 
-- name: "Check what Java version is installed and store the result on 'java_version' ansible variable"
-  shell: java -version 2>&1 | grep -i version | sed 's/.*version ".*\.\(.*\)\..*"/\1/; 1q'
-  register: java_version
-  changed_when: false
-  tags: jetty 
-
 - name: "Include jetty default variables"
   include_vars:
-    file: "java{{ java_version['stdout'] }}_jetty_vars.yml"
+    file: "java{{ jdk_version }}_jetty_vars.yml"
   when: jetty_distribution is undefined or jetty_distribution == ""
   tags: jetty 
 
@@ -28,7 +22,7 @@
 
 - name: "Extract Jetty Package"
   unarchive:
-   src: "files/{{ ansible_os_family }}/java{{ java_version['stdout'] }}/{{ jetty_distribution }}.tar.gz"
+   src: "files/{{ ansible_os_family }}/java{{ jdk_version }}/{{ jetty_distribution }}.tar.gz"
    dest: "/usr/local/src"
    owner: "jetty"
    group: "jetty"
@@ -82,9 +76,9 @@
    owner: "jetty"
    group: "jetty"
   with_items:
-   - { src: "files/{{ ansible_os_family }}/java{{ java_version['stdout'] }}/jetty", dest: '/etc/default/jetty' }
-   - { src: "files/{{ ansible_os_family }}/java{{ java_version['stdout'] }}/start.ini", dest: '/opt/jetty/start.ini' }
-   - { src: "files/{{ ansible_os_family }}/java{{ java_version['stdout'] }}/jetty.xml", dest: '/opt/jetty/etc/jetty.xml' }
+   - { src: "files/{{ ansible_os_family }}/java{{ jdk_version }}/jetty", dest: '/etc/default/jetty' }
+   - { src: "files/{{ ansible_os_family }}/java{{ jdk_version }}/start.ini", dest: '/opt/jetty/start.ini' }
+   - { src: "files/{{ ansible_os_family }}/java{{ jdk_version }}/jetty.xml", dest: '/opt/jetty/etc/jetty.xml' }
   tags: jetty
 
 - name: "Stop jetty after an upgrade of its package"
@@ -95,7 +89,7 @@
    - jetty_src.changed
   tags: jetty
 
-- name: "Start jetty by re-reading configs (2.4 and above)"
+- name: "Start jetty by re-reading configs"
   systemd: 
    name: "jetty"
    daemon_reload: True

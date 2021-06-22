@@ -1,0 +1,46 @@
+---
+# tasks file for idp-stats - tag: idpstats
+
+- name: "Create dir where stats will be inserted"
+  ansible.builtin.file:
+   path: /home/debian/{{ inventory_hostname }}
+   state: directory
+   mode: '0755'
+
+- name: "Download loganalysis.py into /home/debian"
+  get_url:
+   url: https://raw.githubusercontent.com/ConsortiumGARR/idem-tutorials/master/idem-fedops/HOWTO-Statistics/idem-loganalysis-idp_v3.py
+   dest: /home/debian/loganalysis.py
+
+- name: "Run script for each month"
+  shell: "zcat /opt/shibboleth-idp/logs/idp-audit-{{ item }}* | python /home/debian/loganalysis.py -j - > idp-{{ ldap['domain'] }}-{{ item }}-sso-stats.json"
+  args:
+   executable: /bin/bash
+   chdir: /home/debian/{{ inventory_hostname }}
+   creates: "idp-{{ ldap['domain'] }}-{{ item }}-sso-stats.json"
+  loop:
+   - 2020-09
+   - 2020-10
+   - 2020-11
+   - 2020-12
+   - 2021-01
+
+- name: "Store files into /tmp/idpstats dir on the vagrant VM"
+  ansible.builtin.fetch:
+   src: "/home/debian/{{ inventory_hostname }}/idp-{{ldap['domain'] }}-{{ item }}-sso-stats.json"
+   dest: "/tmp/idpstats/"
+   flat: yes
+  loop:
+   - 2020-09
+   - 2020-10
+   - 2020-11
+   - 2020-12
+   - 2021-01
+
+- name: "Cleanup"
+  ansible.builtin.file:
+   path: "{{ item }}"
+   state: absent
+  loop:
+   - "/home/debian/{{ inventory_hostname }}"
+   - "/home/debian/loganalysis.py"

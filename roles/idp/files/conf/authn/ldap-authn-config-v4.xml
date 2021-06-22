@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:p="http://www.springframework.org/schema/p" xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+       default-init-method="initialize"
+       default-destroy-method="destroy"
+       default-lazy-init="true">
+
+    <!--
+    Default behavior is to rely on properties to populate the various beans.
+    You can override these, particularly shibboleth.authn.LDAP.authenticator,
+    to customize the settings or avoid use of properties.
+    
+    Be cautious of any direct dependency on ldaptive classes to simplify upgrades.
+    -->
+
+    <bean id="shibboleth.authn.LDAP.returnAttributes" parent="shibboleth.CommaDelimStringArray">
+        <constructor-arg type="java.lang.String" value="%{idp.authn.LDAP.returnAttributes:1.1}" />
+    </bean>
+
+    <bean id="shibboleth.authn.LDAP.trustCertificates" parent="shibboleth.X509ResourceCredentialConfig"
+        p:trustCertificates="%{idp.authn.LDAP.trustCertificates:undefined}" />
+        
+    <bean id="shibboleth.authn.LDAP.truststore" parent="shibboleth.KeystoreResourceCredentialConfig"
+        p:truststore="%{idp.authn.LDAP.trustStore:undefined}" />
+        
+    <bean id="shibboleth.authn.LDAP.authenticator" parent="shibboleth.LDAPAuthenticationFactory" lazy-init="true" />
+
+</beans>

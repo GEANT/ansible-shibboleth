@@ -6,8 +6,10 @@
 
 - name: "Install Check_MK"
   import_tasks: check_mk_agent-install.yml
+  when: check_mk is defined
   tags: check_mk_agent
 
 - name: "Configure Check_MK"
   import_tasks: check_mk_agent-configure.yml
+  when: check_mk is defined
   tags: check_mk_agent

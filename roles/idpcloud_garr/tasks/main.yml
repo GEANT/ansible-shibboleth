@@ -7,4 +7,13 @@
 
 - name: "Add 'rsync-backup' user needed by rsnapshot server"
   import_tasks: "rsync-backup-configure.yml"
+  when: (idpcloud_garr['rsync_backup_ssh_pub_key'] is defined) and (idpcloud_garr['rsync_backup_ssh_pub_key']|length > 0)
   tags: idpcloud_garr
+
+#- name: "Collect Login Statistics"
+#  import_tasks: idp-stats-2020-2021.yml
+#  tags: idp_stats
+
+#- name: "Discovery Persistent-ID changed with Shib IdP v4.0.1"
+#  import_tasks: discovery-pid.yml
+#  tags: idp_disco_pid

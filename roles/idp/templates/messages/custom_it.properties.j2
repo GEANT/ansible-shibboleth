@@ -1,6 +1,6 @@
 # Proprietà che sostituiscono quelli in messages_it
 
-idp.logo={{ idp_metadata['it']['mdui_logo'] }}
+idp.logo=/..{{ idp_metadata['it']['mdui_logo'] | urlsplit('path') }}
 idp.logo.alt-text={{ idp_metadata['it']['org_displayName'] }}
 idp.footer={{ idp_login['footer']['it']['text'] }}
 bad-password.message=La password immessa non è corretta o l'account non è attivo.
@@ -34,7 +34,7 @@ sp.infopage=Pagina di Informazioni per la risorsa
 sp.noinfopage=Nessuna pagina di informazioni disponibile
 sp.privacypage=Politiche sulla Privacy della risorsa
 sp.noprivacypage=Nessuna Politica sulla Privacy definita dalla risorsa
-{% for fed, value in idp_login['fed_info'].iteritems() %}
+{% for fed, value in idp_login['fed_info'].items() %}
 {{ fed }}.url={{ idp_login['fed_info'][fed]['it']['url'] }}
 {{ fed }}.logo={{ idp_login['fed_info'][fed]['it']['logo'] }}
 {{ fed }}.name={{ idp_login['fed_info'][fed]['it']['name'] }}

@@ -1,0 +1,294 @@
+##
+## Velocity Template for DisplayUsernamePasswordPage view-state
+##
+## Velocity context will contain the following properties
+## flowExecutionUrl - the form action location
+## flowRequestContext - the Spring Web Flow RequestContext
+## flowExecutionKey - the SWF execution key (this is built into the flowExecutionUrl)
+## profileRequestContext - root of context tree
+## authenticationContext - context with authentication request information
+## authenticationErrorContext - context with login error state
+## authenticationWarningContext - context with login warning state
+## ldapResponseContext - context with LDAP state (if using native LDAP)
+## rpUIContext - the context with SP UI information from the metadata
+## extendedAuthenticationFlows - collection of "extended" AuthenticationFlowDescriptor objects
+## passwordPrincipals - contents of the shibboleth.authn.Password.PrincipalOverride bean
+## encoder - HTMLEncoder class
+## request - HttpServletRequest
+## response - HttpServletResponse
+## environment - Spring Environment object for property resolution
+## custom - arbitrary object injected by deployer
+##
+#set ($rpContext = $profileRequestContext.getSubcontext('net.shibboleth.idp.profile.context.RelyingPartyContext'))
+#set ($username = $authenticationContext.getSubcontext('net.shibboleth.idp.authn.context.UsernamePasswordContext', true).getUsername())
+#set ($passwordEnabled = false)
+#if (!$passwordPrincipals or $passwordPrincipals.isEmpty() or $authenticationContext.isAcceptable($passwordPrincipals))
+  #set ($passwordEnabled = true)
+#end
+##
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>#springMessageText("idp.title", "Web Login Service")</title>
+        <link href="#springMessageText("idp.favicon", "$request.getContextPath()/images/dummylogo.png")" rel="shortcut icon" type="image/x-icon" />
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
+        <link rel="stylesheet" type="text/css" href="/css/login.css">
+            <script language="javascript">
+            function setParam(name, value) {
+                var l = window.location;
+                /* build params */
+                var params = {};
+                var x = /(?:\??)([^=&?]+)=?([^&?]*)/g;
+                var s = l.search;
+                for(var r = x.exec(s); r; r = x.exec(s)) {
+                    r[1] = decodeURIComponent(r[1]);
+                    if (!r[2]) r[2] = '%%';
+                    params[r[1]] = r[2];
+                }
+                /* set param */
+                params[name] = encodeURIComponent(value);
+                /* build search */
+                var search = [];
+                for(var i in params) {
+                    var p = encodeURIComponent(i);
+                    var v = params[i];
+                    if (v != '%%') p += '=' + v;
+                    search.push(p);
+                }
+                search = search.join('&');
+                /* execute search */
+                l.search = search;
+            }
+            function getParameterByName(name) {
+                name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+                var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
+                var results = regex.exec(location.search);
+                return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+            }
+            function check_epb() {
+                var cookiestring = RegExp("epb[^;]+").exec(document.cookie);
+                var value = unescape(!!cookiestring ? cookiestring.toString().replace(/^[^=]+./,"") : "");
+                if (value == "ok") {
+                    document.getElementById('epb-notice').style.display = 'none';
+                }
+            }
+            function hide_epb() {
+                document.cookie = "epb=ok; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+                document.getElementById('epb-notice').style.display = 'none';
+            }
+            function show_policy() {
+                el = document.getElementById("overlay");
+                el.style.display = (el.style.display == "none") ? "block" : "none";
+            }
+        </script>
+    </head>
+    <body onload="check_epb()">
+
+        <div id="overlay" style="display: none">
+            <div>
+                <h1>#springMessageText("idp.login.epb.title","Cookie Policy for the IdP")</h1>
+                <h2>#springMessageText("idp.login.epb.subtitle1","What Are Cookies")</h2>
+                <p>#springMessageText("idp.login.epb.paragraph1_1","As is common practice with almost all professional websites this site uses cookies, which are tiny files that are downloaded to your computer, to improve your experience. This page describes what information they gather, how we use it and why we sometimes need to store these cookies. We will also share how you can prevent these cookies from being stored however this may downgrade or 'break' certain elements of the sites functionality.")</p>
+                <p>#springMessageText("idp.login.epb.paragraph1_2","For more general information on cookies see the Wikipedia article on HTTP Cookies...")</p>
+                <h2>#springMessageText("idp.login.epb.subtitle2","How We Use Cookies")</h2>
+                <p>#springMessageText("idp.login.epb.paragraph2_1","We use cookies for a variety of reasons detailed below. Unfortunately in most cases there are no industry standard options for disabling cookies without completely disabling the functionality and features they add to this site. It is recommended that you leave on all cookies if you are not sure whether you need them or not in case they are used to provide a service that you use.")</p>
+                <h2>#springMessageText("idp.login.epb.subtitle3","Disabling Cookies")</h2>
+                <p>#springMessageText("idp.login.epb.paragraph3_1","You can prevent the setting of cookies by adjusting the settings on your browser (see your browser Help for how to do this). Be aware that disabling cookies will affect the functionality of this and many other websites that you visit. Disabling cookies will usually result in also disabling certain functionality and features of the this site. Therefore it is recommended that you do not disable cookies.")</p>
+                <h2>#springMessageText("idp.login.epb.subtitle4","The Cookies We Set")</h2>
+                <p>#springMessageText("idp.login.epb.paragraph4_1","If you create an account with us then we will use cookies for the management of the signup process and general administration. These cookies will usually be deleted when you log out however in some cases they may remain afterwards to remember your site preferences when logged out.")</p>
+                <p>#springMessageText("idp.login.epb.paragraph4_2","We use cookies when you are logged in so that we can remember this fact. This prevents you from having to log in every single time you visit a new page. These cookies are typically removed or cleared when you log out to ensure that you can only access restricted features and areas when logged in.")</p>
+                <p><br/></p>
+                <p>#springMessageText("idp.login.epb.paragraph4_3","When you submit data to through a form such as those found on contact pages or comment forms cookies may be set to remember your user details for future correspondence.")</p>
+                <h2>#springMessageText("idp.login.epb.subtitle5","Third Party Cookies")</h2>
+                <p>#springMessageText("idp.login.epb.paragraph5_1","In some special cases we also use cookies provided by trusted third parties. The following section details which third party cookies you might encounter through this site.")</p>
+                <p>#springMessageText("idp.login.epb.paragraph5_2","Third party analytics are used to track and measure usage of this site so that we can continue to produce engaging content. These cookies may track things such as how long you spend on the site or pages you visit which helps us to understand how we can improve the site for you.")</p>
+                <h2>#springMessageText("idp.login.epb.subtitle6","More Information")</h2>
+                <p>#springMessageText("idp.login.epb.paragraph6_1","Hopefully that has clarified things for you and as was previously mentioned if there is something that you aren't sure whether you need or not it's usually safer to leave cookies enabled in case it does interact with one of the features you use on our site. However if you are still looking for more information then you can contact us through one of our preferred contact methods.")</p>
+                <p>Email: <a href="#springMessageText("idp.login.epb.paragraph6_2","address@example.it")">#springMessageText("idp.login.epb.paragraph6_2","address@example.it")</a></p>
+                <p><br/></p>
+                <p><center><a href='#' onclick='show_policy(); return false'>#springMessageText("idp.login.epb.close","Click here to close")</a></center></p>
+            </div>
+        </div>
+
+        <div class="wrapper">
+            <div id="epb-notice">#springMessageText("idp.login.epb","We use cookies to give you the best online experience. By using our website you agree to our use of cookies in accordance with our cookie policy.") <a href="#" onclick="show_policy(); return false">#springMessageText("idp.login.epb_info","Learn more here.")</a> <a href="#" onclick="hide_epb(); return false">#springMessageText("idp.login.epb_ok","Close.")</a></div>
+
+            <div class="container">
+                <header>
+                    #if ($request.getParameter("spinfo") == "true")
+                    <br/>
+                        #set ($logo = $rpUIContext.getLogo())
+                        #if ($logo)
+                    <img src= "$encoder.encodeForHTMLAttribute($logo)" alt="Logo">
+                        #end
+                    <br/><b>#springMessageText("sp.description", "SP description")</b><br/>
+                        #set ($desc = $rpUIContext.getServiceDescription())
+                        #if ($desc)
+                    $encoder.encodeForHTML($desc)
+                        #end
+                    <br/><br/>
+                    <a href="javascript:setParam('spinfo', 'false');"><span class="item-marker">&lsaquo;</span> #springMessageText("idp.login.goback", "Go back to login page")</a>
+                    #else
+                    <a href="#springMessageText("idp.infoUrl", "#")"><img src="#springMessageText("idp.logo","$request.getContextPath()/idp/images/dummylogo.png")" alt="#springMessageText("idp.logo.alt-text", "logo")"></a>
+                    #end
+                </header>
+
+                <div class="content">
+                    #if ($request.getParameter("spinfo") == "true")
+                    <ul>
+                        <li><span class="item-marker">&rsaquo;</span> <b>#springMessageText("sp.name", "SP Service Name"):</b><br/>
+                        #set ($name = $rpUIContext.getServiceName())
+                        #if ($name)
+                        $encoder.encodeForHTML($name)
+                        #end</li>
+                        <li><span class="item-marker">&rsaquo;</span> <b>#springMessageText("sp.organization", "SP Organization"):</b><br/>
+                        #set ($sp_org = $rpUIContext.getOrganizationDisplayName())
+                        #if ($sp_org)
+                        $encoder.encodeForHTML($sp_org)
+                        #else
+                        $encoder.encodeForHTML($rpUIContext.getOrganizationName())
+                        #end
+                        <li><span class="item-marker">&rsaquo;</span> <b>#springMessageText("sp.contacts", "SP Contacts"):</b><br/>
+                        #set ($technicalEmail = $rpUIContext.getContactEmail("technical"))
+                        #set ($technicalName = $rpUIContext.getContactGivenName("technical"))
+                        #set ($technicalSurName = $rpUIContext.getContactSurName("technical"))
+                        #if ($technicalEmail)
+                            <a href='$encoder.encodeForHTMLAttribute($technicalEmail)'>
+                            #if ($technicalName && $technicalSurName)
+                                $encoder.encodeForHTMLAttribute($technicalName) $encoder.encodeForHTMLAttribute($technicalSurName)
+                            #else
+                                $encoder.encodeForHTMLAttribute($technicalEmail.replace("mailto:", ""))
+                            #end
+                            </a>
+                        #else
+                            #springMessageText("sp.nocontacts", "No contacts provided")
+                        #end
+                        </li>
+                        <li><span class="item-marker">&rsaquo;</span>
+                        #set ($psurl = $rpUIContext.privacyStatementURL)
+                        #if ($psurl)
+                            <b><a href="$encoder.encodeForHTMLAttribute($psurl)">#springMessageText("sp.privacypage", "Privacy Policy page")</a></b>
+                        #else
+                            <b>#springMessageText("sp.noprivacy", "No privacy policy specified")</b>
+                        #end
+                        </li>
+                        <li><span class="item-marker">&rsaquo;</span>
+                        #set ($infoURL=$rpUIContext.informationURL)
+                        #if ($infoURL)
+                            <b><a href="$encoder.encodeForHTMLAttribute($infoURL)">#springMessageText("sp.infopage", "Information page")</a></b>
+                        #else
+                            <b>#springMessageText("sp.noinfopage", "No information website provided")</b>
+                        #end
+                        </li>
+                    </ul>
+                    #else
+                    <div class="column one">
+                            #parse("login-error.vm")
+
+                        <form action="$flowExecutionUrl" method="post">
+                            #parse("csrf/csrf.vm")
+
+                            #set ($serviceName = $rpUIContext.serviceName)
+                            #if ($serviceName && !$rpContext.getRelyingPartyId().contains($serviceName))
+                            <legend>
+                                #springMessageText("idp.login.loginTo", "Login to") $encoder.encodeForHTML($serviceName)
+                            </legend>
+                            #end
+
+                            #if ($passwordEnabled)
+                            <div class="form-element-wrapper">
+                                <label for="username">#springMessageText("idp.login.username", "Username")</label>
+                                <input class="form-element form-field" id="username" name="j_username" type="text" value="#if($username)$encoder.encodeForHTML($username)#end">
+                            </div>
+
+                            <div class="form-element-wrapper">
+                                <label for="password">#springMessageText("idp.login.password", "Password")</label>
+                                <input class="form-element form-field" id="password" name="j_password" type="password" value="">
+                            </div>
+
+                            <div class="form-element-wrapper">
+                                <input type="checkbox" name="donotcache" value="1" id="donotcache">
+                                #springMessageText("idp.login.donotcache", "Don't Remember Login")
+                            </div>
+                            #end
+
+                            <div class="form-element-wrapper">
+                                <input id="_shib_idp_revokeConsent" type="checkbox" name="_shib_idp_revokeConsent" value="true">
+                                #springMessageText("idp.attribute-release.revoke", "Clear prior granting of permission for release of your information to this service.")
+                            </div>
+
+                            #if ($passwordEnabled)
+                            <div class="form-element-wrapper">
+                                <button class="form-element form-button" type="submit" name="_eventId_proceed"
+                                        onClick="this.childNodes[0].nodeValue='#springMessageText("idp.login.pleasewait", "Logging in, please wait...")'"
+                                        >#springMessageText("idp.login.login", "Login")</button>
+                            </div>
+                            #end
+
+                            #foreach ($extFlow in $extendedAuthenticationFlows)
+                                #if ($authenticationContext.isAcceptable($extFlow) and $extFlow.apply(profileRequestContext))
+                            <div class="form-element-wrapper">
+                              <button class="form-element form-button" type="submit" name="_eventId_$extFlow.getId()">
+                                    #springMessageText("idp.login.$extFlow.getId().replace('authn/','')", $extFlow.getId().replace('authn/',''))
+                              </button>
+                            </div>
+                                #end
+                            #end
+                        </form>
+
+                        #*
+                          //
+                          //    SP Description & Logo (optional)
+                          //    These idpui lines will display added information (if available
+                          //    in the metadata) about the Service Provider (SP) that requested
+                          //    authentication. These idpui lines are "active" in this example
+                          //    (not commented out) - this extra SP info will be displayed.
+                          //    Remove or comment out these lines to stop the display of the
+                          //    added SP information.
+                          //
+                        *#
+                            #set ($logo = $rpUIContext.getLogo())
+                            #if ($logo)
+                        <img src= "$encoder.encodeForHTMLAttribute($logo)" alt="$encoder.encodeForHTMLAttribute($serviceName)" height="60px"><br/>
+                            #end
+                            #set ($desc = $rpUIContext.getServiceDescription())
+                            #if ($desc)
+                            $encoder.encodeForHTML($desc)
+                            #end
+
+                        <p><a href="javascript:setParam('spinfo', 'true');"><span class="item-marker">&rsaquo;</span> #springMessageText("idp.login.moreinfo", "More information about the service")</a></p>
+
+                    </div> ## column one
+                    <div class="column two">
+                        <ul class="list list-help">
+                            #if ($passwordEnabled)
+                            <li class="list-help-item"><a href="#springMessageText("idp.url.password.reset", "#")"><span class="item-marker">&rsaquo;</span> #springMessageText("idp.login.forgotPassword", "Forgot password?")</a></li>
+                            #end
+                            <li class="list-help-item"><a href="#springMessageText("idp.url.helpdesk", "#")"><span class="item-marker">&rsaquo;</span> #springMessageText("idp.login.needHelp", "Need Help?")</a></li>
+                            <li class="list-help-item"><a href="#springMessageText("idp.infoUrl", "#")"><span class="item-marker">&rsaquo;</span> #springMessageText("idp.infopage", "Information page")</a></li>
+                            <li class="list-help-item"><a href="#springMessageText("idp.privacyPage", "#")"><span class="item-marker">&rsaquo;</span> #springMessageText("idp.privacypage", "Privacy Policy")</a></li>
+                            <li class="list-help-item"><a href="#springMessageText("idp.aupPage", "#")"><span class="item-marker">&rsaquo;</span> #springMessageText("idp.auppage", "AUP Policy")</a></li>
+                        </ul>
+                        <p>
+{% for language, value in idp_metadata.items() %}
+                            <a href="javascript:setParam('lang', '{{ language }}');"><img height="16px" src="/{{ language }}/{{ language }}Flag.png"></a>
+{% endfor %}
+                        </p>
+{% for fed, value in idp_login['fed_info'].items() %}
+                        <p><a href="#springMessageText("{{ fed }}.url","#")"><img src="#springMessageText("{{ fed }}.logo" ,"/images/federation-logo.png")" alt="#springMessageText("{{ fed }}.name", "Federation Name")" style="width: 100px"/></a></p>
+{% endfor %}
+                    </div> ## column two
+                        #end
+                </div> ## content
+            </div> ## container
+
+            <footer>
+                <div class="container container-footer">
+                    <p class="footer-text">#springMessageText("idp.footer", "Insert your footer text here.")</p>
+                </div>
+            </footer>
+        </div> ## wrapper
+    </body>
+</html>

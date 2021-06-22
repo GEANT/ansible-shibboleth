@@ -16,13 +16,10 @@
 
 - name: "Debian 8 - Install Rsyslog with RELP"
   apt:
-   name: "{{ item }}"
+   name: ['rsyslog', 'rsyslog-relp']
    state: latest
    install_recommends: no
    default_release: "jessie-backports"
-  with_items:
-   - "rsyslog"
-   - "rsyslog-relp"
   when:
    - ansible_distribution_release == "jessie"
    - rsyslog_srv is defined
@@ -31,16 +28,13 @@
    - rsyslog_srv['port'] is defined
    - rsyslog_srv['port'] != ""
 
-- name: "Debian 9 - Install Rsyslog with RELP"
+- name: "Install Rsyslog with RELP"
   apt:
-   name: "{{ item }}"
+   name: ['rsyslog', 'rsyslog-relp']
    state: latest
    install_recommends: no
-  with_items:
-   - "rsyslog"
-   - "rsyslog-relp"
   when:
-   - ansible_distribution_release == "stretch"
+   - ansible_distribution_release != "jessie"
    - rsyslog_srv is defined
    - rsyslog_srv['ip'] is defined
    - rsyslog_srv['ip'] != ""
@@ -48,16 +42,17 @@
    - rsyslog_srv['port'] != ""
 
 - name: "Configure Rsyslog for F-TICKS"
-  template:
-   src: "monitoring/rsyslog/33-fticks.conf.j2"
-   dest: "/etc/rsyslog.d/33-fticks.conf"
+  copy:
+   src: "rsyslog.d/20-fticks.conf"
+   dest: "/etc/rsyslog.d/20-fticks.conf"
    owner: "root"
    group: "root"
    mode: "0644"
+  register: rsyslog_fticks
 
 - name: "Configure Rsyslog to send IdP logs to the centralized remote server"
   template:
-   src: "monitoring/rsyslog/22-idpcloud.conf.j2"
+   src: "monitoring/rsyslog.d/22-idpcloud.conf.j2"
    dest: "/etc/rsyslog.d/22-idpcloud.conf"
    owner: "root"
    group: "root"
@@ -68,12 +63,22 @@
    - rsyslog_srv['ip'] != ""
    - rsyslog_srv['port'] is defined
    - rsyslog_srv['port'] != ""
-  register: rsyslog_template
+  register: rsyslog_idpcloud
+
+- name: "Change 'rsyslog.conf'"
+  copy:
+   src: "rsyslog.d/rsyslog.conf"
+   dest: "/etc/rsyslog.conf"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+   backup: "yes"
+  register: rsyslog_conf
 
 - name: "Restart Rsyslog to start sending IdP logs to the centralized remote server if needed"
   systemd:
-    state: restarted
-    daemon_reload: yes
-    name: rsyslog
+   state: restarted
+   daemon_reload: yes
+   name: rsyslog
   when:
-   - rsyslog_template.changed
+   - rsyslog_idpcloud.changed or rsyslog_conf.changed or rsyslog_fticks.changed

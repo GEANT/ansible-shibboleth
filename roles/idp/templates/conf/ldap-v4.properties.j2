@@ -1,0 +1,77 @@
+# LDAP authentication configuration, see authn/ldap-authn-config.xml
+# Note, this doesn't apply to the use of JAAS
+
+## Authenticator strategy, either anonSearchAuthenticator, bindSearchAuthenticator, directAuthenticator, adAuthenticator
+idp.authn.LDAP.authenticator                   = {{ idp_config['ldap']['authenticator'] | default('AUTHENTICATOR_MISSING') }}
+
+## Connection properties ##
+idp.authn.LDAP.ldapURL                         = {{ idp_config['ldap']['url'] }}
+idp.authn.LDAP.useStartTLS                     = {{ idp_config['ldap']['useStartTLS'] | default('false') }}
+idp.authn.LDAP.useSSL                          = {{ idp_config['ldap']['useSSL'] | default('false') }}
+idp.authn.LDAP.connectTimeout                  = {{ idp_config['ldap']['connectTimeout'] | default('PT3S') }}
+idp.authn.LDAP.responseTimeout                  = {{ idp_config['ldap']['responseTimeout'] | default('PT3S') }}
+
+{% if ((idp_config['ldap']['useStartTLS'] in ['Yes','yes','True','true']) or (idp_config['ldap']['useSSL'] in ['Yes','yes','True','true'])) %}
+## SSL configuration, either jvmTrust, certificateTrust, or keyStoreTrust
+idp.authn.LDAP.sslConfig                       = {{ idp_config['ldap']['sslConfig'] }}
+{% if idp_config['ldap']['sslConfig'] is equalto "certificateTrust" %}
+## If using certificateTrust above, set to the trusted certificate's path
+idp.authn.LDAP.trustCertificates               = {{ idp_config['ldap']['trustCertificates'] | default("/etc/ssl/certs/ca-certificates.crt") }}
+{% elif idp_config['ldap']['sslConfig'] is equalto "keyStoreTrust" %}
+## If using keyStoreTrust above, set to the truststore path
+idp.authn.LDAP.trustStore                      = {{ idp_config['ldap']['trustStore'] | default("%{idp.home}/credentials/ldap-server.truststore") }}
+{% endif %}
+{% endif %}
+
+## Return attributes during authentication
+## NOTE: there is a separate property used for attribute resolution
+idp.authn.LDAP.returnAttributes                = passwordExpirationTime,loginGraceRemaining
+
+## DN resolution properties ##
+
+# Search DN resolution, used by anonSearchAuthenticator, bindSearchAuthenticator
+# for AD: CN=Users,DC=example,DC=org
+idp.authn.LDAP.baseDN                          = {{ idp_config['ldap']['baseDN'] | default('IDP_LDAP_BASEDN_MISSING') }}
+{% if idp_config['ldap']['subtreeSearch'] %}
+idp.authn.LDAP.subtreeSearch                   = {{ idp_config['ldap']['subtreeSearch'] }}
+{% endif %}
+idp.authn.LDAP.userFilter                      = {{ idp_config['ldap']['userFilter'] | default('USER_FILTER_MISSING') }}
+
+# bind search configuration
+# for AD: idp.authn.LDAP.bindDN=adminuser@domain.com
+idp.authn.LDAP.bindDN                           = {{ idp_config['ldap']['bindDN'] | default('IDP_LDAP_BINDDN_MISSING') }}
+
+# Format DN resolution, used by directAuthenticator, adAuthenticator
+# for AD use idp.authn.LDAP.dnFormat=%s@domain.com
+#idp.authn.LDAP.dnFormat                         = uid=%s,ou=people,dc=example,dc=org
+
+# pool passivator, either none, bind or anonymousBind
+#idp.authn.LDAP.bindPoolPassivator              = none
+
+# Handling account state with OpenLDAP/AD for Shibboleth IdP v4.x
+idp.authn.LDAP.usePasswordPolicy                 = true
+
+# LDAP attribute configuration, see attribute-resolver.xml
+# Note, this likely won't apply to the use of legacy V2 resolver configurations
+idp.attribute.resolver.LDAP.ldapURL             = %{idp.authn.LDAP.ldapURL}
+idp.attribute.resolver.LDAP.connectTimeout      = %{idp.authn.LDAP.connectTimeout:PT3S}
+idp.attribute.resolver.LDAP.responseTimeout     = %{idp.authn.LDAP.responseTimeout:PT3S}
+idp.attribute.resolver.LDAP.baseDN              = %{idp.authn.LDAP.baseDN:undefined}
+idp.attribute.resolver.LDAP.bindDN              = %{idp.authn.LDAP.bindDN:undefined}
+idp.attribute.resolver.LDAP.useStartTLS         = %{idp.authn.LDAP.useStartTLS:true}
+idp.attribute.resolver.LDAP.trustCertificates   = %{idp.authn.LDAP.trustCertificates:undefined}
+idp.attribute.resolver.LDAP.searchFilter        = {{ idp_config['ldap']['searchFilter'] | default('IDP_LDAP_SEARCH_FILTER_MISSING') }}
+
+# LDAP pool configuration, used for both authn and DN resolution
+#idp.pool.LDAP.minSize                          = 3
+#idp.pool.LDAP.maxSize                          = 10
+#idp.pool.LDAP.validateOnCheckout               = false
+#idp.pool.LDAP.validatePeriodically             = true
+#idp.pool.LDAP.validatePeriod                   = PT5M
+#idp.pool.LDAP.validateDN                       =
+#idp.pool.LDAP.validateFilter                   = (objectClass=*)
+#idp.pool.LDAP.prunePeriod                      = PT5M
+#idp.pool.LDAP.idleTime                         = PT10M
+#idp.pool.LDAP.blockWaitTime                    = PT3S
+
+idp.attribute.resolver.LDAP.exportAttributes    = uid givenName sn cn mail displayName mobile title preferredLanguage telephoneNumber eduPersonAffiliation eduPersonEntitlement eduPersonOrgDN eduPersonOrgUnitDN eduPersonOrcid schacMotherTongue schacPersonalTitle schacUserPresenceID schacPersonalUniqueID schacPersonalPosition

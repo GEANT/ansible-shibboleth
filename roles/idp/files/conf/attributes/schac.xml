@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+       
+    <bean parent="shibboleth.TranscodingRuleLoader">
+    <constructor-arg>
+    <list>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">schacMotherTongue</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.1</prop>
+                    <prop key="saml1.name">urn:schac:attribute-def:schacMotherTongue</prop>
+                    <prop key="displayName.en">Mother Tongue</prop>
+                    <prop key="displayName.it">Lingua Madre</prop>
+                    <prop key="description.en">Mother Tongue of the user</prop>
+                    <prop key="description.it">Lingua Madre dell'utente</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">schacPersonalTitle</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.8</prop>
+                    <prop key="saml1.name">urn:schac:attribute-def:schacPersonalTitle</prop>
+                    <prop key="displayName.en">Personal Title</prop>
+                    <prop key="displayName.it">Soprannome</prop>
+                    <prop key="description.en">Nice name used for the user</prop>
+                    <prop key="description.it">Titolo usato per salutare l'utente</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">schacHomeOrganization</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.9</prop>
+                    <prop key="saml1.name">urn:schac:attribute-def:schacHomeOrganization</prop>
+                    <prop key="displayName.en">Institution Domain</prop>
+                    <prop key="displayName.it">Dominio istituzione</prop>
+                    <prop key="description.en">Domain of the institution</prop>
+                    <prop key="description.it">Dominio dell'istituzione</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">schacHomeOrganizationType</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.10</prop>
+                    <prop key="saml1.name">urn:schac:attribute-def:schacHomeOrganizationType</prop>
+                    <prop key="displayName.en">Home organization type (international)</prop>
+                    <prop key="displayName.it">Tipo dell'organizzazione di appartenenza (internazionale)</prop>
+                    <prop key="description.en">Type of a Home Organization</prop>
+                    <prop key="description.it">Tipo dell'organizzazione di appartenenza</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">schacUserPresenceID</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.12</prop>
+                    <prop key="saml1.name">urn:schac:attribute-def:schacUserPresenceID</prop>
+                    <prop key="displayName.en">User Network IDs</prop>
+                    <prop key="displayName.it">ID utente sulla rete</prop>
+                    <prop key="description.en">Identifiers that user collect on the net</prop>
+                    <prop key="description.it">Identificativi usati dall'utente sulla rete</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">schacPersonalPosition</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.13</prop>
+                    <prop key="saml1.name">urn:schac:attribute-def:schacPersonalPosition</prop>
+                    <prop key="displayName.en">Personal Position</prop>
+                    <prop key="displayName.it">Ruolo ricoperto</prop>
+                    <prop key="description.en">Personal Position of the user for the institution</prop>
+                    <prop key="description.it">Ruolo dell'utente nell'istituzione</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">schacPersonalUniqueID</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.15</prop>
+                    <prop key="saml1.name">urn:schac:attribute-def:schacPersonalUniqueID</prop>
+                    <prop key="displayName.en">Legal Unique ID</prop>
+                    <prop key="displayName.it">ID Legale Univoco</prop>
+                    <prop key="description.en">Unique Legal Identifier of a person</prop>
+                    <prop key="description.it">Identificativo Univoco Legale associato alla persona</prop>
+                </props>
+            </property>
+        </bean>
+
+    </list>
+    </constructor-arg>
+    </bean>
+ 
+</beans>

@@ -40,18 +40,12 @@
    group: "root"
    mode: "0600"
 
-- name: "Store in the 'shib_db' ansible variable the result of the check on the existance of the 'shibboleth' database"
-  command: mysql -u root -s -N -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='shibboleth'"
-  register: shib_db
-  changed_when: false
-
-- name: "Create the persistent identifiers 'shibboleth' database"
-  mysql_db:
-   encoding: "utf8"
-   state: import
-   name: all
-   target: "/root/shib-idp-persistentId-db.sql"
-  when: shib_db.stdout != 'shibboleth'
+- name: "Setup Database for Stored Persistent-id"
+  import_tasks: stored-pid-install.yml
+  when: 
+   - idp_config is defined
+   - idp_config['idp_persistentId_type'] is defined
+   - idp_config['idp_persistentId_type'] == "stored"
 
 - name: "Load fake RS SP Metadata in the '/metadata' directory"
   copy:
@@ -76,7 +70,7 @@
    - idp_config['sup_coco'] in ["Yes","yes","True","true"]
 
 # Load /opt/shibboleth-idp/conf/saml-nameid.properties
-- name: "Check if a custom 'saml-nameid.properties' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
+- name: "Check if a custom 'saml-nameid.properties' is provided under {{ files_dir }}/<FQDN>/idp/conf"
   stat:
    path: "{{ files_dir }}/{{ fqdn }}/idp/conf/saml-nameid.properties"
   delegate_to: 127.0.0.1
@@ -95,20 +89,34 @@
   notify:
    - "Restart Jetty"
 
-- name: "Load default 'saml-nameid.properties' provided by a template"
+- name: "Load default 'saml-nameid.properties' provided by a template for Shibboleth IdP v3.x"
   template:
-   src: "conf/saml-nameid.properties.j2"
+   src: "conf/saml-nameid-v3.properties.j2"
    dest: "/opt/shibboleth-idp/conf/saml-nameid.properties"
    owner: "jetty"
    group: "root"
    mode: "0600"
   when:
    - saml_nameid_properties.stat.exists == False
+   - "shib_idp_version is search('^3.')"
+  notify:
+   - "Restart Jetty"
+
+- name: "Load default 'saml-nameid.properties' provided by a template for Shibboleth IdP v4.x"
+  template:
+   src: "conf/saml-nameid-v4.properties.j2"
+   dest: "/opt/shibboleth-idp/conf/saml-nameid.properties"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   - saml_nameid_properties.stat.exists == False
+   - "shib_idp_version is search('^4.')"
   notify:
    - "Restart Jetty"
 
 # Load /opt/shibboleth-idp/conf/saml-nameid.xml
-- name: "Check if a custom 'saml-nameid.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
+- name: "Check if a custom 'saml-nameid.xml' is provided under {{ files_dir }}/<FQDN>/idp/conf"
   stat:
    path: "{{ files_dir }}/{{ fqdn }}/idp/conf/saml-nameid.xml"
   delegate_to: 127.0.0.1
@@ -140,7 +148,7 @@
    - "Reload NameID Generation"
 
 # Load /opt/shibboleth-idp/conf/global.xml
-- name: "Check if a custom 'global.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
+- name: "Check if a custom 'global.xml' is provided under {{ files_dir }}/<FQDN>/idp/conf"
   stat:
    path: "{{ files_dir }}/{{ fqdn }}/idp/conf/global.xml"
   delegate_to: 127.0.0.1
@@ -168,11 +176,13 @@
    mode: "0600"
   when:
    - global_xml.stat.exists == False
+   - idp_config is defined
+   - idp_config['idp_persistentId_type'] is defined or idp_config['storage_memcache_hosts'] is defined
   notify:
    - "Restart Jetty"
 
 # Load /opt/shibboleth-idp/conf/idp.properties
-- name: "Check if a custom 'idp.properties' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
+- name: "Check if a custom 'idp.properties' is provided under {{ files_dir }}/<FQDN>/idp/conf"
   stat:
    path: "{{ files_dir }}/{{ fqdn }}/idp/conf/idp.properties"
   delegate_to: 127.0.0.1
@@ -191,20 +201,34 @@
   notify:
    - "Restart Jetty"
 
-- name: "Load default 'idp.properties' provided by a template"
+- name: "Load default 'idp.properties' provided by a template for Shibboleth IdP v3.x"
   template:
-   src: "conf/idp.properties.j2"
+   src: "conf/idp-v3.properties.j2"
    dest: "/opt/shibboleth-idp/conf/idp.properties"
    owner: "jetty"
    group: "root"
    mode: "0600"
   when:
    - idp_properties.stat.exists == False
+   - "shib_idp_version is search('^3.')"
+  notify:
+   - "Restart Jetty"
+
+- name: "Load default 'idp.properties' provided by a template for Shibboleth IdP v4.x"
+  template:
+   src: "conf/idp-v4.properties.j2"
+   dest: "/opt/shibboleth-idp/conf/idp.properties"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   - idp_properties.stat.exists == False
+   - "shib_idp_version is search('^4.')"
   notify:
    - "Restart Jetty"
 
 # Load /opt/shibboleth-idp/conf/ldap.properties
-- name: "Check if a custom 'ldap.properties' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
+- name: "Check if a custom 'ldap.properties' is provided under {{ files_dir }}/<FQDN>/idp/conf"
   stat: 
    path: "{{ files_dir }}/{{ fqdn }}/idp/conf/ldap.properties"
   delegate_to: 127.0.0.1
@@ -223,20 +247,46 @@
   notify:
    - "Restart Jetty"
 
-- name: "Load default 'ldap.properties' provided by a template"
+- name: "Load default 'ldap.properties' provided by a template for Shibboleth IdP v3.x"
   template:
-   src: "conf/ldap.properties.j2"
+   src: "conf/ldap-v3.properties.j2"
    dest: "/opt/shibboleth-idp/conf/ldap.properties"
    owner: "jetty"
    group: "root"
    mode: "0600"
   when:
    - ldap_properties.stat.exists == False
+   - "shib_idp_version is search('^3.')"
+  notify:
+   - "Restart Jetty"
+
+- name: "Load default 'ldap.properties' provided by a template for Shibboleth IdP v4.x"
+  template:
+   src: "conf/ldap-v4.properties.j2"
+   dest: "/opt/shibboleth-idp/conf/ldap.properties"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   - ldap_properties.stat.exists == False
+   - "shib_idp_version is search('^4.')"
+  notify:
+   - "Restart Jetty"
+
+- name: "Load default 'secrets.properties' provided by a template for Shibboleth IdP v4.x"
+  template:
+   src: "credentials/secrets.properties.j2"
+   dest: "/opt/shibboleth-idp/credentials/secrets.properties"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   - "shib_idp_version is search('^4.')"
   notify:
    - "Restart Jetty"
 
 # Load /opt/shibboleth-idp/conf/services.properties
-- name: "Check if a custom 'services.properties' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
+- name: "Check if a custom 'services.properties' is provided under {{ files_dir }}/<FQDN>/idp/conf"
   stat:
    path: "{{ files_dir }}/{{ fqdn }}/idp/conf/services.properties"
   delegate_to: 127.0.0.1
@@ -256,7 +306,7 @@
    - "Restart Jetty"
 
 # Load /opt/shibboleth-idp/conf/services.xml
-- name: "Check if a custom 'services.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
+- name: "Check if a custom 'services.xml' is provided under {{ files_dir }}/<FQDN>/idp/conf"
   stat:
    path: "{{ files_dir }}/{{ fqdn }}/idp/conf/services.xml"
   delegate_to: 127.0.0.1
@@ -275,33 +325,69 @@
   notify:
    - "Restart Jetty"
 
-- name: "Load default 'services.xml' provided by a template"
+- name: "Load default 'services.xml' provided by a template for Shibboleth IdP v3.x"
   template:
-   src: "conf/services.xml.j2"
+   src: "conf/services-v3.xml.j2"
    dest: "/opt/shibboleth-idp/conf/services.xml"
    owner: "jetty"
    group: "root"
    mode: "0600"
   when:
    - services_xml.stat.exists == False
+   - "shib_idp_version is search('^3.')"
   notify:
    - "Restart Jetty"
 
-- name: "Create metadata-providers.xml and the Federation Attribute Filter"
+- name: "Load default 'services.xml' provided by a template for Shibboleth IdP v4.x"
   template:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
+   src: "conf/services-v4.xml.j2"
+   dest: "/opt/shibboleth-idp/conf/services.xml"
    owner: "jetty"
    group: "root"
    mode: "0600"
-  with_items:
-   - { src: "conf/attribute-filter-v3-federation.xml.j2", dest: "/opt/shibboleth-idp/conf/attribute-filter-v3-federation.xml" }
-   - { src: "conf/metadata-providers.xml.j2", dest: "/opt/shibboleth-idp/conf/metadata-providers.xml" }
+  when:
+   - services_xml.stat.exists == False
+   - "shib_idp_version is search('^4.')"
   notify:
    - "Restart Jetty"
 
+- name: "Create metadata-providers.xml"
+  template:
+   src: "conf/metadata-providers.xml.j2"
+   dest: "/opt/shibboleth-idp/conf/metadata-providers.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  notify:
+   - "Restart Jetty"
+
+- name: "Create Federation Attribute Filter for Shibboleth IdP v3.x"
+  template:
+   src: "conf/attribute-filter-v3-federation.xml.j2"
+   dest: "/opt/shibboleth-idp/conf/attribute-filter-federation.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   -  "shib_idp_version is search('^3.')"
+  notify:
+   - "Restart Jetty"
+
+- name: "Create Federation Attribute Filter for Shibboleth IdP v4.x"
+  template:
+   src: "conf/attribute-filter-v4-federation.xml.j2"
+   dest: "/opt/shibboleth-idp/conf/attribute-filter-federation.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   -  "shib_idp_version is search('^4.')"
+  notify:
+   - "Restart Jetty"
+
+
 # Load /opt/shibboleth-idp/conf/attribute-resolver.xml
-- name: "Check if a custom 'attribute-resolver.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
+- name: "Check if a custom 'attribute-resolver.xml' is provided under {{ files_dir }}/<FQDN>/idp/conf"
   stat:
    path: "{{ files_dir }}/{{ fqdn }}/idp/conf/attribute-resolver.xml"
   delegate_to: 127.0.0.1
@@ -311,29 +397,56 @@
 - name: "Load custom 'attribute-resolver.xml' provided"
   copy:
    src: "{{ files_dir }}/{{ fqdn }}/idp/conf/attribute-resolver.xml"
-   dest: "/opt/shibboleth-idp/conf/attribute-resolver-v3-custom.xml"
+   dest: "/opt/shibboleth-idp/conf/attribute-resolver.xml"
    owner: "jetty"
    group: "root"
    mode: "0600"
   when:
    - attribute_resolver_xml.stat.exists == True
   notify:
-   - "Restart Jetty"
+   - "Reload Attribute Resolver"
 
-- name: "Load default 'attribute-resolver.xml' provided by a template"
+- name: "Load default 'attribute-resolver.xml' provided by a template for Shibboleth IdP 3.3.x"
   template:
    src: "conf/attribute-resolver-v3-custom.xml.j2"
-   dest: "/opt/shibboleth-idp/conf/attribute-resolver-v3-custom.xml"
+   dest: "/opt/shibboleth-idp/conf/attribute-resolver.xml"
    owner: "jetty"
    group: "root"
    mode: "0600"
   when:
    - attribute_resolver_xml.stat.exists == False
+   -  "shib_idp_version is search('^3.3.')"
   notify:
    - "Restart Jetty"
 
-# Load /opt/shibboleth-idp/conf/attribute-filter-custom.xml
-- name: "Check if a custom 'attribute-filter.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
+- name: "Load default 'attribute-resolver.xml' provided by a template for Shibboleth IdP 3.4.x"
+  template:
+   src: "conf/attribute-resolver-v3_4-custom.xml.j2"
+   dest: "/opt/shibboleth-idp/conf/attribute-resolver.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   - attribute_resolver_xml.stat.exists == False
+   -  "shib_idp_version is search('^3.4.')"
+  notify:
+   - "Reload Attribute Resolver"
+
+- name: "Load default 'attribute-resolver.xml' provided by a template for Shibboleth IdP 4.0.x"
+  template:
+   src: "conf/attribute-resolver-v4_0-custom.xml.j2"
+   dest: "/opt/shibboleth-idp/conf/attribute-resolver.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   - attribute_resolver_xml.stat.exists == False
+   - "shib_idp_version is search('^4.0.')"
+  notify:
+   - "Reload Attribute Resolver"
+
+# Load /opt/shibboleth-idp/conf/attribute-filter.xml
+- name: "Check if a custom 'attribute-filter.xml' is provided under {{ files_dir }}/<FQDN>/idp/conf"
   stat:
    path: "{{ files_dir }}/{{ fqdn }}/idp/conf/attribute-filter.xml"
   delegate_to: 127.0.0.1
@@ -343,17 +456,17 @@
 - name: "Load custom 'attribute-filter.xml' provided"
   copy:
    src: "{{ files_dir }}/{{ fqdn }}/idp/conf/attribute-filter.xml"
-   dest: "/opt/shibboleth-idp/conf/attribute-filter-custom.xml"
+   dest: "/opt/shibboleth-idp/conf/attribute-filter.xml"
    owner: "jetty"
    group: "root"
    mode: "0600"
   when:
    - attribute_filter_xml.stat.exists == True
   notify:
-   - "Restart Jetty"
+   - "Reload Attribute Filter"
 
 # Load /opt/shibboleth-idp/conf/authn/ldap-authn-config.xml
-- name: "Check if a custom 'ldap-authn-config.xml' is provided under {{ files_dir }}/{{ fqdn }}/idp/conf/authn"
+- name: "Check if a custom 'ldap-authn-config.xml' is provided under {{ files_dir }}/<FQDN>/idp/conf/authn"
   stat: 
    path: "{{ files_dir }}/{{ fqdn }}/idp/conf/authn/ldap-authn-config.xml"
   delegate_to: 127.0.0.1
@@ -377,9 +490,9 @@
   notify:
    - "Restart Jetty"
 
-- name: "Load default 'ldap-authn-config.xml'"
+- name: "Load default 'ldap-authn-config.xml' for Shibboleth IdP v3.x"
   copy:
-   src: "files/conf/authn/ldap-authn-config.xml"
+   src: "files/conf/authn/ldap-authn-config-v3.xml"
    dest: "/opt/shibboleth-idp/conf/authn/ldap-authn-config.xml"
    owner: "jetty"
    group: "root"
@@ -391,11 +504,30 @@
    - idp_config['ldap']['ppolicy'] is defined
    - idp_config['ldap']['ppolicy']['change_password_url'] is defined
    - idp_config['ldap']['ppolicy']['change_password_url'] != ""
+   - "shib_idp_version is search('^3.')"
+  notify:
+   - "Restart Jetty"
+
+- name: "Load default 'ldap-authn-config.xml' for Shibboleth IdP v4.x"
+  copy:
+   src: "files/conf/authn/ldap-authn-config-v4.xml"
+   dest: "/opt/shibboleth-idp/conf/authn/ldap-authn-config.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   - ldap_authn_config_xml.stat.exists == False
+   - idp_config is defined
+   - idp_config['ldap'] is defined
+   - idp_config['ldap']['ppolicy'] is defined
+   - idp_config['ldap']['ppolicy']['change_password_url'] is defined
+   - idp_config['ldap']['ppolicy']['change_password_url'] != ""
+   - "shib_idp_version is search('^4.')"
   notify:
    - "Restart Jetty"
 
 # Load /opt/shibboleth-idp/conf/authn/password-authn-config.xml
-- name: "Check if a custom 'password-authn-config.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf/authn"
+- name: "Check if a custom 'password-authn-config.xml' is provided under {{ files_dir }}/<FQDN>/idp/conf/authn"
   stat:
    path: "{{ files_dir }}/{{ fqdn }}/idp/conf/authn/password-authn-config.xml"
   delegate_to: 127.0.0.1
@@ -419,9 +551,9 @@
   notify:
    - "Restart Jetty"
 
-- name: "Load default 'password-authn-config.xml'"
+- name: "Load default 'password-authn-config.xml' for Shibboleth IdP v3.x"
   copy:
-   src: "files/conf/authn/password-authn-config.xml"
+   src: "files/conf/authn/password-authn-config-v3.xml"
    dest: "/opt/shibboleth-idp/conf/authn/password-authn-config.xml"
    owner: "jetty"
    group: "root"
@@ -433,11 +565,30 @@
    - idp_config['ldap']['ppolicy'] is defined
    - idp_config['ldap']['ppolicy']['change_password_url'] is defined
    - idp_config['ldap']['ppolicy']['change_password_url'] != ""
+   - "shib_idp_version is search('^3.')"
+  notify:
+   - "Restart Jetty"
+
+- name: "Load default 'password-authn-config.xml' for Shibboleth IdP v4.x"
+  copy:
+   src: "files/conf/authn/password-authn-config-v4.xml"
+   dest: "/opt/shibboleth-idp/conf/authn/password-authn-config.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   - password_authn_config_xml.stat.exists == False
+   - idp_config is defined
+   - idp_config['ldap'] is defined
+   - idp_config['ldap']['ppolicy'] is defined
+   - idp_config['ldap']['ppolicy']['change_password_url'] is defined
+   - idp_config['ldap']['ppolicy']['change_password_url'] != ""
+   - "shib_idp_version is search('^4.')"
   notify:
    - "Restart Jetty"
 
 # Load /opt/shibboleth-idp/conf/c14n/subject-c14n.xml
-- name: "Check if a custom 'subject-c14n.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf/authn"
+- name: "Check if a custom 'subject-c14n.xml' is provided under {{ files_dir }}/<FQDN>/idp/conf/authn"
   stat:
    path: "{{ files_dir }}/{{ fqdn }}/idp/conf/c14n/subject-c14n.xml"
   delegate_to: 127.0.0.1
@@ -456,20 +607,40 @@
   notify:
    - "Restart Jetty"
 
-- name: "Load default 'subject-c14n.xml'"
+- name: "Load default 'subject-c14n.xml' only for Shibboleth IdP v3.x"
   copy:
-   src: "files/conf/c14n/subject-c14n.xml"
+   src: "files/conf/c14n/subject-c14n-v3.xml"
    dest: "/opt/shibboleth-idp/conf/c14n/subject-c14n.xml"
    owner: "jetty"
    group: "root"
    mode: "0600"
   when:
    - subject_c14n_xml.stat.exists == False
+   - "shib_idp_version is search('^3.')"
+   - idp_config is defined
+   - idp_config['idp_persistentId_type'] is defined
+   - idp_config['idp_persistentId_type'] == "stored"
+  notify:
+   - "Restart Jetty"
+
+- name: "Load default 'subject-c14n.xml' only for Shibboleth IdP v4.x"
+  copy:
+   src: "files/conf/c14n/subject-c14n-v4.xml"
+   dest: "/opt/shibboleth-idp/conf/c14n/subject-c14n.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   - subject_c14n_xml.stat.exists == False
+   - "shib_idp_version is search('^4.')"
+   - idp_config is defined
+   - idp_config['idp_persistentId_type'] is defined
+   - idp_config['idp_persistentId_type'] == "stored"
   notify:
    - "Restart Jetty"
 
 # Load /opt/shibboleth-idp/conf/logback.xml
-- name: "Check if a custom 'logback.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
+- name: "Check if a custom 'logback.xml' is provided under {{ files_dir }}/<FQDN>/idp/conf"
   stat:
    path: "{{ files_dir }}/{{ fqdn }}/idp/conf/logback.xml"
   delegate_to: 127.0.0.1
@@ -486,92 +657,140 @@
   when:
    - logback_xml.stat.exists == True
   notify:
-   - "Restart Jetty"
+   - "Reload Logging"
 
-- name: "Load default 'logback.xml' provided"
+- name: "Load default 'logback.xml' provided for Shibboleth IdP v3.x"
   copy:
-   src: "files/conf/logback.xml"
+   src: "files/conf/logback-v3.xml"
    dest: "/opt/shibboleth-idp/conf/logback.xml"
    owner: "jetty"
    group: "root"
    mode: "0600"
   when:
    - logback_xml.stat.exists == False
+   - "shib_idp_version is search('^3.')"
   notify:
-   - "Restart Jetty"
+   - "Reload Logging"
 
-# Load /opt/shibboleth-idp/conf/attribute-filter-v3-coco.xml
-- name: "Check if a custom 'attribute-filter-v3-coco.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
+- name: "Load default 'logback.xml' provided for Shibboleth IdP v4.x"
+  copy:
+   src: "files/conf/logback-v4.xml"
+   dest: "/opt/shibboleth-idp/conf/logback.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   - logback_xml.stat.exists == False
+   - "shib_idp_version is search('^4.')"
+  notify:
+   - "Reload Logging"
+
+# Load /opt/shibboleth-idp/conf/attribute-filter-coco.xml
+- name: "Check if a custom 'attribute-filter-coco.xml' is provided under {{ files_dir }}/<FQDN>/idp/conf"
   stat:
-   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/attribute-filter-v3-coco.xml"
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/attribute-filter-coco.xml"
   delegate_to: 127.0.0.1
-  register: attribute_filter_v3_coco_xml
+  register: attribute_filter_coco_xml
   changed_when: false
+
+- name: "Load custom 'attribute-filter-coco.xml' provided"
+  copy:
+   src: "{{ files_dir }}/{{ fqdn }}/idp/conf/attribute-filter-coco.xml"
+   dest: "/opt/shibboleth-idp/conf/attribute-filter-coco.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
   when:
    - idp_config['sup_coco'] is defined
    - idp_config['sup_coco'] in ["Yes","yes","True","true"]
-
-- name: "Load custom 'attribute-filter-v3-coco.xml' provided"
-  copy:
-   src: "{{ files_dir }}/{{ fqdn }}/idp/conf/attribute-filter-v3-coco.xml"
-   dest: "/opt/shibboleth-idp/conf/attribute-filter-v3-coco.xml"
-   owner: "jetty"
-   group: "root"
-   mode: "0600"
-  when:
-   - attribute_filter_v3_coco_xml.stat.exists == True
+   - attribute_filter_coco_xml.stat.exists == True
   notify:
-   - "Restart Jetty"
+   - "Reload Attribute Filter"
 
-- name: "Load default 'attribute-filter-v3-coco.xml' provided"
+- name: "Load default 'attribute-filter-coco.xml' provided for Shibboleth IdP v3.x"
   copy:
    src: "files/conf/attribute-filter-v3-coco.xml"
-   dest: "/opt/shibboleth-idp/conf/attribute-filter-v3-coco.xml"
+   dest: "/opt/shibboleth-idp/conf/attribute-filter-coco.xml"
    owner: "jetty"
    group: "root"
    mode: "0600"
   when:
-   - attribute_filter_v3_coco_xml.stat.exists == False
+   - idp_config['sup_coco'] is defined
+   - idp_config['sup_coco'] in ["Yes","yes","True","true"]
+   - attribute_filter_coco_xml.stat.exists == False
+   - "shib_idp_version is search('^3.')"
   notify:
-   - "Restart Jetty"
+   - "Reload Attribute Filter"
 
-# Load /opt/shibboleth-idp/conf/attribute-filter-v3-rs.xml
-- name: "Check if a custom 'attribute-filter-v3-rs.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
+- name: "Load default 'attribute-filter-coco.xml' provided for Shibboleth IdP v4.x"
+  copy:
+   src: "files/conf/attribute-filter-v4-coco.xml"
+   dest: "/opt/shibboleth-idp/conf/attribute-filter-coco.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   - idp_config['sup_coco'] is defined
+   - idp_config['sup_coco'] in ["Yes","yes","True","true"]
+   - attribute_filter_coco_xml.stat.exists == False
+   - "shib_idp_version is search('^4.')"
+  notify:
+   - "Reload Attribute Filter"
+
+# Load /opt/shibboleth-idp/conf/attribute-filter-rs.xml
+- name: "Check if a custom 'attribute-filter-rs.xml' is provided under {{ files_dir }}/<FQDN>/idp/conf"
   stat:
-   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/attribute-filter-v3-rs.xml"
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/attribute-filter-rs.xml"
   delegate_to: 127.0.0.1
-  register: attribute_filter_v3_rs_xml
+  register: attribute_filter_rs_xml
   changed_when: false
+
+- name: "Load custom 'attribute-filter-rs.xml' provided"
+  copy:
+   src: "{{ files_dir }}/{{ fqdn }}/idp/conf/attribute-filter-rs.xml"
+   dest: "/opt/shibboleth-idp/conf/attribute-filter-rs.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
   when:
    - idp_config['sup_rs'] is defined
    - idp_config['sup_rs'] in ["Yes","yes","True","true"]
-
-- name: "Load custom 'attribute-filter-v3-rs.xml' provided"
-  copy:
-   src: "{{ files_dir }}/{{ fqdn }}/idp/conf/attribute-filter-v3-rs.xml"
-   dest: "/opt/shibboleth-idp/conf/attribute-filter-v3-rs.xml"
-   owner: "jetty"
-   group: "root"
-   mode: "0600"
-  when:
-   - attribute_filter_v3_rs_xml.stat.exists == True
+   - attribute_filter_rs_xml.stat.exists == True
   notify:
-   - "Restart Jetty"
+   - "Reload Attribute Filter"
 
-- name: "Load default 'attribute-filter-v3-rs.xml' provided"
+- name: "Load default 'attribute-filter-rs.xml' provided for Shibboleth IdP v3.x"
   copy:
    src: "files/conf/attribute-filter-v3-rs.xml"
-   dest: "/opt/shibboleth-idp/conf/attribute-filter-v3-rs.xml"
+   dest: "/opt/shibboleth-idp/conf/attribute-filter-rs.xml"
    owner: "jetty"
    group: "root"
    mode: "0600"
   when:
-   - attribute_filter_v3_rs_xml.stat.exists == False
+   - idp_config['sup_rs'] is defined
+   - idp_config['sup_rs'] in ["Yes","yes","True","true"]
+   - attribute_filter_rs_xml.stat.exists == False
+   - "shib_idp_version is search('^3.')"
   notify:
-   - "Restart Jetty"
+   - "Reload Attribute Filter"
+
+- name: "Load default 'attribute-filter-rs.xml' provided for Shibboleth IdP v4.x"
+  copy:
+   src: "files/conf/attribute-filter-v4-rs.xml"
+   dest: "/opt/shibboleth-idp/conf/attribute-filter-rs.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   - idp_config['sup_rs'] is defined
+   - idp_config['sup_rs'] in ["Yes","yes","True","true"]
+   - attribute_filter_rs_xml.stat.exists == False
+   -  "shib_idp_version is search('^4.')"
+  notify:
+   - "Reload Attribute Filter"
 
 # Load /opt/shibboleth-idp/conf/audit.xml
-- name: "Check if a custom 'audit.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
+- name: "Check if a custom 'audit.xml' is provided under {{ files_dir }}/<FQDN>/idp/conf"
   stat:
    path: "{{ files_dir }}/{{ fqdn }}/idp/conf/audit.xml"
   delegate_to: 127.0.0.1
@@ -590,20 +809,34 @@
   notify:
    - "Restart Jetty"
 
-- name: "Load default 'audit.xml' provided"
+- name: "Load default 'audit.xml' provided for Shibboleth IdP v3.x"
   copy:
-   src: "files/conf/audit.xml"
+   src: "files/conf/audit-v3.xml"
    dest: "/opt/shibboleth-idp/conf/audit.xml"
    owner: "jetty"
    group: "root"
    mode: "0600"
   when:
    - audit_xml.stat.exists == False
+   - "shib_idp_version is search('^3.')"
+  notify:
+   - "Restart Jetty"
+
+- name: "Load default 'audit.xml' provided for Shibboleth IdP v4.x"
+  copy:
+   src: "files/conf/audit-v4.xml"
+   dest: "/opt/shibboleth-idp/conf/audit.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   - audit_xml.stat.exists == False
+   - "shib_idp_version is search('^4.')"
   notify:
    - "Restart Jetty"
 
 # Load /opt/shibboleth-idp/conf/mvc-beans.xml
-- name: "Check if a custom 'mvc-beans.xml' is provided under {{ files_dir}}/{{ fqdn }}/idp/conf"
+- name: "Check if a custom 'mvc-beans.xml' is provided under {{ files_dir }}/<FQDN>/idp/conf"
   stat:
    path: "{{ files_dir }}/{{ fqdn }}/idp/conf/mvc-beans.xml"
   delegate_to: 127.0.0.1
@@ -635,7 +868,7 @@
    - "Restart Jetty"
 
 # Load /opt/shibboleth-idp/credentials/trustCertificates.crt
-- name: "Check if a custom 'trustCertificates.crt' is provided under {{ files_dir}}/{{ fqdn }}/idp/credentials"
+- name: "Check if a custom 'trustCertificates.crt' is provided under {{ files_dir }}/<FQDN>/idp/credentials"
   stat:
    path: "{{ files_dir }}/{{ fqdn }}/idp/credentials/trustCertificates.crt"
   delegate_to: 127.0.0.1
@@ -657,6 +890,7 @@
 - name: "Remove fake RS SP Metadata from the '/metadata' directory"
   file:
    path: "/opt/shibboleth-idp/metadata/fake-rs-sp.xml"
+   state: absent
   when:
    - idp_config['sup_rs'] is defined
    - idp_config['sup_rs'] in ["No","no","False","false"]
@@ -664,11 +898,12 @@
 - name: "Remove fake CoCo SP Metadata in the '/metadata' directory"
   file:
    path: "/opt/shibboleth-idp/metadata/fake-coco-sp.xml"
+   state: absent
   when:
    - idp_config['sup_coco'] is defined
    - idp_config['sup_coco'] in ["No","no","False","false"]
 
-- name: "Configure Shibboleth IdP to support OpenLDAP Password Policy"
+- name: "Configure Shibboleth IdP to support OpenLDAP Password Policy for Shibboleth IdP v3.x"
   copy:
    src: "{{ item.src }}"
    dest: "{{ item.dest }}"
@@ -676,14 +911,33 @@
    group: "{{ item.group }}"
    mode: "{{ item.mode }}"
   with_items:
-   - { src: "files/flows/authn/conditions/conditions-flow.xml", dest: "/opt/shibboleth-idp/flows/authn/conditions/conditions-flow.xml", owner: "root", group: "root", mode: "0755" }
-   - { src: "files/views/login-error.vm", dest: "/opt/shibboleth-idp/views/login-error.vm", owner: "root", group: "root", mode: "0644" }
+   - { src: "files/flows/authn/conditions/conditions-flow-v3.xml", dest: "/opt/shibboleth-idp/flows/authn/conditions/conditions-flow.xml", owner: "root", group: "root", mode: "0755" }
+   - { src: "files/views/login-error-v3.vm", dest: "/opt/shibboleth-idp/views/login-error.vm", owner: "root", group: "root", mode: "0644" }
   when:
    - idp_config is defined
    - idp_config['ldap'] is defined
    - idp_config['ldap']['ppolicy'] is defined
    - idp_config['ldap']['ppolicy']['change_password_url'] is defined
    - idp_config['ldap']['ppolicy']['change_password_url'] != ""
+   - "shib_idp_version is search('^3.')"
+
+- name: "Configure Shibboleth IdP to support OpenLDAP Password Policy for Shibboleth IdP v4.x"
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "{{ item.owner }}"
+   group: "{{ item.group }}"
+   mode: "{{ item.mode }}"
+  with_items:
+   - { src: "files/flows/authn/conditions/conditions-flow-v4.xml", dest: "/opt/shibboleth-idp/flows/authn/conditions/conditions-flow.xml", owner: "root", group: "root", mode: "0755" }
+   - { src: "files/views/login-error-v4.vm", dest: "/opt/shibboleth-idp/views/login-error.vm", owner: "root", group: "root", mode: "0644" }
+  when:
+   - idp_config is defined
+   - idp_config['ldap'] is defined
+   - idp_config['ldap']['ppolicy'] is defined
+   - idp_config['ldap']['ppolicy']['change_password_url'] is defined
+   - idp_config['ldap']['ppolicy']['change_password_url'] != ""
+   - "shib_idp_version is search('^4.')"
 
 - name: "Be sure that 'change-password' directory is created"
   file:
@@ -722,6 +976,7 @@
    mode: "0644"
    validate_certs: "{{ item.disregardTLSCertificate }}"
   with_items: "{{ idp_metadata_providers }}"
+  when: item['url'] is defined
 
 # Jetty IdP Configuration
 - name: "Configure Jetty to load the IdP war file"
@@ -731,3 +986,110 @@
    owner: "root"
    group: "root"
    mode: 0644
+
+- name: "Upload Custom Metadata files"
+  copy:
+   src: "{{ files_dir }}/{{ fqdn }}/idp/metadata/{{ item.file }}"
+   dest: "/opt/shibboleth-idp/metadata/{{ item.file }}"
+   owner: "jetty"
+   group: "root"
+   mode: "0644"
+  when: item['url'] is not defined
+  with_items: "{{ idp_metadata_providers }}"
+
+# IP access control to status page. Required by haproxy
+- name: "Shibboleth Status access control "
+  lineinfile:
+    path: "/opt/shibboleth-idp/conf/access-control.xml"
+    regexp: "p:allowedRanges="
+    line: "p:allowedRanges=\"#{ {'127.0.0.1/32', '::1/128', '{{ ip_access_control['idpstatus'] |  join(\"', '\") }}'} }\" />"
+  when: ip_access_control is defined and ip_access_control['idpstatus']
+  notify:
+   - "Reload Access Control"
+
+- name: "Add 'eduPersonTargetedID' support to Attribute Registry"
+  copy:
+   src: "files/conf/attributes/custom/eduPersonTargetedID.properties"
+   dest: "/opt/shibboleth-idp/conf/attributes/custom/eduPersonTargetedID.properties"
+   owner: "jetty"
+   group: "root"
+   mode: "0644"
+  when:
+   - "shib_idp_version is search('^4.')"
+  notify:
+   - "Restart Jetty"
+
+- name: "Add SCHAC support to Attribute Registry"
+  copy:
+   src: "files/conf/attributes/schac.xml"
+   dest: "/opt/shibboleth-idp/conf/attributes/schac.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0644"
+  when:
+   - "shib_idp_version is search('^4.')"
+  notify:
+   - "Restart Jetty"
+
+- name: "Enable SCHAC support on Attribute Registry"
+  copy:
+   src: "files/conf/attributes/default-rules.xml"
+   dest: "/opt/shibboleth-idp/conf/attributes/default-rules.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0644"
+  when:
+   - "shib_idp_version is search('^4.')"
+  notify:
+   - "Restart Jetty"
+
+- name: "Load script to securing cookies and other IDP data"
+  copy:
+   src: "files/bin/updateIDPsecret.sh"
+   dest: "/opt/shibboleth-idp/bin/updateIDPsecret.sh"
+   owner: "root"
+   group: "root"
+   mode: "0755"
+  when:
+   - "shib_idp_version is search('^4.')"
+
+- name: "Create 'updateIDPsecret' cron"
+  copy:
+   src: "files/cron.daily/updateIDPsecret"
+   dest: "/etc/cron.daily/updateIDPsecret"
+   owner: "root"
+   group: "root"
+   mode: "0755"
+  when:
+   - "shib_idp_version is search('^4.')"
+
+- name: "Check if 'sealer.jks' hard link exists into '/var/local/backups'"
+  stat:
+   path: "/var/local/backups/sealer.jks"
+  register: sealer_jks_lnk
+  changed_when: false
+
+- name: "Create hard link of 'sealer.jks' into '/var/local/backups'"
+  file:
+   src: "/opt/shibboleth-idp/credentials/sealer.jks"
+   dest: "/var/local/backups/sealer.jks"
+   state: hard
+  when:
+   - "shib_idp_version is search('^4.')"
+   - sealer_jks_lnk.stat.exists == False
+
+- name: "Check if 'sealer.kver' hard link exists into '/var/local/backups'"
+  stat:
+   path: "/var/local/backups/sealer.kver"
+  register: sealer_kver_lnk
+  changed_when: false
+
+- name: "Create hard link of 'sealer.kver' into '/var/local/backups'"
+  file:
+   src: "/opt/shibboleth-idp/credentials/sealer.kver"
+   dest: "/var/local/backups/sealer.kver"
+   state: hard
+  when:
+   - "shib_idp_version is search('^4.')"
+   - sealer_kver_lnk.stat.exists == False
+

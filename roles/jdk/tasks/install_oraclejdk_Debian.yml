@@ -20,14 +20,10 @@
 
 - name: "Install Oracle Java"
   apt:
-   name: "{{ item }}"
+   name: ['oracle-java{{ jdk_version }}-installer', 'ca-certificates', 'oracle-java{{ jdk_version }}-set-default']
    state: latest
    update_cache: yes
    install_recommends: no
-  with_items:
-    - "oracle-java{{ jdk_version }}-installer"
-    - "ca-certificates"
-    - "oracle-java{{ jdk_version }}-set-default"
 
 - name: "Configure default-java link"
   file:

@@ -1,0 +1,14 @@
+---
+# tasks file for haproxy
+
+- name: "Include OS-specific variables."
+  include_vars: "{{ ansible_os_family }}.yml"
+  tags: haproxy
+
+- name: "Install Haproxy"
+  import_tasks: haproxy-install.yml
+  tags: haproxy
+
+- name: "Configure Haproxy"
+  import_tasks: haproxy-configure.yml
+  tags: haproxy

@@ -1,0 +1,10 @@
+Alias /statistics /var/www/html/statistics
+
+<Directory /var/www/statistics>
+   DirectoryIndex index.php
+{% if (ip_access_control is defined) and (ip_access_control|length > 0) and (ip_access_control['webstats'] is defined) and (ip_access_control['webstats']|length > 0) %}
+   Require ip {{ ip_access_control['webstats'] | join(' ') }}
+{% else %}
+   Require all granted
+{% endif %}
+</Directory>

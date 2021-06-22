@@ -1,0 +1,45 @@
+---
+# file: shib-idp-servers-balancer.yml
+- hosts: Debian_IdP_without_IdM
+  become: yes
+  become_method: sudo
+  remote_user: debian
+  roles:
+    - common
+    - memcached
+    - apache
+    - jdk
+    - jetty
+    - idp
+    - check_mk_agent
+    - sys-update
+  serial: 3
+
+- hosts: Debian-Mysql
+  become: yes
+  become_method: sudo
+  remote_user: debian
+  roles:
+    - common
+    - mysql
+    - sys-update
+
+- hosts: Debian-IdP-Balancer
+  become: yes
+  become_method: sudo
+  remote_user: debian
+  roles:
+    - haproxy
+  pre_tasks:
+    - name: Gather HAproxy Realservers facts
+      setup:
+        gather_subset: 
+          - '!all'
+          - '!min'
+          - 'network'
+      delegate_to: "{{ item }}"
+      delegate_facts: True
+      with_items:
+        - "{{ groups['Debian_IdP_without_IdM'] | default([]) }}"
+        - "{{ groups['Debian_IdP_with_IdM'] | default([]) }}"
+        - "{{ groups['Debian_IdP_with_IdM_GARR'] | default([]) }}"

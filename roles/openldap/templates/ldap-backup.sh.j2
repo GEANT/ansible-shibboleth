@@ -23,6 +23,10 @@ then
     echo "LDAP BACKUP FAILED"
     echo "FAIL" > $FAILFILE
 else
+    if [ -f "$FAILFILE" ]; then
+       rm $FAILFILE
+    fi
+    echo "#-- Dump completed on $(date +%F) $(date +%T)" >> ${BACKUPDIR}/ldap-users.ldif
     gzip -f ${BACKUPDIR}/ldap-users.ldif
     echo "LDAP BACKUP SUCCEDED"
 fi

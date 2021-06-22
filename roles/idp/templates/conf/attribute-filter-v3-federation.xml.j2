@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This file is an EXAMPLE policy file for IdP-in-the-Cloud Project -->
-<AttributeFilterPolicyGroup id="ShibbolethFilterPolicy"
+<AttributeFilterPolicyGroup id="ShibbolethFilterPolicyFederation"
         xmlns="urn:mace:shibboleth:2.0:afp"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
@@ -12,16 +12,16 @@
         <AttributeRule attributeID="givenName">
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
-        <AttributeRule attributeID="surname">
+        <AttributeRule attributeID="sn">
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
         <AttributeRule attributeID="displayName">
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
-        <AttributeRule attributeID="commonName">
+        <AttributeRule attributeID="cn">
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
-        <AttributeRule attributeID="email">
+        <AttributeRule attributeID="mail">
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
         <AttributeRule attributeID="eduPersonPrincipalName">
@@ -42,13 +42,13 @@
         <PolicyRequirementRule xsi:type="RegistrationAuthority"
                 registrars="{{ idp_federation_regAuth }}"/>
 
-        <AttributeRule attributeID="surname">
+        <AttributeRule attributeID="sn">
             <PermitValueRule xsi:type="AttributeInMetadata" onlyIfRequired="true" />
         </AttributeRule>
         <AttributeRule attributeID="givenName">
             <PermitValueRule xsi:type="AttributeInMetadata" onlyIfRequired="true" />
         </AttributeRule>
-        <AttributeRule attributeID="commonName">
+        <AttributeRule attributeID="cn">
             <PermitValueRule xsi:type="AttributeInMetadata" onlyIfRequired="true" />
         </AttributeRule>
         <AttributeRule attributeID="preferredLanguage">
@@ -66,7 +66,7 @@
         <AttributeRule attributeID="schacPersonalPosition">
             <PermitValueRule xsi:type="AttributeInMetadata" onlyIfRequired="true" />
         </AttributeRule>
-        <AttributeRule attributeID="email">
+        <AttributeRule attributeID="mail">
             <PermitValueRule xsi:type="AttributeInMetadata" onlyIfRequired="true" />
         </AttributeRule>
         <AttributeRule attributeID="telephoneNumber">

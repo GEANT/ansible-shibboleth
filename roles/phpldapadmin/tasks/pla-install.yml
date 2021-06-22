@@ -7,14 +7,9 @@
 
 - name: "Be sure that phpLDAPadmin required packages are installed"
   apt:
-   name: "{{ item }}"
+   name: ['apache2-utils', 'python-passlib', 'gettext', 'php']
    state: latest
    install_recommends: no 
-  with_items:
-   - apache2-utils
-   - python-passlib
-   - gettext
-   - php
   notify:
    - "Restart Apache"
 
@@ -29,15 +24,12 @@
 
 - name: "Be sure that PHP7 LDAP support is installed"
   apt:
-   name: "{{ item }}"
+   name: ['php-ldap', 'php-xml']
    state: latest
    install_recommends: no
-  with_items:
-   - php7.0-ldap
-   - php7.0-xml
   notify:
    - "Restart Apache"
-  when: ansible_distribution_release == "stretch"
+  when: ansible_distribution_release != "jessie"
 
 - name: "Be sure to have LDAP module enabled"
   apache2_module:
@@ -46,21 +38,15 @@
   notify:
    - "Restart Apache"
 
-- name: "Be sure that phpLDAPadmin is installed"
-  unarchive:
-   src: "files/phpldapadmin.tar.gz"
-   dest: "/opt/"
-  changed_when: False
+- name: "Check if pageOrig exists"
+  stat:
+   path: "/opt/phpldapadmin/lib/pageOrig.php"
+  register: pageOrig
 
-- name: "Be sure to patch files of phpLDAPadmin"
-  patch:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
-  with_items:
-   - { src: "files/phpldapadmin/lib/ds_ldap-idpcloud.patch" ,dest: "/opt/phpldapadmin/lib/ds_ldap.php" }
-   - { src: "files/phpldapadmin/lib/ds_ldap_pla-idpcloud.patch" ,dest: "/opt/phpldapadmin/lib/ds_ldap_pla.php" }
-   - { src: "files/phpldapadmin/lib/HTMLTree-idpcloud.patch" ,dest: "/opt/phpldapadmin/lib/HTMLTree.php" }
-   - { src: "files/phpldapadmin/lib/functions-idpcloud.patch" ,dest: "/opt/phpldapadmin/lib/functions.php" }
-   - { src: "files/phpldapadmin/lib/PageRender.patch" ,dest: "/opt/phpldapadmin/lib/PageRender.php" }
-   - { src: "files/phpldapadmin/lib/TemplateRender.patch" ,dest: "/opt/phpldapadmin/lib/TemplateRender.php" }
-  changed_when: False
+- name: "Clone the phpLDAPadmin repository"
+  git:
+   repo: "https://github.com/malavolti/phpLDAPadmin.git"
+   dest: /opt/phpldapadmin
+  notify:
+   - "Restart Apache"
+  when: pageOrig.stat.exists == false

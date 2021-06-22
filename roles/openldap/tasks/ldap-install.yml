@@ -7,12 +7,9 @@
 
 - name: "Install 'debconf-utils' and 'python-ldap' packages"
   apt:
-   name: "{{ item }}"
+   name: ['debconf-utils', 'python-ldap']
    state: latest
    install_recommends: no
-  with_items:
-   - debconf-utils
-   - python-ldap
 
 - name: "Check if debconf-get-selections has parameters for unattended OpenLDAP installation and store the result on 'debconf' ansible variable"
   shell: (debconf-get-selections | grep -q -s slapd); echo $?
@@ -58,12 +55,9 @@
   
 - name: "Install OpenLDAP and its utilities"
   apt:
-   name: "{{ item }}"
+   name: ['slapd', 'ldap-utils']
    state: latest
    install_recommends: no
-  with_items:
-    - slapd
-    - ldap-utils
 
 - name: "Generate ldap admin password hash"
   command: "/usr/sbin/slappasswd -s {{ ldap['root_pw'] }}"

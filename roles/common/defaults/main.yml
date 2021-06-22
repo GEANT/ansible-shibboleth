@@ -18,8 +18,14 @@ common:
   size_swapfile: "2048"
   state: present
  # Remove entirely "mirror" section to use the default distribution repositories
- mirror: "https://mi.mirror.garr.it/mirrors/debian/"
+ mirror: "http://deb.debian.org/debian/"
  root_user_pw: "root_password"
 
 # NTP
 my_timezone: Europe/Rome
+
+ntp_servers:
+ - 0.pool.ntp.org
+ - 1.pool.ntp.org
+ - 2.pool.ntp.org
+ - 3.pool.ntp.org

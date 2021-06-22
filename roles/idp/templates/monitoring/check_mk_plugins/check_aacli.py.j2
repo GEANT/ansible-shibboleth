@@ -40,7 +40,7 @@ if options.debug:
     print "Options passed to command:   %s" % options
     print "Arguments passed to command: %s" % args
 
-os.environ["JAVA_HOME"] = "/usr/lib/jvm/default-java/jre"
+os.environ["JAVA_HOME"] = "{{ java_home_dir }}"
 result = check_output(shlex.split('/opt/shibboleth-idp/bin/aacli.sh --saml2 --principal '+ user +' --requester ' + spEntityId))
 
 namespaces = {

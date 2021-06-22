@@ -1,5 +1,18 @@
 ---
 # tasks for IdP Restore
+- name: "RESTORE - Retrieve IdP sealer.jks and sealer.kver backups"
+  command: "{{ item }}"
+  with_items:
+   - "rsync -avzh {{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/sealer.jks {{ files_dir }}/{{ fqdn }}/idp/credentials/sealer.jks"
+   - "rsync -avzh {{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/sealer.kver {{ files_dir }}/{{ fqdn }}/idp/credentials/sealer.kver"
+  delegate_to: 127.0.0.1
+  when:
+    - bck_uri is defined
+    - bck_uri != ""
+    - host_bck_path is defined
+    - host_bck_path != ""
+  tags: restore
+
 - name: "RESTORE - Retrieve MySQL backups"
   command: "{{ item }}"
   with_items:

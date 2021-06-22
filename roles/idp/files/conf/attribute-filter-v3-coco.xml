@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<AttributeFilterPolicyGroup id="ShibbolethFilterPolicy"
+<AttributeFilterPolicyGroup id="ShibbolethFilterPolicyCoCo"
         xmlns="urn:mace:shibboleth:2.0:afp"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
@@ -11,13 +11,13 @@
             attributeName="http://macedir.org/entity-category"
             attributeValue="http://www.geant.net/uri/dataprotection-code-of-conduct/v1" />
      
-        <AttributeRule attributeID="surname">
+        <AttributeRule attributeID="sn">
             <PermitValueRule xsi:type="AttributeInMetadata" onlyIfRequired="true" />
         </AttributeRule>
         <AttributeRule attributeID="givenName">
             <PermitValueRule xsi:type="AttributeInMetadata" onlyIfRequired="true" />
         </AttributeRule>
-        <AttributeRule attributeID="commonName">
+        <AttributeRule attributeID="cn">
             <PermitValueRule xsi:type="AttributeInMetadata" onlyIfRequired="true" />
         </AttributeRule>
         <AttributeRule attributeID="preferredLanguage">
@@ -35,7 +35,7 @@
         <AttributeRule attributeID="schacPersonalPosition">
             <PermitValueRule xsi:type="AttributeInMetadata" onlyIfRequired="true" />
         </AttributeRule>
-        <AttributeRule attributeID="email">
+        <AttributeRule attributeID="mail">
             <PermitValueRule xsi:type="AttributeInMetadata" onlyIfRequired="true" />
         </AttributeRule>
         <AttributeRule attributeID="telephoneNumber">

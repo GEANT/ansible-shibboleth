@@ -236,7 +236,7 @@ $config->custom->appearance['friendly_attrs'] = array(
  *********************************************/
 
 /* Add "modify group members" link to the attribute. */
-// $config->custom->modify_member['groupattr'] = array('member','uniqueMember','memberUid');
+// $config->custom->modify_member['groupattr'] = array('member','uniqueMember','memberUid','sudoUser');
 
 /* Configure filter for member search. This only applies to "modify group members" feature */
 // $config->custom->modify_member['filter'] = '(objectclass=Person)';
@@ -345,8 +345,13 @@ $servers->setValue('server','tls',true);
    false), then all other sasl options are ignored. */
 // $servers->setValue('login','auth_type','sasl');
 
-/* SASL auth mechanism */
+/* SASL GSSAPI auth mechanism (require auth_type of sasl) */
 // $servers->setValue('sasl','mech','GSSAPI');
+
+/* SASL PLAIN support... this mech converts simple binds to SASL
+   PLAIN binds using any auth_type (or other bind_id/pass) as credentials.
+   NOTE: auth_type must be simple auth compatible (ie not sasl) */
+#  $servers->setValue('sasl','mech','PLAIN');
 
 /* SASL authentication realm name */
 // $servers->setValue('sasl','realm','');
@@ -402,6 +407,12 @@ $servers->setValue('appearance','password_hash_custom','md5');
    setup. */
 // $servers->setValue('login','class',array());
 
+/* If login_attr was set to 'dn', it is possible to specify a template string to
+   build the DN from. Use '%s' where user input should be inserted. A user may
+   still enter the complete DN. In this case the template will not be used. */
+// $servers->setValue('login','bind_dn_template',null);
+#  $servers->setValue('login','bind_dn_template','cn=%s,ou=people,dc=example,dc=com');
+
 /* If you specified something different from 'dn', for example 'uid', as the
    login_attr above, you can optionally specify here to fall back to
    authentication with dn.
@@ -421,6 +432,9 @@ $servers->setValue('appearance','password_hash_custom','md5');
 
 /* Set to true if you would like to initially open the first level of each tree. */
 // $servers->setValue('appearance','open_tree',false);
+
+/* Set to true to display authorization ID in place of login dn (PHP 7.2+) */
+// $servers->setValue('appearance','show_authz',false);
 
 /* This feature allows phpLDAPadmin to automatically determine the next
    available uidNumber for a new entry. */
@@ -575,4 +589,18 @@ $servers->setValue('server','custom_sys_attrs',array('passwordExpirationTime','p
 $servers->setValue('server','custom_attrs',array('nsRoleDN','nsRole','nsAccountLock'));
 $servers->setValue('server','force_may',array('uidNumber','gidNumber','sambaSID'));
 */
+
+
+/***********************************************************************************
+ * If you want to configure Google reCAPTCHA on autentication form, do so below.   *
+ * Remove the commented lines and use this section as a template for all           *
+ * reCAPTCHA v2  Generate on https://www.google.com/recaptcha/                     *
+ *                                                                                 *
+ * IMPORTANT: Select reCAPTCHA v2   on  Type of reCAPTCHA                          *
+ ***********************************************************************************/
+
+$config->custom->session['reCAPTCHA-enable'] = false;
+$config->custom->session['reCAPTCHA-key-site'] = '<put-here-key-site>';
+$config->custom->session['reCAPTCHA-key-server'] = '<put-here-key-server>';
+
 ?>

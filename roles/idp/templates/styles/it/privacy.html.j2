@@ -39,7 +39,7 @@
                <h2>PARTECIPAZIONE AL PROGETTO DI IDEM GARR:<br/>IDP IN THE CLOUD<br/></h2>
                <br/>
                <p class="text-center">
-{% for lang, value in idp_metadata.iteritems() %}
+{% for lang, value in idp_metadata.items() %}
                   <a href="{{ idp_metadata[lang]['mdui_privacyUrl'] | default('/'~lang~'/privacy.html') }}"><img height="36px" src="/{{ lang }}/{{ lang }}Flag.png"></a>
 {% endfor %}
                </p>
@@ -98,7 +98,7 @@
                      <td>
                         <p><strong><p>IT-IT</p></strong></p>
                         <p><strong>Garante per la Protezione dei Dati Personali</strong><br/>Come presentare una denuncia all'autorità competente per la protezione dei dati:<br/>
-   <a href="http://www.garanteprivacy.it/home/diritti/come-agire-per-tutelare-i-nostri-dati-personali">http://www.garanteprivacy.it/home/diritti/come-agire-per-tutelare-i-nostri-dati-personali</a></p>
+   <a href="https://www.garanteprivacy.it/home/diritti/come-agire-per-tutelare-i-tuoi-dati-personali">https://www.garanteprivacy.it/home/diritti/come-agire-per-tutelare-i-tuoi-dati-personali</a></p>
                      </td>
                   </tr>
                   <tr>

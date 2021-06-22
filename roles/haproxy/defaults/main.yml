@@ -1,0 +1,5 @@
+---
+# defaults file for haproxy
+
+haproxy:
+  table_size: "300k"

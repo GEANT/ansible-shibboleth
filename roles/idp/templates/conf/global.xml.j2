@@ -49,10 +49,25 @@
     </util:map>
     -->
 
+{% if idp_config['idp_persistentId_type'] is defined and idp_config['idp_persistentId_type'] == 'stored' %}
+{%  if ansible_distribution_release == 'jessie' or ansible_distribution_release == 'stretch' %}
     <!-- A DataSource bean suitable for use in the idp.persistentId.dataSource property. -->
     <bean id="MyDataSource" class="org.apache.commons.dbcp.BasicDataSource"
           p:driverClassName="com.mysql.jdbc.Driver"
-          p:url="jdbc:mysql://localhost:3306/shibboleth?autoReconnect=true"
+          p:url="jdbc:mysql://{{ idp_config['shibboleth_db_host'] }}:3306/shibboleth?autoReconnect=true"
+          p:username="shibboleth"
+          p:password="{{ idp_config['shibboleth_db_password'] }}"
+          p:maxActive="10"
+          p:maxIdle="5"
+          p:maxWait="15000"
+          p:testOnBorrow="true"
+          p:validationQuery="select 1"
+          p:validationQueryTimeout="5" />
+{%  elif ansible_distribution_release != 'jessie' and ansible_distribution_release != 'stretch' %}
+    <!-- A DataSource bean suitable for use in the idp.persistentId.dataSource property. -->
+    <bean id="MyDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          p:driverClassName="org.mariadb.jdbc.Driver"
+          p:url="jdbc:mysql://{{ idp_config['shibboleth_db_host'] }}:3306/shibboleth?autoReconnect=true"
           p:username="shibboleth"
           p:password="{{ idp_config['shibboleth_db_password'] }}"
           p:maxActive="10"
@@ -62,6 +77,10 @@
           p:validationQuery="select 1"
           p:validationQueryTimeout="5" />
 
+    <!--
+    Glue which is needed for attaching a MySQL data source via JPA (Java Persistence API) and Hibernate ORM, 
+    needed for the "storagerecords" table.
+    -->
     <bean id="shibboleth.JPAStorageService" class="org.opensaml.storage.impl.JPAStorageService"
           p:cleanupInterval="%{idp.storage.cleanupInterval:PT10M}"
           c:factory-ref="shibboleth.JPAStorageService.entityManagerFactory"/>
@@ -69,7 +88,7 @@
     <bean id="shibboleth.JPAStorageService.entityManagerFactory"
           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
           <property name="packagesToScan" value="org.opensaml.storage.impl"/>
-          <property name="dataSource" ref="MyDataSource"/>
+          <property name="dataSource" ref="storageservice.JPAStorageService.DataSource"/>
           <property name="jpaVendorAdapter" ref="shibboleth.JPAStorageService.JPAVendorAdapter"/>
           <property name="jpaDialect">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
@@ -80,4 +99,28 @@
           <property name="database" value="MYSQL" />
     </bean>
 
+{%  endif %}
+{% endif %}
+{% if idp_config['storage_memcache_hosts'] is defined and (idp_config['storage_memcache_hosts']|length > 0)%}
+	  <bean id="shibboleth.MemcachedStorageService"
+		      class="org.opensaml.storage.impl.memcached.MemcachedStorageService"
+		      c:timeout="2">
+	      
+          <constructor-arg name="client">
+             <bean class="net.spy.memcached.spring.MemcachedClientFactoryBean"
+                   p:servers="{{ idp_config['storage_memcache_hosts'] }}"
+                   p:protocol="BINARY"
+                   p:locatorType="CONSISTENT"
+                   p:failureMode="Redistribute">
+               <property name="hashAlg">
+                 <util:constant static-field="net.spy.memcached.DefaultHashAlgorithm.FNV1_64_HASH" />
+               </property>
+               <property name="transcoder">
+                 <!-- DO NOT MODIFY THIS PROPERTY -->
+                 <bean class="org.opensaml.storage.impl.memcached.StorageRecordTranscoder" />
+               </property>
+             </bean>
+	        </constructor-arg>
+	  </bean>
+{% endif %}
 </beans>

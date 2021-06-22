@@ -1,18 +1,52 @@
 ---
 # tasks file for idm-configure
 
-- name: "Be sure to copy needed PLA changed libraries"
+- name: "Check if pageOrig exists"
+  stat:
+   path: "/opt/phpldapadmin/lib/pageOrig.php"
+  register: pageOrig
+
+- name: "Check if TemplateRenderOrig exists"
+  stat:
+   path: "/opt/phpldapadmin/lib/TemplateRenderOrig.php"
+  register: TemplateRenderOrig
+
+- name: "Be sure to patch phpLDAPadmin page.php file"
+  patch:
+   src: "files/phpldapadmin/lib/page.php.patch"
+   dest: "/opt/phpldapadmin/lib/page.php"
+  when: pageOrig.stat.exists == false
+
+- name: "Be sure to patch phpLDAPadmin TemplateRender.php file"
+  patch:
+   src: "files/phpldapadmin/lib/TemplateRender.php.patch"
+   dest: "/opt/phpldapadmin/lib/TemplateRender.php"
+  when: TemplateRenderOrig.stat.exists == false
+
+- name: "Rename page to pageOrig"
+  command: "mv /opt/phpldapadmin/lib/page.php /opt/phpldapadmin/lib/pageOrig.php"
+  when: pageOrig.stat.exists == false
+
+- name: "Rename TemplateRender to TemplateRenderOrig"
+  command: "mv /opt/phpldapadmin/lib/TemplateRender.php /opt/phpldapadmin/lib/TemplateRenderOrig.php"
+  when: TemplateRenderOrig.stat.exists == false
+
+- name: "Be sure to copy the new page.php"
   copy:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
+   src: "files/phpldapadmin/lib/page.php"
+   dest: "/opt/phpldapadmin/lib/page.php"
    owner: "root"
    group: "root"
-   mode: "{{ item.mode }}"
-  with_items:
-   - { src: "files/phpldapadmin/lib/page.php", dest: "/opt/phpldapadmin/lib/page.php", mode: "0644" }
-   - { src: "files/phpldapadmin/lib/pageOrig.php", dest: "/opt/phpldapadmin/lib/pageOrig.php", mode: "0644" }
-   - { src: "files/phpldapadmin/lib/TemplateRender.php", dest: "/opt/phpldapadmin/lib/TemplateRender.php", mode: "0644" }
-   - { src: "files/phpldapadmin/lib/TemplateRenderOrig.php", dest: "/opt/phpldapadmin/lib/TemplateRenderOrig.php", mode: "0644" }
+   mode: "0644"
+  changed_when: False
+
+- name: "Be sure to copy the new TemplateRender.php"
+  copy:
+   src: "files/phpldapadmin/lib/TemplateRender.php"
+   dest: "/opt/phpldapadmin/lib/TemplateRender.php"
+   owner: "root"
+   group: "root"
+   mode: "0644"
   changed_when: False
 
 - name: "Be sure to copy needed PLA changed javascripts"
@@ -30,12 +64,10 @@
    - { src: "files/phpldapadmin/htdocs/js/jquery-ui-1.9.1.min.js", dest: "/opt/phpldapadmin/htdocs/js/jquery-ui-1.9.1.min.js", mode: "0644" }
    - { src: "files/phpldapadmin/htdocs/js/livevalidation_standalone.compressed.js", dest: "/opt/phpldapadmin/htdocs/js/livevalidation_standalone.compressed.js", mode: "0644" }
 
-- name: "Be sure to patch files of phpLDAPadmin"
+- name: "Be sure to patch phpLDAPadmin 'create.php' file"
   patch:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
-  with_items:
-   - { src: "files/phpldapadmin/htdocs/create-idpcloud.patch" ,dest: "/opt/phpldapadmin/htdocs/create.php" }
+   src: "files/phpldapadmin/htdocs/create-idpcloud.patch"
+   dest: "/opt/phpldapadmin/htdocs/create.php"
   changed_when: False
 
 - name: "Be sure to copy 'checkValue.php' on phpldapadmin/htdocs"
@@ -57,13 +89,13 @@
    mode: "{{ item.mode }}"
   with_items:
    - { src: "phpldapadmin/htdocs/lockuser.php.j2", dest: "/opt/phpldapadmin/htdocs/lockuser.php", mode: "0644" }
-   - { src: "lockusers.py.j2", dest: "/etc/cron.hourly/lockusers.py", mode: "0755" }
+   - { src: "lockusers.py.j2", dest: "/etc/cron.hourly/lockusers", mode: "0755" }
    - { src: "phpldapadmin/htdocs/action_lock.php.j2", dest: "/opt/phpldapadmin/htdocs/action_lock.php", mode: "0644" }
 
 - name: "Be sure to update configuration of phpLDAPadmin"
   template:
-   src: phpldapadmin/config/config.php.j2
-   dest: /opt/phpldapadmin/config/config.php
+   src: "phpldapadmin/config/config.php.j2"
+   dest: "/opt/phpldapadmin/config/config.php"
    owner: "root"
    group: "www-data"
   changed_when: False
@@ -112,27 +144,75 @@
    group: "root"
    mode: "0644"
 
-- name: "Be sure to load 'idm-tools' apache2 configuration files"
-  copy:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
-   owner: "root"
-   group: "root"
-   mode: "0644"
-  with_items:
-   - { src: "files/apache2/conf-enabled/idm-tools.conf", dest: "/etc/apache2/conf-enabled/idm-tools.conf"  }
+- name: "Check if Apache IDM-TOOLS conf is already enabled"
+  stat:
+   path: "/etc/apache2/conf-available/idm-tools.conf"
+  register: idm_tools_apache
+  changed_when: false
+
+- name: "Remove any 'idm-tools.conf' file into '/etc/apache2/conf-enabled'"
+  file:
+   path: "/etc/apache2/conf-enabled/idm-tools.conf"
+   state: absent
+  when: idm_tools_apache.stat.isreg is defined and idm_tools_apache.stat.isreg
   notify:
    - "Restart Apache"
 
-- name: "Be sure to load 'statistics' apache2 configuration files"
+- name: "Load Apache IDM-TOOLS conf"
   copy:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
+   src: "files/apache2/conf-available/idm-tools.conf"
+   dest: "/etc/apache2/conf-available/idm-tools.conf"
    owner: "root"
    group: "root"
    mode: "0644"
-  with_items:
-   - { src: "files/apache2/conf-enabled/statistics.conf", dest: "/etc/apache2/conf-enabled/statistics.conf"  }
+  when: idm_tools_apache.stat.islnk is not defined
+  notify:
+   - "Restart Apache"
+
+- name: "Add IDM-TOOLS support to Apache HTTPS VirtualHost"
+  blockinfile:
+    path: "/etc/apache2/sites-available/{{ fqdn }}-ssl.conf"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - IDM-TOOLS"
+    insertbefore: "</VirtualHost>"
+    block: |
+      Include conf-available/idm-tools.conf
+  when: idm_tools_apache.stat.islnk is not defined
+  notify:
+   - "Restart Apache"
+
+- name: "Check if Apache STATISTICS conf is already enabled"
+  stat:
+   path: "/etc/apache2/conf-enabled/statistics.conf"
+  register: stats_apache
+  changed_when: false
+
+- name: "Remove any 'statistics.conf' file into '/etc/apache2/conf-enabled'"
+  file:
+   path: "/etc/apache2/conf-enabled/statistics.conf"
+   state: absent
+  when: stats_apache.stat.isreg is defined and stats_apache.stat.isreg
+  notify:
+   - "Restart Apache"
+
+- name: "Load Apache STATISTICS conf"
+  copy:
+   src: "files/apache2/conf-available/statistics.conf"
+   dest: "/etc/apache2/conf-available/statistics.conf"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  when: stats_apache.stat.islnk is not defined
+  notify:
+   - "Restart Apache"
+
+- name: "Add STATISTICS support to Apache HTTPS VirtualHost"
+  blockinfile:
+    path: "/etc/apache2/sites-available/{{ fqdn }}-ssl.conf"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - STATISTICS"
+    insertbefore: "</VirtualHost>"
+    block: |
+      Include conf-available/statistics.conf
+  when: stats_apache.stat.islnk is not defined
   notify:
    - "Restart Apache"
 
@@ -147,8 +227,14 @@
    - { line: "" }
    - { line: "Nuovi utenti per {{ ldap['org'] }}:" }
 
-- name: "Be sure to have an Hard Link for 'updates.txt' file"
+- name: "Check if 'updates.txt' file is missing"
+  stat:
+   path: "/opt/phpldapadmin/htdocs/idm-tools/updates.txt"
+  register: updates_txt
+
+- name: "Be sure to create an Hard Link of 'updates.txt' under phpldapadmin dir if missing"
   file:
    src: "/var/local/backups/updates.txt"
    dest: "/opt/phpldapadmin/htdocs/idm-tools/updates.txt"
    state: hard
+  when: updates_txt.stat.exists == False

@@ -1,0 +1,16 @@
+---
+# Configure Memcached
+
+- name: "Define memcached_user"
+  set_fact:
+    memcached_user: "{{ __memcached_user }}"
+  when: memcached_user is not defined
+
+- name: "Copy Memcached configuration"
+  template:
+    src: memcached-{{ ansible_os_family }}.conf.j2
+    dest: "{{ memcached_config_file }}"
+    owner: "root"
+    group: "root"
+    mode: 0644
+  notify: "Restart memcached"

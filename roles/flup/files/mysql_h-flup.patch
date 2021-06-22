@@ -1,0 +1,10 @@
+--- mysql.h.2bkp	2021-02-11 11:37:27.233183224 +0100
++++ mysql.h	2021-02-11 11:39:27.713932609 +0100
+@@ -354,6 +354,7 @@
+     unsigned int server_status;
+     unsigned int server_language;
+     unsigned int warning_count;          /* warning count, added in 4.1 protocol */
++    unsigned int reconnect;
+     struct st_mysql_options options;
+     enum mysql_status status;
+     my_bool	free_me;		/* If free in mysql_close */

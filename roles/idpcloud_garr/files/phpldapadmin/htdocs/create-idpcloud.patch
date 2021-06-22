@@ -1,16 +1,16 @@
---- create.php	2012-10-01 16:54:14.000000000 +0200
-+++ create-idpcloud.php	2017-12-13 10:21:56.876760829 +0100
-@@ -64,11 +64,11 @@
-
-	else if ($action_number == 2)
-		$redirect_url = sprintf('cmd.php?%s&template=%s&container=%s',
+--- htdocs/create.php	2021-02-12 21:41:54.581298781 +0100
++++ ../phpldapadmin-working/htdocs/create.php	2021-02-12 21:20:25.529458683 +0100
+@@ -63,11 +63,11 @@
+ 
+ 	else if ($action_number == 2)
+ 		$redirect_url = sprintf('cmd.php?%s&template=%s&container=%s',
 -			$href,'default',$request['template']->getContainerEncode());
 +			$href,'custom_idpAccount:1',$request['template']->getContainerEncode());
-
-	else
-		$redirect_url = sprintf('cmd.php?%s&template=%s&dn=%s',
+ 
+ 	else
+ 		$redirect_url = sprintf('cmd.php?%s&template=%s&dn=%s',
 -			$href,'default',$request['template']->getDNEncode());
 +			$href,'custom_idpAccount:1',$request['template']->getDNEncode());
-
-	if ($action_number == 1 || $action_number == 2)
-		printf('<meta http-equiv="refresh" content="0; url=%s" />',$redirect_url);
+ 
+ 	if ($action_number == 1 || $action_number == 2)
+ 		printf('<meta http-equiv="refresh" content="0; url=%s" />',$redirect_url);

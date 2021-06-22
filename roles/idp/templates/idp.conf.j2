@@ -8,5 +8,10 @@
         Require all granted
     </Location>
 
-    RedirectMatch ^/$ {{ idp_metadata['en']['mdui_infoUrl'] }}
+    <If " %{REQUEST_URI} == '\/' && %{HTTP:Accept-Language} =~ /^it/">
+        RedirectMatch ^/$ {{ idp_metadata['it']['mdui_infoUrl'] }}
+    </If>
+    <Else>
+        RedirectMatch ^/$ {{ idp_metadata['en']['mdui_infoUrl'] }}
+    </Else>
 </IfModule>

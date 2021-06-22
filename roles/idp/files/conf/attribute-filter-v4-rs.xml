@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<AttributeFilterPolicyGroup id="ShibbolethFilterPolicyRandS" xmlns="urn:mace:shibboleth:2.0:afp"
+                            xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
+                            xmlns:saml="urn:mace:shibboleth:2.0:afp:mf:saml"
+                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                            xsi:schemaLocation="urn:mace:shibboleth:2.0:afp classpath:/schema/shibboleth-2.0-afp.xsd
+                                                urn:mace:shibboleth:2.0:afp:mf:basic classpath:/schema/shibboleth-2.0-afp-mf-basic.xsd">
+
+    <!-- Dynamic Attribute Filter Policy compliant with R&S Entity Category -->
+
+    <AttributeFilterPolicy id="releaseDynamicSubsetRandSAttributeBundle">
+
+      <PolicyRequirementRule xsi:type="EntityAttributeExactMatch"
+          attributeName="http://macedir.org/entity-category"
+          attributeValue="http://refeds.org/category/research-and-scholarship"/>
+
+      <AttributeRule attributeID="eduPersonPrincipalName" permitAny = "true" />
+      <AttributeRule attributeID="eduPersonTargetedID" permitAny = "true" />
+      <AttributeRule attributeID="mail" permitAny = "true" />
+      <AttributeRule attributeID="displayName" permitAny = "true" />
+      <AttributeRule attributeID="givenName" permitAny = "true" />
+      <AttributeRule attributeID="sn" permitAny = "true" />
+
+    </AttributeFilterPolicy>
+
+</AttributeFilterPolicyGroup>

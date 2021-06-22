@@ -1,9 +1,5 @@
 ---
 # tasks file for common
-- name: "Include OS-specific variables. 'host_vars' wins on this inclusion"
-  include_vars: "{{ ansible_os_family }}.yml"
-  tags: common
-
 - name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
   apt:
    update_cache: yes
@@ -17,6 +13,11 @@
    owner: "root"
    group: "root"
    mode: "0644" 
+  tags: common
+
+- name: "Configure the 'hostname' with the FQDN provided"
+  hostname:
+   name: "{{ fqdn }}"
   tags: common
 
 - name: "Configure the nameservers in the resolver"
@@ -63,22 +64,9 @@
 
 - name: "Install needed common packages"
   apt: 
-   name: "{{ item }}"
+   name: ['ntp', 'ntpdate', 'vim', 'ca-certificates', 'openssl', 'ssl-cert', 'aptitude', 'debconf', 'debconf-utils', 'apt-transport-https', 'patch', 'fail2ban']
    install_recommends: no
    state: latest
-  with_items:
-   - ntp
-   - ntpdate
-   - vim
-   - ca-certificates
-   - openssl
-   - ssl-cert
-   - aptitude
-   - debconf
-   - debconf-utils
-   - apt-transport-https
-   - patch
-   - fail2ban
   tags: common
 
 - name: "Replace default mirror site with the preferred one"
@@ -150,4 +138,11 @@
    - common['swap']['name_swapfile'] is defined and common['swap']['name_swapfile'] != ''
    - common['swap']['size_swapfile'] is defined and common['swap']['size_swapfile'] != ''
    - common['swap']['state'] is defined and (common['swap']['state'] == 'present' or common['swap']['state'] == 'absent')
+  tags: common
+
+- name: "Assign the right privileges to the /tmp directory"
+  file:
+   path: "/tmp"
+   state: directory
+   mode: "u+rwx,g+rwx,o+rwt"
   tags: common

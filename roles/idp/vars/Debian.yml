@@ -1,3 +1,3 @@
 ---
 # Default Debian Variables
-java_home_dir: "/usr/lib/jvm/default-java/jre"
+java_home_dir: "/usr/lib/jvm/default-java"

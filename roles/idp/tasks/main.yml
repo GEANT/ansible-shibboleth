@@ -4,20 +4,17 @@
   include_vars: "{{ ansible_os_family }}.yml"
   tags: idp
 
-- name: "Include attribute resolver default dictionary if a custom one is not provided on the host_vars of IdP"
-  include_vars:
-   file: "attr-defs-dict-java{{ jdk_version }}.yml"
-  when: idp_attrDef is undefined or idp_attrDef == ""
-  tags: idp
-
 - name: "Include static attributes vars if custom one is not provided on host_vars of IdP"
   include_vars:
    file: "staticAttributes.yml"
   when: idp_stat_attrs is undefined or idp_stat_attrs == ""
   tags: idp
 
-- name: "Include shibboleth identity provider variables"
-  include_vars: shib-idp-vars.yml
+- name: "Restore Shibboleth IdP if needed"
+  import_tasks: idp-restore.yml
+  when: 
+   - idp_db_restore is defined
+   - idp_db_restore in ["Yes","yes","True","true"]
   tags: idp
 
 - name: "Install Shibboleth IdP"
@@ -34,13 +31,6 @@
 
 - name: "Configure Shibboleth IdP /statistics application"
   import_tasks: idp-statistics.yml
-  tags: idp
-
-- name: "Restore Shibboleth IdP if needed"
-  import_tasks: idp-restore.yml
-  when: 
-   - idp_db_restore is defined
-   - idp_db_restore in ["Yes","yes","True","true"]
   tags: idp
 
 - name: "Configure Check_MK probes on Shibboleth IdP"

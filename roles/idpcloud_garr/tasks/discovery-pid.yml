@@ -1,0 +1,138 @@
+---
+# tasks file for discovery persistent-id that change after Shib IdP upgrade to v4.0.1
+
+- name: "Check if 'persistent-2018-09.txt' exists"
+  ansible.builtin.stat:
+   path: /home/debian/persistent-2018-09.txt
+  register: persistent
+
+- name: "Check if 'users-and-sp-2018-09.txt' exists"
+  ansible.builtin.stat:
+   path: /home/debian/users-and-sp-2018-09.txt
+  register: users
+
+- name: "Check if 'users-to-warn-2018-09.txt' exists"
+  ansible.builtin.stat:
+   path: /home/debian/users-to-warn-2018-09.txt
+  register: users_involved
+
+- name: "Delete all files created for persistent-id 2018-09 before starting"
+  file:
+   path: "{{ item.path }}"
+  loop:
+   - { path: "/home/debian/persistent-2018-09.txt" }
+   - { path: "/home/debian/users-and-sp-2018-09.txt" }
+   - { path: "/home/debian/users-to-warn-2018-09.txt" }
+  when: 
+   - persistent.stat.exists == True
+   - users.stat.exists == True
+   - users_involved.stat.exists == True
+
+- name: "Set IDEM TEST SPs"
+  set_fact:
+   idem_sps: "'https://sp-test.garr.it/sp','https://sp-test.garr.it/shibboleth','https://sp24-test.garr.it/shibboleth','https://sp2-test.garr.it/shibboleth','https://sp-demo.idem.garr.it/shibboleth','https://registry.idem.garr.it/shibboleth','https://wiki.idem.garr.it/rp','https://wiki.idem.garr.it/shibboleth','https://grouper.idem.garr.it/shibboleth','https://fake-rs.example.org/shibboleth','https://fake-coco.example.org/shibboleth','https://wiki.idem.garrservices.it/shibboleth','https://spemb.lab.unimo.it/shibboleth'"
+   garr_sps: "'https://gbox.garr.it/shibboleth','https://webmeetings.garr.it/shibboleth'"
+   removed_sps: "'https://discourse.sci-gaia.eu/shibboleth','https://sgw.africa-grid.org/shibboleth','https://idem-wifi.unito.it/shibboleth','https://tcs-personal-portal.terena.org/simplesamlphp/module.php/saml/sp/metadata.php/default-sp','https://tcs-escience-portal.terena.org/simplesamlphp/module.php/saml/sp/metadata.php/default-sp','https://www.digicert.com/sso','anonymous','https://tcs-personal.garr.it/simplesamlphp/module.php/saml/sp/metadata.php/default-sp','https://tcs-escience.garr.it/simplesamlphp/module.php/saml/sp/metadata.php/default-sp','https://garrbox.garr.it/simplesamlphp/module.php/saml/sp/metadata.php/default-sp','https://tcs-personal.garr.it/simplesamlphp/module.php/saml/sp/metadata.php/default-sp','http://dummy.com/sp/2cb1fe93-bc3c-42ee-a53a-5169a5f3bfc4','https://ricerca2012-idem.cbim.it/shibboleth','https://ricerca2012.cbim.it/shibboleth','https://www.idem.garr.it/components/com_joomsso/simplesaml/www/module.php/saml/sp/metadata.php/default-sp','https://sgw.garr.it/shibboleth','https://fire.rettorato.unito.it/shibboleth','https://dida.cs.unicam.it/shibboleth','https://foodl.org/simplesaml/module.php/saml/sp/metadata.php/saml','https://ricevi.ct.infn.it/shibboleth','https://terena.org/sp','http://nera.cineca.it/simplesaml/module.php/saml/sp/metadata.php/default-sp','https://ecsg.dch-rp.eu/shibboleth','https://filesender.garr.it/simplesaml/module.php/saml/sp/metadata.php/default-sp','https://oar.sci-gaia.eu/shibboleth','https://connect.ct.infn.it/shibboleth','https://learning.garr.it/learning/auth/idemauth4m/simplesamlphp/www/module.php/saml/sp/metadata.php/shibidem-sp','https://wifi.dir.garr.it:12081/shibboleth','https://fs-elcira-srv01.dir.garr.it/simplesamlphp/module.php/saml/sp/metadata.php/default-sp','https://shibboleth.ovid.com/entity'"
+   test_users: "(malavolti|vaghetti|biancini|marco.malavolti|davide.vaghetti|andrea.biancini|testuser|test|idpldap)"
+
+- name: "IDPCLOUD-OPS: Generate a list of persistent-id created before September 2018"
+  shell: mysql shibboleth -e "SELECT creationDate,principalName,peerEntity,persistentId FROM shibpid WHERE creationDate <= '2018-09-01' AND peerEntity NOT IN ({{ idem_sps }},{{ garr_sps }},{{ removed_sps }}) ORDER BY creationDate ASC;" > /home/debian/persistent-2018-09.txt
+  args:
+   executable: /bin/bash
+  changed_when: false
+
+- ansible.builtin.stat:
+   path: /home/debian/persistent-2018-09.txt
+  register: pid
+
+- name: "IDPCLOUD-OPS: Remove lines that contains the testusers used by IDPCLOUD Staff"
+  shell: sed -E '/\s{{test_users}}\s/d' -i /home/debian/persistent-2018-09.txt
+  args:
+   executable: /bin/bash
+   warn: false
+  when: pid.stat.size != 0
+
+#- shell: "{{ item.cmd }}"
+#  args:
+#    executable: /bin/bash
+#  loop:
+#   - { cmd: "cat /home/debian/persistent-2018-09.txt | grep -v 'creationDate' > /home/debian/persistent-2018-09.txt.aux" }
+#   - { cmd: "mv /home/debian/persistent-2018-09.txt.aux /home/debian/persistent-2018-09.txt" }
+#  changed_when: false
+#  when: pid.stat.size != 0
+
+- name: "IDPCLOUD-USERS: Generate a list of users where the persistent-id will change with v4.0.1 of Shibboleth IdP"
+  shell: mysql shibboleth -e "SELECT principalName,peerEntity FROM shibpid WHERE creationDate <= '2018-09-01' AND peerEntity NOT IN ({{ idem_sps }},{{ garr_sps }},{{ removed_sps }}) ORDER BY creationDate ASC;" > /home/debian/users-and-sp-2018-09.txt
+  args:
+   executable: /bin/bash
+  register: users
+  changed_when: false
+
+- ansible.builtin.stat:
+   path: /home/debian/users-and-sp-2018-09.txt
+  register: usrs
+
+- name: "IDPCLOUD-USERS: Create the final list of 'principalName peerEntity' by removing the testusers used by IDPCLOUD Staff"
+  shell: sed -E '/{{test_users}}\s/d' -i /home/debian/users-and-sp-2018-09.txt
+  args:
+   executable: /bin/bash
+   warn: false
+  changed_when: false
+  when: usrs.stat.size != 0
+
+- shell: "{{ item.cmd }}"
+  args:
+    executable: /bin/bash
+  loop:
+   - { cmd: "sort -u /home/debian/users-and-sp-2018-09.txt | grep -v 'principalName' > /home/debian/users-and-sp-2018-09.txt.aux" }
+   - { cmd: "mv /home/debian/users-and-sp-2018-09.txt.aux /home/debian/users-and-sp-2018-09.txt" }
+  changed_when: false
+  when: usrs.stat.size != 0
+
+- name: "IDPCLOUD-USERS: Generate a list of users that an IDP Admin has to contact after the upgrade to v4.0.1 of Shibboleth IdP"
+  shell: mysql shibboleth -e "SELECT principalName FROM shibpid WHERE creationDate <= '2018-09-01' AND peerEntity NOT IN ({{ idem_sps }},{{ garr_sps }},{{ removed_sps }});" > /home/debian/users-to-warn-2018-09.txt
+  args:
+   executable: /bin/bash
+  register: users_involved
+  changed_when: false
+
+- ansible.builtin.stat:
+   path: /home/debian/users-to-warn-2018-09.txt
+  register: usrs_to_warn
+
+- name: "IDPCLOUD-USERS: Create the final list of 'principalName' by removing the testusers used by IDPCLOUD Staff"
+  shell: sed -E '/{{test_users}}/d' -i /home/debian/users-to-warn-2018-09.txt
+  args:
+    executable: /bin/bash
+    warn: false
+  changed_when: false
+  when: usrs_to_warn.stat.size != 0
+
+- shell: "{{ item.cmd }}"
+  args:
+    executable: /bin/bash
+  loop:
+   - { cmd: "sort -u /home/debian/users-to-warn-2018-09.txt | grep -v 'principalName' > /home/debian/users-to-warn-2018-09.txt.aux" }
+   - { cmd: "mv /home/debian/users-to-warn-2018-09.txt.aux /home/debian/users-to-warn-2018-09.txt" }
+  changed_when: false
+  when: usrs_to_warn.stat.size != 0
+
+- shell: cat /home/debian/users-and-sp-2018-09.txt | wc -l
+  args:
+    executable: /bin/bash
+  register: result_pid
+  changed_when: false
+
+- shell: cat /home/debian/users-to-warn-2018-09.txt | wc -l
+  args:
+    executable: /bin/bash
+  register: result_users
+  changed_when: false
+
+- name: "Show how many persistent-id will change with IdP v4.0.1"
+  ansible.builtin.debug: 
+   msg: "{{ result_pid.stdout }}"
+
+- name: "Show how many users have persistent-id changed after the upgrade to IdP v4.0.1"
+  ansible.builtin.debug: 
+   msg: "{{ result_users.stdout }}"

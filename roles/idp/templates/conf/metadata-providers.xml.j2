@@ -38,37 +38,49 @@
     -->
 
 {% for md in idp_metadata_providers %}    
+{% if md['url'] is defined %}
     <MetadataProvider
       id="{{ md['id'] }}"
       xsi:type="FileBackedHTTPMetadataProvider"
+{% if http_proxy_host is defined %}
+      proxyHost="{{ http_proxy_host }}"
+      proxyPort="{{ http_proxy_port }}"
+{% endif %}
       backingFile="%{idp.home}/metadata/{{ md['file'] }}"
       metadataURL="{{ md['url'] }}"
-      disregardTLSCertificate="{{ md['disregardTLSCertificate'] }}">
+      disregardTLSCertificate="{{ md['disregardTLSCertificate'] | default('false') }}">
 
-{% if md['pubKey'] is defined %}
-      <!--
-          Verify the signature on the root element of the metadata aggregate
-          using a trusted metadata signing certificate.
-      -->
-      <MetadataFilter xsi:type="SignatureValidation" requireSignedRoot="true">
-         <PublicKey>
-            {{ md['pubKey'] }}
-         </PublicKey>
-      </MetadataFilter>
-
-{% endif %}
-{% if md['maxValidInterval'] is defined %}
-      <!--
-          Require a validUntil XML attribute on the root element and make sure its value is no more than 5 days into the future. 
-      -->
-      <MetadataFilter xsi:type="RequiredValidUntil" maxValidityInterval="{{ md['maxValidInterval'] }}"/>
+{% if (md['pubKey'] is defined) and (md['pubKey']|length > 0) %}
+         <!--
+             Verify the signature on the root element of the metadata aggregate
+             using a trusted metadata signing certificate.
+         -->
+         <MetadataFilter xsi:type="SignatureValidation" requireSignedRoot="true">
+            <PublicKey>
+               {{ md['pubKey'] }}
+            </PublicKey>
+         </MetadataFilter>
 
 {% endif %}
-      <!-- Consume all SP metadata in the aggregate -->
-      <MetadataFilter xsi:type="EntityRoleWhiteList">
-        <RetainedRole>md:SPSSODescriptor</RetainedRole>
-      </MetadataFilter>
+{% if (md['maxValidInterval'] is defined) and (md['maxValidInterval']|length > 0) %}
+         <!--
+             Require a validUntil XML attribute on the root element and make sure its value is no more than 5 days into the future. 
+         -->
+         <MetadataFilter xsi:type="RequiredValidUntil" maxValidityInterval="{{ md['maxValidInterval'] }}"/>
+
+{% endif %}
+         <!-- Consume all SP metadata in the aggregate -->
+         <MetadataFilter xsi:type="EntityRoleWhiteList">
+           <RetainedRole>md:SPSSODescriptor</RetainedRole>
+         </MetadataFilter>
+
+{% if (md['comment'] is defined) and (md['comment']|length > 0) %}
+         <!-- {{ md['comment'] }} -->
+	       <MetadataProvider id="{{ md['id'] }}"  xsi:type="FilesystemMetadataProvider" metadataFile="/opt/shibboleth-idp/metadata/{{ md['file'] }}"/>
+{% endif %}
+
     </MetadataProvider>
+{% endif %}
 {% endfor %}
 
     <!--
@@ -84,11 +96,11 @@
     <MetadataProvider id="LocalMetadata"  xsi:type="FilesystemMetadataProvider" metadataFile="PATH_TO_YOUR_METADATA"/>
     -->
 
-{% if idp_config %}
-{% if idp_config['sup_rs'] is defined and idp_config['sup_rs'] in ["True","true","Yes","yes"] %}
+{% if (idp_config is defined) and (idp_config|length > 0) %}
+{% if (idp_config['sup_rs'] is defined) and (idp_config['sup_rs'] in ["True","true","Yes","yes"]) %}
     <MetadataProvider id="Fake_RS_SP_Metadata"  xsi:type="FilesystemMetadataProvider" metadataFile="/opt/shibboleth-idp/metadata/fake-rs-sp.xml"/>
 {% endif %}
-{% if idp_config['sup_coco'] is defined and idp_config['sup_coco'] in ["True","true","Yes","yes"] %}
+{% if (idp_config['sup_coco'] is defined) and (idp_config['sup_coco'] in ["True","true","Yes","yes"]) %}
     <MetadataProvider id="Fake_COCO_SP_Metadata"  xsi:type="FilesystemMetadataProvider" metadataFile="/opt/shibboleth-idp/metadata/fake-coco-sp.xml"/>
 {% endif %}
 {% endif %}

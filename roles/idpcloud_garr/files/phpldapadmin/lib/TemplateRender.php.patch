@@ -1,0 +1,11 @@
+--- lib/TemplateRender.php	2021-02-12 22:25:34.569275205 +0100
++++ ../phpldapadmin-working/lib/TemplateRenderOrig.php	2021-02-12 21:20:25.485458413 +0100
+@@ -12,7 +12,7 @@
+  * @package phpLDAPadmin
+  * @subpackage Templates
+  */
+-class TemplateRender extends PageRender {
++class TemplateRenderOrig extends PageRender {
+ 	# Page number
+ 	private $pagelast;
+ 

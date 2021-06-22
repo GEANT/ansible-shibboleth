@@ -26,7 +26,7 @@
                <h2>PARTECIPAZIONE AL PROGETTO IDEM GARR:<br/>IDP IN THE CLOUD<br/></h2>
                <br/>
                <p class="text-center">
-{% for lang, value in idp_metadata.iteritems() %}
+{% for lang, value in idp_metadata.items() %}
                   <a href="{{ idp_metadata[lang]['mdui_infoUrl'] | default('/'~lang~'/info.html') }}"><img height="36px" src="/{{ lang }}/{{ lang }}Flag.png"></a>
 {% endfor %}
                </p>
@@ -44,28 +44,32 @@
 
             <strong>{{ idp_metadata['it']['mdui_displayName'] }}</strong> partecipa alla Federazione nazionale <strong>IDEM</strong> (<strong>IDE</strong>ntity <strong>M</strong>anagement federato per l'accesso ai servizi), per la realizzazione dell'Infrastruttura di Autenticazione e Autorizzazione federata della rete GARR, e all'interfederazione <strong>eduGAIN</strong>(che collega le federazioni di identità nazionali tra loro per semplificare l'accesso ai contenuti, servizi e risorse per la comunità di Ricerca e Formazione.)
             
-            <p><a href="https://www.idem.garr.it/it/servizi/sp" target="_blank">Elenco delle Risorse associate alla Federazione {{ idp_login['fed_info']['federation']['it']['name'] }}</a> a cui è possibile accedere tramite le credenziali fornite per questo Identity Provider.</p>
+            <p><a href="https://www.idem.garr.it/partecipare/risorse-idem" target="_blank">Elenco delle Risorse associate alla Federazione {{ idp_login['fed_info']['federation']['it']['name'] }}</a> a cui è possibile accedere tramite le credenziali fornite per questo Identity Provider.</p>
 
             Le credenziali di accesso vengono conferite a:
             <ul>
                <li>Ricercatori</li>
                <li>Altro personale dipendente/registrato e ospiti</li>
             </ul>
-            Le modalità di conferimento, utilizzo e revoca delle credenziali sono contenute nel Documento descrittivo del processo di accreditamento degli utenti (DOPAU).
-            <br/>
 
             <h3>ACCEPTABLE USE POLICY - AUP</h3>
             <p><a href="https://www.garr.it/it/regole-di-utilizzo-della-rete-aup">Regole di utilizzo della rete - AUP</a></p>
 
             <h3>ATTIVAZIONE E GESTIONE ACCOUNT</h3>
-            <a href="/flup">Gestisci il tuo account</a> (<a href="https://wiki.idem.garrservices.it/wiki/index.php/MINSAL:IdpInTheCloudFlupManual">GUIDA</a>)
+            <a href="/flup">Gestisci il tuo account</a> (<a href="https://wiki.idem.garr.it/wiki/IdpInTheCloudFlupManual">GUIDA</a>)
 
             <h3>GUIDA ALL'ACCESSO DELLE RISORSE FEDERATE</h3>
-            <a href="https://wiki.idem.garrservices.it/wiki/index.php/MINSAL:IdpInTheCloudHowToAccessFederatedResources">Guida all'accesso delle risorse federate IDEM ed eduGAIN</a>
+            <a href="https://wiki.idem.garr.it/wiki/IdpInTheCloudHowToAccessFederatedResources">Guida all'accesso delle risorse federate IDEM ed eduGAIN</a>
 
             <h3>SUPPORTO UTENTI</h3>
             <ul>
-               <li>Referente Tecnico per {{ idp_metadata['it']['mdui_displayName'] }}: <a href="mailto:{{ idp_contacts['support']['mail'] }}">{{ idp_contacts['support']['mail']}}</a></li>
+               <li>Referente Tecnico per {{ idp_metadata['it']['mdui_displayName'] }}:</li>
+               <ul>
+                <li>e-mail: <a href="mailto:{{ idp_contacts['support']['mail'] }}">{{ idp_contacts['support']['mail'] }}</a></li>
+{% if idp_contacts['support']['telephone'] is defined and idp_contacts['support']['telephone'] != '' %}
+                <li>telefono: {{ idp_contacts['support']['telephone'] }}</li>
+{% endif %}
+               </ul>
             </ul>
 
             <h3>OPERATORE DEL SERVIZIO</h3>

@@ -1,0 +1,39 @@
+---
+# tasks file for mysql-configure
+- name: "Configure .my.cnf file for a simple MySQL authentication"
+  template: 
+   src: "root.cnf.j2" 
+   dest: "~/.my.cnf"
+   mode: 0600
+
+- name: "Start MySQL service"
+  systemd:
+   name: mysql
+   daemon-reload: True
+   state: started
+   enabled: True
+
+- name: "Create MySQL backups directory"
+  file:
+   dest: "{{ item }}"
+   state: "directory"
+  with_items:
+   - "/var/local/backups"
+
+- name: "Put mysql backup script in the '/etc/cron.hourly' directory to run the script once an hour"
+  template:
+   src: "mysql-backup.sh.j2"
+   dest: "/etc/cron.hourly/mysql-backup"
+   mode: "0755"
+
+- name: "Be sure that all root accounts receive the root password for database"
+  mysql_user: 
+   name: "root" 
+   host: "{{ item }}" 
+   password: "{{ mysql['root_password'] }}"
+   state: present
+  with_items:
+   - "{{ fqdn }}"
+   - 127.0.0.1
+   - ::1
+   - localhost
