@@ -12,6 +12,7 @@
 ## Requirements
 
 * [Ansible](https://www.ansible.com/) - Tested with Ansible v2.9.10
+* Python v3.7.3
 * [Shibboleth IdP source](https://shibboleth.net/downloads/identity-provider/latest/)
 * A Debian 9 "Stretch" or Debian 10 "Buster" server/virtual machine where install the Shibboleth IdP v3.x/v4.x
 
