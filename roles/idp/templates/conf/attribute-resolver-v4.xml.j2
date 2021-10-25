@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<AttributeResolver
+        xmlns="urn:mace:shibboleth:2.0:resolver"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
+
+    <!-- ========================================== -->
+    <!--      Attribute Definitions                 -->
+    <!-- ========================================== -->
+
+    <AttributeDefinition scope="%{idp.scope}" xsi:type="Scoped" id="eduPersonScopedAffiliation">
+        <InputDataConnector ref="myLDAP" attributeNames="eduPersonAffiliation" />
+    </AttributeDefinition>
+
+    <AttributeDefinition scope="%{idp.scope}" xsi:type="Scoped" id="eduPersonPrincipalName">
+        <InputDataConnector ref="myLDAP" attributeNames="%{idp.persistentId.sourceAttribute}" />
+    </AttributeDefinition>
+
+    <!-- AttributeDefinition for eduPersonTargetedID - Computed Mode -->
+    <AttributeDefinition xsi:type="SAML2NameID" nameIdFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" id="eduPersonTargetedID">
+        <InputDataConnector ref="myComputedId" attributeNames="computedID"/>
+    </AttributeDefinition>
+
+    <!-- AttributeDefinition for eduPersonTargetedID - Stored Mode -->
+    <!--
+    <AttributeDefinition xsi:type="SAML2NameID" nameIdFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" id="eduPersonTargetedID">
+        <InputDataConnector ref="myStoredId" attributeNames="persistentID" />
+    </AttributeDefinition>
+    -->
+
+    <AttributeDefinition xsi:type="Simple" id="schacHomeOrganization">
+        <InputDataConnector ref="staticAttributes" attributeNames="schacHomeOrganization"/>
+    </AttributeDefinition>
+
+    <AttributeDefinition xsi:type="Simple" id="schacHomeOrganizationType">
+        <InputDataConnector ref="staticAttributes" attributeNames="schacHomeOrganizationType"/>
+    </AttributeDefinition>
+
+    <!-- Schema: SAML Subject ID Attributes -->
+    <AttributeDefinition xsi:type="Scoped" id="samlSubjectID" scope="%{idp.scope}">
+        <InputDataConnector ref="myLDAP" attributeNames="%{idp.persistentId.sourceAttribute}"/>
+    </AttributeDefinition>
+
+    <AttributeDefinition xsi:type="Scoped" id="samlPairwiseID" scope="%{idp.scope}">
+        <InputDataConnector ref="myComputedId" attributeNames="computedID"/>
+    </AttributeDefinition>
+
+    <AttributeDefinition id="displayName" xsi:type="ScriptedAttribute">
+        <InputDataConnector ref="myLDAP" attributeNames="displayName cn givenName sn" />
+        <Script>
+<![CDATA[
+ logger = Java.type("org.slf4j.LoggerFactory").getLogger("net.shibboleth.idp.attribute.resolver.displayNameBuilder");
+ valueType =  Java.type("net.shibboleth.idp.attribute.StringAttributeValue");
+
+ // This implementation composes the value of the attribute displayName
+ // from the values of the attributes givenName and surname.
+
+ // check existance of commonName attribute and use it to generate displayName attribute
+ if (cn != null && cn.getValues().size() > 0) {
+    commonName = cn.getValues().get(0);
+ } else {
+    commonName = null;
+ }
+
+ // compose value from givenName and surname
+
+ // check whether givenName and surname exist
+ if (givenName != null && givenName.getValues().size() > 0) {
+    gn = givenName.getValues().get(0);
+ } else {
+    gn = null;
+ }
+ if (sn != null && sn.getValues().size() > 0) {
+    surname = sn.getValues().get(0);
+ } else {
+    surname = null;
+ }
+
+ if (typeof displayName == 'undefined' || displayName.getValues().size() < 1) {
+    //logger.info("No displayName in LDAP found, creating one");
+
+    if (cn != null) {
+       displayName.addValue(new valueType(commonName));
+       //logger.info('displayName final value: ' + displayName.getValues().get(0));
+
+    } else if (sn != null && gn != null) {
+       displayName.addValue(new valueType(gn + ' ' + surname));
+       //logger.info('displayName final value: ' + displayName.getValues().get(0));
+
+    } else if (sn != null) {
+       displayName.addValue(new valueType(surname));
+       //logger.info('displayName final value: ' + displayName.getValues().get(0));
+
+    } else if (gn != null) {
+       displayName.addValue(new valueType(gn));
+       //logger.info('displayName final value: ' + displayName.getValues().get(0));
+    }
+
+ } else {
+    //logger.info('displayName had value: ' + displayName.getValues().get(0));
+ }
+]]>
+        </Script>
+    </AttributeDefinition>
+
+    <!-- ========================================== -->
+    <!--      Data Connectors                       -->
+    <!-- ========================================== -->
+
+{% if ((idp_config['ldap']['useStartTLS'] or idp_config['ldap']['useSSL']) in ['Yes','yes','True','true']) and idp_config['ldap']['trustCertificates'] %}
+    <!-- Data Connector for LDAP -->
+    <DataConnector id="myLDAP" xsi:type="LDAPDirectory"
+        ldapURL="%{idp.attribute.resolver.LDAP.ldapURL}"
+        baseDN="%{idp.attribute.resolver.LDAP.baseDN}"
+        principal="%{idp.attribute.resolver.LDAP.bindDN}"
+        principalCredential="%{idp.attribute.resolver.LDAP.bindDNCredential}"
+        connectTimeout="%{idp.attribute.resolver.LDAP.connectTimeout}"
+        responseTimeout="%{idp.attribute.resolver.LDAP.responseTimeout}"
+        trustFile="%{idp.attribute.resolver.LDAP.trustCertificates}"
+        useStartTLS="%{idp.attribute.resolver.LDAP.useStartTLS:true}"
+        connectionStrategy="%{idp.attribute.resolver.LDAP.connectionStrategy}"
+        noResultIsError="true"
+        multipleResultsIsError="true"
+       	exportAttributes="%{idp.attribute.resolver.LDAP.exportAttributes}">
+        <FilterTemplate>
+            <![CDATA[
+                %{idp.attribute.resolver.LDAP.searchFilter}
+            ]]>
+        </FilterTemplate>
+        <ConnectionPool
+            minPoolSize="%{idp.pool.LDAP.minSize:3}"
+            maxPoolSize="%{idp.pool.LDAP.maxSize:10}"
+            blockWaitTime="%{idp.pool.LDAP.blockWaitTime:PT3S}"
+            validatePeriodically="%{idp.pool.LDAP.validatePeriodically:true}"
+            validateTimerPeriod="%{idp.pool.LDAP.validatePeriod:PT5M}"
+            validateDN="%{idp.pool.LDAP.validateDN:}"
+            validateFilter="%{idp.pool.LDAP.validateFilter:(objectClass=*)}"
+            expirationTime="%{idp.pool.LDAP.idleTime:PT10M}"/>
+    </DataConnector>
+{% else %}
+    <!-- Data Connector for LDAP -->
+    <DataConnector id="myLDAP" xsi:type="LDAPDirectory"
+        ldapURL="%{idp.attribute.resolver.LDAP.ldapURL}"
+        baseDN="%{idp.attribute.resolver.LDAP.baseDN}"
+        principal="%{idp.attribute.resolver.LDAP.bindDN}"
+        principalCredential="%{idp.attribute.resolver.LDAP.bindDNCredential}"
+        connectTimeout="%{idp.attribute.resolver.LDAP.connectTimeout}"
+        responseTimeout="%{idp.attribute.resolver.LDAP.responseTimeout}"
+        connectionStrategy="%{idp.attribute.resolver.LDAP.connectionStrategy}"
+        noResultIsError="true"
+        multipleResultsIsError="true"
+       	exportAttributes="%{idp.attribute.resolver.LDAP.exportAttributes}">
+        <FilterTemplate>
+            <![CDATA[
+                %{idp.attribute.resolver.LDAP.searchFilter}
+            ]]>
+        </FilterTemplate>
+        <ConnectionPool
+            minPoolSize="%{idp.pool.LDAP.minSize:3}"
+            maxPoolSize="%{idp.pool.LDAP.maxSize:10}"
+            blockWaitTime="%{idp.pool.LDAP.blockWaitTime:PT3S}"
+            validatePeriodically="%{idp.pool.LDAP.validatePeriodically:true}"
+            validateTimerPeriod="%{idp.pool.LDAP.validatePeriod:PT5M}"
+            validateDN="%{idp.pool.LDAP.validateDN:}"
+            validateFilter="%{idp.pool.LDAP.validateFilter:(objectClass=*)}"
+            expirationTime="%{idp.pool.LDAP.idleTime:PT10M}"/>
+    </DataConnector>
+{% endif %}
+    <!-- Data Connector for eduPersonTargetedID - Stored Mode -->
+    <!--
+    <DataConnector id="myStoredId" xsi:type="StoredId"
+        generatedAttributeID="persistentID"
+        salt="%{idp.persistentId.salt}"
+        queryTimeout="0">
+
+        <InputDataConnector ref="myLDAP" attributeNames="%{idp.persistentId.sourceAttribute}" />
+        <BeanManagedConnection>MyDataSource</BeanManagedConnection>
+    </DataConnector>
+    -->
+
+    <!-- Data Connector for eduPersonTargetedID - Computed Mode -->
+    <DataConnector id="myComputedId" xsi:type="ComputedId"
+        generatedAttributeID="computedID"
+        salt="%{idp.persistentId.salt}"
+        algorithm="%{idp.persistentId.algorithm:SHA}"
+        encoding="%{idp.persistentId.encoding:BASE32}">
+
+        <InputDataConnector ref="myLDAP" attributeNames="%{idp.persistentId.sourceAttribute}" />
+    </DataConnector>
+
+    <!-- Data Connector for static attributes -->
+    <DataConnector id="staticAttributes" xsi:type="Static">
+        <Attribute id="schacHomeOrganization">
+            <Value>%{idp.scope}</Value>
+        </Attribute>
+        <Attribute id="schacHomeOrganizationType">
+            <Value>{{ idp_config['schacHomeOrganizationType'] }}</Value>
+        </Attribute>
+     </DataConnector>
+
+</AttributeResolver>

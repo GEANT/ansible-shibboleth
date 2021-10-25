@@ -2,8 +2,8 @@
   git:
    repo: "{{ repo }}"
    dest: /opt/flup
-   version: 1.1.1
-   depth: 1
+   version: "1.2.1"
+   depth: "1"
   notify:
    - "Restart Apache"
 
@@ -18,10 +18,11 @@
   when:
    - flup_venv.stat.isdir is undefined
 
-- name: "Apply patch to build MYSQL-Python against MariaDB mysql.h"
-  patch:
-   src: mysql_h-flup.patch
-   dest: /usr/include/mysql/mysql.h
+#- name: "Apply patch to build MYSQL-Python against MariaDB mysql.h"
+#  patch:
+#   src: mysql_h-flup.patch
+#   dest: /usr/include/mysql/mysql.h
+#  when: ansible_distribution_release == "buster"
 
 - name: "Install pip requirements"
   pip:

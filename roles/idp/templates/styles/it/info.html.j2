@@ -144,6 +144,13 @@
                  <td><code>eduPersonOrcid</code></td>
                  <td>Identificativo ricercatore assegnato e gestito da orcid.org</td>
                </tr>
+{% if ansible_fqdn in ['eduid-pilot.aai.garr.it','eduid-indire.aai.garr.it'] %}
+              <tr>
+                <td><code>schacPersonalUniqueCode</code></td>
+                <td>Codice univoco personale assegnato dalla propria organizzazione (URN)</td>
+              </tr>
+{% endif %}
+
             </table>
 
             <p>La Politica sulla Privacy per gli utenti dell'istituto {{ idp_metadata['it']['mdui_displayName'] }} è consultabile qui: <a href="{{ idp_metadata['it']['mdui_privacyUrl'] | default('/it/privacy.html') }}">Privacy Policy</a></p>

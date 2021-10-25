@@ -188,11 +188,6 @@
    group: "root"
    mode: "0755"
 
-- name: "Remove ldap backup script in the '/etc/cron.daily' directory to run the script once a day"
-  file:
-   path: "/etc/cron.daily/ldap-backup"
-   state: absent
-
 - name: "Set 'slapd' log rotation"
   copy:
    src: "files/logrotate-slapd"

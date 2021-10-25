@@ -17,7 +17,7 @@
   when:
    - idp_ldap_restore is defined
    - idp_ldap_restore in ["Yes", "yes", "True", "true"]
-  tags: openldap
+  tags: openldap,restore
 
 - name: "Start OpenLDAP"
   systemd: 

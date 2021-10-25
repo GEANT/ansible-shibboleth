@@ -1,0 +1,7 @@
+---
+# Handlers for enable_maintenance
+
+- name: "Restart Apache2"
+  service:
+    name: apache2
+    state: restarted

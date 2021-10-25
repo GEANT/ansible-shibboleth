@@ -5,11 +5,7 @@
 #
 # OpenJDK: 
 #   jdk_type: "openjdk"
-#   jdk_version: "8"
-#
-# Oracle JDK: 
-#   jdk_type: "oraclejdk"
-#   jdk_version: "8"
+#   jdk_version: "11"
 #
 # Amazon Corretto JDK: 
 #   jdk_type: "corretto"

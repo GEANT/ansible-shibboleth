@@ -71,10 +71,38 @@
 {% endif %}
          <!-- Consume all SP metadata in the aggregate -->
          <MetadataFilter xsi:type="EntityRoleWhiteList">
-           <RetainedRole>md:SPSSODescriptor</RetainedRole>
+            <RetainedRole>md:SPSSODescriptor</RetainedRole>
          </MetadataFilter>
 
-{% if (md['comment'] is defined) and (md['comment']|length > 0) %}
+         <MetadataFilter xsi:type="Algorithm">
+            <!-- CBC-only SPs. -->
+            <md:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc" />
+               <Entity>https://nildeutenti.bo.cnr.it/sp</Entity>
+               <Entity>https://sp.tshhosting.com/shibboleth</Entity>
+               <Entity>https://shibboleth.highwire.org/entity/secure-sp</Entity>
+               <Entity>https://auth.osa.org/oa/entity</Entity>
+               <Entity>https://www.spiedigitallibrary.org/oa/entity</Entity>
+               <Entity>https://www.degruyter.com/shibboleth</Entity>
+               <Entity>https://gins.garr.it/simplesaml/module.php/saml/sp/metadata.php/default-sp</Entity>
+               <Entity>https://aai.openaire.eu/proxy/module.php/saml/sp/metadata.php/sso</Entity>
+               <Entity>urn:federation:MicrosoftOnline</Entity>
+               <Entity>https://ticket.iop.org/shibboleth</Entity>
+               <Entity>https://bestr.it/shibboleth</Entity>
+               <Entity>https://iam.atypon.com/shibboleth</Entity>
+               <Entity>https://shibboleth.cambridge.org/shibboleth-sp</Entity>
+               <Entity>https://idem.mulino.it/module.php/saml/sp/metadata.php/mulino-sp</Entity>
+               <Entity>https://bioone.org/oa/entity</Entity>
+               <Entity>https://journals.aps.org/oa/entity</Entity>
+               <Entity>https://federation.nih.gov/FederationGateway</Entity>
+               <Entity>https://fsso.springer.com</Entity>
+               <Entity>https://kluwerlawonline.com/oa/entity</Entity>
+               <Entity>https://secure.nature.com/shibboleth</Entity>
+               <Entity>https://shibboleth2sp.sams.oup.com/shibboleth</Entity>
+               <Entity>https://clas.cineca.it/simplesaml/module.php/saml/sp/metadata.php/default-sp</Entity>
+               <Entity>https://zeroshell.irccs-stellamaris.it:12081/shibboleth</Entity>
+         </MetadataFilter>
+
+{%- if (md['comment'] is defined) and (md['comment']|length > 0) %}
          <!-- {{ md['comment'] }} -->
 	       <MetadataProvider id="{{ md['id'] }}"  xsi:type="FilesystemMetadataProvider" metadataFile="/opt/shibboleth-idp/metadata/{{ md['file'] }}"/>
 {% endif %}

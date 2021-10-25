@@ -5,6 +5,8 @@
    upgrade: safe
    update_cache: yes
    cache_valid_time: 3600
+  tags: sys_update
 
 #- name: "Reboot VM to upgrade Kernel"
 #  command: reboot
+#  tags: sys_update

@@ -46,11 +46,6 @@
 
         <div class="content">
           <div class="column one">
-            <p>This page is displayed when a logout operation at the Identity Provider completes. This page is an example
-            and should be customized. It is not fully internationalized because the presentation will be a highly localized
-            decision, and we don't have a good suggestion for a default.</p>
-            <br>
-    
             #if ($rpContext)
               <p>#springMessageText("idp.logout.sp-initiated", "You have been logged out of the following service:")</p>
               <blockquote>

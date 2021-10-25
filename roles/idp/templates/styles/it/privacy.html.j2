@@ -108,7 +108,7 @@
                            <li>Alcuni o tutti tra i seguenti dati personali raccolti presso l’interessato da parte del Contraente:
                               <ol>
                                  <li>
-                                    <strong>uno o più identificativi univoci</strong> (uid, schacPersonalUniqueID, eduPersonOrcid, eduPersonTargetedID, SAML persistent identifier);
+                                    <strong>uno o più identificativi univoci</strong> (uid, schacPersonalUniqueID, eduPersonOrcid, eduPersonTargetedID, SAML persistent identifier{% if ansible_fqdn in ['eduid-pilot.aai.garr.it','eduid-indire.aai.garr.it'] %}, schacPersonalUniqueCode{% endif %});
                                  </li>
                                  <li><strong>credenziale di riconoscimento</strong> (userPassword);</li>
                                  <li><strong>nome e cognome</strong> (sn, givenName, cn, displayName);</li>

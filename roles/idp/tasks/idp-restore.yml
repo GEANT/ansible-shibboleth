@@ -3,8 +3,8 @@
 - name: "RESTORE - Retrieve IdP sealer.jks and sealer.kver backups"
   command: "{{ item }}"
   with_items:
-   - "rsync -avzh {{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/sealer.jks {{ files_dir }}/{{ fqdn }}/idp/credentials/sealer.jks"
-   - "rsync -avzh {{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/sealer.kver {{ files_dir }}/{{ fqdn }}/idp/credentials/sealer.kver"
+   - "rsync -avzh -e 'ssh -i {{ lookup('env','HOME') }}/.ssh/idpbakuser_rsa' {{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/sealer.jks {{ files_dir }}/{{ fqdn }}/idp/credentials/sealer.jks"
+   - "rsync -avzh -e 'ssh -i {{ lookup('env','HOME') }}/.ssh/idpbakuser_rsa' {{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/sealer.kver {{ files_dir }}/{{ fqdn }}/idp/credentials/sealer.kver"
   delegate_to: 127.0.0.1
   when:
     - bck_uri is defined
@@ -13,11 +13,25 @@
     - host_bck_path != ""
   tags: restore
 
-- name: "RESTORE - Retrieve MySQL backups"
-  command: "{{ item }}"
+- name: "Restore Sealer JKS and KVER"
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "jetty"
+   group: "root"
+   mode: "{{ item.mode }}"
   with_items:
-   - "rsync -avzh {{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/shibboleth_db.sql.gz {{ files_dir }}/{{ fqdn }}/idp/mysql-restore/shibboleth_db.sql.gz"
-   - "rsync -avzh {{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/statistics_db.sql.gz {{ files_dir }}/{{ fqdn }}/idp/mysql-restore/statistics_db.sql.gz"
+   - { src: "{{ files_dir }}/{{ fqdn }}/idp/credentials/sealer.jks", dest: "/opt/shibboleth-idp/credentials/sealer.jks", mode: "0604" }
+   - { src: "{{ files_dir }}/{{ fqdn }}/idp/credentials/sealer.kver", dest: "/opt/shibboleth-idp/credentials/sealer.kver", mode: "0604" }
+  when:
+    - bck_uri is defined
+    - bck_uri != ""
+    - host_bck_path is defined
+    - host_bck_path != ""
+  tags: restore
+
+- name: "RESTORE - Retrieve MySQL 'statistics' backup"
+  command: "rsync -avzh -e 'ssh -i {{ lookup('env','HOME') }}/.ssh/idpbakuser_rsa' {{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/statistics_db.sql.gz {{ files_dir }}/{{ fqdn }}/idp/mysql-restore/statistics_db.sql.gz"
   delegate_to: 127.0.0.1
   when:
     - bck_uri is defined
@@ -26,54 +40,95 @@
     - host_bck_path != ""
   tags: restore
   
-- name: "RESTORE - Put 'shibboleth' and 'statistics' database backups in the '/root' directory"
+- name: "RESTORE - Retrieve MySQL 'shibboleth' backup"
+  command: "rsync -avzh-e 'ssh -i {{ lookup('env','HOME') }}/.ssh/idpbakuser_rsa' {{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/shibboleth_db.sql.gz {{ files_dir }}/{{ fqdn }}/idp/mysql-restore/shibboleth_db.sql.gz"
+  delegate_to: 127.0.0.1
+  when:
+    - bck_uri is defined
+    - bck_uri != ""
+    - host_bck_path is defined
+    - host_bck_path != ""
+    - idp_db_restore == true
+  tags: restore
+
+- name: "RESTORE - Put 'statistics' database backup in the '/root' directory"
   copy:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
+   src: "{{ files_dir }}/{{ fqdn }}/idp/mysql-restore/statistics_db.sql.gz"
+   dest: "/root/statistics_db.sql.gz"
    owner: "root"
    group: "root"
    mode: "0600"
-  with_items:
-   - { src: "{{ files_dir }}/{{ fqdn }}/idp/mysql-restore/shibboleth_db.sql.gz", dest: "/root/shibboleth_db.sql.gz" }
-   - { src: "{{ files_dir }}/{{ fqdn }}/idp/mysql-restore/statistics_db.sql.gz", dest: "/root/statistics_db.sql.gz" }
   tags: restore
 
-- name: "RESTORE - Extract 'shibboleth' and 'statistics' database backups"
-  command: "gunzip {{ item }}"
-  with_items:
-   - "/root/shibboleth_db.sql.gz"
-   - "/root/statistics_db.sql.gz"
+- name: "RESTORE - Put 'shibboleth' database backup in the '/root' directory"
+  copy:
+   src: "{{ files_dir }}/{{ fqdn }}/idp/mysql-restore/shibboleth_db.sql.gz"
+   dest: "/root/shibboleth_db.sql.gz"
+   owner: "root"
+   group: "root"
+   mode: "0600"
+  when:
+   - idp_db_restore == true
   tags: restore
 
-- name: "RESTORE - Assign the right permissions to the 'shibboleth' and 'statistics' backup extracted"
+- name: "RESTORE - Extract 'statistics' database backup"
+  command: "gunzip /root/statistics_db.sql.gz"
+  tags: restore
+
+- name: "RESTORE - Extract 'shibboleth' database backup"
+  command: "gunzip /root/shibboleth_db.sql.gz"
+  when:
+   - idp_db_restore == true
+  tags: restore
+
+- name: "RESTORE - Assign the right permissions to the 'statistics' backup extracted"
   file:
-   dest: "{{ item }}"
+   dest: "/root/statistics_db.sql"
    owner: "root"
    group: "root"
    mode: "600"
-  with_items:
-   - "/root/shibboleth_db.sql"
-   - "/root/statistics_db.sql"
   tags: restore
 
-- name: "RESTORE - DROP the existing 'shibboleth' and 'statistics' databases"
+- name: "RESTORE - Assign the right permissions to the 'shibboleth' backup extracted"
+  file:
+   dest: "/root/shibboleth_db.sql"
+   owner: "root"
+   group: "root"
+   mode: "600"
+  when:
+   - idp_db_restore == true
+  tags: restore
+
+- name: "RESTORE - DROP the existing 'statistics' database"
   mysql_db:
-   name: "{{ item }}"
+   name: "statistics"
    state: absent
-  with_items:
-   - "shibboleth"
-   - "statistics"
   tags: restore
 
-- name: "RESTORE - Restore 'shibboleth' and 'statistics' databases"
+- name: "RESTORE - DROP the existing 'shibboleth' database"
+  mysql_db:
+   name: "shibboleth"
+   state: absent
+  when:
+   - idp_db_restore == true
+  tags: restore
+
+- name: "RESTORE - Restore 'statistics' database"
   mysql_db:
    encoding: "utf8"
    state: import
    name: all
-   target: "{{ item }}"
-  with_items:
-   - "/root/shibboleth_db.sql"
-   - "/root/statistics_db.sql"
+   target: "/root/statistics_db.sql"
+  tags: restore
+
+- name: "RESTORE - Restore 'shibboleth' database"
+  mysql_db:
+   encoding: "utf8"
+   state: import
+   name: all
+   target: "/root/shibboleth_db.sql"
+  when:
+   - idp_db_restore == true
   tags: restore
 
 - name: "RESTORE - Remove the backups restored from /root directory"
@@ -109,4 +164,13 @@
   command: "ansible-vault encrypt --vault-password-file {{ vault_file }} {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
   delegate_to: 127.0.0.1
   when: "'ANSIBLE_VAULT' in host_yaml.stdout"
+  tags: restore
+
+- name: "RESTORE - Be sure to set the right owner and group of YML file"
+  file:
+   path: "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+   owner: "{{ lookup('env','USER') }}"
+   group: "{{ lookup('env','USER') }}"
+   state: file
+  delegate_to: 127.0.0.1
   tags: restore

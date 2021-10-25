@@ -6,14 +6,6 @@
   register: idp_apache
   changed_when: false
 
-- name: "Remove any 'idp.conf' file into '/etc/apache2/conf-enabled'"
-  file:
-   path: "/etc/apache2/conf-enabled/idp.conf"
-   state: absent
-  when: idp_apache.stat.isreg is defined and idp_apache.stat.isreg
-  notify:
-   - "Restart Apache"
-
 - name: "Add Apache IDP conf"
   template:
    src: "idp.conf.j2"
@@ -44,7 +36,7 @@
 
 - name: "Add Apache SHIB-LOCALHOST conf"
   copy:
-   src: "files/apache/shib-localhost.conf"
+   src: "files/apache/conf-available/shib-localhost.conf"
    dest: "/etc/apache2/conf-available/shib-localhost.conf"
    owner: "root"
    group: "root"
@@ -104,23 +96,36 @@
   notify:
    - "Restart Apache"
 
-- name: "Put the Shibboleth IdP Views files in the right position for Shibboleth IdP v3.x"
-  template:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
-   owner: "root"
-   group: "root"
-   mode: "0644"
-  with_items:
-   - { src: "views/login-v3.vm.j2", dest: "/opt/shibboleth-idp/views/login.vm" }
-   - { src: "views/logout-v3.vm.j2", dest: "/opt/shibboleth-idp/views/logout.vm" }
-   - { src: "views/logout-complete-v3.vm.j2", dest: "/opt/shibboleth-idp/views/logout-complete.vm" }
-   - { src: "views/logout-propagate-v3.vm.j2", dest: "/opt/shibboleth-idp/views/logout-propagate.vm" }
-   - { src: "views/intercept/attribute-release-v3.vm.j2", dest: "/opt/shibboleth-idp/views/intercept/attribute-release.vm" }
+- name: "Check if Shibboleth IdP 'idp.intercept.Consent' module is already enabled" 
+  stat: 
+   path: "/opt/shibboleth-idp/views/intercept/attribute-release.vm"
+  register: shib_ar_tou_mod
   when:
-   - "shib_idp_version is search('^3.')"
+   - "shib_idp_version is search('^4.')"
+
+# Enable the ability:
+# - require user consent to attribute release
+# - present a "terms of use" message
+# prior to completing a login to a service
+
+- name: "Enable Attribute Release and TermOfUse Module on Shibboleth IdP v4.1"
+  shell: bin/module.sh -t idp.intercept.Consent || bin/module.sh -e idp.intercept.Consent
+  args:
+   chdir: "/opt/shibboleth-idp"
+  when:
+   - shib_ar_tou_mod.stat.exists == False
   notify:
-   - "Restart Apache"
+   - "Restart Jetty"
+
+- name: "Configure conf/relying-party.xml to enable the Attribute Release Module"
+  lineinfile:
+   path: "/opt/shibboleth-idp/conf/relying-party.xml"
+   regexp: '\s.*\"SAML2.SSO\"\s\/>'
+   line: '                <bean parent="SAML2.SSO" p:postAuthenticationFlows="attribute-release" />'
+  when:
+   - shib_ar_tou_mod.stat.exists == False
+  notify:
+   - "Restart Jetty"
 
 - name: "Put the Shibboleth IdP Views files in the right position for Shibboleth IdP v4.x"
   template:
@@ -150,20 +155,6 @@
   with_items:
    - { src: "messages/cookie_policy.properties.j2", dest: "/opt/shibboleth-idp/messages/cookie_policy.properties" }
    - { src: "messages/custom.properties.j2", dest: "/opt/shibboleth-idp/messages/custom.properties" }
-  notify:
-   - "Restart Apache"
-
-- name: "Put severals messages_LANGUAGE.properties in the right position for Shibboleth IdP v3.x"
-  copy:
-   src: "files/messages/messages_{{ item.key }}-v3.properties"
-   dest: "/opt/shibboleth-idp/messages/messages_{{ item.key }}.properties"
-   owner: "root"
-   group: "root"
-   mode: "0644"
-  with_dict: "{{ idp_metadata }}"
-  when: 
-   - "item.key != 'en'"
-   - "shib_idp_version is search('^3.')"
   notify:
    - "Restart Apache"
 

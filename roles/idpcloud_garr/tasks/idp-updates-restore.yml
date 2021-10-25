@@ -1,0 +1,48 @@
+---
+# tasks for IdP Restore
+- name: "RESTORE - Retrieve 'updates.txt' from backup server into the right local directory"
+  command: "rsync -avzh -e 'ssh -i {{ lookup('env','HOME') }}/.ssh/idpbakuser_rsa' {{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/updates.txt {{ files_dir }}/{{ fqdn }}/idpcloud_garr/updates.txt"
+  delegate_to: 127.0.0.1
+  when:
+    - bck_uri is defined
+    - bck_uri != ""
+    - host_bck_path is defined
+    - host_bck_path != ""
+
+- name: "RESTORE - Put 'updates.txt' into the right IdP directory"
+  copy:
+   src: "{{ files_dir }}/{{ fqdn }}/idpcloud_garr/updates.txt"
+   dest: "/opt/phpldapadmin/htdocs/idm-tools/updates.txt"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+
+- name: "RESTORE - Check if the HOST YAML file is encrypted with Vault"
+  command: "cat {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+  delegate_to: 127.0.0.1
+  register: host_yaml
+
+- name: "RESTORE - Decrypt Vaulted HOST YAML file"
+  command: "ansible-vault decrypt --vault-password-file {{ vault_file }} {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+  delegate_to: 127.0.0.1
+  when: "'ANSIBLE_VAULT' in host_yaml.stdout"
+
+- name: "RESTORE - Be sure to set 'idp_updates_restore' to 'false'"
+  lineinfile:
+   path: "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+   regexp: '^idp_updates_restore'
+   line: 'idp_updates_restore: "false"'
+  delegate_to: 127.0.0.1
+
+- name: "RESTORE - Encrypt HOST YAML file with Vault"
+  command: "ansible-vault encrypt --vault-password-file {{ vault_file }} {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+  delegate_to: 127.0.0.1
+  when: "'ANSIBLE_VAULT' in host_yaml.stdout"
+
+- name: "RESTORE - Be sure to set the right owner and group of YML file"
+  file:
+   path: "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+   owner: "{{ lookup('env','USER') }}"
+   group: "{{ lookup('env','USER') }}"
+   state: file
+  delegate_to: 127.0.0.1

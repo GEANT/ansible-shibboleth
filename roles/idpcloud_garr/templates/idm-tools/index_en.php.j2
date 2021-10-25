@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="auto" lang="auto" dir="ltr">
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>User Management Tools</title>
+  <link rel="shortcut icon" href="../en/favicon.png">
+  <link rel="stylesheet" href="../idm/css/default/custom.css">
+ </head>
+ <body>
+  <table class="page" border="0" width="100%">
+   <tbody>
+    <tr>
+     <td>
+      <div>
+       <table width="100%" border="0">
+        <tbody>
+         <tr>
+          <td align="left" width="10%"><a href="{{ idp_metadata['en']['org_url'] }}" target="_self"><img src="../en/logo.png" alt="Logo" class="logo"></a></td>
+          <td align="left"><h1>User Management tools for Identity Provider of {{ idp_metadata['en']['org_name'] }}</h1></td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </td>
+    </tr>
+    <tr>
+     <td class="body" width="80%">
+      <div>
+       <table class="body">
+        <tbody>
+         <tr>
+          <td>
+           <center>
+            <h3 class="title">User Management Tools</h3>
+            <center>&nbsp;</center>
+            <table class="entry" cellspacing="0" border="0" style="margin-left: auto; margin-right: auto;">
+             <tbody>
+              <tr class="updated">
+               <td class="title">User Management</td>
+               <td class="note"></td>
+              </tr>
+              <tr class="updated">
+               <td class="value" colspan="2">
+                <table cellspacing="0" cellpadding="0" width="100%" border="0">
+                 <tbody>
+                  <tr>
+                   <td class="icon" style="width: 25px;"><img src="images/ldap-ou.png" alt="Icon" style="float: right;">&nbsp;</td>
+                   <td valign="top">Login to the <b>User Management</b> interface<br/> to create, delete and change users of the LDAP server.</td>
+                   <td valign="top" style="text-align: right;"></td>
+                  </tr>
+                 </tbody>
+                </table>
+                <table class="entry" border="0">
+                 <tbody>
+                  <tr>
+                   <td style="width: 25px;">&nbsp;</td>
+                   <td><input type="button" value="Go to the administration user site" onclick="location.href = '/idm'"></td>
+                  </tr>
+                 </tbody>
+                </table>
+               </td>
+              </tr>
+              <tr class="updated">
+               <td class="title">Lock/Unlock users</td>
+               <td class="note"></td>
+              </tr>
+              <tr class="updated">
+               <td class="value" colspan="2">
+                <table cellspacing="0" cellpadding="0" width="100%" border="0">
+                 <tbody>
+                  <tr>
+                   <td class="icon" style="width: 25px;"><img src="images/lock-icon.png" alt="Icon" style="float: right;">&nbsp;</td>
+                   <td valign="top">Login to the <b>Lock/Unlock</b><br/> interface to lock/unlock users and to set their <br/> expiration contract date (to disable their account automatically).<br/></td>
+                   <td valign="top" style="text-align: right;"></td>
+                  </tr>
+                 </tbody>
+                </table>
+                <table class="entry" border="0">
+                 <tbody>
+                  <tr>
+                   <td style="width: 25px;">&nbsp;</td>
+                   <td><input type="button" value="Go to the lock/unlock page" onclick="location.href = '/idm/lockuser.php'"></td>
+                  </tr>
+                 </tbody>
+                </table>
+               </td>
+              </tr>
+              <tr class="updated">
+               <td class="title">Usage Statistics</td>
+               <td class="note"></td>
+              </tr>
+              <tr class="updated">
+               <td class="value" colspan="2">
+                <table cellspacing="0" cellpadding="0" width="100%" border="0">
+                 <tbody>
+                  <tr>
+                   <td class="icon" style="width: 25px;"><img src="images/statistics.png" alt="Icon" style="float: right;">&nbsp;</td>
+                   <td valign="top">Login to the <b>Statistics</b><br/> interface to see how your user use the federated resources<br/> available to this IdP.<br/></td>
+                   <td valign="top" style="text-align: right;"></td>
+                  </tr>
+                 </tbody>
+                </table>
+                <table class="entry" border="0">
+                 <tbody>
+                  <tr>
+                   <td style="width: 25px;">&nbsp;</td>
+                   <td><input type="button" value="Go to the Usage Statistics page" onclick="location.href = '/statistics'"></td>
+                  </tr>
+                 </tbody>
+                </table>
+               </td>
+              </tr>
+              <tr class="updated">
+               <td class="title">User Updates</td>
+               <td class="note"></td>
+              </tr>
+              <tr class="updated">
+               <td class="value" colspan="2">
+                <table cellspacing="0" cellpadding="0" width="100%" border="0">
+                 <tbody>
+                  <tr>
+                   <td class="icon" style="width: 25px;"><img src="images/user-update.png" alt="Icon" style="float: right;">&nbsp;</td>
+                   <td valign="top">Login to the <b>User Updates</b><br/> interface to see which new users have been added to this IdP.<br/></td>
+                   <td valign="top" style="text-align: right;"></td>
+                  </tr>
+                 </tbody>
+                </table>
+                <table class="entry" border="0">
+                 <tbody>
+                  <tr>
+                   <td style="width: 25px;">&nbsp;</td>
+                   <td><input type="button" value="Go to the User Updates page" onclick="location.href = '/idm-tools/updates.txt'"></td>
+                  </tr>
+                 </tbody>
+                </table>
+               </td>
+              </tr>
+{% if shib_pid_before_2018_09.stat.exists %}
+              <tr class="updated">
+               <td class="title">Users with Persistent-ID changed from September 2018</td>
+               <td class="note"></td>
+              </tr>
+              <tr class="updated">
+               <td class="value" colspan="2">
+                <table cellspacing="0" cellpadding="0" width="100%" border="0">
+                 <tbody>
+                  <tr>
+                   <td class="icon" style="width: 25px;"><img src="../idm/images/default/ldap-ou.png" alt="Icon" style="float: right;">&nbsp;</td>
+                   <td valign="top">Persistent-ID changed from 2018/09.<br/></td>
+                   <td valign="top" style="text-align: right;"></td>
+                  </tr>
+                 </tbody>
+                </table>
+                <table class="entry" border="0">
+                 <tbody>
+                  <tr>
+                   <td style="width: 25px;">&nbsp;</td>
+                   <td>Download the users list with changed Persistent-ID: <a href="/idm-tools/persistent-id-before-2018-09.csv" download>persistent-id-before-2018-09.csv</a></td>                  </tr>
+                 </tbody>
+                </table>
+		            <table class="entry" border="0">
+                 <tbody>
+                  <tr>
+                   <td style="width: 25px;">&nbsp;</td>
+                   <td><b>WARNING:</b>If there are not users with changed persistent-id, the file will be empty.</td>
+                  </tr>
+                 </tbody>
+                </table>
+               </td>
+              </tr>
+{% endif %}
+             </tbody>
+            </table>
+           </center>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </td>
+    </tr>
+    <tr class="foot"><td><small>&nbsp;</small></td></tr>
+   </tbody>
+  </table>
+ </body>
+</html>

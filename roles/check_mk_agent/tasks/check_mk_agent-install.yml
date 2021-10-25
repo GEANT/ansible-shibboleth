@@ -13,7 +13,7 @@
 
 - name: "Check if the Monitoring Agent of Check_MK is already downloaded"
   stat:
-    path: "/usr/local/src/{{ check_mk_agent_version }}.deb"
+    path: "/usr/local/src/{{ check_mk_agent_pkg }}"
   register: agent
 
 - name: "Download the Check_MK monitoring agent for Debian on the Ansible Master"
@@ -25,10 +25,10 @@
 
 - name: "Download the Check_MK monitoring agent for Debian"
   copy:
-   src: "{{ files_dir }}/all/{{ check_mk_agent_version }}.deb"
+   src: "{{ files_dir }}/all/{{ check_mk_agent_pkg }}"
    dest: "/usr/local/src"
   when: agent.stat.exists == False 
 
 - name: "Install Check_MK Agent"
-  command: "gdebi /usr/local/src/{{ check_mk_agent_version }}.deb -n"
+  command: "gdebi /usr/local/src/{{ check_mk_agent_pkg }} -n"
   when: agent.stat.exists == False 

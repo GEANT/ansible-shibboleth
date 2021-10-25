@@ -1,39 +1,59 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
+# coding=utf-8
 
 import ldap
 import ldap.modlist as modlist
 from datetime import datetime
 
+# PARAMETERS
+
+ldapuser            = "{{ pla['ldap']['root_dn'] }}"
+ldappasswd          = "{{ pla['ldap']['root_pw'] }}"
+ldapsrv             = "ldap://{{ fqdn }}:389"
+search_base         = "ou=people,dc=garr,dc=it"
+search_scope        = ldap.SCOPE_SUBTREE
+search_filter       = "uid=*"
+retrieve_attributes = [ 'uid', 'cn', 'pwdAccountLockedTime', 'schacExpiryDate' ]
+
 try:
-        l = ldap.open("{{ fqdn }}", 389)
-        l.protocol_version = ldap.VERSION3
-        l.simple_bind('{{ pla['ldap']['root_dn'] }}','{{ pla['ldap']['root_pw'] }}')
+   # Connect to LDAP server via plain, ssl or tls.
+   l = ldap.initialize(ldapsrv,bytes_mode=False)
 
-        search_base = "ou=people,{{ pla['ldap']['basedn'] }}"
-        search_scope = ldap.SCOPE_SUBTREE
-        retrieve_attributes = [ 'uid', 'cn', 'pwdAccountLockedTime', 'schacExpiryDate' ]
-        search_filter = "uid=*"
+   # Set LDAP protocol version used
+   l.protocol_version=ldap.VERSION3
 
-        ldap_result_id = l.search(search_base, search_scope, search_filter, retrieve_attributes)
-        while 1:
-                result_type, result_data = l.result(ldap_result_id, 0)
-                if (result_data == []): break
+   # Connect
+   l.simple_bind_s(ldapuser,ldappasswd)
 
-                if result_type == ldap.RES_SEARCH_ENTRY:
-                        cur_cn = result_data[0][0]
-                        cur_attrs = result_data[0][1]
+   # Return a list of tuple (dn, attrs):
+   # [
+   #  (
+   #    'uid=test.user,ou=people,dc=example,dc=org',
+   #    {'cn': [b'Test User'], 'schacExpiryDate': [b'20210820000000Z'],'uid': [b'test.user']}
+   #  )
+   # ]
+   results = l.search(search_base, ldap.SCOPE_SUBTREE, search_filter, retrieve_attributes)
 
-                        if 'schacExpiryDate' in cur_attrs and len(cur_attrs['schacExpiryDate']) > 0:
-                                expiry_date = datetime.strptime(cur_attrs['schacExpiryDate'][0], '%Y%m%d%H%M%SZ')
-                                if datetime.now() >= expiry_date:
-                                        if not 'pwdAccountLockedTime' in cur_attrs:
-                                                old = { }
-                                                new = { 'pwdAccountLockedTime': ['000001010000Z'] }
-                                                ldif = modlist.modifyModlist(old, new)
-                                                l.modify_s(cur_cn, ldif)
-                                                print "Locked user %s" % cur_cn
+   while 1:
+      result_type, result_data = l.result(results, 0)
+      if (result_data == []): break
 
-        l.unbind_s()
+      if result_type == ldap.RES_SEARCH_ENTRY:
+         cur_dn = result_data[0][0]
+         cur_attrs = result_data[0][1]
 
-except ldap.LDAPError, e:
-        print e
+      if 'schacExpiryDate' in cur_attrs and len(cur_attrs['schacExpiryDate']) > 0:
+         str_schacExpiryDate = str(cur_attrs['schacExpiryDate'][0], 'utf-8')
+         expiry_date = datetime.strptime(str_schacExpiryDate, '%Y%m%d%H%M%SZ')
+         if datetime.now() >= expiry_date:
+            if not 'pwdAccountLockedTime' in cur_attrs:
+               old = { }
+               new = { 'pwdAccountLockedTime': [b'000001010000Z'] }
+               ldif = modlist.modifyModlist(old, new)
+               l.modify_s(cur_dn, ldif)
+               print (f"Locked user { cur_dn }")
+
+   l.unbind_s()
+
+except ldap.LDAPError as e:
+        print(e)

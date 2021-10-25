@@ -34,17 +34,12 @@
 
 - name: "Install Mysql server and needed libraries"
   apt:
-   name: ['python-mysqldb', 'mysql-server', 'libmysql-java', 'libcommons-dbcp-java', 'libcommons-pool-java']
+   name: ['python3-mysqldb', 'default-mysql-server', 'libcommons-dbcp-java', 'libcommons-pool-java']
    state: latest
    install_recommends: no
-  when:
-   - ansible_distribution_release == 'jessie' or ansible_distribution_release == "stretch"
 
-- name: "Install Mysql server and needed libraries"
+- name: "Install MariaDB Connector Java"
   apt:
-   name: ['python-mysqldb', 'default-mysql-server', 'libcommons-dbcp-java', 'libcommons-pool-java', 'libmariadb-java']
+   name: 'libmariadb-java'
    state: latest
    install_recommends: no
-  when:
-   - ansible_distribution_release != 'jessie'
-   - ansible_distribution_release != 'stretch'

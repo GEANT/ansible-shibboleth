@@ -4,18 +4,29 @@
   include_vars: "{{ ansible_os_family }}.yml"
   tags: idp
 
-- name: "Include static attributes vars if custom one is not provided on host_vars of IdP"
-  include_vars:
-   file: "staticAttributes.yml"
-  when: idp_stat_attrs is undefined or idp_stat_attrs == ""
-  tags: idp
+- name: "Restore Sealer if needed"
+  import_tasks: idp-sealer-restore.yml
+  when: 
+   - idp_sealer_restore is defined
+   - idp_sealer_restore in ["Yes","yes","True","true"]
+  tags: idp,restore
 
-- name: "Restore Shibboleth IdP if needed"
-  import_tasks: idp-restore.yml
+- name: "Restore 'statistics' database if needed"
+  import_tasks: idp-stats-restore.yml
+  when: 
+   - idp_stats_restore is defined
+   - idp_stats_restore in ["Yes","yes","True","true"]
+  tags: idp,restore
+
+- name: "Restore Shibboleth IdP Database if 'stored' has been used"
+  import_tasks: idp-db-restore.yml
   when: 
    - idp_db_restore is defined
    - idp_db_restore in ["Yes","yes","True","true"]
-  tags: idp
+   - idp_config is defined
+   - idp_config['idp_persistentId_type'] is defined
+   - idp_config['idp_persistentId_type'] == "stored"
+  tags: idp,restore
 
 - name: "Install Shibboleth IdP"
   import_tasks: idp-install.yml

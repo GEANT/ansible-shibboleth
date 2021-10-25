@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #-*- coding: utf-8 -*-
 
 import xml.etree.cElementTree as ET
@@ -6,11 +6,11 @@ from operator import itemgetter
 from collections import OrderedDict
 
 import sys, getopt
-import optparse
+import argparse
 from subprocess import check_output
 import shlex
 import os
-from cStringIO import StringIO
+from io import StringIO
 
 # PARAMETERS
 
@@ -30,24 +30,23 @@ tls         = False
 
 # END PARAMETERS
 
-parser = optparse.OptionParser()
-parser.add_option("-d", "--debug", dest="debug", action="store_true", help="Print debug information", default=False)
-parser.add_option("-e", "--entity", dest="spEntityId", help="Specify SP entityId", default=spEntityId)
-parser.add_option("-p", "--principal", dest="user", help="Username to be checked", default=user)
-(options, args) = parser.parse_args()
+parser = argparse.ArgumentParser(prog="check_aacli.py",description=f"Run AACLI to verify the IdP operation", epilog="AACLI CHECK SCRIPT")
+parser.add_argument("--debug", dest="debug", action="store_true", help="Print debug information", default=False)
+parser.add_argument("--entity", dest="spEntityId", help="Specify SP entityId", default=spEntityId)
+parser.add_argument("--principal", dest="user", help="Username to be checked", default=user)
+options = parser.parse_args()
 
 if options.debug:
-    print "Options passed to command:   %s" % options
-    print "Arguments passed to command: %s" % args
+    print(f"Options passed to command: {options}")
 
-os.environ["JAVA_HOME"] = "{{ java_home_dir }}"
-result = check_output(shlex.split('/opt/shibboleth-idp/bin/aacli.sh --saml2 --principal '+ user +' --requester ' + spEntityId))
+os.environ["JAVA_HOME"] = "/usr/lib/jvm/default-java"
+result = check_output(shlex.split(f"/opt/shibboleth-idp/bin/aacli.sh --saml2 --principal {user} --requester {spEntityId}"))
 
 namespaces = {
    'saml2': 'urn:oasis:names:tc:SAML:2.0:assertion'
 }
 
-tree = ET.parse(StringIO(result))
+tree = ET.parse(StringIO(result.decode('utf-8')))
 root = tree.getroot()
 attrs = root.findall("./saml2:AttributeStatement/saml2:Attribute", namespaces)
 
@@ -72,17 +71,17 @@ try:
    import ldap
 
    # Connect to LDAP server via plain, ssl or tls.
-   con = ldap.initialize(ldapsrv)
+   con = ldap.initialize(ldapsrv,bytes_mode=False)
    if tls: con.set_option(ldap.OPT_X_TLS_DEMAND, True)
    con.simple_bind_s(searchuser,ldappasswd)
 
    # Search the LDAP for the right user.
    filter = '(objectclass=person)'
    attrs = ['*']
-   searchuser  = userid_attr + '=' + options.user + ',' + basedn
+   searchuser  = f"{userid_attr}={options.user},{basedn}"
    ldapuser = con.search_s(searchuser, ldap.SCOPE_SUBTREE, filter, attrs)[0][1]
 
-   if options.debug: print ldapuser
+   if options.debug: print(f"LDAPUSER: {ldapuser}")
 
    # Verify all interesting attrs comparing LDAP with Shibboleth session.
    #
@@ -101,31 +100,31 @@ try:
       if '=' in value:
          spAttrs[value.split('=', 1)[0].strip()] = value.split('=', 1)[1].strip()
 
-   if options.debug: print spAttrs
+   if options.debug: print(f"spAttrs:{spAttrs}")
 
    # Check all attributes
    for curAttrLDAP in attrs:
-      if curAttrLDAP[0] == '@':
-         valLDAP = [('{0}@'+scope).format(i) for i in ldapuser[curAttrLDAP[1:]]]
+      if curAttrLDAP.startswith('@'):
+         valLDAP = [f"{i.decode('utf-8')}@{scope}" for i in ldapuser[curAttrLDAP[1:]]]
       else:
-         valLDAP = ldapuser[curAttrLDAP]
+         valLDAP = ldapuser[curAttrLDAP][0].decode('utf-8')
 
       valSP = spAttrs[attrs[curAttrLDAP]]
-      if options.debug: print "\n\nChecking %s with %s for attribute: %s => %s" % (valLDAP, valSP, curAttrLDAP, attrs[curAttrLDAP])
+      if options.debug: print(f"\n\nChecking {valLDAP} with {valSP} for attribute: {curAttrLDAP} => {attrs[curAttrLDAP]}")
 
       if not valSP in valLDAP:
          validAttrs = False
-         attrErrString += "Attribute %s in LDAP has value %s in LDAP session and value %s in the SP.\n" % (curAttrLDAP, valLDAP, valSP)
+         attrErrString += f"Attribute {curAttrLDAP} in LDAP has value {valLDAP} in LDAP session and value {valSP} in the SP.\n"
 
 except Exception as e:
    # In case of an error put validAttrs to False to return exit status 1 below.
-   if options.debug: print e
+   if options.debug: print(e)
    validAttrs = False
 
 if validAttrs:
-   print "0 check_aacli - SUCCESS - IdP has retrieved metadata of Test SP and is sending attributes to it"
+   print("0 check_aacli - SUCCESS - IdP has retrieved metadata of Test SP and is sending attributes to it")
    sys.exit(0)
 else:
-   print "1 check_aacli - CRITICAL - IdP doesn't send attributes to Test SP"
-   print attrErrString
+   print("1 check_aacli - CRITICAL - IdP doesn't send attributes to Test SP")
+   print(attrErrString)
    sys.exit(1)

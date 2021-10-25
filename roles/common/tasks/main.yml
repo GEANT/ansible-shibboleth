@@ -1,5 +1,22 @@
 ---
 # tasks file for common
+
+- name: "Configure the nameservers in the resolver"
+  template:
+   src: resolv.conf.j2
+   dest: /etc/resolv.conf
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  tags: common
+
+- name: "Install needed Python3 module for apt"
+  apt: 
+   name: "python3-apt" 
+   install_recommends: no
+   state: present
+  tags: common
+
 - name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
   apt:
    update_cache: yes
@@ -20,15 +37,6 @@
    name: "{{ fqdn }}"
   tags: common
 
-- name: "Configure the nameservers in the resolver"
-  template:
-   src: resolv.conf.j2
-   dest: /etc/resolv.conf
-   owner: "root"
-   group: "root"
-   mode: "0644"
-  tags: common
-
 - name: "Add root user's password"
   user:
    name: "root"
@@ -38,8 +46,7 @@
 - name: "Disable Root SSH Login access"
   lineinfile:
    dest: "/etc/ssh/sshd_config"
-   regexp: "^PermitRootLogin"
-   insertafter: "^#PermitRootLogin prohibit-password"
+   regexp: "^(# *)?PermitRootLogin "
    line: "PermitRootLogin no"
    state: present
   notify: 
@@ -52,11 +59,21 @@
   register: cloud_cfg
   tags: common
 
-- name: "Comment out 'manage_etc_host' from /etc/cloud/cloud.cfg"
+- name: "Remove wrong line from /etc/cloud/cloud.cfg"
   lineinfile:
-   dest: /etc/cloud/cloud.cfg
-   regexp: "manage_etc_hosts"
-   line: "#manage_etc_hosts"
+   path: /etc/cloud/cloud.cfg
+   regexp: "#manage_etc_hosts"
+   state: absent
+  when:
+   - cloud_cfg.stat.exists
+  tags: common
+
+- name: "Disable 'manage_etc_host' from Debian cloud-init"
+  lineinfile:
+   path: /etc/cloud/cloud.cfg.d/02_debian_idpcloud.cfg
+   regexp: "^manage_etc_hosts"
+   line: "manage_etc_hosts: False"
+   create: yes
    state: present
   when:
    - cloud_cfg.stat.exists
@@ -115,12 +132,11 @@
    - "Update Timezone"
   tags: common
 
-- name: "Set /etc/localtime in Debian Stretch"
+- name: "Set /etc/localtime"
   file:
    src: "/usr/share/zoneinfo/{{ my_timezone }}"
    dest: "/etc/localtime"
    state: link
-  when: ansible_distribution_release != "jessie"
   tags: common
 
 - name: "Be sure to configure SSL if needed"
@@ -129,7 +145,9 @@
    - common is defined
    - common['ssl'] is defined
    - common['ssl'] in ["True","true","Yes","yes"]
-  tags: common
+  tags:
+   - common
+   - ssl_update
 
 - name: "Manage SWAP file if needed"
   import_tasks: "manage_swapfile.yml"
@@ -145,4 +163,24 @@
    path: "/tmp"
    state: directory
    mode: "u+rwx,g+rwx,o+rwt"
+  tags: common
+
+- name: "Ensure the en_US.UTF-8 locale exists"
+  locale_gen:
+   name: 'en_US.UTF-8'
+   state: present
+  tags: common
+
+- name: "Check the existance of '/etc/default/locale'"
+  stat:
+    path: /etc/default/locale
+  register: default_locale
+  tags: common
+
+- name: "Remove '/etc/default/locale' file"
+  file:
+   path: "/etc/default/locale"
+   state: absent
+  when:
+   - default_locale.stat.exists
   tags: common

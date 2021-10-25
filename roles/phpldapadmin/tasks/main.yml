@@ -15,16 +15,6 @@
   changed_when: False
   tags: pla
 
-- name: "Be sure to configure '{{ pla['web_gui_user'] }}' user for phpLDAPadmin"
-  htpasswd:
-   path: "/etc/apache2/htpasswd"
-   name: "{{ pla['web_gui_user'] }}"
-   password: "{{ pla['web_gui_pw'] }}"
-   owner: "root"
-   group: "root"
-   mode: 0644
-  tags: pla
-
 - name: "Check if Apache phpLDAPadmin conf is already enabled"
   stat:
    path: "/etc/apache2/conf-enabled/phpldapadmin.conf"
@@ -54,7 +44,7 @@
    - "Restart Apache"
   tags: pla
 
-- name: "Be sure to load logo and apache2 configuration files of phpLDAPadmin"
+- name: "Be sure to load logo and favicon files on phpLDAPadmin"
   copy:
    src: "{{ item.src }}"
    dest: "{{ item.dest }}"

@@ -29,20 +29,6 @@
   when:
    - shib_tarball.stat.exists == False
 
-- name: "Put Shibboleth Identity Provider v3.x installer properties' files in the right position"
-  template:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
-   owner: "root"
-   group: "root"
-   mode: "{{ item.mode }}"
-  with_items:
-   - { src: "shib-idp-install.properties.j2", dest: "/tmp/shib-idp-install.properties", mode: "0644" }
-   - { src: "installer.properties.j2", dest: "/tmp/installer.properties", mode: "0644" } 
-  when: 
-   - shib_tarball.stat.exists == False
-   - "shib_idp_version is search('^3.')"
-
 - name: "Put Shibboleth Identity Provider v4.x installer properties' files in the right position"
   template:
    src: "{{ item.src }}"
@@ -56,7 +42,6 @@
    - shib_tarball.stat.exists == False
    - "shib_idp_version is search('^4.')"
 
-# Create 'shibboleth' DB only for Shibboleth IdP v3.x
 - name: "Put the Shibboleth Identity Provider persistent-id database structure file in the right position"
   template:
    src: "shib-idp-persistentId-db.sql.j2"
@@ -69,15 +54,7 @@
    - idp_config['idp_persistentId_type'] is defined
    - idp_config['idp_persistentId_type'] == "stored"
 
-#- name: "Put the JSTL libraries, needed for Shibboleth IdP Status page, in the right position"
-#  copy:
-#   src: "files/jstl-1.2.jar"
-#   dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/jstl-1.2.jar"
-#   owner: "root"
-#   group: "root"
-#   mode: 0644
-
-- name: "Create link for commons-dbcp, commons-pool and mysql JAR files used by Shibboleth IdP"
+- name: "Create link for commons-dbcp & commons-pool JAR files needed by Shibboleth IdP for 'stored' persistent-id"
   file:
    src: "{{ item.src }}" 
    dest: "{{ item.dest }}"
@@ -87,19 +64,12 @@
   with_items:
    - { src: '/usr/share/java/commons-dbcp.jar' ,dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/commons-dbcp.jar" }
    - { src: '/usr/share/java/commons-pool.jar' ,dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/commons-pool.jar" }
+  when:
+   - idp_config is defined
+   - idp_config['idp_persistentId_type'] is defined
+   - idp_config['idp_persistentId_type'] == "stored"
 
-- name: "Create link for MySQL Connector JAR files used by Shibboleth IdP"
-  file:
-   src: "{{ item.src }}" 
-   dest: "{{ item.dest }}"
-   owner: "jetty"
-   group: "jetty"
-   state: link
-  with_items:
-   - { src: '/usr/share/java/mysql.jar' ,dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/mysql-connector-java.jar" }
-  when: ansible_distribution_release == 'jessie' or ansible_distribution_release == 'stretch'
-
-- name: "Create link for MariaDB Connector JAR files used by Shibboleth IdP"
+- name: "Create link for MariaDB Connector JAR files needed by Shibboleth IdP for 'stored' persistent-id"
   file:
    src: "{{ item.src }}" 
    dest: "{{ item.dest }}"
@@ -109,8 +79,9 @@
   with_items:
    - { src: '/usr/share/java/mariadb-java-client.jar', dest: "/usr/local/src/shibboleth-identity-provider-{{ shib_idp_version }}/webapp/WEB-INF/lib/mariadb-java-client.jar" }
   when: 
-   - ansible_distribution_release != 'jessie'
-   - ansible_distribution_release != 'stretch'
+   - idp_config is defined
+   - idp_config['idp_persistentId_type'] is defined
+   - idp_config['idp_persistentId_type'] == "stored"
 
 - name: "Install Shibboleth IdP"
   shell: "./install.sh -Didp.property.file=/tmp/installer.properties"
@@ -134,5 +105,4 @@
     - "metadata"
     - "credentials"
     - "conf"
-    - "system"
     - "war"

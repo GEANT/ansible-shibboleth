@@ -1,200 +1,221 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
+# coding=utf-8
 
-# Copyright 2010 University Corporation for Advanced Internet Development, Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-
-"""Parse Shibboleth 2.x Identity Provider audit logfile and generate simple stats.
-   Audit log file format: https://wiki.shibboleth.net/confluence/display/SHIB2/IdPLogging"""
-   
-import sys
-import fileinput
-import os
+"""Parse Shibboleth Identity Provider audit logfile and generate simple stats."""
+from __future__ import absolute_import, print_function
+from fileinput import input as finput, hook_compressed as compr
+from sys import exit as term
+from os import linesep
+from json import dumps
 from optparse import OptionParser
 from operator import itemgetter
 
-def parseFiles(files,options):
-    """Build datastructures from lines."""
+
+def parse_files(files, options):
+    """Build datastructures from lines"""
     lines = []
-    if sys.version_info < (2, 5):
-        for line in fileinput.input(files):
-            if line.find('Shibboleth-Audit'):
-                line = line[line.find('Shibboleth-Audit') + len('Shibboleth-Audit') + 1:]
-            lines.append(line.rstrip().split("|"))
-    else:
-        for line in fileinput.input(files, openhook=fileinput.hook_compressed):
-            if line.find('Shibboleth-Audit'):
-                line = line[line.find('Shibboleth-Audit') + len('Shibboleth-Audit') + 1:]
-            lines.append(line.rstrip().split("|"))
+    for line in finput(files, openhook=compr):
+        if (type(line) is bytes): line = line.decode('utf-8')
+        lines.append(line.rstrip().split("|"))
 
     db = {}
-    db['rp'], db['users'], db['msgprof'], db['logins'] = {},{},{},0
+    db['rp'], db['users'], db['msgprof'], db['logins'] = {}, {}, {}, 0
 
+    # Audit log format we're trying to parse below:
+    # datetime|req_bind|req_id|rp|msg_profile|idp|resp_bind|resp_id|user|authn_mech|attribs|name_id|assert_id|ip
     for event in lines:
         try:
-            datetime,reqBind,reqId,rp,msgProfile,idp,respBind,respId,user,authnMeth,relAttribs,nameId,assertIds,EOL = event
+            rp, msg_profile, user = list(event[i] for i in [3, 4, 8])
         except ValueError:
-            print """ERROR: Unsupported log file format or using compressed log files with Python < 2.5.%sSee the documentation in the Shibboleth wiki.""" % os.linesep
-            sys.exit(-1)
-            
-        if msgProfile.lower().endswith(":sso"):
+            print(linesep.join([
+                "ERROR: Unsupported log file format or compressed logs with Python < 2.5",
+                "See the documentation."]))
+            term(-1)
+
+        if msg_profile.lower().find("sso") > -1:
             db['logins'] += 1
 
-        # we almost always need to cound rps:
-        if db['rp'].has_key(rp):
-            db['rp'][rp] += 1 
-        else:
-            db['rp'][rp] = 1 
+            # we almost always need to count rps:
+            if len(rp) > 0:
+               if rp in db['rp']:
+                  db['rp'][rp] += 1
+               else:
+                  db['rp'][rp] = 1
 
-        # only count users if asked to
-        if options.uniqusers or options.allusers:
-            if db['users'].has_key(user):
-               db['users'][user] += 1
-            else:
-               db['users'][user] = 1
+            # only count users if asked to
+            if len(user) > 0:
+               if options.uniqusers or options.xml or options.rrd or options.json:
+                  if user in db['users']:
+                     db['users'][user] += 1
+                  else:
+                     db['users'][user] = 1
 
         # only count message profiles and rps if asked to
         if options.msgprofiles:
-            if db['msgprof'].has_key(msgProfile):
-                if db['msgprof'][msgProfile].has_key(rp):
-                   db['msgprof'][msgProfile][rp] += 1
+            if msg_profile in db['msgprof']:
+                if rp in db['msgprof'][msg_profile]:
+                    db['msgprof'][msg_profile][rp] += 1
                 else:
-                   db['msgprof'][msgProfile][rp] = 1
+                    db['msgprof'][msg_profile][rp] = 1
             else:
-                db['msgprof'][msgProfile] = {}
-                db['msgprof'][msgProfile][rp] = 1
+                db['msgprof'][msg_profile] = {}
+                db['msgprof'][msg_profile][rp] = 1
     return db
 
-def uniqueRps(db):
-    """Output unique relying parties."""
-    for rp in sorted(db['rp'].keys()):
-        print rp
-    
-def uniqueRpCount(db,options):
-    """Output number of unique relying parties."""
-    rps = len(db['rp'].keys())
-    if options.quiet:
-        print rps
-    else:
-        print "%d unique relying part%s" % (rps, ('y', 'ies')[rps!=1])
-    
-def loginCount(db,options):
-    """Output total number of logins."""
+
+def basic_stats(db):
+    """Collect basic statistics to be fed to output functions"""
+    rps = len(list(db['rp'].keys()))
+    users = len(list(db['users'].keys()))
     logins = db['logins']
-    if not options.quiet:
-        print "%d login%s" % (logins, ('', 's')[logins!=1])
+    return {"rps": rps, "users": users, "logins": logins}
+
+
+def xml_out(db):
+    """XML output of basic stats"""
+    stats = basic_stats(db)
+    print('<?xml version="1.0"?>')
+    print('<idp-audit rps="%d" logins="%d" users="%d">'
+          % (stats['rps'], stats['logins'], stats['users']))
+    for rp, i in list(db['rp'].items()):
+        print('  <rp count="%d">%s</rp>' % (i, rp))
+    print("</idp-audit>")
+
+
+def rrd_out(db):
+    """RRD output of basic stats"""
+    stats = basic_stats(db)
+    print("rp:%d l:%d u:%d" % (stats['rps'], stats['logins'], stats['users']))
+
+
+def json_out(db, options):
+    """JSON output of basic stats"""
+    stats = {"stats": basic_stats(db)}
+    stats['logins_per_rp'] = db['rp']
+    if options.quiet:
+        print(dumps(stats, separators=(',', ':')))
     else:
-        print logins
+        print(dumps(stats, indent=2, separators=(',', ': ')))
 
-def uniqueUsers(db,options):
-    """Output number of unique userids."""
-    users = len(db['users'].keys())
-    if not options.quiet:
-        print "%d unique userid%s" % (users, ('', 's')[users!=1])
+
+def unique_rp(db):
+    """Output unique relying parties"""
+    for rp in sorted(db['rp'].keys()):
+        print(rp)
+
+
+def unique_rp_count(db, options):
+    """Output number of unique relying parties"""
+    rps = len(list(db['rp'].keys()))
+    if options.quiet:
+        print(rps)
     else:
-        print users
+        print("%d unique relying part%s" % (rps, ('y', 'ies')[rps != 1]))
 
-def allUsers(db):
-    """Output useridss and number of logins."""
-    for curuser,logins in sorted(db['users'].items(), reverse=True, key=lambda (k,v): (v,k)):
-        if not curuser == '':
-            print "%d\t | %s" % (logins, curuser)
 
-def loginsPerRp(db,options):
-    """Output list of logins per relying party."""
-    for rp,i in db['rp'].items():
+def login_count(db, options):
+    """Output total number of logins"""
+    logins = db['logins']
+    if options.quiet:
+        print(logins)
+    else:
+        print("%d login%s" % (logins, ('', 's')[logins != 1]))
+
+
+def unique_users(db, options):
+    """Output number of unique userids"""
+    users = len(list(db['users'].keys()))
+    if options.quiet:
+        print(users)
+    else:
+        print("%d unique userid%s" % (users, ('', 's')[users != 1]))
+
+
+def logins_per_rp_sorted(db, options):
+    """Output sorted list of logins per relying party"""
+    for rp, i in sorted(iter(list(db['rp'].items())), key=itemgetter(1), reverse=True):
         if options.quiet:
-            print "%d %s" % (i, rp)
+            print("%d %s" % (i, rp))
         else:
-            print "%d\t | %s" % (i, rp)
+            print("%d\t | %s" % (i, rp))
 
-def loginsPerRpSorted(db,options):
-    """Output sorted list of logins per relying party."""
-    for rp,i in sorted(db['rp'].items(), key=itemgetter(1), reverse=True):
-        if options.quiet:
-            print "%d %s" % (i, rp)
-        else:
-            print "%d\t | %s" % (i, rp)
 
-def rpPerMessageProfile(db,options):
-    """Output usage of SAML message profiles per relying party."""
-    for mp,rps in db['msgprof'].items():
-        print mp
-        for rp,i in sorted(rps.items(), key=itemgetter(1), reverse=True):
+def rp_per_msg_profile(db, options):
+    """Output usage of SAML message profiles per relying party"""
+    for mp, rps in list(db['msgprof'].items()):
+        print(mp)
+        for rp, i in sorted(iter(list(rps.items())), key=itemgetter(1), reverse=True):
             if options.quiet:
-                print "%d %s" % (i, rp)
+                print("%d %s" % (i, rp))
             else:
-                print "%d\t | %s" % (i, rp)
+                print("%d\t | %s" % (i, rp))
         if not options.quiet:
-            print
+            print()
 
-def main():
-    """Parse command line options and arguments and their contents."""
-    parser = OptionParser()
-    usage = "usage: %prog [options] [files ...]"
-    parser = OptionParser(usage)
-    parser.add_option("-r", "--relyingparties", help="list of unique relying parties, sorted by name",
-                      action="store_true", dest="uniqrp")
-    parser.add_option("-c", "--rpcount", help="number of unique relying parties",
-                      action="store_true")
-    parser.add_option("-u", "--users", help="number of unique userids",
-                      action="store_true", dest="uniqusers")
-    parser.add_option("-a", "--allusers", help="number of logins per userid",
-                      action="store_true", dest="allusers")
-    parser.add_option("-l", "--logins", help="number of logins",
-                      action="store_true")
-    parser.add_option("-p", "--rplogins", help="number of events per relying party, by name",
-                      action="store_true")
-    parser.add_option("-n", "--rploginssort", help="number of events per relying party, sorted numerically",
-                      action="store_true")
-    parser.add_option("-m", "--msgprofiles", help="usage of SAML message profiles per relying party ",
-                      action="store_true")
-    parser.add_option("-q", "--quiet", help="suppress all descriptive or decorative output",
-                      action="store_true" )
+
+def getopts():
+    """Parse command line options and arguments"""
+    parser = OptionParser("Usage: %prog [options] [files ...]")
+    parser.add_option("-r", "--relyingparties", action="store_true", dest="uniqrp",
+                      help="List of unique relying parties, sorted by name")
+    parser.add_option("-c", "--rpcount", action="store_true",
+                      help="Number of unique relying parties")
+    parser.add_option("-u", "--users", action="store_true", dest="uniqusers",
+                      help="Number of unique userids")
+    parser.add_option("-l", "--logins", action="store_true", help="Number of logins")
+    parser.add_option("-n", "--rploginssort", action="store_true",
+                      help="Number of events per relying party, sorted numerically")
+    parser.add_option("-m", "--msgprofiles", action="store_true",
+                      help="Used SAML message profiles per relying party, sorted")
+    parser.add_option("-q", "--quiet", action="store_true",
+                      help="Suppress decorative output (or compact JSON)")
+    parser.add_option("-x", "--xml", action="store_true", help="Output stats in XML")
+    parser.add_option("-t", "--rrd", action="store_true", help="Output basic stats for RRD use")
+    parser.add_option("-j", "--json", action="store_true", help="Output stats in JSON")
 
     # Parse options and do basic sanity checking
     (options, args) = parser.parse_args()
     if len(args) == 0:
-        print "Missing filename(s). Specify '-' as filename to read from STDIN.\n"
+        print("Missing filename(s). Specify '-' as filename to read from STDIN.%s" % linesep)
         parser.print_help()
-        sys.exit(-1)
-    if options.rplogins and options.rploginssort:
-        parser.error("Options -p and -n are mutually exclusive (just use one or the other).")
+        term(-1)
 
-    # Make sure that at least one option is set, otherwise don't bother parsing any logfiles
-    for value in options.__dict__.values():
+    # Make sure that at least one option is set, otherwise don't bother parsing any files
+    for value in list(options.__dict__.values()):
         if value:
-            db = parseFiles(args,options)
-            break
-    else:
-        print "Missing option: At least one option needs to be supplied.\n"
-        parser.print_help()
-        sys.exit(-1)
+            db = parse_files(args, options)
+            return (db, options)
+    print("Missing option: At least one option needs to be supplied.%s" % linesep)
+    parser.print_help()
+    term(-1)
 
-    # map command line options to procedures
-    if options.uniqrp: uniqueRps(db)
-    if options.rpcount: uniqueRpCount(db,options)
-    if options.uniqusers: uniqueUsers(db,options)
-    if options.allusers: allUsers(db)
-    if options.logins: loginCount(db,options)
-    if options.rplogins or options.rploginssort:
+
+def main():
+    """Run necessary procedures"""
+    db, options = getopts()
+    if options.uniqrp:
+        unique_rp(db)
+    if options.rpcount:
+        unique_rp_count(db, options)
+    if options.uniqusers:
+        unique_users(db, options)
+    if options.logins:
+        login_count(db, options)
+    if options.rploginssort:
         if not options.quiet:
             header = "logins\t | relyingPartyId"
-            print "\n" + header + "\n" + '-'*(len(header)+1)
-    if options.rplogins: loginsPerRp(db,options)
-    if options.rploginssort: loginsPerRpSorted(db,options)
-    if options.msgprofiles: rpPerMessageProfile(db,options)
+            print(linesep + header + linesep + '-' * (len(header) + 1))
+    if options.rploginssort:
+        logins_per_rp_sorted(db, options)
+    if options.msgprofiles:
+        rp_per_msg_profile(db, options)
+    if options.xml:
+        xml_out(db)
+    if options.rrd:
+        rrd_out(db)
+    if options.json:
+        json_out(db, options)
+
 
 if __name__ == "__main__":
     main()

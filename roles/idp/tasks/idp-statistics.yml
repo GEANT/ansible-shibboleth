@@ -7,19 +7,9 @@
 
 - name: "Install packages needed by /statistics application"
   apt:
-   name: ['python-mysqldb','php','php-xml']
+   name: ['python3-mysqldb','php','php-xml','php-mysql']
    state: latest
    install_recommends: no
-  when:
-   - ansible_distribution_release != "jessie"
-
-- name: "Debian 8 - Install packages needed by /statistics application"
-  apt:
-   name: ['php5-mysql', 'php5']
-   state: latest
-   install_recommends: no
-  when:
-   - ansible_distribution_release == "jessie"
 
 - name: "Check if 'statistics' DB is already created on {{ idp_stats['db_host'] }} and store the result into 'statistics_db' ansible variable"
   command: mysql --host={{ idp_stats['db_host'] }} --user=statistics --password={{ idp_stats['db_pw'] }} -s -N -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='statistics'"
@@ -71,7 +61,6 @@
    - { src: "statistics/insertSP.php.j2", dest: "/opt/loganalysis/insertSP.php", mode: "0644" }
    - { src: "statistics/IDProvider.conf.php.j2", dest: "/opt/loganalysis/IDProvider.conf.php", mode: "0644" }
    - { src: "statistics/db.php.j2", dest: "/var/www/html/statistics/db.php", mode: "0644" }
-   - { src: "statistics/idp-stats.conf.j2", dest: "/etc/apache2/conf-enabled/idp-stats.conf", mode: "0644" }
   notify:
    - "Restart Apache"
 
@@ -109,5 +98,33 @@
    owner: "root"
    group: "root"
    mode: "0644"
+  notify:
+   - "Restart Apache"
+
+- name: "Check if Apache STATISTICS conf is already enabled"
+  stat:
+   path: "/etc/apache2/conf-enabled/statistics.conf"
+  register: stats_apache
+  changed_when: false
+
+- name: "Load Apache STATISTICS conf"
+  copy:
+   src: "files/apache/conf-available/statistics.conf"
+   dest: "/etc/apache2/conf-available/statistics.conf"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  when: stats_apache.stat.islnk is not defined
+  notify:
+   - "Restart Apache"
+
+- name: "Add STATISTICS support to Apache HTTPS VirtualHost"
+  blockinfile:
+    path: "/etc/apache2/sites-available/{{ fqdn }}-ssl.conf"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - STATISTICS"
+    insertbefore: "</VirtualHost>"
+    block: |
+      Include conf-available/statistics.conf
+  when: stats_apache.stat.islnk is not defined
   notify:
    - "Restart Apache"

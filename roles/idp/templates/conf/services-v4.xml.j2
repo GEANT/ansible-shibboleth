@@ -8,19 +8,30 @@
                            
     default-init-method="initialize"
     default-destroy-method="destroy">
-                               
+        
+    {% if ((idp_config['url_attribute_filter'] is defined) and (idp_config['url_attribute_filter'] != '')) %}                        
+    <bean id="MyHTTPClient" parent="shibboleth.FileCachingHttpClientFactory"
+          p:connectionTimeout="PT30S"
+          p:connectionRequestTimeout="PT30S"
+          p:socketTimeout="PT30S"
+          p:cacheDirectory="%{idp.home}/tmp/httpClientCache" />
+
+    <bean id="AttributeFilterByUrl" class="net.shibboleth.ext.spring.resource.FileBackedHTTPResource"
+          c:client-ref="MyHTTPClient"
+          c:url="{{ idp_config['url_attribute_filter'] }}"
+          c:backingFile="%{idp.home}/conf/attribute-filter-custom.xml"/>
+    {% endif %}
+
     <!-- By default we look at resources whose names are derived from %{idp.home}. -->
 
     <!-- This set of resources supports a native Spring relying-party.xml file. -->
     <util:list id="shibboleth.RelyingPartyResolverResources">
         <value>%{idp.home}/conf/relying-party.xml</value>
         <value>%{idp.home}/conf/credentials.xml</value>
-        <value>%{idp.home}/system/conf/relying-party-system.xml</value>
     </util:list>
 
     <util:list id="shibboleth.MetadataResolverResources">
         <value>%{idp.home}/conf/metadata-providers.xml</value>
-        <value>%{idp.home}/system/conf/metadata-providers-system.xml</value>
     </util:list>
 
     <util:list id ="shibboleth.AttributeResolverResources">
@@ -39,28 +50,20 @@
     </util:list>
 
     <util:list id ="shibboleth.AttributeFilterResources">
-        <value>%{idp.home}/conf/attribute-filter.xml</value>
-        <value>%{idp.home}/conf/attribute-filter-federation.xml</value>
-{% if idp_config is defined and idp_config['sup_rs'] in ['Yes','yes','True','true'] %}
-        <value>%{idp.home}/conf/attribute-filter-rs.xml</value>
-{% endif %}
-{% if idp_config is defined and idp_config['sup_coco'] in ['Yes','yes','True','true'] %}
-        <value>%{idp.home}/conf/attribute-filter-coco.xml</value>
+        <!--<value>%{idp.home}/conf/attribute-filter.xml</value>-->
+{% if ((idp_config['url_attribute_filter'] is defined) and (idp_config['url_attribute_filter'] != '')) %}
+        <ref bean="AttributeFilterByUrl"/>
+{% else %}
+        <value>%{idp.home}/conf/attribute-filter-custom.xml</value>
 {% endif %}
     </util:list>
 
     <util:list id ="shibboleth.NameIdentifierGenerationResources">
         <value>%{idp.home}/conf/saml-nameid.xml</value>
-        <value>%{idp.home}/system/conf/saml-nameid-system.xml</value>
     </util:list>
 
     <util:list id="shibboleth.AccessControlResources">
         <value>%{idp.home}/conf/access-control.xml</value>
-        <value>%{idp.home}/system/conf/access-control-system.xml</value>
-    </util:list>
-
-    <util:list id="shibboleth.CASServiceRegistryResources">
-        <value>%{idp.home}/conf/cas-protocol.xml</value>
     </util:list>
 
     <!--
@@ -72,7 +75,6 @@
         <value>%{idp.home}/messages/cookie_policy</value>
         <value>%{idp.home}/messages/custom</value>
         <value>%{idp.home}/messages/messages</value>
-        <value>%{idp.home}/system/messages/messages</value>
     </util:list>
 
 </beans>

@@ -11,7 +11,7 @@
   user:
    name: rsync-backup
 
-- name: "Be sure to add the idpcloud-key to root authorized keys"
+- name: "Be sure to add the backup server SSH key to the rsync-backup user's authorized keys"
   authorized_key:
    user: rsync-backup
    state: present

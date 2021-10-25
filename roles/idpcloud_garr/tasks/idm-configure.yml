@@ -72,13 +72,11 @@
 
 - name: "Be sure to copy 'checkValue.php' on phpldapadmin/htdocs"
   template:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
+   src: "phpldapadmin/htdocs/checkValue.php.j2"
+   dest: "/opt/phpldapadmin/htdocs/checkValue.php"
    owner: "root"
    group: "root"
-   mode: "{{ item.mode }}"
-  with_items:
-   - { src: "phpldapadmin/htdocs/checkValue.php.j2", dest: "/opt/phpldapadmin/htdocs/checkValue.php", mode: "0644" }
+   mode: "0644"
 
 - name: "Be sure to add needed files for locking/unlocking users"
   template:
@@ -100,6 +98,46 @@
    group: "www-data"
   changed_when: False
 
+# Load /opt/phpldapadmin/templates/creation/custom_idpAccount.xml
+- name: "Check if 'creation/custom_idpAccount_{{ idpcloud_garr['idm'] }}.xml' is provided under {{ files_dir }}/<FQDN>/idpcloud_garr/phpldapadmin/templates"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idpcloud_garr/phpldapadmin/templates/creation/custom_idpAccount_{{ idpcloud_garr['idm'] }}.xml"
+  delegate_to: 127.0.0.1
+  register: customPLAcreationTemplate
+  changed_when: false
+
+- name: "Load custom 'creation/custom_idpAccount.xml' provided"
+  copy:
+   src: "{{ files_dir }}/{{ fqdn }}/idpcloud_garr/phpldapadmin/templates/creation/custom_idpAccount_{{ idpcloud_garr['idm'] }}.xml"
+   dest: "/opt/phpldapadmin/templates/creation/custom_idpAccount.xml"
+   owner: "root"
+   group: "www-data"
+   mode: "0640"
+  when:
+   - customPLAcreationTemplate.stat.exists == True
+  notify:
+   - "Restart Apache"
+
+# Load /opt/phpldapadmin/templates/modification/custom_idpAccount.xml
+- name: "Check if 'modification/custom_idpAccount_{{ idpcloud_garr['idm'] }}.xml' is provided under {{ files_dir }}/<FQDN>/idpcloud_garr/phpldapadmin/templates"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idpcloud_garr/phpldapadmin/templates/modification/custom_idpAccount_{{ idpcloud_garr['idm'] }}.xml"
+  delegate_to: 127.0.0.1
+  register: customPLAmodificationTemplate
+  changed_when: false
+
+- name: "Load custom 'modification/custom_idpAccount.xml' provided"
+  copy:
+   src: "{{ files_dir }}/{{ fqdn }}/idpcloud_garr/phpldapadmin/templates/modification/custom_idpAccount_{{ idpcloud_garr['idm'] }}.xml"
+   dest: "/opt/phpldapadmin/templates/modification/custom_idpAccount.xml"
+   owner: "root"
+   group: "www-data"
+   mode: "0640"
+  when:
+   - customPLAmodificationTemplate.stat.exists == True
+  notify:
+   - "Restart Apache"
+
 - name: "Be sure to add creation/modification PLA templates"
   template:
    src: "{{ item.src }}"
@@ -110,6 +148,10 @@
   with_items:
    - { src: "phpldapadmin/templates/creation/custom_idpAccount_{{ idpcloud_garr['idm'] }}.xml.j2", dest: "/opt/phpldapadmin/templates/creation/custom_idpAccount.xml", mode: "0640" }
    - { src: "phpldapadmin/templates/modification/custom_idpAccount_{{ idpcloud_garr['idm'] }}.xml.j2", dest: "/opt/phpldapadmin/templates/modification/custom_idpAccount.xml", mode: "0640" }
+  when:
+   - customPLAmodificationTemplate.stat.exists == False
+  notify:
+   - "Restart Apache"
  
 - name: "Be sure to enrich phpLDAPadmin with IdP-in-the-Cloud italian templates translation"
   copy:
@@ -126,15 +168,60 @@
    state: directory
    mode: 0755
 
-- name: "Be sure to load idm-tools index page"
-  template:
-   src: "phpldapadmin/htdocs/idm-tools/index.php.j2"
-   dest: "/opt/phpldapadmin/htdocs/idm-tools/index.php"
+- name: "Be sure to create 'idm-tools/css' directory"
+  file:
+   path: "/opt/phpldapadmin/htdocs/idm-tools/css"
+   state: directory
+   mode: 0755
+
+- name: "Be sure to create 'idm-tools/images' directory"
+  file:
+   path: "/opt/phpldapadmin/htdocs/idm-tools/images"
+   state: directory
+   mode: 0755
+
+- name: "Look for 'persistent-id-before-2018-09.csv' file"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idpcloud_garr/idm-tools/persistent-id-before-2018-09.csv"
+  register: shib_pid_before_2018_09
+  delegate_to: localhost
+  changed_when: false
+
+- name: "Copy 'persistent-id-before-2018-09.csv' into 'idm-tools' dir"
+  copy:
+   src: "{{ files_dir }}/{{ fqdn }}/idpcloud_garr/idm-tools/persistent-id-before-2018-09.csv"
+   dest: "/opt/phpldapadmin/htdocs/idm-tools/persistent-id-before-2018-09.csv"
    owner: "root"
    group: "root"
    mode: "0644"
+  when: shib_pid_before_2018_09.stat.exists == True
+
+- name: "Copy files and directories needed by 'idm-tools'"
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: 0644
+  loop:
+   - { src: "files/idm-tools/images/ldap-ou.png", dest: "/opt/phpldapadmin/htdocs/idm-tools/images/ldap-ou.png" }
+   - { src: "files/idm-tools/images/lock-icon.png", dest: "/opt/phpldapadmin/htdocs/idm-tools/images/lock-icon.png" }
+   - { src: "files/idm-tools/images/statistics.png", dest: "/opt/phpldapadmin/htdocs/idm-tools/images/statistics.png" }
+   - { src: "files/idm-tools/images/user-update.png", dest: "/opt/phpldapadmin/htdocs/idm-tools/images/user-update.png" }
+   - { src: "files/idm-tools/index.php", dest: "/opt/phpldapadmin/htdocs/idm-tools/index.php" }
+
+- name: "Be sure to load idm-tools index page"
+  template:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  loop:
+   - { src: "idm-tools/index_it.php.j2", dest: "/opt/phpldapadmin/htdocs/idm-tools/index_it.php" }
+   - { src: "idm-tools/index_en.php.j2", dest: "/opt/phpldapadmin/htdocs/idm-tools/index_en.php" }
   notify:
-   - "Restart Apache"
+   - "Reload Apache"
 
 - name: "Be sure to load custom CSS for IdP-in-the-Cloud italian templates"
   copy:
@@ -149,14 +236,6 @@
    path: "/etc/apache2/conf-available/idm-tools.conf"
   register: idm_tools_apache
   changed_when: false
-
-- name: "Remove any 'idm-tools.conf' file into '/etc/apache2/conf-enabled'"
-  file:
-   path: "/etc/apache2/conf-enabled/idm-tools.conf"
-   state: absent
-  when: idm_tools_apache.stat.isreg is defined and idm_tools_apache.stat.isreg
-  notify:
-   - "Restart Apache"
 
 - name: "Load Apache IDM-TOOLS conf"
   copy:
@@ -180,42 +259,6 @@
   notify:
    - "Restart Apache"
 
-- name: "Check if Apache STATISTICS conf is already enabled"
-  stat:
-   path: "/etc/apache2/conf-enabled/statistics.conf"
-  register: stats_apache
-  changed_when: false
-
-- name: "Remove any 'statistics.conf' file into '/etc/apache2/conf-enabled'"
-  file:
-   path: "/etc/apache2/conf-enabled/statistics.conf"
-   state: absent
-  when: stats_apache.stat.isreg is defined and stats_apache.stat.isreg
-  notify:
-   - "Restart Apache"
-
-- name: "Load Apache STATISTICS conf"
-  copy:
-   src: "files/apache2/conf-available/statistics.conf"
-   dest: "/etc/apache2/conf-available/statistics.conf"
-   owner: "root"
-   group: "root"
-   mode: "0644"
-  when: stats_apache.stat.islnk is not defined
-  notify:
-   - "Restart Apache"
-
-- name: "Add STATISTICS support to Apache HTTPS VirtualHost"
-  blockinfile:
-    path: "/etc/apache2/sites-available/{{ fqdn }}-ssl.conf"
-    marker: "# {mark} ANSIBLE MANAGED BLOCK - STATISTICS"
-    insertbefore: "</VirtualHost>"
-    block: |
-      Include conf-available/statistics.conf
-  when: stats_apache.stat.islnk is not defined
-  notify:
-   - "Restart Apache"
-
 - name: "Be sure to have 'updates.txt' file for users' updates"
   lineinfile:
    dest: "/var/local/backups/updates.txt"
@@ -226,15 +269,32 @@
    - { line: "# Data: " }
    - { line: "" }
    - { line: "Nuovi utenti per {{ ldap['org'] }}:" }
+  when: ansible_fqdn not in ['eduid-pilot.aai.garr.it','eduid-indire.aai.garr.it','idp-portici.izs.garr.it','idp-sicilia.izs.garr.it','idp-acs.beniculturali.garr.it','idp-iccu.beniculturali.garr.it','idp-ssbar.beniculturali.garr.it']
 
 - name: "Check if 'updates.txt' file is missing"
   stat:
    path: "/opt/phpldapadmin/htdocs/idm-tools/updates.txt"
   register: updates_txt
+  when: ansible_fqdn not in ['eduid-pilot.aai.garr.it','eduid-indire.aai.garr.it','idp-portici.izs.garr.it','idp-sicilia.izs.garr.it','idp-acs.beniculturali.garr.it','idp-iccu.beniculturali.garr.it','idp-ssbar.beniculturali.garr.it']
 
-- name: "Be sure to create an Hard Link of 'updates.txt' under phpldapadmin dir if missing"
+- name: "Be sure to create an Hard Link of 'updates.txt' under /opt/phpldapadmin/htdocs/idm-tools dir if missing"
   file:
    src: "/var/local/backups/updates.txt"
    dest: "/opt/phpldapadmin/htdocs/idm-tools/updates.txt"
    state: hard
-  when: updates_txt.stat.exists == False
+  when: 
+   - ansible_fqdn not in ['eduid-pilot.aai.garr.it','eduid-indire.aai.garr.it','idp-portici.izs.garr.it','idp-sicilia.izs.garr.it','idp-acs.beniculturali.garr.it','idp-iccu.beniculturali.garr.it','idp-ssbar.beniculturali.garr.it']
+   - updates_txt.stat.exists == False
+
+- name: "Be sure to add the Test User - INDIRE IdP"
+  ldap_attr:
+   dn: "uid=testuser,ou=people,{{ ldap['basedn'] }}"
+   name: "schacHomeOrganization"
+   values: "{{ idp_config['scope'] }}"
+   state: present
+  when: ansible_fqdn in ['eduid-pilot.aai.garr.it','eduid-indire.aai.garr.it']
+
+- name: "Ensure the it_IT.UTF-8 locale exists"
+  locale_gen:
+   name: 'it_IT.UTF-8'
+   state: present

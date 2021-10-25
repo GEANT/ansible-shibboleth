@@ -1,0 +1,86 @@
+---
+# tasks file for enable_maintenance
+
+- name: "Shutdown Jetty"
+  service:
+    name: jetty
+    state: stopped
+
+- name: "Check Apache2 maintenance config file existance"
+  stat: 
+   path: "/etc/apache2/sites-enabled/maintenance.conf"
+  register: maintenance_conf
+
+- name: "Copy the Apache2 maintenance config file"
+  blockinfile:
+   path: "/etc/apache2/sites-available/maintenance.conf"
+   marker: "# {mark} ANSIBLE MANAGED BLOCK"
+   create: yes
+   block: |
+    <IfModule mod_ssl.c>
+        SSLStaplingCache        shmcb:/var/run/ocsp(128000)
+        <VirtualHost _default_:443>
+                ServerName {{ fqdn }}
+                ServerAdmin idpcloud-service@garr.it
+                DocumentRoot /var/www/html
+                ErrorLog ${APACHE_LOG_DIR}/error.log
+                CustomLog ${APACHE_LOG_DIR}/access.log combined
+                SSLEngine on
+                SSLProtocol All -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+                SSLCipherSuite "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH"
+                SSLHonorCipherOrder on
+                SSLCompression Off
+                SSLUseStapling          on
+                SSLStaplingResponderTimeout 5
+                SSLStaplingReturnResponderErrors off
+                Header always set Strict-Transport-Security "max-age=63072000;includeSubDomains;preload"
+                SSLCertificateFile    /etc/ssl/certs/ssl-cert.crt
+                SSLCertificateKeyFile /etc/ssl/private/ssl-cert.key
+                SSLCACertificateFile /etc/ssl/certs/cacert.pem
+                BrowserMatch "MSIE [2-6]" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
+                BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+                RedirectMatch ^.*(?<!\/(maintenance.html))$ https://{{ fqdn }}/maintenance.html
+        </VirtualHost>
+    </IfModule>
+  when: not maintenance_conf.stat.exists
+
+- name: "Check '/var/www/html/maintenance.html' file existance"
+  stat: 
+   path: "/var/www/html/maintenance.html"
+  register: maintenance_html
+
+- name: "Create /var/www/html/maintenance.html"
+  blockinfile:
+   path: "/var/www/html/maintenance.html"
+   marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
+   create: yes
+   block: |
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+     <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+      <title>Maintenance</title>
+     </head>
+     <body>
+      <div class="container">
+       <h1>Maintenance</h1>
+       <br/>
+       <h2>The service is currently in maintenance. We will be back online as soon as possible!</h2>
+      </div>
+     </body>
+    </html>
+  when: not maintenance_html.stat.exists
+
+- name: "Enable the Apache2 maintenance site"
+  shell: "a2ensite maintenance"
+  notify:
+   - "Restart Apache2"
+  when: not maintenance_conf.stat.exists
+
+- name: "Disable the main site"
+  shell: "a2dissite {{ fqdn }}-ssl"
+  notify:
+   - "Restart Apache2"
+  when: not maintenance_conf.stat.exists

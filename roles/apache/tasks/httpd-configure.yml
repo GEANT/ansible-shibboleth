@@ -67,6 +67,12 @@
   notify:
    - "Restart Apache"
 
+- name: "Disable Apache Default HTTP VirtualHost"
+  shell: "a2dissite -q 000-default"
+  when: ssl_site_apache.stat.exists == False
+  notify:
+   - "Restart Apache"
+
 - name: "Check if Apache localized error pages conf is alread enabled"
   stat:
    path: "/etc/apache2/conf-enabled/localized-error-pages.conf"
@@ -90,14 +96,6 @@
   notify:
    - "Restart Apache"
 
-- name: "Remove any conf file into '/etc/apache2/conf-enabled'"
-  file:
-   path: "/etc/apache2/conf-enabled/localized-error-pages.conf"
-   state: absent
-  when: apache_local_error_pages.stat.isreg is defined and apache_local_error_pages.stat.isreg
-  notify:
-   - "Restart Apache"
-
 - name: "Restart Apache if CA, CRT or KEY are changed"
   systemd:
    state: restarted
@@ -105,3 +103,16 @@
    daemon_reload: True
   when: 
    - ssl_cert['changed'] == True or ssl_key['changed'] == True or ssl_ca['changed'] == True
+
+- name: "Be sure to configure '{{ apache['web_gui_user'] }}' user to protect selected web pages"
+  htpasswd:
+   path: "/etc/apache2/htpasswd"
+   name: "{{ apache['web_gui_user'] }}"
+   password: "{{ apache['web_gui_pw'] }}"
+   owner: "root"
+   group: "root"
+   mode: 0644
+  when:
+   - apache is defined
+   - apache['web_gui_user'] is defined and apache['web_gui_user'] != ""
+   - apache['web_gui_pw'] is defined and apache['web_gui_pw'] != ""

@@ -1,2 +1,14 @@
 ---
 # defaults file for openldap
+
+fqdn: "idp.example.org"
+idp_ldap_restore: "false"
+
+ldap:
+ basedn: "dc=example,dc=org"
+ domain: "example.org"
+ org: "Example ORG"
+ url: "ldap://{{ fqdn }}:389"
+ root_dn: "cn=admin,dc=example,dc=org"
+ root_pw: "ldap_root_pw"
+ create_test_user: "yes"

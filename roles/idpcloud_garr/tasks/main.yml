@@ -1,14 +1,44 @@
 ---
 # tasks file for idpcloud_garr
 
+- name: "Load IdP-in-the-Cloud 'audit.xml'"
+  import_tasks: "idp-audit-configure.yml"
+  when:
+   - audit_xml.stat.exists == False
+   - "shib_idp_version is search('^4.')"
+  notify:
+   - "Restart Jetty"
+
 - name: "Configure IdM of IdP-in-the-Cloud"
   import_tasks: "idm-configure.yml"
+  when: 
+   - ldap is defined
+   - pla is defined
+   - ldap['url'] is defined and ldap['url']|length > 0 
+   - pla['ldap']['url'] is defined and pla['ldap']['url']|length > 0 
+  tags: idpcloud_garr
+
+- name: "Set the 'read' permission to sealer JKS and KVER for 'other' to be able to backup them with rsync-backup user"
+  file:
+   path: "{{ item }}"
+   mode: o=r
+   state: file
+  loop:
+   - "/opt/shibboleth-idp/credentials/sealer.jks"
+   - "/opt/shibboleth-idp/credentials/sealer.kver"
   tags: idpcloud_garr
 
 - name: "Add 'rsync-backup' user needed by rsnapshot server"
   import_tasks: "rsync-backup-configure.yml"
   when: (idpcloud_garr['rsync_backup_ssh_pub_key'] is defined) and (idpcloud_garr['rsync_backup_ssh_pub_key']|length > 0)
   tags: idpcloud_garr
+
+- name: "Restore 'updates.txt' file if needed"
+  import_tasks: idp-updates-restore.yml
+  when: 
+   - idp_updates_restore is defined
+   - idp_updates_restore in ["Yes","yes","True","true"]
+  tags: idpcloud_garr,restore
 
 #- name: "Collect Login Statistics"
 #  import_tasks: idp-stats-2020-2021.yml

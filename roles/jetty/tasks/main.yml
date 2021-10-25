@@ -81,10 +81,8 @@
    - { src: "files/{{ ansible_os_family }}/java{{ jdk_version }}/jetty.xml", dest: '/opt/jetty/etc/jetty.xml' }
   tags: jetty
 
-- name: "Stop jetty after an upgrade of its package"
-  systemd: 
-   name: "jetty"
-   state: stopped
+- name: "Stop jetty after an upgrade"
+  command: "/etc/init.d/jetty stop" 
   when:
    - jetty_src.changed
   tags: jetty

@@ -3,31 +3,27 @@
 
 idp_dl_url: "https://shibboleth.net/downloads/identity-provider/archive/{{ shib_idp_version }}/shibboleth-identity-provider-{{ shib_idp_version }}.tar.gz"
 
-# Shibboleth v3.3.2
-#shib_idp_version: "3.3.2"
-#shib_idp_checksum: "ed9fbefd273199d2841d4045b2661671c53825ed3c7d52d38bfe516b39d5fc64"
-
-# Shibboleth v3.3.3
-#shib_idp_version: "3.3.3"
-#shib_idp_checksum: "742a772f19e11c55af8a18f16463b736230fc447cd8c4aaf4bf242c5b074087c"
-
-# Shibboleth v3.4.8
-#shib_idp_version: "3.4.8"
-#shib_idp_checksum: "ad0fcd834d0c6571363d47ad6dde08fbb75cce3202c41f8c64a5b42614f95a27"
-
 # Shibboleth 4.0.1
-shib_idp_version: "4.0.1"
-shib_idp_checksum: "832f73568c5b74a616332258fd9dc555bb20d7dd9056c18dc0ccf52e9292102a"
+#shib_idp_version: "4.0.1"
+#shib_idp_checksum: "832f73568c5b74a616332258fd9dc555bb20d7dd9056c18dc0ccf52e9292102a"
+
+# Shibboleth 4.1.0
+#shib_idp_version: "4.1.0"
+#shib_idp_checksum: "46fe154859f9f1557acd1ae26ee9ac82ded938af52a7dec0b18adbf5bb4510e9"
+
+# Shibboleth 4.1.2
+#shib_idp_version: "4.1.2"
+#shib_idp_checksum: "2d35dbccc6c6ae6f7eec4adc98eaa406c33df3ad49879839a3839dbf427afff8"
+
+# Shibboleth 4.1.4
+shib_idp_version: "4.1.4"
+shib_idp_checksum: "65429f547a7854b30713d86ba5901ca718eae91efb3e618ee11108be59bf8a29"
 
 # Available:
 #
 # OpenJDK: 
 #   jdk_type: "openjdk"
-#   jdk_version: "8"
-#
-# Oracle JDK: 
-#   jdk_type: "oraclejdk"
-#   jdk_version: "8"
+#   jdk_version: "11"
 #
 # Amazon Corretto JDK: 
 #   jdk_type: "corretto"
@@ -71,7 +67,6 @@ idp_metadata:
   org_displayName: "ITA Organization DisplayName"
   org_url: "https://www.organization.org/it"
 
-
 idp_contacts:
  technical:
   givenName: "Example Technical"
@@ -83,3 +78,7 @@ idp_contacts:
   mail: "support.user@example.org"
   address: "Example Address 32, Milan, Italy"
   telephone: "+393249582321"
+
+idp_db_restore: "false"
+idp_sealer_restore: "false"
+idp_stats_restore: "false"

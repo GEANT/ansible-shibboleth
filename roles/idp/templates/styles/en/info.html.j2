@@ -143,6 +143,12 @@
                 <td><code>eduPersonOrcid</code></td>
                 <td>ORCID user identifier released and managed by orcid.org</td>
               </tr>
+{% if ansible_fqdn in ['eduid-pilot.aai.garr.it','eduid-indire.aai.garr.it'] %}
+              <tr>
+                <td><code>schacPersonalUniqueCode</code></td>
+                <td>URN for application specific codes that link a person to bits and pieces of personal data</td>
+              </tr>
+{% endif %}
             </table>
 
             <p>The Privacy Policy applied to the users of the institution {{ idp_metadata['en']['mdui_displayName'] }} is located here: <a href="{{ idp_metadata['en']['mdui_privacyUrl'] | default('/en/privacy.html') }}">Privacy Policy</a></p>

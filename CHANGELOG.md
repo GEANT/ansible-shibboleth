@@ -1,5 +1,27 @@
 # Ansible-Shibboleth Changelog
 
+## 2021-10-25
+
+* Replaced Python 2 with Python 3
+* Fixed HTTPS redirection
+* Added Shibboleth IdP v4.1.4
+* Update phpLDAPadmin to v1.2.6.2
+* Added `sealer.jks` and `sealer.kver` to the backup&restore system
+* Configured default persistent-id management to computed
+* Refactorized and Cleaned code
+* Updated Jetty package
+* Removed Java 7 and Java 8 support
+* Added Amazon Corretto JDK as default JDK
+* Increased Jetty timeout to 120 seconds for edugain metadata
+* Removed Debian Jessie support
+* Removed useless code
+* Removed Shibboleth v3.x support
+* Configured default locale to `en_US.UTF-8`
+* Added `enable_maintenance` role
+* Added `disable_maintenance` role
+* Added `make_a_backup` role
+* Added recognized NO-GCM SPs to metadata-providers.xml
+
 ## 2021-06-22
 
 * Added checks on `updates.txt` file.

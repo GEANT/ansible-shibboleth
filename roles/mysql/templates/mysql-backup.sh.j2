@@ -12,7 +12,7 @@ fi
 
 WHICH="`which which`"
 MYSQLDUMP="`${WHICH} mysqldump`"
-DATABASES=`mysql --defaults-file=/etc/mysql/debian.cnf -Bse 'show databases'`
+DATABASES=`mysql -Bse 'show databases'`
 FAILFILE="/var/local/backups/MYSQL_FAIL"
 
 for db in ${DATABASES}; do

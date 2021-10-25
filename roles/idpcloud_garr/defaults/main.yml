@@ -1,4 +1,8 @@
 ---
 # defaults file for idpcloud_garr
+
+idp_updates_restore: "false"
+
 idpcloud_garr:
  idm: "spuid"
+ rsync_backup_ssh_pub_key: "rsync-backup_id_rsa.pub"

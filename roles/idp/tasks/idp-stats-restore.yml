@@ -1,0 +1,75 @@
+---
+# tasks for IdP statistics restore
+- name: "RESTORE - Retrieve MySQL 'statistics' backup"
+  command: "rsync -avzh -e 'ssh -i {{ lookup('env','HOME') }}/.ssh/idpbakuser_rsa' {{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/statistics_db.sql.gz {{ files_dir }}/{{ fqdn }}/idp/mysql-restore/statistics_db.sql.gz"
+  delegate_to: 127.0.0.1
+  when:
+    - bck_uri is defined
+    - bck_uri != ""
+    - host_bck_path is defined
+    - host_bck_path != ""
+  
+- name: "RESTORE - Put 'statistics' database backup in the '/root' directory"
+  copy:
+   src: "{{ files_dir }}/{{ fqdn }}/idp/mysql-restore/statistics_db.sql.gz"
+   dest: "/root/statistics_db.sql.gz"
+   owner: "root"
+   group: "root"
+   mode: "0600"
+
+- name: "RESTORE - Extract 'statistics' database backup"
+  command: "gunzip /root/statistics_db.sql.gz"
+
+- name: "RESTORE - Assign the right permissions to the 'statistics' backup extracted"
+  file:
+   dest: "/root/statistics_db.sql"
+   owner: "root"
+   group: "root"
+   mode: "600"
+
+- name: "RESTORE - DROP the existing 'statistics' database"
+  mysql_db:
+   name: "statistics"
+   state: absent
+
+- name: "RESTORE - Restore 'statistics' database"
+  mysql_db:
+   encoding: "utf8"
+   state: import
+   name: all
+   target: "/root/statistics_db.sql"
+
+- name: "RESTORE - Remove the backups restored from /root directory"
+  file:
+   dest: "/root/statistics_db.sql"
+   state: "absent"
+
+- name: "RESTORE - Check if the HOST YAML file is encrypted with Vault"
+  command: "cat {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+  delegate_to: 127.0.0.1
+  register: host_yaml
+
+- name: "RESTORE - Decrypt Vaulted HOST YAML file"
+  command: "ansible-vault decrypt --vault-password-file {{ vault_file }} {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+  delegate_to: 127.0.0.1
+  when: "'ANSIBLE_VAULT' in host_yaml.stdout"
+
+- name: "RESTORE - Be sure to set 'idp_db_restore' to 'false'"
+  lineinfile:
+   path: "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+   regexp: '^idp_stats_restore'
+   line: 'idp_stats_restore: "false"'
+  delegate_to: 127.0.0.1
+
+- name: "RESTORE - Encrypt HOST YAML file with Vault"
+  command: "ansible-vault encrypt --vault-password-file {{ vault_file }} {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+  delegate_to: 127.0.0.1
+  when: "'ANSIBLE_VAULT' in host_yaml.stdout"
+
+- name: "RESTORE - Be sure to set the right owner and group of YML file"
+  file:
+   path: "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+   owner: "{{ lookup('env','USER') }}"
+   group: "{{ lookup('env','USER') }}"
+   state: file
+  delegate_to: 127.0.0.1

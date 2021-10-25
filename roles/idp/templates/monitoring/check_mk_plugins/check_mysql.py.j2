@@ -1,17 +1,16 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #-*- coding: utf-8 -*-
 
-import MySQLdb
+import pymysql
 
-db = MySQLdb.connect("localhost","root","{{ mysql['root_password'] }}" )
+db = pymysql.connect("localhost","root","{{ mysql['root_password'] }}" )
 
 cursor = db.cursor()
 
+{% if idp_config['idp_persistentId_type'] is defined and idp_config['idp_persistentId_type'] == 'stored' %}
 cursor.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'shibboleth' AND TABLE_NAME = 'shibpid'")
 shibpid = cursor.fetchone()
-
-cursor.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'shibboleth' AND TABLE_NAME = 'StorageRecords'")
-storageRecords = cursor.fetchone()
+{% endif -%}
 
 cursor.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'statistics' AND TABLE_NAME = 'logins'")
 logins = cursor.fetchone()
@@ -19,9 +18,13 @@ logins = cursor.fetchone()
 cursor.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'statistics' AND TABLE_NAME = 'sps'")
 sps = cursor.fetchone()
 
-if (shibpid and storageRecords and logins and sps):
-   print "0 check_mysql - SUCCESS - IdP has all needed databases"
+{% if idp_config['idp_persistentId_type'] is defined and idp_config['idp_persistentId_type'] == 'stored' %}
+if (shibpid[0] and logins[0] and sps[0]):
+{% else %}
+if (logins[0] and sps[0]):
+{% endif %}
+   print ("0 check_mysql - SUCCESS - IdP has all needed databases")
 else:
-   print "1 check_mysql - CRITICAL - IdP doesn't have all needed databases"
+   print ("1 check_mysql - CRITICAL - IdP doesn't have all needed databases")
 
 db.close()

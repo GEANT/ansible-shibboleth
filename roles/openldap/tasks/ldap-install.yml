@@ -5,9 +5,15 @@
    update_cache: yes
    cache_valid_time: 3600
 
-- name: "Install 'debconf-utils' and 'python-ldap' packages"
+- name: "Install 'debconf-utils' packages"
   apt:
-   name: ['debconf-utils', 'python-ldap']
+   name: 'debconf-utils'
+   state: latest
+   install_recommends: no
+
+- name: "Install 'python3-ldap'"
+  apt:
+   name: 'python3-ldap'
    state: latest
    install_recommends: no
 
@@ -32,7 +38,7 @@
       value: "{{ ldap['root_pw']|default('') }}"
     - key: slapd/move_old_database
       type: boolean
-      value: true
+      value: "true"
     - key: slapd/domain
       type: string
       value: "{{ ldap['domain']|default('') }}"
@@ -41,13 +47,13 @@
       value: "{{ ldap['org']|default('') }}"
     - key: slapd/no_configuration
       type: boolean
-      value: false
+      value: "false"
     - key: slapd/purge_database
       type: boolean
-      value: false
+      value: "false"
     - key: slapd/allow_ldap_v2
       type: boolean
-      value: false
+      value: "false"
     - key: slapd/backend
       type: select
       value: MDB

@@ -1,0 +1,23 @@
+---
+# tasks file for IdP Configuration IdP-in-the-Cloud specific
+
+# Load /opt/shibboleth-idp/conf/audit.xml
+- name: "Check if a custom 'audit.xml' is provided under {{ files_dir }}/<FQDN>/idp/conf"
+  stat:
+   path: "{{ files_dir }}/{{ fqdn }}/idp/conf/audit.xml"
+  delegate_to: 127.0.0.1
+  register: audit_xml
+  changed_when: false
+
+- name: "Load IdP-in-the-Cloud 'audit.xml'"
+  copy:
+   src: "files/conf/audit-v4.xml"
+   dest: "/opt/shibboleth-idp/conf/audit.xml"
+   owner: "jetty"
+   group: "root"
+   mode: "0600"
+  when:
+   - audit_xml.stat.exists == False
+   - "shib_idp_version is search('^4.')"
+  notify:
+   - "Restart Jetty"

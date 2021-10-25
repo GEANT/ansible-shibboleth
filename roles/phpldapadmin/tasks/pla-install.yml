@@ -7,29 +7,19 @@
 
 - name: "Be sure that phpLDAPadmin required packages are installed"
   apt:
-   name: ['apache2-utils', 'python-passlib', 'gettext', 'php']
+   name: ['gettext', 'php']
    state: latest
    install_recommends: no 
   notify:
    - "Restart Apache"
 
-- name: "Be sure that PHP5 LDAP support is installed"
-  apt:
-   name: "php5-ldap"
-   state: latest
-   install_recommends: no
-  notify:
-   - "Restart Apache"
-  when: ansible_distribution_release == "jessie"
-
-- name: "Be sure that PHP7 LDAP support is installed"
+- name: "Be sure that 'php-ldap' and 'php-xml' are installed"
   apt:
    name: ['php-ldap', 'php-xml']
    state: latest
    install_recommends: no
   notify:
    - "Restart Apache"
-  when: ansible_distribution_release != "jessie"
 
 - name: "Be sure to have LDAP module enabled"
   apache2_module:
@@ -38,15 +28,16 @@
   notify:
    - "Restart Apache"
 
-- name: "Check if pageOrig exists"
+- name: "Check if phpldapadmin dir exists"
   stat:
-   path: "/opt/phpldapadmin/lib/pageOrig.php"
-  register: pageOrig
+   path: "/opt/phpldapadmin"
+  register: pla_dir
 
 - name: "Clone the phpLDAPadmin repository"
   git:
    repo: "https://github.com/malavolti/phpLDAPadmin.git"
    dest: /opt/phpldapadmin
+   version: "1.2.6.2"
   notify:
    - "Restart Apache"
-  when: pageOrig.stat.exists == false
+  when: pla_dir.stat.exists == False

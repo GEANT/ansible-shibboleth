@@ -1,0 +1,34 @@
+---
+# tasks file for enable_maintenance
+
+- name: "Start Jetty"
+  systemd:
+    name: jetty
+    state: started
+
+- name: "Check Apache2 maintenance config file existance"
+  stat: 
+   path: "/etc/apache2/sites-enabled/maintenance.conf"
+  register: maintenance_conf
+
+- name: "Disable the Apache2 maintenance site"
+  shell: "a2dissite maintenance"
+  notify:
+   - "Restart Apache2"
+  when: maintenance_conf.stat.exists
+
+- name: "Check Apache2 maintenance index file existance"
+  stat: 
+   path: "/var/www/html/maintenance.html"
+  register: maintenance_html
+
+- name: "Remove the Apache2 maintenance index file"
+  file:
+   path: "/var/www/html/maintenance.html"
+   state: absent
+
+- name: "Enable the main site"
+  shell: "a2ensite {{ fqdn }}-ssl"
+  notify:
+   - "Restart Apache2"
+  when: maintenance_conf.stat.exists

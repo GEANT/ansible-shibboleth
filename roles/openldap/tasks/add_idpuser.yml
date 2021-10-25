@@ -1,6 +1,6 @@
 ---
 
-- name: "Be sure to adde 'idpuser' to LDAP"
+- name: "Be sure to add 'idpuser' to LDAP"
   ldap_entry:
     dn: "{{ idp_config['ldap']['bindDN'] }}"
     objectClass:

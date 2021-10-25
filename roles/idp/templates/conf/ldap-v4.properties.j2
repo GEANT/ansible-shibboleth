@@ -74,4 +74,4 @@ idp.attribute.resolver.LDAP.searchFilter        = {{ idp_config['ldap']['searchF
 #idp.pool.LDAP.idleTime                         = PT10M
 #idp.pool.LDAP.blockWaitTime                    = PT3S
 
-idp.attribute.resolver.LDAP.exportAttributes    = uid givenName sn cn mail displayName mobile title preferredLanguage telephoneNumber eduPersonAffiliation eduPersonEntitlement eduPersonOrgDN eduPersonOrgUnitDN eduPersonOrcid schacMotherTongue schacPersonalTitle schacUserPresenceID schacPersonalUniqueID schacPersonalPosition
+idp.attribute.resolver.LDAP.exportAttributes    = {{ idp_config['ldap']['exportAttributes'] }}

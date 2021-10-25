@@ -1,5 +1,6 @@
 ---
 # tasks for configure_ssl
+
 - name: "Be sure that SSL Certificate is in '/etc/ssl/certs'"
   copy:
    src: "{{ files_dir }}/{{ fqdn }}/common/ssl/{{ common['ssl_cert'] }}"
@@ -18,7 +19,7 @@
    mode: "0440"
   register: ssl_key
 
-- name: "Ensure local certs directory exists"
+- name: "Be sure that 'ca-certificates' directory exists"
   file:
    state: "directory"
    path: "/usr/local/share/ca-certificates"
@@ -35,3 +36,51 @@
 - name: "Update cert index"
   shell: "/usr/sbin/update-ca-certificates"
   when: ssl_ca['changed'] == true
+
+- name: "Check if Apache exists"
+  stat:
+   path: "/etc/init.d/apache2"
+  register: check_apache2
+
+- name: "Restart Apache"
+  become: yes
+  become_method: sudo
+  systemd:
+   name: apache2
+   daemon_reload: yes
+   state: restarted
+  when:
+   - check_apache2.stat.exists == True 
+   - ssl_ca['changed'] == True or ssl_key['changed'] == True or ssl_cert['changed'] == True
+
+- name: "Check if OpenLDAP exists"
+  stat:
+   path: "/etc/init.d/slapd"
+  register: check_slapd
+
+- name: "Restart OpenLDAP"
+  become: yes
+  become_method: sudo
+  systemd:
+   name: slapd
+   daemon_reload: yes
+   state: restarted
+  when:
+   - check_slapd.stat.exists == True 
+   - ssl_ca['changed'] == True or ssl_key['changed'] == True or ssl_cert['changed'] == True
+
+- name: "Check if Jetty exists"
+  stat:
+   path: "/etc/init.d/jetty"
+  register: check_jetty
+
+- name: "Restart Jetty"
+  become: yes
+  become_method: sudo
+  systemd:
+   name: jetty
+   daemon_reload: yes
+   state: restarted
+  when:
+   - check_jetty.stat.exists == True 
+   - ssl_ca['changed'] == True or ssl_key['changed'] == True or ssl_cert['changed'] == True

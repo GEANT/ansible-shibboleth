@@ -1,40 +1,11 @@
 ---
 # tasks for IdP Rsyslog and F-TICKS
-- name: "Debian 8 - Install backports APT repository"
-  apt_repository:
-    repo: "deb {{ common['mirror'] | default('http://deb.debian.org/debian/') }} jessie-backports main"
-    state: present
-    update_cache: yes
-    filename: 'jessie-backports'
-  when:
-   - ansible_distribution_release == "jessie"
-   - rsyslog_srv is defined
-   - rsyslog_srv['ip'] is defined
-   - rsyslog_srv['ip'] != ""
-   - rsyslog_srv['port'] is defined
-   - rsyslog_srv['port'] != ""
-
-- name: "Debian 8 - Install Rsyslog with RELP"
-  apt:
-   name: ['rsyslog', 'rsyslog-relp']
-   state: latest
-   install_recommends: no
-   default_release: "jessie-backports"
-  when:
-   - ansible_distribution_release == "jessie"
-   - rsyslog_srv is defined
-   - rsyslog_srv['ip'] is defined
-   - rsyslog_srv['ip'] != ""
-   - rsyslog_srv['port'] is defined
-   - rsyslog_srv['port'] != ""
-
 - name: "Install Rsyslog with RELP"
   apt:
    name: ['rsyslog', 'rsyslog-relp']
    state: latest
    install_recommends: no
   when:
-   - ansible_distribution_release != "jessie"
    - rsyslog_srv is defined
    - rsyslog_srv['ip'] is defined
    - rsyslog_srv['ip'] != ""

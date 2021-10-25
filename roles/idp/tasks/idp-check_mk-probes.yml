@@ -5,12 +5,12 @@
    update_cache: yes
    cache_valid_time: 3600
 
-- name: "Install needed packages for Check MK plugin"
+- name: "Install needed 'ldap' and 'pymysql' packages for Python 3"
   apt:
-   name: "python-ldap"
+   name: ['python3-ldap','python3-pymysql']
    state: latest
    install_recommends: no
-  when:
+  when: 
    - check_mk is defined
    - check_mk['srv'] is defined
 

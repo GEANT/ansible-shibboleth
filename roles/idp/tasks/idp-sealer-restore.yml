@@ -1,0 +1,43 @@
+---
+# tasks for IdP sealer restore
+- name: "RESTORE - Retrieve IdP sealer.jks and sealer.kver backups"
+  command: "{{ item }}"
+  with_items:
+   - "rsync -avzh -e 'ssh -i {{ lookup('env','HOME') }}/.ssh/idpbakuser_rsa' {{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/sealer.jks {{ files_dir }}/{{ fqdn }}/idp/credentials/sealer.jks"
+   - "rsync -avzh -e 'ssh -i {{ lookup('env','HOME') }}/.ssh/idpbakuser_rsa' {{ bck_uri }}/{{ fqdn }}/{{ host_bck_path }}/sealer.kver {{ files_dir }}/{{ fqdn }}/idp/credentials/sealer.kver"
+  delegate_to: 127.0.0.1
+  when:
+    - bck_uri is defined
+    - bck_uri != ""
+    - host_bck_path is defined
+    - host_bck_path != ""
+
+- name: "RESTORE - Check if the HOST YAML file is encrypted with Vault"
+  command: "cat {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+  delegate_to: 127.0.0.1
+  register: host_yaml
+
+- name: "RESTORE - Decrypt Vaulted HOST YAML file"
+  command: "ansible-vault decrypt --vault-password-file {{ vault_file }} {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+  delegate_to: 127.0.0.1
+  when: "'ANSIBLE_VAULT' in host_yaml.stdout"
+
+- name: "RESTORE - Be sure to set 'idp_sealer_restore' to 'false'"
+  lineinfile:
+   path: "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+   regexp: '^idp_sealer_restore'
+   line: 'idp_sealer_restore: "false"'
+  delegate_to: 127.0.0.1
+
+- name: "RESTORE - Encrypt HOST YAML file with Vault"
+  command: "ansible-vault encrypt --vault-password-file {{ vault_file }} {{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+  delegate_to: 127.0.0.1
+  when: "'ANSIBLE_VAULT' in host_yaml.stdout"
+
+- name: "RESTORE - Be sure to set the right owner and group of YML file"
+  file:
+   path: "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}.yml"
+   owner: "{{ lookup('env','USER') }}"
+   group: "{{ lookup('env','USER') }}"
+   state: file
+  delegate_to: 127.0.0.1

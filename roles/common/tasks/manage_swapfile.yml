@@ -11,11 +11,8 @@
   import_tasks: add_swapfile.yml
   when:
    - common['swap']['state'] is defined and common['swap']['state'] == "present"
-  tags: common
 
 - name: "Remove SWAP file"
   import_tasks: rm_swapfile.yml
   when:
    - common['swap']['state'] is defined and common['swap']['state'] == "absent"
-  tags: common
-

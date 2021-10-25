@@ -1,5 +1,6 @@
 activate_this = '/opt/flup/venv/bin/activate_this.py'
-execfile(activate_this, dict(__file__=activate_this))
+with open(activate_this) as f:
+    exec(f.read(), {'__file__': activate_this})
 
 import sys
 sys.path.insert(0, '/opt/flup/')

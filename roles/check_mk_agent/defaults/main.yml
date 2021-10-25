@@ -1,2 +1,24 @@
 ---
 # defaults file for check_mk_agent
+
+# This directory MUST CONTAIN another "all/" directory
+files_dir: "<PATH-OF-DIR-WHERE-CHECK_MK-DEB-PKG-IS-STORED>"
+
+check_mk:
+ check_idp: "false"
+ srv: "<FQDN-CHECK-MK-SERVER>"
+ site: "<NAME-OF-THE-SITE-ON-CHECKMK>"
+ api_user_name: ""
+ api_user_secret: ""
+ folder: "<FOLDER-NAME-WHERE-PUT-THE-IDP>"
+ spEntityID: "<SP-ENTITYID-TO-USE-FOR-TESTS>"
+ testuser: "testuser"
+ baseDN: "ou=people,dc=example,dc=org"
+ searchuser: "cn=idpuser,ou=system,dc=example,dc=org"
+ searchuser_pw: "<PASSWORD-FOR-IDPUSER>"
+ userid_attr: "uid"
+ ldap_url: "ldap://idp.example.org:389"
+ ldap_useStartTLS: "false"
+ idp_scope: "example.org"
+ check_rs: "false"
+ check_coco: "false"

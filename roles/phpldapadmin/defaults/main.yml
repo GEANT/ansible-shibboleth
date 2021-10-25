@@ -1,2 +1,20 @@
 ---
 # defaults file for phpldapadmin
+
+fqdn: "idp.example.org"
+
+# This directory MUST CONTAIN another "phpldapadmin/" directory
+files_dir: "<PATH-OF-DIR-WHERE-PLA-UTILS-ARE-STORED>"
+
+pla:
+ orgUrl: "http://www.example.org/"
+ easy_idm: "true"
+ ldap:
+  basedn: "dc=example,dc=org"
+  domain: "example.org"
+  org: "Example Org"
+  url: "http://www.example.org/"
+  root_dn: "cn=admin,dc=example,dc=org"
+  root_pw: "root_ldap_pw"
+ web_gui_user: "admin"
+ web_gui_pw: "admin_pw"

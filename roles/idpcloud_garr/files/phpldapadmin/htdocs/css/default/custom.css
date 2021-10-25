@@ -82,3 +82,7 @@ span.LV_valid {
 .locked {
         background-color: #E3170D;
 }
+
+h1 {
+   padding-left: 2%;
+}

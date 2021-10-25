@@ -1,5 +1,4 @@
 ---
-
 - name: "Be sure to add the Test User"
   ldap_entry:
    dn: "uid=testuser,ou=people,{{ ldap['basedn'] }}"
@@ -8,6 +7,7 @@
      - eduPerson
      - schacLinkageIdentifiers
      - schacEntryMetadata
+     - schacContactLocation
    attributes:
      uid: "testuser"
      sn: "User"

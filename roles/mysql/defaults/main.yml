@@ -1,2 +1,7 @@
 ---
 # defaults file for mariadb
+
+fqdn: "idp.example.org"
+
+mysql:
+ root_password: "rootdbpw"

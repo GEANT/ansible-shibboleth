@@ -1,6 +1,12 @@
 ---
 # Install Amazon Corretto JDK on Debian
 
+- name: "Install GPG"
+  apt:
+    name: ['gpg','gpg-agent']
+    state: latest
+    install_recommends: no
+
 - name: "Add Amazon Corretto JDK signing key to APT"
   apt_key:
     url: "https://apt.corretto.aws/corretto.key"

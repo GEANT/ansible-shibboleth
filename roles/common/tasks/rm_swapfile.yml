@@ -1,5 +1,5 @@
 ---
-# tasks for remove_swapfile.yml
+# tasks for rm_swapfile.yml
 
 - name: "Disable swapfile"
   command: "swapoff /{{ common['swap']['name_swapfile'] }}"

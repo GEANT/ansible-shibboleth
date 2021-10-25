@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
+# coding=utf-8
 
 # Copyright 2010 University Corporation for Advanced Internet Development, Inc.
 #
@@ -21,7 +22,7 @@
 import sys
 import fileinput
 import os
-import MySQLdb
+import pymysql
 import random
 from optparse import OptionParser
 from operator import itemgetter
@@ -30,12 +31,9 @@ from datetime import datetime, date
 def parseFiles(files):
     """Build datastructures from lines."""
     lines = []
-    if sys.version_info < (2, 5):
-        for line in fileinput.input(files):
-            lines.append(line.rstrip().split("|"))
-    else:
-        for line in fileinput.input(files, openhook=fileinput.hook_compressed):
-            lines.append(line.rstrip().split("|"))
+    for line in fileinput.input(files, openhook=fileinput.hook_compressed):
+        if (type(line) is bytes): line = line.decode('utf-8')
+        lines.append(line.rstrip().split("|"))
 
     dictAll = {}
 
@@ -59,7 +57,7 @@ def parseFiles(files):
 {% endif %}
 {% endif %}
         except ValueError:
-            print """ERROR: Unsupported log file format or using compressed log files with Python < 2.5.%s. See the documentation in the Shibboleth wiki.""" % os.linesep
+            print (f"ERROR: Unsupported log file format or using compressed log files. See the documentation in the Shibboleth wiki.")
             sys.exit(-1)
 
         # set the 'curdate' with YYYY-MM-DD format
@@ -82,7 +80,7 @@ def parseFiles(files):
             else:
                 dictAll[curdate][rp][user] = 1
 
-    database = MySQLdb.connect(host="{{ idp_stats['db_host'] }}", user="statistics", passwd="{{ idp_stats['db_pw'] }}", db="statistics")
+    database = pymysql.connect("{{ idp_stats['db_host'] }}", "statistics", "{{ idp_stats['db_pw'] }}", "statistics")
 
     cursor = database.cursor()
     cursor.execute("SELECT MAX(data) FROM logins")
@@ -95,13 +93,13 @@ def parseFiles(files):
              for sp, b in a.items():
                 for utente, numlogins in b.items():
                    if idp:
-                     #print "INSERT INTO `logins` VALUES (%s, %s, %s, %s, %s);" % (idp, data, sp, utente, numlogins)
-                     cursor.execute("INSERT INTO logins VALUES (%s, %s, %s, %s, %s)", (idp, data, sp, utente, numlogins))
+                     #print (f"INSERT INTO `logins` VALUES ('{idp}', '{data}', '{sp}', '{utente}', '{numlogins}');")
+                     cursor.execute(f"INSERT INTO logins VALUES ('{idp}', '{data}', '{sp}', '{utente}', '{numlogins}');")
                      database.commit()
                      count = count + 1
 
     database.close()
-    print "Inserted %d elements in the login database." % count
+    print (f"Inserted {count} elements in the login database.")
 
 def main():
     """Parse command line options and arguments and their contents."""
@@ -109,7 +107,7 @@ def main():
     usage = "usage: %prog [files ...]"
     (options, args) = parser.parse_args()
     if len(args) == 0:
-        print "Missing filename(s). Specify '-' as filename to read from STDIN.\n"
+        print ("Missing filename(s). Specify '-' as filename to read from STDIN.\n")
         parser.print_help()
         sys.exit(-1)
 
